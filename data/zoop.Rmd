@@ -1,0 +1,48 @@
+---
+title: "zoop heatmap"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load packages
+```{r, message=FALSE}
+require(dplyr)
+require(zooper)
+require(lubridate)
+require(readr)
+require(ggplot2)
+```
+
+Load core stations
+```{r, message=FALSE}
+zoop_stations<-read_csv("zoop_station_lookup.csv")%>%
+  filter(Core%in%c(1, 2))
+```
+
+Load zoop data
+```{r}
+zoop_data<-Zoopsynther(Data_type="Community", Sources="EMP", Time_consistency = TRUE)%>%
+  filter(Station%in%zoop_stations$StationNZ)
+```
+
+Summarise zoop data
+```{r}
+zoop_data_sum<-zoop_data%>%
+  mutate(Month=month(Date))%>%
+  group_by(Month, Year)%>%
+  summarise(N=n(), .groups="drop")
+```
+
+Plot heat map
+```{r}
+ggplot(zoop_data_sum, aes(y=Month, x=Year, fill=N))+
+  geom_tile()+
+  scale_fill_viridis_c()+
+  scale_y_continuous(breaks=1:12)+
+  coord_cartesian(expand=FALSE)+
+  theme_bw()
+```
+
