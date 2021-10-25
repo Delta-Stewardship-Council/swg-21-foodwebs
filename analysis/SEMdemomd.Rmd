@@ -1,0 +1,161 @@
+---
+title: "SEM demo"
+author: "Tanya Rogers"
+date: "10/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, message=FALSE}
+library(readxl)
+library(dplyr)
+library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
+library(lavaan)
+library(semPlot)
+```
+
+### Data Preparation and Diagnostics
+
+Here I load the data, log things that look lognormally distributed (based on histograms), and reorder the data by time (using seasonal decimal years). Because the smelt index contains zeros, I added the minimum value before taking logs. According to meta-data, 'winter' for a given year includes Dec of previous year and Jan-Feb for given year, so winter for a given year goes first.
+
+```{r dataprep}
+alldata=readxl::read_xlsx("Integrated data set_DWR_2021-09-24.xlsx",sheet = 1,na = "NA")
+colnames(alldata)
+
+alldatalog=alldata %>% 
+  mutate_at(c("Delta Outflow","Chla","DissNitrateNitrite",
+              "TotPhos","DissAmmonia","Sbindex","ZoopsBPUE_ug","Zoop_CPUE"),log) %>% 
+  mutate(SmeltIndex=log(SmeltIndex+0.1),
+         decYear=case_when(Season == "Winter" ~ Year,
+                           Season == "Spring" ~ Year+0.25,
+                           Season == "Summer" ~ Year+0.5,
+                           Season == "Fall" ~ Year+0.75)) %>% 
+  arrange(decYear)
+```
+
+Index, Delta Outflow, X2, and Salinity are all fairly strongly correlated, and probably represent the same process. Index not as correlated as the others, but its value is the same for all seasons in a given year. Delta Export isn't correlated with the rest. So, I am dropping all variables except Delta Outflow and Delta Export.  
+
+Ammonium and Nitrate are also correlated, and probably represent the same process (nitrogen availability), so should probably pick one. I arbitrarily chose nitrate, but I don't know what's more important in this system.  
+
+I am also dropping Sbindex because there is only data from 1 season.  
+
+Below are bivariate plots, color indicating season
+
+```{r pairs}
+pairs.panels(alldatalog[c(8,2,6,7,15,10,12)],pch=21,
+             bg=c("blue","green","red","yellow")[factor(alldata$Season)])
+
+focaldata=as.data.frame(alldatalog[c(23,4,6,8,10,11,16,17,9,19,13)])
+fvars=colnames(focaldata)[3:11]
+pairs.panels(focaldata[c(-1,-2)],pch=21,
+             bg=c("blue","green","red","yellow")[factor(alldata$Season)])
+```
+
+Here are plots of the timeseries, acfs, and ccfs.
+
+```{r tsplots}
+#timeseries
+par(mfrow=c(3,3),mar=c(2,2,2,1))
+for(i in 1:9) {
+  plot.default(x=focaldata[,1],y=focaldata[,i+2],main=fvars[i], type="o",cex=0.5)
+}
+
+#acf
+par(mfrow=c(3,3),mar=c(2,2,3,1))
+for(i in 1:9) {
+  acf(focaldata[,i+2],main=fvars[i], lag.max = 5,na.action = na.pass,cex=0.5)
+}
+```
+
+```{r ccf,fig.height=16,fig.width=16}
+#ccf
+par(mfrow=c(8,8),mar=c(2,2,3,1))
+for(i in 1:8){
+  for(j in (i+1):9) {
+    par(mfg=c(i,j-1))
+    ccf(focaldata[i+2],focaldata[j+2],lag.max = 5,na.action = na.pass, main=paste0(fvars[i],"&", fvars[j]),cex=0.5)
+  }
+}
+```
+
+In preparation for analysis, I renamed things to simpler names, standardized the data, generated lagged variables (by 1 season).
+
+```{r dataprep2}
+fd=focaldata
+colnames(fd)[3:11]=c("Outflow","Export","Nit","Phos","Temp","Secchi","Chla","Zoop","Smelt")
+fd=fd %>% mutate_at(3:11,scale) %>% mutate_at(3:11,list("1"=lag))
+```
+
+### SEM
+
+These models are fit using the lavaan package. The semPlot package can be used to make the path diagrams. I have found these diagrams often look like crap though for more complex models, which is why I usually make them in powerpoint after the fact. But there might be better tools out there for this; I haven't really looked into it recently.
+
+#### Simple Example with Chla, Zoop, and Temp
+
+```{r m1}
+model1='Chla~Temp
+        Zoop~Chla+Temp'
+modfit1=sem(model1, data=fd)
+summary(modfit1, standardized=T, rsq=T)
+standardizedSolution(modfit1)
+semPaths(modfit1, "std", layout="spring", edge.label.cex = 1)
+
+model1b='Chla~Temp
+        Zoop~Chla'
+modfit1b=sem(model1b, data=fd)
+summary(modfit1b, standardized=T, rsq=T)
+standardizedSolution(modfit1b)
+semPaths(modfit1b, "std", layout="spring", edge.label.cex = 1)
+
+anova(modfit1,modfit1b)
+```
+
+#### Another Chla and Zoop model
+
+```{r m2}
+model2='Chla~Chla_1+Zoop_1+Phos_1+Temp
+        Zoop~Zoop_1+Chla_1+Phos_1+Outflow+Temp
+        Chla~~0*Zoop'
+modfit2=sem(model2, data=fd)
+summary(modfit2, standardized=T, rsq=T)
+standardizedSolution(modfit2)
+semPaths(modfit2, "std", layout="spring", edge.label.cex = 1)
+```
+
+#### A model with Chla, Zoop, Smelt
+
+```{r m3}
+model3='Chla~Chla_1+Zoop_1+Phos_1+Temp
+        Zoop~Zoop_1+Chla_1+Smelt_1+Phos_1+Outflow+Temp
+        Smelt~Smelt_1+Zoop_1+Chla_1+Phos_1+Outflow+Temp
+        Chla~~0*Zoop
+        Smelt~~0*Zoop
+        Chla~~0*Smelt'
+modfit3=sem(model3, data=fd)
+summary(modfit3, standardized=T, rsq=T)
+standardizedSolution(modfit3)
+semPaths(modfit3, "std", layout="spring", edge.label.cex = 1)
+```
+
+#### Diagnostic plots
+
+Here's a model that doesn't fit the data (fails Chi-square test). Functions are given for examining the residual covariances. This can suggest paths that are missing.
+
+```{r}
+model4='Chla~Chla_1+Zoop_1+Phos_1
+        Zoop~Zoop_1+Chla_1+Temp
+        Chla~~0*Zoop'
+modfit4=sem(model4, data=fd)
+summary(modfit4, standardized=T, rsq=T)
+
+inspect(modfit4, "sample") #sample (observed) covariance matrix
+fitted(modfit4) #predicted covariance matrix
+residuals(modfit4) #residual covariance matrix
+residuals(modfit4, type="cor") #residual correlation matrix
+modificationIndices(modfit4, standardized=F)
+```
+
+

@@ -1,0 +1,70 @@
+---
+title: "Benthic Sampling Effort"
+author: "Jeanette Clark"
+date: "10/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(DT)
+library(leaflet)
+library(sf)
+```
+
+```{r, message=FALSE}
+ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
+  mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
+  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-")))
+```
+
+
+```{r}
+sites_mon <- ben  %>% 
+  distinct(StationClean, Latitude, Longitude, mon) 
+
+sites <- ben %>% 
+  group_by(StationClean, Latitude, Longitude) %>% 
+  summarise(n_months = length(unique(mon)), .groups  =  "drop") %>% 
+  drop_na()  %>% 
+  st_as_sf(coords = c('Longitude','Latitude'), crs = 4326,  remove = FALSE)
+```
+
+
+Sites that were sampled each month
+
+
+```{r, echo=F}
+ggplot(sites_mon, aes(x = mon, y = StationClean), size = 3) +
+  geom_point() +
+  theme_classic()
+```
+Location of sites, sized according to total number of months sampled
+
+```{r, message = FALSE, echo = FALSE}
+leaflet(sites) %>% 
+  addTiles() %>% 
+  addCircleMarkers(data = sites,
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = ~(n_months/100), # arbitrary scaling
+                         fillColor = "blue",
+                         fillOpacity = 1,
+                         weight = 0.25,
+                         color = "black",
+                         label = ~StationClean)
+```
+
+Some sites have moved slightly
+
+```{r, echo = FALSE}
+datatable(sites)
+```
+
