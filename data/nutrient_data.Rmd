@@ -145,6 +145,8 @@ plt <- ggplot(df_wq_sub, aes(Date, Station)) +
 
 plt
 ```
+
+#
 Calculate annual indices (first pass).
 ```{r}
 df_wq_sub$Year <- as.numeric(substr(df_wq_sub$Date, 1, 4))
