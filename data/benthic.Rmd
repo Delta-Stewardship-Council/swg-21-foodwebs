@@ -17,6 +17,7 @@ library(ggplot2)
 library(DT)
 library(leaflet)
 library(sf)
+library(janitor)
 ```
 
 
@@ -123,3 +124,68 @@ leaflet(sites) %>%
                          color = "black",
                          label = ~StationClean)
 ```
+
+## Annual Average CPUE
+
+For each clam species
+Code adapted from [Sarah's work here](https://github.com/emp-des/annual-report-graphs/blob/master/Benthic/Benthic_AR_Template.Rmd)
+
+```{r}
+ben_clams  <- ben %>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula")) %>% 
+  group_by(Month, Year, StationCode) %>%
+  mutate(Grab_Count = max(Grab)) %>%
+  ungroup() %>%
+  group_by(Month, Year) %>%
+  mutate(Station_Count = n_distinct(StationCode),
+         Grab_Count = Grab_Count*Station_Count) %>%
+  ungroup() %>%
+  group_by(Genus, Month, Year, Grab_Count, Station_Count) %>%
+  summarize(
+    Orgs_Total = sum(Count, na.rm = TRUE)
+    ) %>%
+  ungroup()
+
+
+
+ben_clams$Date <- with(ben_clams, paste(Month, Year))
+
+# get grab variable
+df_grab_vari <- ben_clams[!duplicated(ben_clams$Date),]
+
+df_grab_vari <- df_grab_vari %>%
+  group_by(Year) %>%
+  summarize(Grab_Count = sum(Grab_Count)) 
+
+# create df of totals by year
+df_year_sums <- ben_clams %>%
+  group_by(Genus, Year) %>%
+  summarize(Orgs_Total = sum(Orgs_Total, na.rm = TRUE)) %>%
+  ungroup()
+df_year_sums <-  merge(df_year_sums, df_grab_vari, by = 'Year', all.x=FALSE, all.y=FALSE)
+
+df_year_CPUE <- df_year_sums %>%
+  mutate(CPUE_Total = Orgs_Total/Grab_Count/0.052) %>%
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(corbicula_cpue = Corbicula,
+         potamocorbula_cpue = Potamocorbula)  %>% 
+  clean_names()
+
+```
+
+
+```{r}
+ggplot() +
+  geom_line(data = df_year_CPUE, aes(x = year,  y = corbicula_cpue), color = "red") +
+  geom_line(data = df_year_CPUE, aes(x = year,  y = potamocorbula_cpue), color = "blue") +
+  theme_classic() +
+  labs(x= "Year", y = "CPUE", title = "Annual Mean CPUE for Corbicula (red) and Potamocorbula (blue)")
+```
+
+
+```{r}
+write_csv(df_year_CPUE, "annual_averages/benthic.csv")
+```
+
+
