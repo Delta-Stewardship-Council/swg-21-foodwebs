@@ -47,7 +47,6 @@ sites_mon <- ben  %>%
 sites <- ben %>% 
   group_by(StationClean, Latitude, Longitude) %>% 
   summarise(n_months = length(unique(mon)), .groups  =  "drop") %>% 
-  drop_na()  %>% 
   st_as_sf(coords = c('Longitude','Latitude'), crs = 4326,  remove = FALSE)
 ```
 
@@ -84,3 +83,28 @@ leaflet(sites) %>%
 datatable(as.data.frame(sites))
 ```
 
+## Core Stations
+
+```{r}
+core <- c("P8",
+          "MD10",
+          "D8",
+          "D7",
+          "D6",
+          "D41",
+          "D4",
+          "D28A",
+          "D26",
+          "C3",
+          "C10")
+
+core_data <-  sites_mon %>% 
+  filter(StationClean %in% core)
+```
+
+
+```{r, echo=F}
+ggplot(core_data, aes(x = mon, y = StationClean), size = 3) +
+  geom_point() +
+  theme_classic()
+```
