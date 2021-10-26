@@ -49,5 +49,5 @@ ggplot(combo_dayflow, aes(factor(Month), OUT)) +
 
 #data points against julian day.#
 ggplot(combo_dayflow, aes(JDay, OUT)) + geom_point() + geom_smooth() + labs(x = "Julian Day",
-                                                                 y = "Flow (cfs)") + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) +
+                                                                            y = "Flow (cfs)") + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) +
   annotation_logticks(sides = "l")
