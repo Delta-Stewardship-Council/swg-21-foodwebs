@@ -127,7 +127,8 @@ leaflet(sites) %>%
 
 ## Annual Average CPUE
 
-For each clam species
+For both clam genera, Potamocorbula and Corbicula.
+
 Code adapted from [Sarah's work here](https://github.com/emp-des/annual-report-graphs/blob/master/Benthic/Benthic_AR_Template.Rmd)
 
 ```{r}
@@ -141,10 +142,7 @@ ben_clams  <- ben %>%
          Grab_Count = Grab_Count*Station_Count) %>%
   ungroup() %>%
   group_by(Genus, Month, Year, Grab_Count, Station_Count) %>%
-  summarize(
-    Orgs_Total = sum(Count, na.rm = TRUE)
-    ) %>%
-  ungroup()
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop")
 
 
 
@@ -155,13 +153,13 @@ df_grab_vari <- ben_clams[!duplicated(ben_clams$Date),]
 
 df_grab_vari <- df_grab_vari %>%
   group_by(Year) %>%
-  summarize(Grab_Count = sum(Grab_Count)) 
+  summarize(Grab_Count = sum(Grab_Count), .groups = "drop") 
 
 # create df of totals by year
 df_year_sums <- ben_clams %>%
   group_by(Genus, Year) %>%
-  summarize(Orgs_Total = sum(Orgs_Total, na.rm = TRUE)) %>%
-  ungroup()
+  summarize(Orgs_Total = sum(Orgs_Total, na.rm = TRUE), .groups = "drop") 
+
 df_year_sums <-  merge(df_year_sums, df_grab_vari, by = 'Year', all.x=FALSE, all.y=FALSE)
 
 df_year_CPUE <- df_year_sums %>%
@@ -175,7 +173,7 @@ df_year_CPUE <- df_year_sums %>%
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 ggplot() +
   geom_line(data = df_year_CPUE, aes(x = year,  y = corbicula_cpue), color = "red") +
   geom_line(data = df_year_CPUE, aes(x = year,  y = potamocorbula_cpue), color = "blue") +
