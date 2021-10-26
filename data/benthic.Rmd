@@ -61,22 +61,6 @@ ggplot(sites_mon, aes(x = mon, y = StationClean), size = 3) +
 ```
 
 
-## Location of sites, sized according to total number of months sampled
-
-```{r, message = FALSE, echo = FALSE}
-leaflet(sites) %>% 
-  addTiles() %>% 
-  addCircleMarkers(data = sites,
-                         lat = ~Latitude,
-                         lng = ~Longitude,
-                         radius = ~(n_months/50), # arbitrary scaling
-                         fillColor = "blue",
-                         fillOpacity = 1,
-                         weight = 0.25,
-                         color = "black",
-                         label = ~StationClean)
-```
-
 ## Table of site information
 
 ```{r, echo = FALSE}
@@ -107,4 +91,35 @@ core_data <-  sites_mon %>%
 ggplot(core_data, aes(x = mon, y = StationClean), size = 3) +
   geom_point() +
   theme_classic()
+```
+
+## Location of sites, sized according to total number of months sampled
+
+Red are core sites
+
+```{r, message = FALSE, echo = FALSE}
+sites_core <- sites %>% 
+  filter(StationClean %in% core)
+
+
+leaflet(sites) %>% 
+  addTiles() %>% 
+  addCircleMarkers(data = sites,
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = ~(n_months/50), # arbitrary scaling
+                         fillColor = "blue",
+                         fillOpacity = 1,
+                         weight = 0.25,
+                         color = "black",
+                         label = ~StationClean) %>% 
+  addCircleMarkers(data = sites_core,
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = ~(n_months/50), # arbitrary scaling
+                         fillColor = "red",
+                         fillOpacity = 1,
+                         weight = 0.25,
+                         color = "black",
+                         label = ~StationClean)
 ```
