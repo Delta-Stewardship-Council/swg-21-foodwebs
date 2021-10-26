@@ -1,7 +1,5 @@
 ###merge dayflow datasets for timeperiod of interest###
 
-testing this new branchsdfsdfsdf
-
 ###downloading daatasets##
 #Dayflow Results 1970 - 1983#
 data1 <- read.csv("https://data.cnra.ca.gov/dataset/06ee2016-b138-47d7-9e85-f46fae674536/resource/a0a46a1d-bec5-4db9-b331-655e306860ba/download/dayflow-results-1970-1983.csv")
@@ -53,3 +51,14 @@ ggplot(combo_dayflow, aes(factor(Month), OUT)) +
 ggplot(combo_dayflow, aes(JDay, OUT)) + geom_point() + geom_smooth() + labs(x = "Julian Day",
                                                                             y = "Flow (cfs)") + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) +
   annotation_logticks(sides = "l")
+
+##average the delta-wide outflow per year for DSP first pass study##
+
+annual_average_deltawide_flow<-combo_dayflow %>%
+  group_by(Year) %>%
+  summarise(value = mean(OUT))
+#raname column for flow
+annual_average_deltawide_flow<-rename(annual_average_deltawide_flow,c("Mean_flow" = "value"))
+
+
+
