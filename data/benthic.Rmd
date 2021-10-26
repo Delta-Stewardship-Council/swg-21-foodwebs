@@ -19,11 +19,25 @@ library(leaflet)
 library(sf)
 ```
 
+
+## Read and preprocess data
+
+* remove the L,R,C (left, right, center) from site names, so we can group those counts together
+    - may need to verify this doesn't create any statistical artifacts
+* create a monthly time stamp
+* take mean of lat/lon for each site
+    -  some sites moved slightly, and some years don't have lat/lons for the sites. Assume minor site movement is negligable (may need to verify)
+
 ```{r, message=FALSE}
 ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
   mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
-  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-")))
+  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% 
+  group_by(StationClean) %>% 
+  mutate(Latitude = mean(Latitude, na.rm = T), 
+         Longitude = mean(Longitude, na.rm = T)) %>% 
+  ungroup()
 ```
+
 
 
 ```{r}
@@ -38,7 +52,7 @@ sites <- ben %>%
 ```
 
 
-Sites that were sampled each month
+## Sites that were sampled each month
 
 
 ```{r, echo=F}
@@ -46,7 +60,9 @@ ggplot(sites_mon, aes(x = mon, y = StationClean), size = 3) +
   geom_point() +
   theme_classic()
 ```
-Location of sites, sized according to total number of months sampled
+
+
+## Location of sites, sized according to total number of months sampled
 
 ```{r, message = FALSE, echo = FALSE}
 leaflet(sites) %>% 
@@ -54,7 +70,7 @@ leaflet(sites) %>%
   addCircleMarkers(data = sites,
                          lat = ~Latitude,
                          lng = ~Longitude,
-                         radius = ~(n_months/100), # arbitrary scaling
+                         radius = ~(n_months/50), # arbitrary scaling
                          fillColor = "blue",
                          fillOpacity = 1,
                          weight = 0.25,
@@ -62,9 +78,9 @@ leaflet(sites) %>%
                          label = ~StationClean)
 ```
 
-Some sites have moved slightly
+## Table of site information
 
 ```{r, echo = FALSE}
-datatable(sites)
+datatable(as.data.frame(sites))
 ```
 
