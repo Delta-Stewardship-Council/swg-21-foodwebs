@@ -1,6 +1,8 @@
 ---
 title: "zoop heatmap"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -13,6 +15,7 @@ require(dplyr)
 require(zooper)
 require(lubridate)
 require(readr)
+require(tidyr)
 require(ggplot2)
 ```
 
@@ -25,13 +28,32 @@ zoop_stations<-read_csv("zoop_station_lookup.csv")%>%
 Load zoop data
 ```{r}
 zoop_data<-Zoopsynther(Data_type="Community", Sources="EMP", Time_consistency = TRUE)%>%
-  filter(Station%in%zoop_stations$StationNZ)
+  filter(Station%in%zoop_stations$StationNZ)%>%
+  mutate(Month=month(Date))
 ```
 
-Summarise zoop data
+Summarize zoop effort by date and station
+```{r}
+zoop_data_station<-zoop_data%>%
+  select(Month, Year, Station)%>%
+  distinct()%>%
+  mutate(type="present")%>%
+  complete(Month, Year, Station, fill=list(type="missing"))%>%
+  mutate(Date=dmy(paste("1", Month, Year)))
+```
+
+Plot zoop effort by date and station
+```{r}
+ggplot(zoop_data_station, aes(x=Date, y=Station, color=type))+
+  geom_point()+
+  scale_color_manual(values=c("firebrick3", "black"))+
+  theme_bw()
+```
+
+
+Summarize zoop effort by month and year
 ```{r}
 zoop_data_sum<-zoop_data%>%
-  mutate(Month=month(Date))%>%
   group_by(Month, Year)%>%
   summarise(N=n(), .groups="drop")
 ```
