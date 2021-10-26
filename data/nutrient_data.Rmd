@@ -1,0 +1,146 @@
+---
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r echo = FALSE, results='hide', message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggmap)
+```
+
+```{r, warning = FALSE, message = FALSE}
+# read in data
+df_wq <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.4&entityid=98b400de8472d2a3d2e403141533a2cc',
+                  col_types = c(.default = 'd', Date = 'c', Station = 'c'))
+df_wq$Date <- as.Date(df_wq$Date, format = '%m/%d/%Y')
+df_wq <- pivot_longer(df_wq, cols = Chla:pHBottom, names_to = 'Analyte', values_to = 'Value')
+
+df_stations <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.4&entityid=827aa171ecae79731cc50ae0e590e5af')
+df_stations <- subset(df_stations, select = c('Station','Latitude','Longitude'))
+
+df_wq <- inner_join(df_wq, df_stations, by = 'Station')
+```
+
+# Check Temporal Coverage
+```{r fig.width=15, fig.height=8}
+# subset by wanted nutrients
+df_wq_sub <- df_wq[df_wq$Analyte %in% c('Chla', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica'),]
+df_wq_sub <- subset(df_wq_sub, select = c('Date','Station','Latitude','Longitude','Analyte','Value'))
+
+# exclude dates where any of the analytes don't exist
+df_wq_sub <- na.omit(df_wq_sub)
+
+# check temporal coverage
+plt <- ggplot(df_wq_sub, aes(Date, Station)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90))
+
+plt
+```
+
+Core stations are:
+
+* P8
+* MD10/MD10A?
+* D8
+* D7
+* D6
+* D41
+* D4
+* D28A
+* D26
+* C3/C3A?
+* C10/C10A?
+
+# Subset out Relevant Stations
+```{r}
+station_list <- c('P8','MD10','MD10A','D8','D7','D6','D41','D4','D28A','D26','C3','C3A','C10','C10A')
+df_wq_sub <- df_wq_sub [df_wq_sub$Station %in% station_list,]
+
+# check temporal coverage
+plt <- ggplot(df_wq_sub, aes(Date, Station)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90))
+
+plt
+```
+
+# Check Spatial Coverage
+```{r, results='hide', message=FALSE, warning = FALSE, results = 'hide'}
+buffer <- 0.05
+coordDict = list( 
+    'minLat' = min(df_wq_sub$Latitude) - buffer,
+    'maxLat' = max(df_wq_sub$Latitude) + buffer,
+    'minLon' = min(df_wq_sub$Longitude) - buffer,
+    'maxLon' = max(df_wq_sub$Longitude) + buffer
+)
+
+map_obj <- get_stamenmap(
+  bbox = c(left = coordDict[['minLon']], bottom = coordDict[['minLat']], right = coordDict[['maxLon']], top = coordDict[['maxLat']]),
+  zoom = 10,
+  maptype = 'terrain'
+  )
+
+# plot the map
+map <- ggmap(map_obj) + 
+  theme_void() +
+  geom_point(data = df_wq_sub, aes(x = Longitude, y = Latitude, label = Station), shape = 21, fill = 'red', size = 3) +
+  geom_text(data = df_wq_sub, aes(label = Station, x = Longitude, y = Latitude), vjust = 0, hjust = 0)
+
+map
+```
+
+# Check if C3/C3A, MD10/MD10A, and C10/C10A can be combined {.tabset .tabset-pills}
+## MD10/MD10A
+```{r, results='asis'}
+analytes <- unique(df_wq_sub$Analyte)
+for (analyte in analytes){
+  df_check <- df_wq_sub %>% filter(Station %in% c('MD10','MD10A'), Analyte == analyte)
+  plt <- ggplot(df_check) +
+    geom_line(aes(Date, Value, color = Station)) +
+    ylab(analyte)
+  
+  plot(plt)
+}
+```
+
+## C10/C10A
+```{r, results='asis'}
+for (analyte in analytes){
+  df_check <- df_wq_sub %>% filter(Station %in% c('C10','C10A'), Analyte == analyte)
+  plt <- ggplot(df_check) +
+    geom_line(aes(Date, Value, color = Station)) +
+    ylab(analyte)
+  
+  plot(plt)
+}
+```
+
+## C3/C3A
+```{r, results='asis'}
+for (analyte in analytes){
+  df_check <- df_wq_sub %>% filter(Station %in% c('C3','C3A'), Analyte == analyte)
+  plt <- ggplot(df_check) +
+    geom_line(aes(Date, Value, color = Station)) +
+    ylab(analyte)
+  
+  plot(plt)
+}
+```
+
+#
+Looks good to me, so will combine the stations.
+```{r}
+df_wq_sub$Station[df_wq_sub$Station == 'C10'] <- 'C10A'
+df_wq_sub$Station[df_wq_sub$Station == 'MD10'] <- 'MD10A'
+df_wq_sub$Station[df_wq_sub$Station == 'C3'] <- 'C3A'
+
+# check temporal coverage
+plt <- ggplot(df_wq_sub, aes(Date, Station)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90))
+
+plt
+```
+
