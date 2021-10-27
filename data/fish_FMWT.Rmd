@@ -17,24 +17,19 @@ library(LTMRdata)
 library(tidyverse)
 library(lubridate)
 library(brms)
+library(lme4)
 
 ```
-## Read and preprocess data
+## Sampling effort summary
+Number of sampling event for each index station (once a month) for each year. Inconsistent sampling throughout the years.
 
-* Read data from Sam Bashevkin's integrated fish dataset and select only species of interest (only Delta Smelt is shown at the moment)
-* Load csv data from Steve Slater (California Department of Fish and Wildlife) that indicates "index stations"
-  -  Index stations are those that are sampled most consistently across years and labeled as "1" in the index stations.csv
-* Process data
-    - Remove non-index stations
-    - Remove data from months that are not sampled regularly (the survey mainly samples in the fall, Sep-Dec)
-    - Add year, month, and other variables/columns
-    - Summarize catch count for each sampling event (year, date, station)
-    
-```{r, echo = TRUE, message=FALSE, warning=FALSE}
-FMWT_Delta_Smelt <-LTMRdata::fish(sources="FMWT", species="Hypomesus transpacificus", size_cutoff=40)
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 FMWT_index_stations<-read.csv("FMWT index stations_SS_BM.csv")
 FMWT_index_stations_only<-FMWT_index_stations %>% filter(Index=="1")
+
+
+FMWT_Delta_Smelt <-LTMRdata::fish(sources="FMWT", species="Hypomesus transpacificus", size_cutoff=40)
 
 #Limit FMWT data to just index stations
 FMWT_Delta_Smelt_derived <- FMWT_Delta_Smelt %>% filter(Station %in% unique(FMWT_index_stations_only$Station)) %>%
@@ -44,19 +39,6 @@ FMWT_Delta_Smelt_derived <- FMWT_Delta_Smelt %>% filter(Station %in% unique(FMWT
   group_by(Station,Datetime,Survey,Taxa) %>%
   summarise(CatchCount=sum(Count))%>%
   mutate(Year=year(Datetime))
-
-FMWT_Delta_Smelt_derived$Station<-as.numeric(FMWT_Delta_Smelt_derived$Station)
-FMWT_Delta_Smelt_derived$CatchCount<-as.integer(FMWT_Delta_Smelt_derived$CatchCount)
-FMWT_Delta_Smelt_derived$Station_fac<-as.factor(FMWT_Delta_Smelt_derived$Station)
-FMWT_Delta_Smelt_derived$Year_fac<-as.factor(FMWT_Delta_Smelt_derived$Year)
-FMWT_Delta_Smelt_derived$Season_fac<-as.factor(FMWT_Delta_Smelt_derived$Survey)
-
-```
-
-## Sampling effort summary
-Number of sampling event for each station (once a month) for each year
-
-```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 #Check sample size across years
 FMWT_sample_size <- FMWT_Delta_Smelt_derived %>% mutate(sample_size=1) %>%
@@ -68,6 +50,86 @@ ggplot(FMWT_Delta_Smelt_derived %>% mutate(sample_size=1) %>%
          group_by(Year,Station) %>% summarise(sample_size=sum(sample_size)) %>%
          mutate(Station=as.factor(Station))
        ,aes(x=Year,y=Station,fill=sample_size))+geom_tile()
+
+
+```
+
+Check sampling effort by first digit region (region "3","4", etc.). Somewhat inconsistent sampling across regions in the earlier years, but more consistent over time. We will just take an average for each region and month before averaging across months to get a value for each year
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+#Check sample size across years
+FMWT_sample_size_region <- FMWT_Delta_Smelt_derived %>% mutate(Region=as.numeric(substr(Station, 1, 1)),sample_size=1) %>%
+  group_by(Year,Region) %>% summarise(sample_size=sum(sample_size)) %>%
+  spread(Region,sample_size)
+
+#Plot effort across regions and years
+ggplot(FMWT_Delta_Smelt_derived %>% mutate(Region=as.numeric(substr(Station, 1, 1)),sample_size=1) %>%
+  group_by(Year,Region) %>% summarise(sample_size=sum(sample_size))
+       ,aes(x=Year,y=Region,fill=sample_size))+geom_tile()
+
+```
+
+
+## Read and preprocess data for fish biomass
+
+* Read data from Sam Bashevkin's integrated fish dataset and select only species of interest: Delta Smelt, age-0 Striped Bass, Threadfin Shad, American Shad, Longfin Smelt
+* Load csv data from Steve Slater (California Department of Fish and Wildlife) that indicates "index stations"
+  -  Index stations are those that are sampled most consistently across years and labeled as "1" in the index stations.csv
+* Process data
+    - Remove non-index stations
+    - Remove data from months that are not sampled regularly (the survey mainly samples in the fall, Sep-Dec)
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+FMWT_Delta_Smelt <-LTMRdata::fish(sources="FMWT", species="Hypomesus transpacificus", size_cutoff=40)
+FMWT_Longfin_Smelt <-LTMRdata::fish(sources="FMWT", species="Spirinchus thaleichthys", size_cutoff=40)
+FMWT_Threadfin_Shad <-LTMRdata::fish(sources="FMWT", species="Dorosoma petenense", size_cutoff=40)
+FMWT_American_Shad <-LTMRdata::fish(sources="FMWT", species="Alosa sapidissima", size_cutoff=40)
+
+#Remove age-1 Striped Bass
+FMWT_Striped_Bass <-LTMRdata::fish(sources="FMWT", species="Morone saxatilis", size_cutoff=40) %>% filter(Length<150)
+
+FMWT_biomass_estuarine<-bind_rows(FMWT_Delta_Smelt,FMWT_Longfin_Smelt,FMWT_Threadfin_Shad,FMWT_American_Shad,FMWT_Striped_Bass)
+
+remove(FMWT_Delta_Smelt,FMWT_Longfin_Smelt,FMWT_Threadfin_Shad,FMWT_American_Shad,FMWT_Striped_Bass)
+
+#Limit FMWT data to just index stations
+FMWT_biomass_derived_estuarine <- FMWT_biomass_estuarine %>% filter(Station %in% unique(FMWT_index_stations_only$Station)) %>%
+  #and only for September to December (survey 3,4,5,6)
+  filter(Survey %in% c(3:6))
+```
+
+* Convert fish length data into biomass using equation from Kimmerer et al. (2005)
+
+Kimmerer W, Avent SR, Bollens SM, Feyrer F, Grimaldo LF, Moyle PB, Nobriga M, Visintainer T. 2005. Variability in Length–Weight Relationships Used to Estimate Biomass of Estuarine Fish from Survey Data. Trans Am Fish Soc. 134(2):481–495. doi:10.1577/t04-042.1.
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+FMWT_biomass_derived_estuarine <- FMWT_biomass_derived_estuarine %>% 
+  mutate(Length=ifelse(is.na(Length),0,Length)) %>%
+  mutate(Biomass = case_when(
+    Taxa=="Hypomesus transpacificus" ~ (0.0018*(Length^3.38))*Count,
+    Taxa=="Spirinchus thaleichthys" ~ (0.0005*(Length^3.69))*Count,
+    Taxa=="Dorosoma petenense" ~ (0.0072*(Length^3.16))*Count,
+    Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count,
+    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count))
+
+
+```
+Calculated estuarine biomass per sampling event and then calculate average for each region, then every month, then get annual value.
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+FMWT_biomass_sum_estuarine <- FMWT_biomass_derived_estuarine %>% group_by(Station,Datetime,Survey) %>%
+  summarise(Biomass=sum(Biomass)) %>%
+  mutate(Year=year(Datetime),Region=as.numeric(substr(Station, 1, 1)))
+
+FMWT_biomass_annual_estuarine <- FMWT_biomass_sum_estuarine %>%
+  group_by(Year,Region,Survey) %>%
+  summarise(Biomass=mean(Biomass)) %>%
+  group_by(Year,Survey) %>%
+  summarise(Biomass=mean(Biomass)) %>%
+  group_by(Year) %>%
+  summarise(Biomass=mean(Biomass))
+
+
 
 ```
 

@@ -60,5 +60,6 @@ annual_average_deltawide_flow<-combo_dayflow %>%
 #raname column for flow
 annual_average_deltawide_flow<-rename(annual_average_deltawide_flow,c("Mean_flow" = "value"))
 
-
-
+library(readr)
+write_csv(annual_average_deltawide_flow,
+          file.path("annual_averages","annual_average_deltawide_flow.csv"))

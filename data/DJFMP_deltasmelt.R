@@ -74,8 +74,7 @@ avg_count_Y <- DJFMP_1976_2020 %>%
   summarise(Avg_Annual_DScatch = mean(Count))
 
 # # save
-#write.csv(avg_count_Y, "C:/Users/smanugian/Desktop/NCEAS_DSP/FoodWebGroup/ExploreData_DJFMP/annual_avg_DS_catch.csv", row.names=FALSE)
-
+write.csv(avg_count_Y, "data/annual_averages/DJFMP_annual_avg_DS_catch.csv", row.names=FALSE)
 
 
 # #########################
