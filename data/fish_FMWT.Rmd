@@ -1,0 +1,73 @@
+---
+title: "Fall Midwater Trawl Fish Data"
+author: "Brian Mahardja"
+date: "10/26/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+#devtools::install_github("sbashevkin/LTMRdata")
+
+library(LTMRdata)
+library(tidyverse)
+library(lubridate)
+library(brms)
+
+```
+## Read and preprocess data
+
+* Read data from Sam Bashevkin's integrated fish dataset and select only species of interest (only Delta Smelt is shown at the moment)
+* Load csv data from Steve Slater (California Department of Fish and Wildlife) that indicates "index stations"
+  -  Index stations are those that are sampled most consistently across years and labeled as "1" in the index stations.csv
+* Process data
+    - Remove non-index stations
+    - Remove data from months that are not sampled regularly (the survey mainly samples in the fall, Sep-Dec)
+    - Add year, month, and other variables/columns
+    - Summarize catch count for each sampling event (year, date, station)
+    
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+FMWT_Delta_Smelt <-LTMRdata::fish(sources="FMWT", species="Hypomesus transpacificus", size_cutoff=40)
+
+FMWT_index_stations<-read.csv("FMWT index stations_SS_BM.csv")
+FMWT_index_stations_only<-FMWT_index_stations %>% filter(Index=="1")
+
+#Limit FMWT data to just index stations
+FMWT_Delta_Smelt_derived <- FMWT_Delta_Smelt %>% filter(Station %in% unique(FMWT_index_stations_only$Station)) %>%
+  #and only for September to December (survey 3,4,5,6)
+  filter(Survey %in% c(3:6)) %>%
+  #summarize by station, add year
+  group_by(Station,Datetime,Survey,Taxa) %>%
+  summarise(CatchCount=sum(Count))%>%
+  mutate(Year=year(Datetime))
+
+FMWT_Delta_Smelt_derived$Station<-as.numeric(FMWT_Delta_Smelt_derived$Station)
+FMWT_Delta_Smelt_derived$CatchCount<-as.integer(FMWT_Delta_Smelt_derived$CatchCount)
+FMWT_Delta_Smelt_derived$Station_fac<-as.factor(FMWT_Delta_Smelt_derived$Station)
+FMWT_Delta_Smelt_derived$Year_fac<-as.factor(FMWT_Delta_Smelt_derived$Year)
+FMWT_Delta_Smelt_derived$Season_fac<-as.factor(FMWT_Delta_Smelt_derived$Survey)
+
+```
+
+## Sampling effort summary
+Number of sampling event for each station (once a month) for each year
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+#Check sample size across years
+FMWT_sample_size <- FMWT_Delta_Smelt_derived %>% mutate(sample_size=1) %>%
+  group_by(Year,Station) %>% summarise(sample_size=sum(sample_size)) %>%
+  spread(Station,sample_size)
+
+#Plot effort across years
+ggplot(FMWT_Delta_Smelt_derived %>% mutate(sample_size=1) %>%
+         group_by(Year,Station) %>% summarise(sample_size=sum(sample_size)) %>%
+         mutate(Station=as.factor(Station))
+       ,aes(x=Year,y=Station,fill=sample_size))+geom_tile()
+
+```
+

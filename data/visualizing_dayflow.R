@@ -49,5 +49,16 @@ ggplot(combo_dayflow, aes(factor(Month), OUT)) +
 
 #data points against julian day.#
 ggplot(combo_dayflow, aes(JDay, OUT)) + geom_point() + geom_smooth() + labs(x = "Julian Day",
-                                                                 y = "Flow (cfs)") + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) +
+                                                                            y = "Flow (cfs)") + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) +
   annotation_logticks(sides = "l")
+
+##average the delta-wide outflow per year for DSP first pass study##
+
+annual_average_deltawide_flow<-combo_dayflow %>%
+  group_by(Year) %>%
+  summarise(value = mean(OUT))
+#raname column for flow
+annual_average_deltawide_flow<-rename(annual_average_deltawide_flow,c("Mean_flow" = "value"))
+
+
+

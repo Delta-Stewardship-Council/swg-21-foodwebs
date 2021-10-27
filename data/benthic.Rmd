@@ -17,13 +17,28 @@ library(ggplot2)
 library(DT)
 library(leaflet)
 library(sf)
+library(janitor)
 ```
+
+
+## Read and preprocess data
+
+* remove the L,R,C (left, right, center) from site names, so we can group those counts together
+    - may need to verify this doesn't create any statistical artifacts
+* create a monthly time stamp
+* take mean of lat/lon for each site
+    -  some sites moved slightly, and some years don't have lat/lons for the sites. Assume minor site movement is negligable (may need to verify)
 
 ```{r, message=FALSE}
 ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
   mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
-  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-")))
+  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% 
+  group_by(StationClean) %>% 
+  mutate(Latitude = mean(Latitude, na.rm = T), 
+         Longitude = mean(Longitude, na.rm = T)) %>% 
+  ungroup()
 ```
+
 
 
 ```{r}
@@ -33,12 +48,11 @@ sites_mon <- ben  %>%
 sites <- ben %>% 
   group_by(StationClean, Latitude, Longitude) %>% 
   summarise(n_months = length(unique(mon)), .groups  =  "drop") %>% 
-  drop_na()  %>% 
   st_as_sf(coords = c('Longitude','Latitude'), crs = 4326,  remove = FALSE)
 ```
 
 
-Sites that were sampled each month
+## Sites that were sampled each month
 
 
 ```{r, echo=F}
@@ -46,25 +60,130 @@ ggplot(sites_mon, aes(x = mon, y = StationClean), size = 3) +
   geom_point() +
   theme_classic()
 ```
-Location of sites, sized according to total number of months sampled
+
+
+## Table of site information
+
+```{r, echo = FALSE}
+datatable(as.data.frame(sites))
+```
+
+## Core Stations
+
+```{r}
+core <- c("P8",
+          "MD10",
+          "D8",
+          "D7",
+          "D6",
+          "D41",
+          "D4",
+          "D28A",
+          "D26",
+          "C3",
+          "C10")
+
+core_data <-  sites_mon %>% 
+  filter(StationClean %in% core)
+```
+
+
+```{r, echo=F}
+ggplot(core_data, aes(x = mon, y = StationClean), size = 3) +
+  geom_point() +
+  theme_classic()
+```
+
+## Location of sites, sized according to total number of months sampled
+
+Red are core sites
 
 ```{r, message = FALSE, echo = FALSE}
+sites_core <- sites %>% 
+  filter(StationClean %in% core)
+
+
 leaflet(sites) %>% 
   addTiles() %>% 
   addCircleMarkers(data = sites,
                          lat = ~Latitude,
                          lng = ~Longitude,
-                         radius = ~(n_months/100), # arbitrary scaling
+                         radius = ~(n_months/50), # arbitrary scaling
                          fillColor = "blue",
+                         fillOpacity = 1,
+                         weight = 0.25,
+                         color = "black",
+                         label = ~StationClean) %>% 
+  addCircleMarkers(data = sites_core,
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = ~(n_months/50), # arbitrary scaling
+                         fillColor = "red",
                          fillOpacity = 1,
                          weight = 0.25,
                          color = "black",
                          label = ~StationClean)
 ```
 
-Some sites have moved slightly
+## Annual Average CPUE
+
+For both clam genera, Potamocorbula and Corbicula.
+
+Code adapted from [Sarah's work here](https://github.com/emp-des/annual-report-graphs/blob/master/Benthic/Benthic_AR_Template.Rmd)
+
+```{r}
+ben_clams  <- ben %>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula")) %>% 
+  group_by(Month, Year, StationCode) %>%
+  mutate(Grab_Count = max(Grab)) %>%
+  ungroup() %>%
+  group_by(Month, Year) %>%
+  mutate(Station_Count = n_distinct(StationCode),
+         Grab_Count = Grab_Count*Station_Count) %>%
+  ungroup() %>%
+  group_by(Genus, Month, Year, Grab_Count, Station_Count) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop")
+
+
+
+ben_clams$Date <- with(ben_clams, paste(Month, Year))
+
+# get grab variable
+df_grab_vari <- ben_clams[!duplicated(ben_clams$Date),]
+
+df_grab_vari <- df_grab_vari %>%
+  group_by(Year) %>%
+  summarize(Grab_Count = sum(Grab_Count), .groups = "drop") 
+
+# create df of totals by year
+df_year_sums <- ben_clams %>%
+  group_by(Genus, Year) %>%
+  summarize(Orgs_Total = sum(Orgs_Total, na.rm = TRUE), .groups = "drop") 
+
+df_year_sums <-  merge(df_year_sums, df_grab_vari, by = 'Year', all.x=FALSE, all.y=FALSE)
+
+df_year_CPUE <- df_year_sums %>%
+  mutate(CPUE_Total = Orgs_Total/Grab_Count/0.052) %>%
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(corbicula_cpue = Corbicula,
+         potamocorbula_cpue = Potamocorbula)  %>% 
+  clean_names()
+
+```
+
 
 ```{r, echo = FALSE}
-datatable(sites)
+ggplot() +
+  geom_line(data = df_year_CPUE, aes(x = year,  y = corbicula_cpue), color = "red") +
+  geom_line(data = df_year_CPUE, aes(x = year,  y = potamocorbula_cpue), color = "blue") +
+  theme_classic() +
+  labs(x= "Year", y = "CPUE", title = "Annual Mean CPUE for Corbicula (red) and Potamocorbula (blue)")
 ```
+
+
+```{r}
+write_csv(df_year_CPUE, "annual_averages/benthic.csv")
+```
+
 
