@@ -16,18 +16,20 @@ FMWT_Delta_Smelt <-LTMRdata::fish(sources="FMWT", species="Hypomesus transpacifi
 FMWT_Longfin_Smelt <-LTMRdata::fish(sources="FMWT", species="Spirinchus thaleichthys", size_cutoff=40)
 FMWT_Threadfin_Shad <-LTMRdata::fish(sources="FMWT", species="Dorosoma petenense", size_cutoff=40)
 FMWT_American_Shad <-LTMRdata::fish(sources="FMWT", species="Alosa sapidissima", size_cutoff=40)
+FMWT_Northern_Anchovy <-LTMRdata::fish(sources="FMWT", species="Engraulis mordax", size_cutoff=40)
+FMWT_Pacific_Herring <-LTMRdata::fish(sources="FMWT", species="Clupea pallasii", size_cutoff=40)
 
 #Load age-0 Striped Bass
 #Remove age-1 Striped Bass
 FMWT_Striped_Bass <-LTMRdata::fish(sources="FMWT", species="Morone saxatilis", size_cutoff=40) %>% filter(Length<150)
 
 #Load index stations from Steve Slater (California Dept. of Fish and Wildlife)
-FMWT_index_stations<-read.csv("FMWT index stations_SS_BM.csv")
+FMWT_index_stations<-read.csv(file.path("data","FMWT index stations_SS_BM.csv"))
 FMWT_index_stations_only<-FMWT_index_stations %>% filter(Index=="1")
 
 
 #Limit FMWT data to just index stations
-FMWT_combined <- bind_rows(FMWT_Delta_Smelt,FMWT_Longfin_Smelt,FMWT_Threadfin_Shad,FMWT_American_Shad,FMWT_Striped_Bass) %>% filter(Station %in% unique(FMWT_index_stations_only$Station)) %>%
+FMWT_combined <- bind_rows(FMWT_Delta_Smelt,FMWT_Longfin_Smelt,FMWT_Threadfin_Shad,FMWT_American_Shad,FMWT_Striped_Bass,FMWT_Northern_Anchovy,FMWT_Pacific_Herring) %>% filter(Station %in% unique(FMWT_index_stations_only$Station)) %>%
   #and only for September to December (survey 3,4,5,6)
   filter(Survey %in% c(3:6))
 
@@ -41,6 +43,8 @@ FMWT_combined <- FMWT_combined %>%
     Taxa=="Spirinchus thaleichthys" ~ (0.0005*(Length^3.69))*Count,
     Taxa=="Dorosoma petenense" ~ (0.0072*(Length^3.16))*Count,
     Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count,
+    Taxa=="Engraulis mordax" ~ (0.0015*(Length^3.37))*Count,
+    Taxa=="Clupea pallasii" ~ (0.0015*(Length^3.44))*Count,
     Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count))
 
 
@@ -60,6 +64,8 @@ FMWT_annual_values <- FMWT_combined_sum %>%
     Taxa=="Spirinchus thaleichthys" ~ "LongfinSmelt",
     Taxa=="Dorosoma petenense" ~ "ThreadfinShad",
     Taxa=="Alosa sapidissima" ~ "AmericanShad",
+    Taxa=="Engraulis mordax" ~ "NorthernAnchovy",
+    Taxa=="Clupea pallasii" ~ "PacificHerring",
     Taxa=="Morone saxatilis" ~ "StripedBass_age0"))
 
 
@@ -69,7 +75,9 @@ FMWT_annual_values_biomass <- FMWT_annual_values %>% select(Year,CommonName,Biom
                                                           fish_biomass_ThreadfinShad,
                                                           fish_biomass_DeltaSmelt,
                                                           fish_biomass_LongfinSmelt,
-                                                          fish_biomass_StripedBass_age0))
+                                                          fish_biomass_StripedBass_age0),
+         fish_biomass_Marine_pelagic_forage_fishes=sum(fish_biomass_NorthernAnchovy,
+                                                       fish_biomass_PacificHerring))
 
 
 FMWT_annual_values_CPUE <- FMWT_annual_values %>% select(Year,CommonName,Catch_per_tow) %>%
@@ -78,14 +86,17 @@ FMWT_annual_values_CPUE <- FMWT_annual_values %>% select(Year,CommonName,Catch_p
                                                                 fish_catch_per_tow_ThreadfinShad,
                                                                 fish_catch_per_tow_DeltaSmelt,
                                                                 fish_catch_per_tow_LongfinSmelt,
-                                                                fish_catch_per_tow_StripedBass_age0))
-
-write.csv(FMWT_annual_values_biomass,file=file.path("data","annual_averages","fish_biomass_FMWT.csv"))
-
-write.csv(FMWT_annual_values_CPUE,file=file.path("data","annual_averages","fish_catch_per_tow_FMWT.csv"))
+                                                                fish_catch_per_tow_StripedBass_age0),
+         fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(fish_catch_per_tow_NorthernAnchovy,
+                                                             fish_catch_per_tow_PacificHerring))
 
 
+write.csv(FMWT_annual_values_biomass,row.names=FALSE,file=file.path("data","annual_averages","fish_biomass_FMWT.csv"))
 
+write.csv(FMWT_annual_values_CPUE,row.names=FALSE,file=file.path("data","annual_averages","fish_catch_per_tow_FMWT.csv"))
+
+
+plot(FMWT_annual_values_CPUE$fish_catch_per_tow_Estuarine_pelagic_forage_fishes~FMWT_annual_values_biomass$fish_biomass_Estuarine_pelagic_forage_fishes)
 
 
 ####################----------------------------------------
