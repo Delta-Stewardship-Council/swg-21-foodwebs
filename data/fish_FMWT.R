@@ -12,16 +12,16 @@ setwd("~/GitHub/swg-21-foodwebs")
 
 
 #Load species
-FMWT_Delta_Smelt <-LTMRdata::fish(sources="FMWT", species="Hypomesus transpacificus", size_cutoff=40)
-FMWT_Longfin_Smelt <-LTMRdata::fish(sources="FMWT", species="Spirinchus thaleichthys", size_cutoff=40)
-FMWT_Threadfin_Shad <-LTMRdata::fish(sources="FMWT", species="Dorosoma petenense", size_cutoff=40)
-FMWT_American_Shad <-LTMRdata::fish(sources="FMWT", species="Alosa sapidissima", size_cutoff=40)
-FMWT_Northern_Anchovy <-LTMRdata::fish(sources="FMWT", species="Engraulis mordax", size_cutoff=40)
-FMWT_Pacific_Herring <-LTMRdata::fish(sources="FMWT", species="Clupea pallasii", size_cutoff=40)
+FMWT_Delta_Smelt <-LTMRdata::fish(sources="FMWT", species="Hypomesus transpacificus", size_cutoff=NULL,remove_unknown_lengths=FALSE)
+FMWT_Longfin_Smelt <-LTMRdata::fish(sources="FMWT", species="Spirinchus thaleichthys", size_cutoff=NULL,remove_unknown_lengths=FALSE)
+FMWT_Threadfin_Shad <-LTMRdata::fish(sources="FMWT", species="Dorosoma petenense", size_cutoff=NULL,remove_unknown_lengths=FALSE)
+FMWT_American_Shad <-LTMRdata::fish(sources="FMWT", species="Alosa sapidissima", size_cutoff=NULL,remove_unknown_lengths=FALSE)
+FMWT_Northern_Anchovy <-LTMRdata::fish(sources="FMWT", species="Engraulis mordax", size_cutoff=NULL,remove_unknown_lengths=FALSE)
+FMWT_Pacific_Herring <-LTMRdata::fish(sources="FMWT", species="Clupea pallasii", size_cutoff=NULL,remove_unknown_lengths=FALSE)
 
 #Load age-0 Striped Bass
 #Remove age-1 Striped Bass
-FMWT_Striped_Bass <-LTMRdata::fish(sources="FMWT", species="Morone saxatilis", size_cutoff=40) %>% filter(Length<150)
+FMWT_Striped_Bass <-LTMRdata::fish(sources="FMWT", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>% filter(Length<150)
 
 #Load index stations from Steve Slater (California Dept. of Fish and Wildlife)
 FMWT_index_stations<-read.csv(file.path("data","FMWT index stations_SS_BM.csv"))
