@@ -17,11 +17,12 @@ require(lubridate)
 require(readr)
 require(tidyr)
 require(ggplot2)
+require(readxl)
 ```
 
 Load core stations
 ```{r, message=FALSE}
-zoop_stations<-read_csv("zoop_station_lookup.csv")%>%
+zoop_stations<-read_csv("data/zoop_station_lookup.csv")%>%
   filter(Core%in%c(1, 2))
 ```
 
@@ -66,5 +67,59 @@ ggplot(zoop_data_sum, aes(y=Month, x=Year, fill=N))+
   scale_y_continuous(breaks=1:12)+
   coord_cartesian(expand=FALSE)+
   theme_bw()
+```
+
+Remove stations that aren't continuous
+```{r}
+zoop_data_continuous<-filter(zoop_data, !Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))
+
+# Make sure the right number of stations was removed
+length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))==6
+```
+
+Read in zoop mass conversions and groupings
+```{r}
+zoop_mass_group<-read_csv("data/biomass_mesomicro.csv")%>%
+  mutate(Taxlifestage=paste(Taxname, Lifestage))
+```
+
+Load Mysid biomass data
+```{r}
+zoop_mysid<-read_excel("data/1972-2020MysidBPUEMatrix.xlsx",
+                       sheet="Mysid_BPUE_matrix_1972-2020", na = "NA",
+                       col_types = c(rep("numeric", 4), "date", "text", "text", rep("text", 7), rep("numeric", 8)))%>%
+  select(Date=SampleDate, Station=StationNZ, `Acanthomysis aspera`:Unidentified)%>%
+  mutate(BPUE_mysid=rowSums(select(., -Date, -Station), na.rm=T))%>%
+  mutate(BPUE_mysid=BPUE_mysid*1000, # Convert to ug
+         Group="Mysida")%>%
+  mutate(SampleID=paste("EMP", Station, Date))%>%
+  filter(Station%in%zoop_stations$StationNZ)%>%
+  filter(!Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))%>%
+  select(SampleID, Group, BPUE_mysid)
+```
+
+
+Start processing the zoop data
+```{r}
+zoop_data_mass<-zoop_data_continuous%>%
+      filter(
+        (SizeClass=="Meso" & 
+           Taxlifestage%in%paste(c("Acartiella sinensis", "Acartia", "Diaptomidae", 
+                                         "Eurytemora affinis", "Calanoida", "Pseudodiaptomus forbesi", 
+                                         "Pseudodiaptomus marinus", "Sinocalanus doerrii", "Tortanus", 
+                                         "Acanthocyclops", "Cyclopoida", "Bosmina longirostris", 
+                                         "Daphnia", "Diaphanosoma", "Cladocera"), 
+                                       "Adult")) | 
+          (SizeClass=="Micro" & 
+             Taxlifestage%in%paste(c("Limnoithona", "Limnoithona sinensis", "Limnoithona tetraspina", 
+                                           "Oithona davisae", "Oithona similis", "Oithona"), 
+                                         "Adult")) |
+          Family=="Mysidae")%>%
+      left_join(zoop_mass_group, by=c("Taxlifestage", "Lifestage", "Taxname"))%>%
+      mutate(BPUE=CPUE*Carbon_mass_micrograms)%>%
+  left_join(zoop_mysid, 
+            by="SampleID")%>%
+      group_by(Year, Group)%>%
+      summarise(across(c(BPUE, CPUE), ~list(sum=sum(.x, na.rm=T))), .groups="drop")
 ```
 
