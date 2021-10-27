@@ -175,7 +175,8 @@ require(lubridate)
 require(readr)
 require(tidyr)
 require(ggplot2)
-require(readxl)</code></pre>
+require(readxl)
+require(stringr)</code></pre>
 <p>Load core stations</p>
 <pre class="r"><code>zoop_stations&lt;-read_csv(&quot;data/zoop_station_lookup.csv&quot;)%&gt;%
   filter(Core%in%c(1, 2))</code></pre>
@@ -216,16 +217,10 @@ require(readxl)</code></pre>
 length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))==6</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <p>Read in zoop mass conversions and groupings</p>
-<pre class="r"><code>zoop_mass_group&lt;-read_csv(&quot;data/biomass_mesomicro.csv&quot;)%&gt;%
-  mutate(Taxlifestage=paste(Taxname, Lifestage))</code></pre>
-<pre><code>## Rows: 28 Columns: 5</code></pre>
-<pre><code>## -- Column specification --------------------------------------------------------
-## Delimiter: &quot;,&quot;
-## chr (4): Taxname, Level, Lifestage, Reference
-## dbl (1): Carbon_mass_micrograms</code></pre>
-<pre><code>## 
-## i Use `spec()` to retrieve the full column specification for this data.
-## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>zoop_mass_group&lt;-read_excel(&quot;data/Zoop Categories for SEM.xlsx&quot;, na = &quot;NA&quot;)%&gt;%
+  mutate(Taxlifestage=paste(Taxname, Lifestage))%&gt;%
+  rename(Group=`SEM Category`)%&gt;%
+  mutate(Group=str_replace_all(Group, &quot; &quot;, &quot;_&quot;))</code></pre>
 <p>Load Mysid biomass data</p>
 <pre class="r"><code>zoop_mysid&lt;-read_excel(&quot;data/1972-2020MysidBPUEMatrix.xlsx&quot;,
                        sheet=&quot;Mysid_BPUE_matrix_1972-2020&quot;, na = &quot;NA&quot;,
@@ -254,11 +249,18 @@ length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))
                                          &quot;Adult&quot;)) |
           Family==&quot;Mysidae&quot;)%&gt;%
       left_join(zoop_mass_group, by=c(&quot;Taxlifestage&quot;, &quot;Lifestage&quot;, &quot;Taxname&quot;))%&gt;%
-      mutate(BPUE=CPUE*Carbon_mass_micrograms)%&gt;%
+      mutate(BPUE=CPUE*Carbon_mass_micrograms,
+             Group=if_else(Family==&quot;Mysidae&quot;, &quot;Mysida&quot;, Group))%&gt;%
   left_join(zoop_mysid, 
-            by=&quot;SampleID&quot;)%&gt;%
+            by=c(&quot;Group&quot;, &quot;SampleID&quot;))%&gt;%
+  filter(!is.na(Group))%&gt;% # This removes the cirripedia, harpacticoids, diaptomidae, and all oithona because they aren&#39;t Delta Smelt prey
+  mutate(BPUE=if_else(is.na(BPUE), BPUE_mysid, BPUE))%&gt;%
       group_by(Year, Group)%&gt;%
-      summarise(across(c(BPUE, CPUE), ~list(sum=sum(.x, na.rm=T))), .groups=&quot;drop&quot;)</code></pre>
+      summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups=&quot;drop&quot;)%&gt;%
+  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
+    names_glue = &quot;{Group}_{.value}&quot;)
+
+write_csv(zoop_data_mass, &quot;data/annual_averages/zoop.csv&quot;)</code></pre>
 
 
 

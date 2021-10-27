@@ -18,6 +18,7 @@ require(readr)
 require(tidyr)
 require(ggplot2)
 require(readxl)
+require(stringr)
 ```
 
 Load core stations
@@ -79,8 +80,10 @@ length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))
 
 Read in zoop mass conversions and groupings
 ```{r}
-zoop_mass_group<-read_csv("data/biomass_mesomicro.csv")%>%
-  mutate(Taxlifestage=paste(Taxname, Lifestage))
+zoop_mass_group<-read_excel("data/Zoop Categories for SEM.xlsx", na = "NA")%>%
+  mutate(Taxlifestage=paste(Taxname, Lifestage))%>%
+  rename(Group=`SEM Category`)%>%
+  mutate(Group=str_replace_all(Group, " ", "_"))
 ```
 
 Load Mysid biomass data
@@ -116,10 +119,17 @@ zoop_data_mass<-zoop_data_continuous%>%
                                          "Adult")) |
           Family=="Mysidae")%>%
       left_join(zoop_mass_group, by=c("Taxlifestage", "Lifestage", "Taxname"))%>%
-      mutate(BPUE=CPUE*Carbon_mass_micrograms)%>%
+      mutate(BPUE=CPUE*Carbon_mass_micrograms,
+             Group=if_else(Family=="Mysidae", "Mysida", Group))%>%
   left_join(zoop_mysid, 
-            by="SampleID")%>%
+            by=c("Group", "SampleID"))%>%
+  filter(!is.na(Group))%>% # This removes the cirripedia, harpacticoids, diaptomidae, and all oithona because they aren't Delta Smelt prey
+  mutate(BPUE=if_else(is.na(BPUE), BPUE_mysid, BPUE))%>%
       group_by(Year, Group)%>%
-      summarise(across(c(BPUE, CPUE), ~list(sum=sum(.x, na.rm=T))), .groups="drop")
+      summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
+  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
+    names_glue = "{Group}_{.value}")
+
+write_csv(zoop_data_mass, "data/annual_averages/zoop.csv")
 ```
 
