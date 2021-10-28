@@ -1,0 +1,156 @@
+---
+title: "Data_wrangling_fish"
+author: "Denise-Colombano"
+date: "10/28/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The purpose of this script is to evaluate the spatial and temporal overlap of 
+the different surveys used in the SEM.
+
+Inventory datasets:
+- Fish: FMWT, Bay Study
+- Zoop: EMP
+- [TBD]
+
+
+# Load libraries
+```{r}
+library(tidyverse)
+library(zooper)
+library(LTMRdata)
+```
+
+# Fish surveys
+
+Query the CDFW Fall Midwater Trawl and Bay Study data sets from the LTMRdata package.
+```{r}
+Surveys <- LTMRdata::fish(sources=c("FMWT", "Baystudy"),
+             species=NULL,
+             convert_lengths=TRUE,
+             remove_unconverted_lengths=FALSE,
+             size_cutoff=40,
+             zero_fill = TRUE,
+             remove_unknown_lengths = TRUE,
+             univariate = FALSE,
+             quiet = FALSE)
+Surveys
+
+Surveys$Month <- lubridate::month(Surveys$Date)
+Surveys$Year <- lubridate::year(Surveys$Date)
+str(Surveys)
+```
+
+
+Assess sampling density across space and time
+```{r}
+SamplingDensity <- Surveys %>%
+  select(Source, Method, Station, Latitude, Longitude, Year, Month) %>% 
+  distinct(Source, Method, Station, Latitude, Longitude, Year, Month) %>% 
+  mutate(Sampling=1)
+
+summary(SamplingDensity)
+
+# Bay Study
+Baystudy <- SamplingDensity %>% 
+  filter(Source=="Bay Study") %>% 
+  group_by(Station, Longitude, Latitude, Year) %>% 
+  summarize(Sampling=sum(Sampling)/24) # 2 gears x 12 months = 24 sampling points per year
+Baystudy
+
+ggplot(Baystudy, aes(Longitude, Latitude))+
+  geom_point(aes(color=Station, size=Sampling), pch=21)+
+  theme_bw()+
+  facet_wrap(Year~.)+
+  scale_color_viridis_d()
+
+# FMWT
+Fallmwt <- SamplingDensity %>% 
+  filter(Source=="FMWT") %>% 
+  group_by(Station, Longitude, Latitude, Year) %>% 
+  summarize(Sampling=sum(Sampling)) 
+Fallmwt
+
+ggplot(Fallmwt, aes(Longitude, Latitude))+
+  geom_point(aes(color=Station, size=Sampling), pch=21)+
+  theme_bw()+
+  facet_wrap(Year~.)+
+  scale_color_viridis_d()
+```
+
+
+# Zoop surveys
+
+Query the EMP data from the Zooper package. Borrow code from "zoop.Rmd" by S.B.
+
+Load core stations
+```{r, message=FALSE}
+download.file("https://portal.edirepository.org/nis/dataviewer?packageid=edi.522.7&entityid=71dd301f30a2bc2e40f5da573dde9f97", destfile = file.path(tempdir(), "zoop_station_lookup.csv"))
+
+zoop_stations<-read_csv(file.path(tempdir(), "zoop_station_lookup.csv"))%>%
+  filter(Core%in%c(1, 2))
+```
+
+Load zoop data
+```{r}
+zoop_data<-Zoopsynther(Data_type="Community", Sources="EMP", Time_consistency = TRUE)%>%
+  filter(Station%in%zoop_stations$StationNZ)%>%
+  mutate(Month=lubridate::month(Date))
+```
+
+Remove stations that aren't continuous
+```{r}
+zoop_data_continuous<-filter(zoop_data, !Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))
+
+# Make sure the right number of stations was removed
+length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))==6
+
+str(zoop_data_continuous)
+```
+
+Assess sampling density across space and time
+```{r}
+zoop_surveys <- zoop_data_continuous %>% 
+  select(Month, Year, Station, Longitude, Latitude) %>% 
+  distinct(Month, Year, Station, Longitude, Latitude) %>% 
+  mutate(Sampling=1)
+
+zoop_emp <- zoop_surveys %>% 
+  group_by(Station, Year, Longitude, Latitude) %>% 
+  summarize(Sampling=sum(Sampling))
+
+ggplot(zoop_emp, aes(Longitude, Latitude))+
+  geom_point(aes(color=Station, size=Sampling), pch=21)+
+  theme_bw()+
+  facet_wrap(Year~.)+
+  scale_color_viridis_d()
+```
+
+# Fish + Zoop
+Layer them on top of each other
+```{r}
+# map for each year
+ggplot()+
+  geom_point(data=Fallmwt, aes(Longitude, Latitude), pch=21, color="gray50")+
+  geom_point(data=Baystudy, aes(Longitude, Latitude), pch=21, color="orange")+
+  geom_point(data=zoop_emp, aes(Longitude, Latitude), pch=4, color="slateblue")+  
+  theme_bw()+
+  facet_wrap(Year~.)+
+  labs(subtitle="Spatial overlap - annual")
+
+# map for all years
+ggplot()+
+  geom_point(data=Fallmwt, aes(Longitude, Latitude), pch=21, color="gray50", size=3)+
+  geom_point(data=Baystudy, aes(Longitude, Latitude), pch=21, color="orange", size=3)+
+  geom_point(data=zoop_emp, aes(Longitude, Latitude), pch=3, color="slateblue", size=3)+  
+  theme_bw()+
+  labs(subtitle="Spatial overlap - overall")
+```
+
+
