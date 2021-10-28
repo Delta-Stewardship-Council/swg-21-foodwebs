@@ -3,6 +3,13 @@ title: "zoop heatmap"
 output: html_document
 editor_options: 
   chunk_output_type: console
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      envir = globalenv()
+    )
+  })
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +30,7 @@ require(stringr)
 
 Load core stations
 ```{r, message=FALSE}
-zoop_stations<-read_csv("data/zoop_station_lookup.csv")%>%
+zoop_stations<-read_csv("data/data_in/zoop_station_lookup.csv")%>%
   filter(Core%in%c(1, 2))
 ```
 
@@ -80,7 +87,7 @@ length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))
 
 Read in zoop mass conversions and groupings
 ```{r}
-zoop_mass_group<-read_excel("data/Zoop Categories for SEM.xlsx", na = "NA")%>%
+zoop_mass_group<-read_excel("data/data_in/Zoop Categories for SEM.xlsx", na = "NA")%>%
   mutate(Taxlifestage=paste(Taxname, Lifestage))%>%
   rename(Group=`SEM Category`)%>%
   mutate(Group=str_replace_all(Group, " ", "_"))
@@ -88,7 +95,7 @@ zoop_mass_group<-read_excel("data/Zoop Categories for SEM.xlsx", na = "NA")%>%
 
 Load Mysid biomass data
 ```{r}
-zoop_mysid<-read_excel("data/1972-2020MysidBPUEMatrix.xlsx",
+zoop_mysid<-read_excel("data/data_in/1972-2020MysidBPUEMatrix.xlsx",
                        sheet="Mysid_BPUE_matrix_1972-2020", na = "NA",
                        col_types = c(rep("numeric", 4), "date", "text", "text", rep("text", 7), rep("numeric", 8)))%>%
   select(Date=SampleDate, Station=StationNZ, `Acanthomysis aspera`:Unidentified)%>%
