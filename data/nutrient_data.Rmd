@@ -2,6 +2,13 @@
 output:
   html_document:
     code_folding: hide
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      envir = globalenv()
+    )
+  })
 ---
 
 ```{r echo = FALSE, results='hide', message=FALSE, warning=FALSE}
@@ -27,7 +34,7 @@ df_wq <- inner_join(df_wq, df_stations, by = 'Station')
 ```{r fig.width=15, fig.height=8}
 # subset by wanted nutrients
 df_wq_sub <- df_wq[df_wq$Analyte %in% c('Chla', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica','DOSurf','spCndSurf','TotPhos','Turbidity','Pheo',
-'DON','DissChloride'),]
+'DON','DissChloride','TurbiditySurface','Secchi','SpCndSurface'),]
 df_wq_sub <- subset(df_wq_sub, select = c('Date','Station','Latitude','Longitude','Analyte','Value'))
 
 # exclude dates where any of the analytes don't exist

@@ -3,6 +3,13 @@ title: "Fall Midwater Trawl Fish Data"
 author: "Brian Mahardja"
 date: "10/26/2021"
 output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      envir = globalenv()
+    )
+  })
 ---
 
 ```{r setup, include=FALSE}
@@ -25,7 +32,7 @@ Number of sampling event for each index station (once a month) for each year. In
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-FMWT_index_stations<-read.csv("FMWT index stations_SS_BM.csv")
+FMWT_index_stations<-read.csv("data_in/FMWT index stations_SS_BM.csv")
 FMWT_index_stations_only<-FMWT_index_stations %>% filter(Index=="1")
 
 

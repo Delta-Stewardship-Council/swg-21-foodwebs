@@ -3,6 +3,13 @@ title: "Benthic Sampling Effort"
 author: "Jeanette Clark"
 date: "10/25/2021"
 output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      envir = globalenv()
+    )
+  })
 ---
 
 ```{r setup, include=FALSE}
