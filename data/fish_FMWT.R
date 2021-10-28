@@ -2,7 +2,6 @@
 library(LTMRdata)
 library(tidyverse)
 library(lubridate)
-library(brms)
 
 setwd("~/GitHub/swg-21-foodwebs")
 
@@ -126,7 +125,6 @@ write.csv(FMWT_annual_values_CPUE,row.names=FALSE,file=file.path("data","annual_
 
 
 plot(FMWT_annual_values_CPUE$fish_catch_per_tow_Estuarine_pelagic_forage_fishes~FMWT_annual_values_biomass$fish_biomass_Estuarine_pelagic_forage_fishes)
-
 
 
 
