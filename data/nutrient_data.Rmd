@@ -5,7 +5,8 @@ output:
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
-      output_dir = '../docs',
+      output_dir = 'docs',
+      knit_root_dir = '.',
       envir = globalenv()
     )
   })
@@ -15,26 +16,20 @@ knit: (function(input, ...) {
 library(tidyverse)
 library(ggmap)
 library(readr)
+require(discretewq)
 ```
 
 ```{r, warning = FALSE, message = FALSE}
 # read in data
-df_wq <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.4&entityid=98b400de8472d2a3d2e403141533a2cc',
-                  col_types = c(.default = 'd', Date = 'c', Station = 'c'))
-df_wq$Date <- as.Date(df_wq$Date, format = '%m/%d/%Y')
-df_wq <- pivot_longer(df_wq, cols = Chla:pHBottom, names_to = 'Analyte', values_to = 'Value')
-
-df_stations <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.4&entityid=827aa171ecae79731cc50ae0e590e5af')
-df_stations <- subset(df_stations, select = c('Station','Latitude','Longitude'))
-
-df_wq <- inner_join(df_wq, df_stations, by = 'Station')
+df_wq <- wq(Sources = c("EMP"))
+df_wq <- pivot_longer(df_wq, cols = c(Temperature, Chlorophyll:TKN, Salinity), names_to = 'Analyte', values_to = 'Value')
 ```
 
 # Check Temporal Coverage
 ```{r fig.width=15, fig.height=8}
 # subset by wanted nutrients
-df_wq_sub <- df_wq[df_wq$Analyte %in% c('Chla', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica','DOSurf','spCndSurf','TotPhos','Turbidity','Pheo',
-'DON','DissChloride','TurbiditySurface','Secchi','SpCndSurface'),]
+df_wq_sub <- df_wq[df_wq$Analyte %in% c('Chla', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica','DOSurf','Salinity','TotPhos','Turbidity','Pheo',
+'DON','DissChloride','TurbiditySurface','Secchi','Temperature'),]
 df_wq_sub <- subset(df_wq_sub, select = c('Date','Station','Latitude','Longitude','Analyte','Value'))
 
 # exclude dates where any of the analytes don't exist
@@ -78,7 +73,7 @@ plt
 # Check Spatial Coverage
 ```{r, results='hide', message=FALSE, warning = FALSE, results = 'hide'}
 buffer <- 0.05
-coordDict = list( 
+coordDict = list(
     'minLat' = min(df_wq_sub$Latitude) - buffer,
     'maxLat' = max(df_wq_sub$Latitude) + buffer,
     'minLon' = min(df_wq_sub$Longitude) - buffer,
@@ -92,7 +87,7 @@ map_obj <- get_stamenmap(
   )
 
 # plot the map
-map <- ggmap(map_obj) + 
+map <- ggmap(map_obj) +
   theme_void() +
   geom_point(data = df_wq_sub, aes(x = Longitude, y = Latitude, label = Station), shape = 21, fill = 'red', size = 3) +
   geom_text(data = df_wq_sub, aes(label = Station, x = Longitude, y = Latitude), vjust = 0, hjust = 0)
@@ -109,7 +104,7 @@ for (analyte in analytes){
   plt <- ggplot(df_check) +
     geom_line(aes(Date, Value, color = Station)) +
     ylab(analyte)
-  
+
   plot(plt)
 }
 ```
@@ -121,7 +116,7 @@ for (analyte in analytes){
   plt <- ggplot(df_check) +
     geom_line(aes(Date, Value, color = Station)) +
     ylab(analyte)
-  
+
   plot(plt)
 }
 ```
@@ -133,7 +128,7 @@ for (analyte in analytes){
   plt <- ggplot(df_check) +
     geom_line(aes(Date, Value, color = Station)) +
     ylab(analyte)
-  
+
   plot(plt)
 }
 ```
@@ -163,13 +158,13 @@ empwq_annual_mean <- df_wq_sub %>%
 	dplyr::summarize(MeanValue=mean(Value, na.rm=TRUE), .groups="drop")
 
 
-ggplot(data=empwq_annual_mean, aes(Year, MeanValue)) + 
-	geom_point() + 
+ggplot(data=empwq_annual_mean, aes(Year, MeanValue)) +
+	geom_point() +
 	facet_wrap( ~ Analyte, scales="free_y")
 
 empwq_annual_mean_wide <- pivot_wider(data=empwq_annual_mean, id_cols=Year,
                                       names_from=Analyte, values_from=MeanValue)
 
-write_csv(empwq_annual_mean_wide, 
+write_csv(empwq_annual_mean_wide,
           file.path("annual_averages","emp_waterquality_mean.csv"))
 ```
