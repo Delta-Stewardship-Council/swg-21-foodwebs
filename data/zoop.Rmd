@@ -84,6 +84,9 @@ zoop_mass_group<-read_excel("data/Zoop Categories for SEM.xlsx", na = "NA")%>%
   mutate(Taxlifestage=paste(Taxname, Lifestage))%>%
   rename(Group=`SEM Category`)%>%
   mutate(Group=str_replace_all(Group, " ", "_"))
+
+# List all the zoop groups
+unique(zoop_mass_group$Group)
 ```
 
 Load Mysid biomass data
@@ -129,6 +132,8 @@ zoop_data_mass<-zoop_data_continuous%>%
       summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
   pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
     names_glue = "{Group}_{.value}")
+
+str(zoop_data_mass)
 
 write_csv(zoop_data_mass, "data/annual_averages/zoop.csv")
 ```

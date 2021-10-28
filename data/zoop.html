@@ -220,7 +220,13 @@ length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))
 <pre class="r"><code>zoop_mass_group&lt;-read_excel(&quot;data/Zoop Categories for SEM.xlsx&quot;, na = &quot;NA&quot;)%&gt;%
   mutate(Taxlifestage=paste(Taxname, Lifestage))%&gt;%
   rename(Group=`SEM Category`)%&gt;%
-  mutate(Group=str_replace_all(Group, &quot; &quot;, &quot;_&quot;))</code></pre>
+  mutate(Group=str_replace_all(Group, &quot; &quot;, &quot;_&quot;))
+
+# List all the zoop groups
+unique(zoop_mass_group$Group)</code></pre>
+<pre><code>## [1] &quot;Herbivorous_Copepods&quot; NA                     &quot;Predatory_Calanoids&quot; 
+## [4] &quot;Cladoceran&quot;           &quot;Cyclopoids&quot;           &quot;Mysids&quot;              
+## [7] &quot;Amphipods&quot;</code></pre>
 <p>Load Mysid biomass data</p>
 <pre class="r"><code>zoop_mysid&lt;-read_excel(&quot;data/1972-2020MysidBPUEMatrix.xlsx&quot;,
                        sheet=&quot;Mysid_BPUE_matrix_1972-2020&quot;, na = &quot;NA&quot;,
@@ -260,7 +266,20 @@ length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))
   pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
     names_glue = &quot;{Group}_{.value}&quot;)
 
-write_csv(zoop_data_mass, &quot;data/annual_averages/zoop.csv&quot;)</code></pre>
+str(zoop_data_mass)</code></pre>
+<pre><code>## tibble [49 x 11] (S3: tbl_df/tbl/data.frame)
+##  $ Year                     : num [1:49] 1972 1973 1974 1975 1976 ...
+##  $ Cladoceran_BPUE          : num [1:49] 335194 295190 608369 494136 561472 ...
+##  $ Cyclopoids_BPUE          : num [1:49] 999603 418022 348552 106657 266497 ...
+##  $ Herbivorous_Copepods_BPUE: num [1:49] 2039402 1097354 1366656 613561 706109 ...
+##  $ Mysida_BPUE              : num [1:49] 25737923 28097293 35917706 14204370 24052380 ...
+##  $ Predatory_Calanoids_BPUE : num [1:49] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ Cladoceran_CPUE          : num [1:49] 558657 491984 1013948 823560 935787 ...
+##  $ Cyclopoids_CPUE          : num [1:49] 297501 124411 103736 31743 79315 ...
+##  $ Herbivorous_Copepods_CPUE: num [1:49] 574480 309114 384973 172834 198904 ...
+##  $ Mysida_CPUE              : num [1:49] 11763 16999 20668 13314 20347 ...
+##  $ Predatory_Calanoids_CPUE : num [1:49] 0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+<pre class="r"><code>write_csv(zoop_data_mass, &quot;data/annual_averages/zoop.csv&quot;)</code></pre>
 
 
 
