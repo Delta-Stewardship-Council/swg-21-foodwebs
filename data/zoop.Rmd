@@ -6,7 +6,8 @@ editor_options:
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
-      output_dir = '../docs',
+      output_dir = 'docs',
+      knit_root_dir = "../",
       envir = globalenv()
     )
   })
@@ -26,11 +27,14 @@ require(tidyr)
 require(ggplot2)
 require(readxl)
 require(stringr)
+require(sf)
 ```
 
 Load core stations
 ```{r, message=FALSE}
-zoop_stations<-read_csv("data/data_in/zoop_station_lookup.csv")%>%
+download.file("https://portal.edirepository.org/nis/dataviewer?packageid=edi.522.7&entityid=71dd301f30a2bc2e40f5da573dde9f97", destfile = file.path(tempdir(), "zoop_station_lookup.csv"))
+
+zoop_stations<-read_csv(file.path(tempdir(), "zoop_station_lookup.csv"))%>%
   filter(Core%in%c(1, 2))
 ```
 
@@ -83,6 +87,15 @@ zoop_data_continuous<-filter(zoop_data, !Station%in%c("NZEZ6", "NZEZ2", "NZD16",
 
 # Make sure the right number of stations was removed
 length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))==6
+```
+
+Plot the final set of stations
+```{r}
+ggplot()+
+  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
+  geom_point(data=zoop_data_continuous%>%select(Station, Latitude, Longitude)%>%distinct(), 
+             aes(x=Longitude, y=Latitude),
+             color="red")
 ```
 
 Read in zoop mass conversions and groupings
