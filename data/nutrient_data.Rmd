@@ -22,14 +22,14 @@ require(discretewq)
 ```{r, warning = FALSE, message = FALSE}
 # read in data
 df_wq <- wq(Sources = c("EMP"))
-df_wq <- pivot_longer(df_wq, cols = c(Chlorophyll:TKN, Salinity), names_to = 'Analyte', values_to = 'Value')
+df_wq <- pivot_longer(df_wq, cols = c(Temperature, Chlorophyll:TKN, Salinity), names_to = 'Analyte', values_to = 'Value')
 ```
 
 # Check Temporal Coverage
 ```{r fig.width=15, fig.height=8}
 # subset by wanted nutrients
 df_wq_sub <- df_wq[df_wq$Analyte %in% c('Chla', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica','DOSurf','Salinity','TotPhos','Turbidity','Pheo',
-'DON','DissChloride','TurbiditySurface','Secchi'),]
+'DON','DissChloride','TurbiditySurface','Secchi','Temperature'),]
 df_wq_sub <- subset(df_wq_sub, select = c('Date','Station','Latitude','Longitude','Analyte','Value'))
 
 # exclude dates where any of the analytes don't exist
