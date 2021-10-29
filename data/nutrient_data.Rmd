@@ -28,8 +28,7 @@ df_wq <- pivot_longer(df_wq, cols = c(Temperature, Chlorophyll:TKN, Salinity), n
 # Check Temporal Coverage
 ```{r fig.width=15, fig.height=8}
 # subset by wanted nutrients
-df_wq_sub <- df_wq[df_wq$Analyte %in% c('Chla', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica','DOSurf','Salinity','TotPhos','Turbidity','Pheo',
-'DON','DissChloride','TurbiditySurface','Secchi','Temperature'),]
+df_wq_sub <- df_wq[df_wq$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica','DOSurf','Salinity','TotPhos','Turbidity','Pheo', 'DON','DissChloride','TurbiditySurface','Secchi','Temperature'),]
 df_wq_sub <- subset(df_wq_sub, select = c('Date','Station','Latitude','Longitude','Analyte','Value'))
 
 # exclude dates where any of the analytes don't exist
@@ -148,10 +147,9 @@ plt <- ggplot(df_wq_sub, aes(Date, Station)) +
 plt
 ```
 
-#
 Calculate annual indices (first pass).
 ```{r}
-df_wq_sub$Year <- as.numeric(substr(df_wq_sub$Date, 1, 4))
+df_wq_sub$Year <- lubridate::year(df_wq_sub$Date)
 
 empwq_annual_mean <- df_wq_sub %>%
 	dplyr::group_by(Analyte, Year) %>%
