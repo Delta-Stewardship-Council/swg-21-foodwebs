@@ -168,27 +168,11 @@ pre code {
 </div>
 
 
-<pre class="r"><code>library(sf)</code></pre>
-<pre><code>## Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1</code></pre>
-<pre class="r"><code>library(stars)</code></pre>
-<pre><code>## Loading required package: abind</code></pre>
-<pre class="r"><code>library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(ggplot2)
+<pre class="r"><code>library(sf)
+library(stars)
+library(dplyr)
+library(ggplot2)
 require(lubridate)</code></pre>
-<pre><code>## Loading required package: lubridate</code></pre>
-<pre><code>## 
-## Attaching package: &#39;lubridate&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     date, intersect, setdiff, union</code></pre>
 <p>Load model-predicted temperature data</p>
 <pre class="r"><code>temp_data&lt;-readRDS(&quot;~/WQ-discrete/Temperature analysis/Discrete Temp Data.Rds&quot;)
 temp_predictions&lt;-readRDS(&quot;~/WQ-discrete/Temperature analysis/Model outputs and validations/newdata_all_sum.Rds&quot;)

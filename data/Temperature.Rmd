@@ -13,7 +13,7 @@ knit: (function(input, ...) {
   })
 ---
 
-```{r}
+```{r, message=FALSE}
 library(sf)
 library(stars)
 library(dplyr)
