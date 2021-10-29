@@ -19,6 +19,48 @@ setnames(data3, "EXPORTS", "EXPORT")
 library(dplyr)
 combo_dayflow = bind_rows(data1,data2, data3)
 
+#converting calendar year to water year values and adding water year column
+#months 10, 11, 12 = (calendar yr + 1). months 1-9, calendar yr = water yr
+w.year <- combo_dayflow$Year
+oct.nov.dec <- (combo_dayflow$Month) > 9
+w.year[oct.nov.dec] <- w.year[oct.nov.dec] + 1
+combo_dayflow$Water_year <- w.year
+
+##average the delta-wide outflow per year for DSP first pass study##
+
+#remove 1969 because there's no matching year it in water year, since sampling started in october.
+combo_dayflow_CY<-combo_dayflow[-c(1:92), ]
+##average total outflow, inflow, Yolo, Sac, export by calendar year
+annual_average_deltawide_flow<-combo_dayflow_CY %>%
+  group_by(Year) %>%
+  summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(EXPORT))
+#name column for flow
+annual_average_deltawide_flow_CY<-rename(annual_average_deltawide_flow,c("Calendar_Year" = "Year","Mean_outflow_CY" = "value", "Mean_inflow_CY" = "mean(TOT)",
+                                      "Mean_YOLO_CY" = "mean(YOLO)", "Mean_SAC_CY" = "mean(SAC)", "Mean_Export_CY" = "mean(EXPORT)"))
+
+##average total outflow, inflow, Yolo, Sac, export by water year
+WY_annual_average_deltawide_flow<-combo_dayflow %>%
+  group_by(Water_year) %>%
+  summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(EXPORT))
+#name column for flow
+annual_average_deltawide_flow_WY<-rename(WY_annual_average_deltawide_flow,c("Mean_outflow_WY" = "value", "Mean_inflow_WY" = "mean(TOT)",
+                                                                      "Mean_YOLO_WY" = "mean(YOLO)", "Mean_SAC_WY" = "mean(SAC)", "Mean_Export_WY" = "mean(EXPORT)"))
+cy_wy_average_flow<- cbind(annual_average_deltawide_flow_CY,annual_average_deltawide_flow_WY)
+
+library(readr)
+
+write_csv(cy_wy_average_flow, file.path("annual_averages","annual_average_deltawide_flow.csv"))
+
+
+
+
+
+
+
+################################
+##########Plotting flow#########
+################################
+
 ##summarize by month##
 str(combo_dayflow)
 #date_parse the date vector
@@ -52,14 +94,3 @@ ggplot(combo_dayflow, aes(JDay, OUT)) + geom_point() + geom_smooth() + labs(x = 
                                                                             y = "Flow (cfs)") + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) +
   annotation_logticks(sides = "l")
 
-##average the delta-wide outflow per year for DSP first pass study##
-
-annual_average_deltawide_flow<-combo_dayflow %>%
-  group_by(Year) %>%
-  summarise(value = mean(OUT))
-#raname column for flow
-annual_average_deltawide_flow<-rename(annual_average_deltawide_flow,c("Mean_flow" = "value"))
-
-library(readr)
-write_csv(annual_average_deltawide_flow,
-          file.path("annual_averages","annual_average_deltawide_flow.csv"))
