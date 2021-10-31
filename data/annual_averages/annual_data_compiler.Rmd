@@ -36,6 +36,7 @@ zoop=read.csv("data/annual_averages/zoop.csv")
 zoopbm=select(zoop, Year, grep("BPUE", colnames(zoop)))
 
 combined=flow %>% 
+  rename(Year=Calendar_Year) %>% select(-Water_year) %>% 
   full_join(nutwq, by="Year") %>% 
   full_join(benthic, by = c("Year"="year")) %>%
   #full_join(fishab, by="Year") %>% 
@@ -43,7 +44,7 @@ combined=flow %>%
   full_join(zoopbm, by="Year") %>% 
   arrange(Year)
 
-write.csv(combined, "data/annual_averages/annual_data_compiled.csv")
+write.csv(combined, "data/annual_averages/annual_data_compiled.csv", row.names = F)
 ```
 
 Plots

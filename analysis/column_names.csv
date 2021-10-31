@@ -1,0 +1,22 @@
+Longname,Shortname,Datacolumn,Log
+Year,year,Year,no
+Flow,flow,Mean_outflow_WY,yes
+Salinity,salinity,Salinity,no
+Secchi,secchi,Secchi,no
+Ammonia,ammonia,DissAmmonia,yes
+Phytoplankton,chla,Chlorophyll,yes
+Nitrate Nitrite,nitrate,DissNitrateNitrite,yes
+Dissolved Organic Nitrogen,don,DON,yes
+Dissolved Orthophosphorous,dop,DissOrthophos,yes
+Total Phosphorous,tphos,TotPhos,yes
+Temperature,temp,Temperature,no
+Clams,clams,potamocorbula_cpue,no
+Herbivorous copepods,hcope,Herbivorous_Copepods_BPUE,yes
+Predatory calanoids,pcal,Predatory_Calanoids_BPUE,no
+Mysids,mysid,Mysida_BPUE,yes
+Cladocera,clad,Cladoceran_BPUE,yes
+Cyclopoids,cyclo,Cyclopoids_BPUE,yes
+Estuarine fishes,estfish,fish_biomass_Estuarine_pelagic_forage_fishes,yes
+Marine fishes,marfish,fish_biomass_Marine_pelagic_forage_fishes,yes
+Delta smelt,smelt,fish_biomass_DeltaSmelt,yes
+Striped bass,sbass,fish_biomass_StripedBass_age0,yes
