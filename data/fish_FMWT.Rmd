@@ -227,7 +227,7 @@ plot(FMWT_annual_values_CPUE$FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fi
 FMWT_annual_values<-full_join(FMWT_annual_values_CPUE,FMWT_annual_values_biomass)
 
 
-write.csv(FMWT_annual_values_CPUE,row.names=FALSE,file=file.path("annual_averages/fish_FMWT.csv"))
+write.csv(FMWT_annual_values,row.names=FALSE,file=file.path("annual_averages/fish_FMWT.csv"))
 
 ```
 
