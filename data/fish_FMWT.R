@@ -23,7 +23,7 @@ FMWT_Pacific_Herring <-LTMRdata::fish(sources="FMWT", species="Clupea pallasii",
 FMWT_Striped_Bass <-LTMRdata::fish(sources="FMWT", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>% filter(is.na(Length)|Length<150)
 
 #Load index stations from Steve Slater (California Dept. of Fish and Wildlife)
-FMWT_index_stations<-read.csv(file.path("data","FMWT index stations_SS_BM.csv"))
+FMWT_index_stations<-read.csv("data/data_in/FMWT index stations_SS_BM.csv")
 FMWT_index_stations_only<-FMWT_index_stations %>% filter(Index=="1")
 
 
@@ -126,7 +126,7 @@ write.csv(FMWT_annual_values_CPUE,row.names=FALSE,file=file.path("data","annual_
 
 plot(FMWT_annual_values_CPUE$fish_catch_per_tow_Estuarine_pelagic_forage_fishes~FMWT_annual_values_biomass$fish_biomass_Estuarine_pelagic_forage_fishes)
 
-
+test<-LTMRdata::fish(sources="FMWT", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE)
 
 ####################----------------------------------------
 ####################----------------------------------------
