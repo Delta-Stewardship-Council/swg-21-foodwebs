@@ -250,7 +250,7 @@ BayStudy_annual_values_final_Otter<-full_join(BayStudy_Otter_annual_values_CPUE,
                                               BayStudy_Otter_annual_values_biomass)
 BayStudy_annual_values_final<-full_join(BayStudy_annual_values_final_Midwater,BayStudy_annual_values_final_Otter)
 
-write.csv(BayStudy_annual_values_final,row.names=FALSE,file=file.path("annual_averages/fish_data_BayStudy.csv"))
+write.csv(BayStudy_annual_values_final,row.names=FALSE,file=file.path("annual_averages/fish_BayStudy.csv"))
 
 ```
 

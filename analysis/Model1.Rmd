@@ -1,0 +1,179 @@
+---
+title: "Preliminary SEM Analyses 1"
+author: "Delta Food Web Team"
+date: "10/25/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      knit_root_dir = '..',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, message=FALSE}
+library(dplyr)
+library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
+library(lavaan)
+library(semPlot)
+```
+
+### Import data
+
+```{r dataprep}
+combined=read.csv("data/annual_averages/annual_data_compiled.csv")
+cnames=read.csv("analysis/column_names.csv", stringsAsFactors = F)
+dsub=filter(combined, Year>=1975)
+focaldata=dsub[,cnames$Datacolumn]
+fvars=cnames$Shortname
+colnames(focaldata)=fvars
+```
+
+### Diagnostic plots and data prep
+
+Histograms, log transform, scale
+
+```{r histo}
+par(mfrow=c(5,4),mar=c(2,2,2,1))
+for(i in 2:length(fvars)) {
+  hist(x=focaldata[,i],main=fvars[i])
+}
+logvars=fvars[cnames$Log=="yes"]
+#log transform
+logtrans=function(x) {
+  x2=x[which(!is.na(x))]
+  if(any(x2==0)) {log(x+min(x2[which(x2>0)],na.rm=T))}
+  else {log(x)}
+}
+focaldatalog = focaldata %>% 
+  mutate_at(logvars,logtrans)
+
+par(mfrow=c(5,4),mar=c(2,2,2,1))
+for(i in 2:length(fvars)) {
+  hist(x=focaldatalog[,i],main=fvars[i])
+}
+
+#scale data
+fd=focaldatalog
+fd=fd %>% mutate_at(2:length(fvars),scale) %>% 
+  mutate_at(2:length(fvars),list("1"=lag))
+```
+
+Time series
+
+```{r timeseries, fig.width=8, fig.height=9}
+
+#original units
+par(mfrow=c(5,4),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=focaldata[,1],y=focaldata[,i],main=fvars[i], type="o",cex=0.5)
+}
+
+#log scaled
+par(mfrow=c(5,4),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+Bivariate plots
+
+Flow and salinity are correlated. Flow also shows some correlations with nutrients, temperature. Ammonia and nitrate are correlated.
+
+Striped bass (age-0) and smelt are positively correlated. We might want to try to get data on adult bass, or use some other index for predatory fish, since age-0 bass are probably not eating smelt.
+
+```{r bivariate, fig.width=8, fig.height=8}
+#exogenous vars
+pairs.panels(select(fd, flow, salinity, secchi, ammonia, nitrate, don, dop, temp),lm = T)
+#plankton
+pairs.panels(select(fd, chla, hcope, pcal, clad, cyclo, mysid, clams),lm = T)
+#fish
+pairs.panels(select(fd, smelt, sbass, estfish, marfish),lm = T)
+
+```
+
+### SEM model
+
+Delta smelt
+
+```{r sem1}
+model1='chla~temp+flow+secchi+year
+        clad~chla+temp+flow+year
+        hcope~chla+temp+flow+year
+        cyclo~chla+temp+flow+secchi
+        clams~chla+hcope+cyclo+pcal+temp+flow+year
+        pcal~cyclo+hcope+temp+flow+year
+        mysid~cyclo+pcal+hcope+temp+flow+year
+        smelt~clad+hcope+pcal+cyclo+mysid+temp+flow+secchi+year
+        clams~~0*smelt
+        clad~~cyclo
+        clad~~hcope
+        cyclo~~pcal
+        cyclo~~hcope'
+modfit1=sem(model1, data=fd)
+summary(modfit1, standardized=T, rsq=T)
+standardizedSolution(modfit1)
+semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
+
+# residuals(modfit1) #residual covariance matrix
+# residuals(modfit1,type="cor") #residual correlation matrix
+# modificationIndices(modfit1, standardized=F)
+```
+
+Estuarine fishes total
+
+```{r sem2}
+model2='chla~temp+flow+secchi+year
+        clad~chla+temp+flow+year
+        hcope~chla+temp+flow+year
+        cyclo~chla+temp+flow+secchi
+        clams~chla+hcope+cyclo+pcal+temp+flow+year
+        pcal~cyclo+hcope+temp+flow+year
+        mysid~cyclo+pcal+hcope+temp+flow+year
+        estfish~clad+hcope+pcal+cyclo+mysid+temp+flow+secchi+year
+        clams~~0*estfish
+        clad~~cyclo
+        clad~~hcope
+        cyclo~~pcal
+        cyclo~~hcope'
+modfit2=sem(model2, data=fd)
+summary(modfit2, standardized=T, rsq=T)
+standardizedSolution(modfit2)
+semPaths(modfit2, "std", edge.label.cex = 1, residuals = F)
+
+# residuals(modfit2) #residual covariance matrix
+# residuals(modfit2,type="cor") #residual correlation matrix
+# modificationIndices(modfit2, standardized=F)
+```
+
+Marine fishes total
+
+```{r sem3}
+model3='chla~temp+flow+secchi+year
+        clad~chla+temp+flow+year
+        hcope~chla+temp+flow+year
+        cyclo~chla+temp+flow+secchi
+        clams~chla+hcope+cyclo+pcal+temp+flow+year
+        pcal~cyclo+hcope+temp+flow+year
+        mysid~cyclo+pcal+hcope+temp+flow+year
+        marfish~clad+hcope+pcal+cyclo+mysid+temp+flow+secchi+year
+        clams~~0*marfish
+        clad~~cyclo
+        clad~~hcope
+        cyclo~~pcal
+        cyclo~~hcope'
+modfit3=sem(model3, data=fd)
+summary(modfit3, standardized=T, rsq=T)
+standardizedSolution(modfit3)
+semPaths(modfit3, "std", edge.label.cex = 1, residuals = F)
+
+# residuals(modfit3) #residual covariance matrix
+# residuals(modfit3,type="cor") #residual correlation matrix
+# modificationIndices(modfit3, standardized=F)
+```

@@ -22,9 +22,20 @@ Inventory datasets:
 
 # Load libraries
 ```{r}
+# tidy data
 library(tidyverse)
+
+# S.B. packages
 library(zooper)
 library(LTMRdata)
+library(discretewq)
+
+# J.C. packages
+library(DT)
+library(leaflet)
+library(sf)
+library(janitor)
+
 ```
 
 # Fish surveys
@@ -153,4 +164,129 @@ ggplot()+
   labs(subtitle="Spatial overlap - overall")
 ```
 
+
+# Water quality
+
+Same stations as EMP zooplankton that are already plotted.
+Data lives here.
+```{r}
+# require(discretewq)
+# wq_stations <- wq(Sources = "EMP")
+# wq_stations <- pivot_longer(wq_stations, 
+#                             cols = c(Temperature, Chlorophyll:TKN, Salinity), 
+#                             names_to = 'Analyte', values_to = 'Value')
+```
+
+
+# Benthic 
+
+Code borrowed from the benthic.Rmd by JC
+```{r, message=FALSE}
+ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
+  mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
+  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% 
+  group_by(StationClean) %>% 
+  mutate(Latitude = mean(Latitude, na.rm = T), 
+         Longitude = mean(Longitude, na.rm = T)) %>% 
+  ungroup()
+```
+
+```{r}
+sites_mon <- ben  %>% 
+  distinct(StationClean, Latitude, Longitude, mon) 
+
+sites <- ben %>% 
+  group_by(StationClean, Latitude, Longitude) %>% 
+  summarise(n_months = length(unique(mon)), .groups  =  "drop") %>% 
+  st_as_sf(coords = c('Longitude','Latitude'), crs = 4326,  remove = FALSE)
+```
+
+## Sites that were sampled each month
+
+
+```{r, echo=F}
+ggplot(sites_mon, aes(x = mon, y = StationClean), size = 3) +
+  geom_point() +
+  theme_classic()
+```
+
+
+## Table of site information
+
+```{r, echo = FALSE}
+datatable(as.data.frame(sites))
+```
+
+## Core Stations
+
+```{r}
+core <- c("P8",
+          "MD10",
+          "D8",
+          "D7",
+          "D6",
+          "D41",
+          "D4",
+          "D28A",
+          "D26",
+          "C3",
+          "C10")
+
+core_data <-  sites_mon %>% 
+  filter(StationClean %in% core)
+
+sites_core <- sites %>% 
+  filter(StationClean %in% core)
+```
+
+
+```{r, echo=F}
+ggplot(core_data, aes(x = mon, y = StationClean), size = 3) +
+  geom_point() +
+  theme_classic()
+```
+
+
+
+# Plot altogether
+```{r, message = FALSE, echo = FALSE}
+
+leaflet(sites) %>% 
+  addTiles() %>% 
+  addCircleMarkers(data = Fallmwt,
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = 2, 
+                         fillColor = "gray",
+                         fillOpacity = 0.5,
+                         weight = 0.1,
+                         color = "black",
+                         label = ~Station) %>% 
+  addCircleMarkers(data = Baystudy,
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = 2,
+                         fillColor = "yellow",
+                         fillOpacity = 0.5,
+                         weight = 0.1,
+                         color = "black",
+                         label = ~Station) %>% 
+  addCircleMarkers(data = zoop_emp,
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = 2,                         fillColor = "blue",
+                         fillOpacity = 1,
+                         weight = 0.1,
+                         color = "black",
+                         label = ~Station) %>% 
+  addCircleMarkers(data = sites_core,
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = 3, 
+                         fillColor = "red",
+                         fillOpacity = 1,
+                         weight = 0.1,
+                         color = "black",
+                         label = ~StationClean)
+```
 

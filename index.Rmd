@@ -23,3 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## [Bay Study Fish Sampling](fish_BayStudy.html)
 ## [Modeled temperature data](Temperature.html)
 ## [Compiled annual data](annual_data_compiler.html)
+
+# Models
+
+## [Prelim model 1](Model1.html)

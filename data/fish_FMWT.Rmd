@@ -171,7 +171,7 @@ Calculate separate data frames for average biomass and  catch per tow. Also eval
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 
 FMWT_annual_values_biomass <- FMWT_annual_values %>% select(Year,CommonName,Biomass) %>%
-  pivot_wider(names_from =CommonName,values_from =Biomass,names_prefix="fish_biomass_")
+  pivot_wider(names_from =CommonName,values_from =Biomass,names_prefix="FMWT_fish_biomass_")
 
 #Check when FMWT started measuring fish length for each species
 FMWT_no_length<-FMWT_combined %>% filter(Length_NA_flag=="Unknown length") %>% mutate(Year=year(Date)) %>% group_by(Year,Taxa) %>%
@@ -188,44 +188,46 @@ FMWT_no_length_compare$NoLengthCount<-ifelse(is.na(FMWT_no_length_compare$NoLeng
 FMWT_no_length_compare$proportion_of_not_measured<-FMWT_no_length_compare$NoLengthCount/FMWT_no_length_compare$TotalCount
 #Different proportion of fish measured by fish species
 #Add NA subjectively
-FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1970, "fish_biomass_AmericanShad" ] <- NA
-FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1973, "fish_biomass_ThreadfinShad" ] <- NA
-FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1973, "fish_biomass_DeltaSmelt" ] <- NA
-FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1973, "fish_biomass_LongfinSmelt" ] <- NA
-FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1967, "fish_biomass_StripedBass_age0" ] <- NA
-FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1972, "fish_biomass_NorthernAnchovy" ] <- NA
-FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1972, "fish_biomass_PacificHerring" ] <- NA
+FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1970, "FMWT_fish_biomass_AmericanShad" ] <- NA
+FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1973, "FMWT_fish_biomass_ThreadfinShad" ] <- NA
+FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1973, "FMWT_fish_biomass_DeltaSmelt" ] <- NA
+FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1973, "FMWT_fish_biomass_LongfinSmelt" ] <- NA
+FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1968, "FMWT_fish_biomass_StripedBass_age0" ] <- NA
+FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1972, "FMWT_fish_biomass_NorthernAnchovy" ] <- NA
+FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1972, "FMWT_fish_biomass_PacificHerring" ] <- NA
 
 
-FMWT_annual_values_biomass <- FMWT_annual_values_biomass %>% mutate(fish_biomass_Estuarine_pelagic_forage_fishes=sum(fish_biomass_AmericanShad,
-                                                          fish_biomass_ThreadfinShad,
-                                                          fish_biomass_DeltaSmelt,
-                                                          fish_biomass_LongfinSmelt,
-                                                          fish_biomass_StripedBass_age0),
-         fish_biomass_Marine_pelagic_forage_fishes=sum(fish_biomass_NorthernAnchovy,
-                                                       fish_biomass_PacificHerring))
+FMWT_annual_values_biomass <- FMWT_annual_values_biomass %>% mutate(FMWT_fish_biomass_Estuarine_pelagic_forage_fishes=sum(FMWT_fish_biomass_AmericanShad,
+                                                          FMWT_fish_biomass_ThreadfinShad,
+                                                          FMWT_fish_biomass_DeltaSmelt,
+                                                          FMWT_fish_biomass_LongfinSmelt,
+                                                          FMWT_fish_biomass_StripedBass_age0),
+         FMWT_fish_biomass_Marine_pelagic_forage_fishes=sum(FMWT_fish_biomass_NorthernAnchovy,
+                                                       FMWT_fish_biomass_PacificHerring))
 
 
 FMWT_annual_values_CPUE <- FMWT_annual_values %>% select(Year,CommonName,Catch_per_tow) %>%
-  pivot_wider(names_from =CommonName,values_from = Catch_per_tow,names_prefix="fish_catch_per_tow_") %>%
-  mutate(fish_catch_per_tow_Estuarine_pelagic_forage_fishes=sum(fish_catch_per_tow_AmericanShad,
-                                                                fish_catch_per_tow_ThreadfinShad,
-                                                                fish_catch_per_tow_DeltaSmelt,
-                                                                fish_catch_per_tow_LongfinSmelt,
-                                                                fish_catch_per_tow_StripedBass_age0),
-         fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(fish_catch_per_tow_NorthernAnchovy,
-                                                             fish_catch_per_tow_PacificHerring))
+  pivot_wider(names_from =CommonName,values_from = Catch_per_tow,names_prefix="FMWT_fish_catch_per_tow_") %>%
+  mutate(FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=sum(FMWT_fish_catch_per_tow_AmericanShad,
+                                                                FMWT_fish_catch_per_tow_ThreadfinShad,
+                                                                FMWT_fish_catch_per_tow_DeltaSmelt,
+                                                                FMWT_fish_catch_per_tow_LongfinSmelt,
+                                                                FMWT_fish_catch_per_tow_StripedBass_age0),
+         FMWT_fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(FMWT_fish_catch_per_tow_NorthernAnchovy,
+                                                             FMWT_fish_catch_per_tow_PacificHerring))
 
 ```
 
 Check that biomass and catch per unit effort are correlated with one another. And then write csv in the annual average folder
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
-plot(FMWT_annual_values_CPUE$fish_catch_per_tow_Estuarine_pelagic_forage_fishes~FMWT_annual_values_biomass$fish_biomass_Estuarine_pelagic_forage_fishes,  xlab="Estuarine fish biomass", ylab="Estuarine fish catch per tow")
+plot(FMWT_annual_values_CPUE$FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fishes~
+       FMWT_annual_values_biomass$FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,  xlab="Estuarine fish biomass", ylab="Estuarine fish catch per tow")
 
-write.csv(FMWT_annual_values_biomass,row.names=FALSE,file=file.path("annual_averages/fish_biomass_FMWT.csv"))
+FMWT_annual_values<-full_join(FMWT_annual_values_CPUE,FMWT_annual_values_biomass)
 
-write.csv(FMWT_annual_values_CPUE,row.names=FALSE,file=file.path("annual_averages/fish_catch_per_tow_FMWT.csv"))
+
+write.csv(FMWT_annual_values,row.names=FALSE,file=file.path("annual_averages/fish_FMWT.csv"))
 
 ```
 
