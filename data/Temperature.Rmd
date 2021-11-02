@@ -18,7 +18,8 @@ library(sf)
 library(stars)
 library(dplyr)
 library(ggplot2)
-require(lubridate)
+library(lubridate)
+library(readr)
 ```
 
 Load model-predicted temperature data
@@ -102,3 +103,25 @@ ggplot()+
   theme_bw()+
   theme(legend.position = "bottom")
 ```
+
+Filter data to just regions present in all months (including winter), then calculate yearly averages
+```{r}
+temp_sum<-temp_predictions_filtered%>%
+  st_drop_geometry()%>%
+  filter(SubRegion%in%unique(regions_all_months$SubRegion))%>%
+  group_by(Month, Year)%>%
+  summarise(Temperature=mean(Monthly_mean), .groups="drop")%>%
+  group_by(Year)%>%
+  summarise(Temperature=mean(Temperature), .groups="drop")%>%
+  filter(Year>=1975)
+
+write_csv(temp_sum, "data/annual_averages/temperature.csv")
+```
+
+Plot Temperature timeseries
+```{r}
+ggplot(temp_sum, aes(x=Year, y=Temperature))+
+  geom_point()+
+  theme_bw()
+```
+

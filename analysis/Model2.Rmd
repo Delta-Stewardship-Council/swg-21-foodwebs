@@ -1,0 +1,175 @@
+---
+title: "Preliminary SEM Analyses 2"
+author: "Delta Food Web Team"
+date: "10/25/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      knit_root_dir = '..',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, message=FALSE}
+library(dplyr)
+library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
+library(lavaan)
+library(semPlot)
+```
+
+### Import data
+
+```{r dataprep}
+combined=read.csv("data/annual_averages/annual_data_compiled.csv")
+cnames=read.csv("analysis/column_names.csv", stringsAsFactors = F)
+dsub=filter(combined, Year>=1975)
+focaldata=dsub[,cnames$Datacolumn]
+fvars=cnames$Shortname
+colnames(focaldata)=fvars
+```
+
+### Derived variables
+
+```{r}
+focaldata = focaldata %>% 
+  mutate(hzoop=hcope+clad+cyclo) #biomass, herbivorous zooplankton
+fvars=c(fvars,"hzoop")
+```
+
+### Diagnostic plots and data prep
+
+Histograms, log transform, scale
+
+```{r histo}
+#log transform
+logvars=fvars[c(cnames$Log=="yes",T)]
+logtrans=function(x) {
+  x2=x[which(!is.na(x))]
+  if(any(x2==0)) {log(x+min(x2[which(x2>0)],na.rm=T))}
+  else {log(x)}
+}
+focaldatalog = focaldata %>% 
+  mutate_at(logvars,logtrans)
+
+#scale data
+fd=focaldatalog
+fd=fd %>% mutate_at(2:length(fvars),scale) %>% 
+  mutate_at(2:length(fvars),list("1"=lag))
+```
+
+Time series
+
+```{r timeseries, fig.width=8, fig.height=9}
+
+#original units
+par(mfrow=c(5,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=focaldata[,1],y=focaldata[,i],main=fvars[i], type="o",cex=0.5)
+}
+
+#log scaled
+par(mfrow=c(5,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+Bivariate plots
+
+```{r bivariate, fig.width=8, fig.height=8}
+pairs.panels(select(fd, year, flow, temp, secchi, chla, hzoop, pcal, mysid, smelt),lm = T)
+```
+
+### SEM model
+
+Simplified model with just one category for herbiv zoop.
+
+```{r}
+model1='secchi~year+flow
+        chla~year+flow+secchi
+        hzoop~year+flow+temp+chla+pcal+secchi
+        pcal~year+flow
+        mysid~year+flow+hzoop+pcal
+        smelt~year+flow+secchi+hzoop+pcal+mysid'
+modfit1=sem(model1, data=fd)
+summary(modfit1, standardized=T, rsq=T)
+semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
+
+#delete some of ns paths
+model1b='secchi~year+flow
+        chla~year+flow+secchi
+        hzoop~year+flow+temp+chla+pcal+secchi
+        pcal~year
+        mysid~year+hzoop+pcal
+        smelt~year+secchi+hzoop+pcal+mysid'
+modfit1b=sem(model1b, data=fd)
+summary(modfit1b, standardized=T, rsq=T)
+semPaths(modfit1b, "std", edge.label.cex = 1, residuals = F)
+
+anova(modfit1, modfit1b)
+
+#adding smelt last year makes year effects ns...
+model1c='secchi~year+flow
+        chla~year+flow+secchi
+        hzoop~year+flow+temp+chla+pcal+secchi
+        pcal~year
+        mysid~year+hzoop+pcal
+        smelt~year+secchi+hzoop+pcal+mysid+smelt_1'
+modfit1c=sem(model1c, data=fd)
+summary(modfit1c, standardized=T, rsq=T)
+semPaths(modfit1c, "std", edge.label.cex = 1, residuals = F)
+
+#year vs secchi effect on hzoop
+model1d='secchi~year+flow
+        chla~year+flow+secchi
+        hzoop~flow+temp+chla+pcal+secchi
+        pcal~year
+        mysid~year+hzoop+pcal
+        smelt~year+secchi+hzoop+pcal+mysid'
+modfit1d=sem(model1d, data=fd)
+summary(modfit1d, standardized=T, rsq=T)
+semPaths(modfit1d, "std", edge.label.cex = 1, residuals = F)
+
+anova(modfit1d, modfit1b)
+
+#using hcope instead of hzoop
+model1e='secchi~year+flow
+        chla~year+flow+secchi
+        hcope~year+flow+temp+chla+pcal+secchi
+        pcal~year
+        mysid~year+hcope+pcal
+        smelt~year+secchi+hcope+pcal+mysid'
+modfit1e=sem(model1e, data=fd)
+summary(modfit1e, standardized=T, rsq=T)
+semPaths(modfit1e, "std", edge.label.cex = 1, residuals = F)
+
+#using estfish instead of smelt
+model1f='secchi~year+flow
+        chla~year+flow+secchi
+        hcope~year+flow+temp+chla+pcal+secchi
+        pcal~year
+        mysid~year+hcope+pcal
+        estfish~year+secchi+hcope+pcal+mysid'
+modfit1f=sem(model1f, data=fd)
+summary(modfit1f, standardized=T, rsq=T)
+semPaths(modfit1f, "std", edge.label.cex = 1, residuals = F)
+
+#using marfish instead of smelt
+model1g='secchi~year+flow
+        chla~year+flow+secchi
+        hcope~year+flow+temp+chla+pcal+secchi
+        pcal~year
+        mysid~year+hcope+pcal
+        marfish~year+secchi+hcope+pcal+mysid'
+modfit1g=sem(model1g, data=fd)
+summary(modfit1g, standardized=T, rsq=T)
+semPaths(modfit1g, "std", edge.label.cex = 1, residuals = F)
+```
+
