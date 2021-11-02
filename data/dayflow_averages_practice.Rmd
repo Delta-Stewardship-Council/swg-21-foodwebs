@@ -1,0 +1,123 @@
+---
+title: "dayflow yearly average calculations"
+author: "Parsa Saffarinia"
+date: "10/29/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(data.table)
+library(dplyr)
+library(readr)
+library(lubridate)
+library(ggplot2)
+library(scales)
+```
+
+
+## read in data from website. 
+
+* the dayflow is separated in year chunks so we have to download each chunk and stitch it together
+
+    - may need to verify this doesn't create any statistical artifacts
+
+
+```{r}
+#Dayflow Results 1970 - 1983#
+data1 <- read.csv("https://data.cnra.ca.gov/dataset/06ee2016-b138-47d7-9e85-f46fae674536/resource/a0a46a1d-bec5-4db9-b331-655e306860ba/download/dayflow-results-1970-1983.csv")
+#Dayflow Results 1984 - 1996
+data2 <- read.csv("https://data.cnra.ca.gov/dataset/06ee2016-b138-47d7-9e85-f46fae674536/resource/cb04e626-9729-4105-af81-f6e5a37f116a/download/dayflow-results-1984-1996.csv")
+#Dayflow Results 1997 - 2020
+data3 <- read.csv("https://data.cnra.ca.gov/dataset/06ee2016-b138-47d7-9e85-f46fae674536/resource/21c377fe-53b8-4bd6-9e1f-2025221be095/download/dayflow-results-1997-2020.csv")
+```
+
+
+
+```{r}
+sites_mon <- ben  %>% 
+  distinct(StationClean, Latitude, Longitude, mon) 
+
+sites <- ben %>% 
+  group_by(StationClean, Latitude, Longitude) %>% 
+  summarise(n_months = length(unique(mon)), .groups  =  "drop") %>% 
+  st_as_sf(coords = c('Longitude','Latitude'), crs = 4326,  remove = FALSE)
+```
+
+
+## some nit-picky stuff, one column was spelled differently for one of the datasets (exports)
+## then combine dataframes for each year chunk
+
+
+```{r}
+#fix "export" and "exports" that changed column names in different years
+head(data1)
+head(data2)
+head(data3)
+library(data.table)
+setnames(data3, "EXPORTS", "EXPORT")
+
+combo_dayflow = bind_rows(data1,data2, data3)
+```
+
+
+# converting calendar year to water year values and adding water year column
+#months 10, 11, 12 = (calendar yr + 1). months 1-9, calendar yr = water yr
+
+```{r}
+
+w.year <- combo_dayflow$Year
+oct.nov.dec <- (combo_dayflow$Month) > 9
+w.year[oct.nov.dec] <- w.year[oct.nov.dec] + 1
+combo_dayflow$Water_year <- w.year
+
+#remove 1969 because there's no matching year it in water year, since sampling started in october.
+combo_dayflow_CY<-combo_dayflow[-c(1:92), ]
+```
+
+## average total outflow, inflow, Yolo, Sac, export by calendar year and water year, rename columns to match
+
+```{r}
+##average total outflow, inflow, Yolo, Sac, export by calendar year
+annual_average_deltawide_flow<-combo_dayflow_CY %>%
+  group_by(Year) %>%
+  summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(EXPORT))
+#name column for flow
+annual_average_deltawide_flow_CY<-rename(annual_average_deltawide_flow,
+c("Calendar_Year" = "Year","Mean_outflow_CY" = "value", "Mean_inflow_CY" = "mean(TOT)",
+  "Mean_YOLO_CY" = "mean(YOLO)", "Mean_SAC_CY" = "mean(SAC)", "Mean_Export_CY" = "mean(EXPORT)"))
+
+##average total outflow, inflow, Yolo, Sac, export by water year
+WY_annual_average_deltawide_flow<-combo_dayflow %>%
+  group_by(Water_year) %>%
+  summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(EXPORT))
+#name column for flow
+annual_average_deltawide_flow_WY<-
+  rename(WY_annual_average_deltawide_flow,c("Mean_outflow_WY" = "value",
+                                            "Mean_inflow_WY" = "mean(TOT)",
+
+                                             "Mean_YOLO_WY" = "mean(YOLO)",
+                                            "Mean_SAC_WY" = "mean(SAC)",
+                                            "Mean_Export_WY" = "mean(EXPORT)"))
+```
+
+#combine the water year and calendar year metrics dataframes, write a CSV for analysis
+
+```{r}
+cy_wy_average_flow<- cbind(annual_average_deltawide_flow_CY,annual_average_deltawide_flow_WY)
+
+library(readr)
+
+write_csv(cy_wy_average_flow, file.path("annual_averages","annual_average_deltawide_flow.csv"))
+```
+
