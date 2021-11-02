@@ -16,7 +16,7 @@ Predatory calanoids,pcal,Predatory_Calanoids_BPUE,no
 Mysids,mysid,Mysida_BPUE,yes
 Cladocera,clad,Cladoceran_BPUE,yes
 Cyclopoids,cyclo,Cyclopoids_BPUE,yes
-Estuarine fishes,estfish,fish_biomass_Estuarine_pelagic_forage_fishes,yes
-Marine fishes,marfish,fish_biomass_Marine_pelagic_forage_fishes,yes
-Delta smelt,smelt,fish_biomass_DeltaSmelt,yes
-Striped bass,sbass,fish_biomass_StripedBass_age0,yes
+Estuarine fishes,estfish,FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,yes
+Marine fishes,marfish,FMWT_fish_biomass_Marine_pelagic_forage_fishes,yes
+Delta smelt,smelt,FMWT_fish_biomass_DeltaSmelt,yes
+Striped bass,sbass,FMWT_fish_biomass_StripedBass_age0,yes
