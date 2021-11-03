@@ -60,8 +60,18 @@ focaldatalog = focaldata %>%
 
 #scale data
 fd=focaldatalog
-fd=fd %>% mutate_at(2:length(fvars),scale) %>% 
-  mutate_at(2:length(fvars),list("1"=lag))
+fd=fd %>% 
+  mutate_at(2:length(fvars),list("1"=lag)) %>% #lag 1
+  mutate_at(2:length(fvars),list("fd"=function(x) c(NA,diff(x)))) %>% #first difference
+  mutate_at(2:length(fvars),list("dtr"=function(x) { #detrend
+    x2=x
+    x2[x2==0]=NA
+    res=residuals(lm(x2~fd$year))
+    out=x
+    out[which(!is.na(x2))]=res
+    return(out)
+  })) %>%
+  mutate_at(-1,scale)
 ```
 
 Time series
@@ -78,6 +88,18 @@ for(i in 2:length(fvars)) {
 par(mfrow=c(5,5),mar=c(2,2,3,1))
 for(i in 2:length(fvars)) {
   plot.default(x=fd[,1],y=fd[,i],main=fvars[i], type="o",cex=0.5)
+}
+
+#first diff
+par(mfrow=c(5,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i+2*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
+}
+
+#detrended
+par(mfrow=c(5,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i+3*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
 }
 ```
 
@@ -171,5 +193,30 @@ model1g='secchi~year+flow
 modfit1g=sem(model1g, data=fd)
 summary(modfit1g, standardized=T, rsq=T)
 semPaths(modfit1g, "std", edge.label.cex = 1, residuals = F)
+```
+
+#### Detrended (anomalies) without year effect
+
+```{r}
+#smelt
+model2a='chla~flow+temp+secchi
+         hzoop~flow+temp+secchi+chla+pcal
+         pcal~flow+temp+secchi
+         mysid~flow+temp+secchi+hzoop+pcal
+         smelt~flow+temp+secchi+hzoop+pcal+mysid'
+modfit2a=sem(model2a, data=fd)
+summary(modfit2a, standardized=T, rsq=T)
+semPaths(modfit2a, "std", edge.label.cex = 1, residuals = F)
+
+#estuarine fishes
+model2b='chla~flow+temp+secchi
+         hzoop~flow+temp+secchi+chla+pcal
+         pcal~flow+temp+secchi
+         mysid~flow+temp+secchi+hzoop+pcal
+         estfish~flow+temp+secchi+hzoop+pcal+mysid'
+modfit2b=sem(model2b, data=fd)
+summary(modfit2b, standardized=T, rsq=T)
+semPaths(modfit2b, "std", edge.label.cex = 1, residuals = F)
+
 ```
 
