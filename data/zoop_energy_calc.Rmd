@@ -1,0 +1,102 @@
+---
+title: "Zoo Energy Densities"
+author: "Peter Dudley"
+date: "10/29/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Get Zoo energy density
+This script is to analyze the energy density of the categories of zooplankton used in out SEM food web model. 
+
+# Libraries and sourced functions used
+```{r load_libraries, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+
+source("./breakout_zoop_energy_groups.R")
+```
+
+# Load the data
+All the files are generated with a excel macro so their file names all start the same way. I use map to read them all into a list
+```{r load_data}
+file_name_start = "./zoop_energy_data/zoo_energy_"
+catagories = na.omit(read.csv(paste0(file_name_start, "catagories.csv"))) %>% 
+  mutate_if(is.character, str_trim)
+file_names = as.list(c( "dry", "wet", "digestibility", "ratio"))
+data = file_names %>% 
+  map(~na.omit(read.csv(paste0(file_name_start, .x, ".csv"))) %>% 
+        mutate_if(is.character, str_trim)) %>% 
+  set_names(file_names)
+```
+
+# Process Data
+If there are groups that are larger then our categories, make entries for each sub
+category containing that data the rows for each one
+```{r}
+higher_groups = catagories %>% 
+  na.omit()
+
+# break out the catagories
+data_brokenout = data %>% 
+  map(~break_out_groups(.x, higher_groups, "group"))
+
+data_ratio = data_brokenout$ratio %>% 
+  group_by(group) %>% 
+  summarize(dry_to_wet_ratio = mean(dry_to_wet_ratio, na.rm = TRUE))
+
+# convert wet to dry if data available
+converted_dry = data_ratio %>% 
+  na.omit() %>% 
+  right_join(data_brokenout$wet, by = "group") %>% 
+  mutate(energy_density_j_per_g_dry_mass =
+           energy_density_j_per_g_wet_mass/dry_to_wet_ratio) %>% 
+  select(-energy_density_j_per_g_wet_mass, -dry_to_wet_ratio) %>%
+  bind_rows(data_brokenout$dry)
+
+converted_wet = data_ratio %>% 
+  na.omit() %>% 
+  right_join(data_brokenout$dry, by = "group") %>% 
+  mutate(energy_density_j_per_g_wet_mass =
+           energy_density_j_per_g_dry_mass*dry_to_wet_ratio) %>% 
+  select(-energy_density_j_per_g_dry_mass, -dry_to_wet_ratio) %>%
+  bind_rows(data_brokenout$wet)
+
+```
+
+Convert all to wet weight and print a table
+```{r}
+dry_summary = converted_wet %>% 
+  group_by(group) %>% 
+  summarise(mean_energy_density = mean(energy_density_j_per_g_wet_mass),
+            energy_density_sd = sd(energy_density_j_per_g_wet_mass))
+print(dry_summary)
+
+
+```
+# Plots
+Print a box plot of the data
+```{r fig1, fig.height = 8, fig.width = 5}
+density_plot = ggplot(data = converted_wet,
+                      aes(x = fct_reorder(group, energy_density_j_per_g_wet_mass),
+                          y = energy_density_j_per_g_wet_mass)) + 
+  theme_classic(base_size = 20) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(x = "Group",
+       y = "Energy Density (j/g wet mass)" ) +
+  geom_boxplot() +
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=2, binwidth = 30, alpha = 0.2)+
+  stat_summary(fun=mean, geom="point", color = "red", shape=23, size=4, stroke = 2)
+print(density_plot)
+```
+

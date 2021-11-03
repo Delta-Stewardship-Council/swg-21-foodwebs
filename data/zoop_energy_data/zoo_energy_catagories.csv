@@ -1,0 +1,8 @@
+group,sub_group
+Copepoda,Cyclopoid
+Copepoda,Herbivorous Calanoid
+Copepoda,Predatory Calanoid 
+Calanoid,Herbivorous Calanoid
+Calanoid,Predatory Calanoid 
+Omnivorous Calanoid ,Herbivorous Calanoid
+Omnivorous Calanoid ,Predatory Calanoid 
