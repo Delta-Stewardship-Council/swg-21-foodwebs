@@ -29,4 +29,4 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## [Prelim model 1](Model1.html)
 ## [Prelim model 2](Model2.html)
-## [Prelim GP model 1](Model3.html)
+## [Prelim GP model 1](GPModel1.html)
