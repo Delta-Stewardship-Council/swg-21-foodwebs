@@ -39,7 +39,8 @@ monthly_average_deltawide_flow<-combo_dayflow %>%
             mean(SJR), mean(XGEO),mean(EXPORT))
 monthly_average_deltawide_flow<-rename(monthly_average_deltawide_flow,
                                        c("Mean_OUT" = "value"))
-
+library(readr)
+write_csv(monthly_average_deltawide_flow, file.path("monthly_avgs","monthly_average_deltawide_flow.csv"))
 
 ##average total outflow, inflow, Yolo, Sac, export by calendar year
 annual_average_deltawide_flow<-combo_dayflow_CY %>%
