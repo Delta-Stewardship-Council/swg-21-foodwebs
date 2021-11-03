@@ -39,7 +39,7 @@ colnames(focaldata)=fvars
 
 ```{r}
 focaldata = focaldata %>% 
-  mutate(hzoop=hcope+clad+cyclo) #biomass, herbivorous zooplankton
+  mutate(hzoop=hcope+clad) #biomass, herbivorous zooplankton
 fvars=c(fvars,"hzoop")
 ```
 
@@ -119,7 +119,7 @@ for(i in 2:length(fvars)) {
 Bivariate plots
 
 ```{r bivariate, fig.width=8, fig.height=8, echo=FALSE}
-pairs.panels(select(fd, year, flow, temp, secchi, chla, hzoop, pcal, mysid, smelt),lm = T)
+pairs.panels(select(fd, year, flow, temp, secchi, chla, hzoop, pcope, mysid, smelt),lm = T)
 ```
 
 ### SEM model
@@ -130,20 +130,20 @@ Simplified model with just one category for herbiv zoop.
 
 ```{r}
 model1='chla~year+flow+secchi
-        hzoop~year+flow+temp+chla+pcal+secchi
-        pcal~year+flow
-        mysid~year+flow+hzoop+pcal
-        smelt~year+flow+secchi+hzoop+pcal+mysid'
+        hzoop~year+flow+temp+chla+pcope+secchi
+        pcope~year+flow
+        mysid~year+flow+hzoop+pcope
+        smelt~year+flow+secchi+hzoop+pcope+mysid'
 modfit1=sem(model1, data=fd)
 #summary(modfit1, standardized=T, rsq=T)
 semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
 
 #delete some of ns paths
 model1b='chla~year+flow+secchi
-        hzoop~year+flow+temp+chla+pcal+secchi
-        pcal~year
-        mysid~year+hzoop+pcal
-        smelt~year+secchi+hzoop+pcal+mysid'
+        hzoop~year+flow+temp+chla+pcope+secchi
+        pcope~year
+        mysid~year+hzoop+pcope
+        smelt~year+secchi+hzoop+pcope+mysid'
 modfit1b=sem(model1b, data=fd)
 #summary(modfit1b, standardized=T, rsq=T)
 semPaths(modfit1b, "std", edge.label.cex = 1, residuals = F)
@@ -152,20 +152,20 @@ anova(modfit1, modfit1b)
 
 # #adding smelt last year makes year effects ns...
 # model1c='chla~year+flow+secchi
-#         hzoop~year+flow+temp+chla+pcal+secchi
-#         pcal~year
-#         mysid~year+hzoop+pcal
-#         smelt~year+secchi+hzoop+pcal+mysid+smelt_1'
+#         hzoop~year+flow+temp+chla+pcope+secchi
+#         pcope~year
+#         mysid~year+hzoop+pcope
+#         smelt~year+secchi+hzoop+pcope+mysid+smelt_1'
 # modfit1c=sem(model1c, data=fd)
 # summary(modfit1c, standardized=T, rsq=T)
 # semPaths(modfit1c, "std", edge.label.cex = 1, residuals = F)
 
 # #year vs secchi effect on hzoop
 # model1d='chla~year+flow+secchi
-#         hzoop~flow+temp+chla+pcal+secchi
-#         pcal~year
-#         mysid~year+hzoop+pcal
-#         smelt~year+secchi+hzoop+pcal+mysid'
+#         hzoop~flow+temp+chla+pcope+secchi
+#         pcope~year
+#         mysid~year+hzoop+pcope
+#         smelt~year+secchi+hzoop+pcope+mysid'
 # modfit1d=sem(model1d, data=fd)
 # summary(modfit1d, standardized=T, rsq=T)
 # semPaths(modfit1d, "std", edge.label.cex = 1, residuals = F)
@@ -174,10 +174,10 @@ anova(modfit1, modfit1b)
 
 #using hcope instead of hzoop
 model1e='chla~year+flow+secchi
-        hcope~year+flow+temp+chla+pcal+secchi
-        pcal~year
-        mysid~year+hcope+pcal
-        smelt~year+secchi+hcope+pcal+mysid'
+        hcope~year+flow+temp+chla+pcope+secchi
+        pcope~year
+        mysid~year+hcope+pcope
+        smelt~year+secchi+hcope+pcope+mysid'
 modfit1e=sem(model1e, data=fd)
 #summary(modfit1e, standardized=T, rsq=T)
 semPaths(modfit1e, "std", edge.label.cex = 1, residuals = F)
@@ -188,20 +188,20 @@ semPaths(modfit1e, "std", edge.label.cex = 1, residuals = F)
 ```{r}
 #using estfish instead of smelt
 model1f='chla~year+flow+secchi
-        hcope~year+flow+temp+chla+pcal+secchi
-        pcal~year
-        mysid~year+hcope+pcal
-        estfish~year+secchi+hcope+pcal+mysid'
+        hcope~year+flow+temp+chla+pcope+secchi
+        pcope~year
+        mysid~year+hcope+pcope
+        estfish~year+secchi+hcope+pcope+mysid'
 modfit1f=sem(model1f, data=fd)
 #summary(modfit1f, standardized=T, rsq=T)
 semPaths(modfit1f, "std", edge.label.cex = 1, residuals = F)
 
 #using marfish instead of smelt
 model1g='chla~year+flow+secchi
-        hcope~year+flow+temp+chla+pcal+secchi
-        pcal~year
-        mysid~year+hcope+pcal
-        marfish~year+secchi+hcope+pcal+mysid'
+        hcope~year+flow+temp+chla+pcope+secchi
+        pcope~year
+        mysid~year+hcope+pcope
+        marfish~year+secchi+hcope+pcope+mysid'
 modfit1g=sem(model1g, data=fd)
 #summary(modfit1g, standardized=T, rsq=T)
 semPaths(modfit1g, "std", edge.label.cex = 1, residuals = F)
@@ -212,20 +212,20 @@ Detrended (anomalies) without year effect
 ```{r}
 #smelt
 model2a='chla_dtr~flow_dtr+temp_dtr+secchi_dtr
-         hzoop_dtr~flow_dtr+temp_dtr+secchi_dtr+chla_dtr+pcal_dtr
-         pcal_dtr~flow_dtr+temp_dtr+secchi_dtr
-         mysid_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcal_dtr
-         smelt_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcal_dtr+mysid_dtr'
+         hzoop_dtr~flow_dtr+temp_dtr+secchi_dtr+chla_dtr+pcope_dtr
+         pcope_dtr~flow_dtr+temp_dtr+secchi_dtr
+         mysid_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr
+         smelt_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr+mysid_dtr'
 modfit2a=sem(model2a, data=fd)
 #summary(modfit2a, standardized=T, rsq=T)
 semPaths(modfit2a, "std", edge.label.cex = 1, residuals = F)
 
 #estuarine fishes
 model2b='chla_dtr~flow_dtr+temp_dtr+secchi_dtr
-         hzoop_dtr~flow_dtr+temp_dtr+secchi_dtr+chla_dtr+pcal_dtr
-         pcal_dtr~flow_dtr+temp_dtr+secchi_dtr
-         mysid_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcal_dtr
-         estfish_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcal_dtr+mysid_dtr'
+         hzoop_dtr~flow_dtr+temp_dtr+secchi_dtr+chla_dtr+pcope_dtr
+         pcope_dtr~flow_dtr+temp_dtr+secchi_dtr
+         mysid_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr
+         estfish_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr+mysid_dtr'
 modfit2b=sem(model2b, data=fd)
 #summary(modfit2b, standardized=T, rsq=T)
 semPaths(modfit2b, "std", edge.label.cex = 1, residuals = F)
@@ -236,10 +236,10 @@ Estuarine fishes with latent variable, detrended
 ```{r}
 #estuarine fishes with latent variable
 model2c='chla_dtr~flow_dtr+temp_dtr+secchi_dtr
-         hzoop_dtr~flow_dtr+temp_dtr+secchi_dtr+chla_dtr+pcal_dtr
-         pcal_dtr~flow_dtr+temp_dtr+secchi_dtr
-         mysid_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcal_dtr
-         estfish_lat~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcal_dtr+mysid_dtr
+         hzoop_dtr~flow_dtr+temp_dtr+secchi_dtr+chla_dtr+pcope_dtr
+         pcope_dtr~flow_dtr+temp_dtr+secchi_dtr
+         mysid_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr
+         estfish_lat~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr+mysid_dtr
          estfish_lat=~estfish_dtr+estfish_bsmt_dtr' #+estfish_bsot_dtr
 modfit2c=sem(model2c, data=fd)
 #summary(modfit2c, standardized=T, rsq=T)
@@ -251,10 +251,10 @@ Estuarine fishes with latent variable, not detrended
 ```{r}
 #estuarine fishes with latent variable (not detrended with year)
 model2d='chla~year+flow+temp+secchi
-         hzoop~year+flow+temp+secchi+chla+pcal
-         pcal~year+flow+temp+secchi
-         mysid~year+flow+temp+secchi+hzoop+pcal
-         estfish_lat~year+flow+temp+secchi+hzoop+pcal+mysid
+         hzoop~year+flow+temp+secchi+chla+pcope
+         pcope~year+flow+temp+secchi
+         mysid~year+flow+temp+secchi+hzoop+pcope
+         estfish_lat~year+flow+temp+secchi+hzoop+pcope+mysid
          estfish_lat=~estfish+estfish_bsmt' #+estfish_bsot
 modfit2d=sem(model2d, data=fd)
 #summary(modfit2d, standardized=T, rsq=T)

@@ -13,10 +13,9 @@ Temperature,temp,Temperature,no
 Temperature modelled,tempm,Temperature_model,no
 Clams,clams,potamocorbula_cpue,no
 Herbivorous copepods,hcope,Herbivorous_Copepods_BPUE,yes
-Predatory calanoids,pcal,Predatory_Calanoids_BPUE,no
+Predatory copepods,pcope,Predatory_Copepods_BPUE,yes
 Mysids,mysid,Mysida_BPUE,yes
 Cladocera,clad,Cladoceran_BPUE,yes
-Cyclopoids,cyclo,Cyclopoids_BPUE,yes
 Estuarine fishes,estfish,FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,yes
 Marine fishes,marfish,FMWT_fish_biomass_Marine_pelagic_forage_fishes,yes
 Delta smelt,smelt,FMWT_fish_biomass_DeltaSmelt,yes
