@@ -80,6 +80,7 @@ plt
 
 # Check Spatial Coverage
 ```{r, results='hide', message=FALSE, warning = FALSE, results = 'hide'}
+analytes <- unique(df_wq_sub$Analyte)
 buffer <- 0.05
 coordDict = list(
     'minLat' = min(df_wq_sub$Latitude) - buffer,
