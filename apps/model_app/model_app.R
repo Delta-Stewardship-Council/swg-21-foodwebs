@@ -91,12 +91,17 @@ ui <- fluidPage(
 server <- function(input, output) {
 
     output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+        #generate lavaan formula
+        formula1 <- paste0(c(input$response_variable_1, paste0(input$predictor_variables_1,collapse = "+")), collapse="~")
+        formula2 <- paste0(c(input$response_variable_2, paste0(input$predictor_variables_2,collapse = "+")), collapse="~")
+        formula <- paste0(c(formula1, formula2), collapse = "\n        ")
+
+        #fit model
+        modfit=sem(formula, data=fd)
+        #summary(modfit1, standardized=T, rsq=T)
+
+        semPaths(modfit, "std", edge.label.cex = 1, residuals = F)
     })
 }
 
