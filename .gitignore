@@ -41,3 +41,6 @@ vignettes/*.pdf
 data_raw/
 
 .DS_Store
+
+# Targets build files
+_targets/
