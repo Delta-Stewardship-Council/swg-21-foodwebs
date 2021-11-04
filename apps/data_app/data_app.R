@@ -50,7 +50,7 @@ server <- function(input, output) {
         ggplot(df_compiled %>% filter(Year %in% c(input$time_span[1]:input$time_span[2])), aes(x = .data[[input$x_variable]],
                                y = .data[[input$y_variable]]
                                )) +
-            geom_point(size = 4)+geom_smooth()+
+            geom_point(size = 4)+geom_smooth(method=lm)+
             theme_light()
     })
 }
