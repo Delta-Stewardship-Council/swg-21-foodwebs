@@ -11,42 +11,31 @@ library(shiny)
 library(tidyverse)
 
 df_compiled <- read_csv('../../data/annual_averages/annual_data_compiled.csv')
-df_compiled <- pivot_longer(df_compiled, cols = -Year, names_to = 'variable', values_to = 'value')
+df_compiled_pivot <- pivot_longer(df_compiled, cols = -Year, names_to = 'variable', values_to = 'value')
+
+column_names<-names(df_compiled)
+
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Data Exploration"),
 
-    # Sidebar with a slider input for number of bins
-    # sidebarLayout(
-    #     sidebarPanel(
-    #         sliderInput("bins",
-    #                     "Number of bins:",
-    #                     min = 1,
-    #                     max = 50,
-    #                     value = 30)
-    #     ),
-
-
+    sidebarLayout(
+        sidebarPanel(
+            selectInput("x_variable", "X Variable", column_names, selected = "Year"),
+            selectInput("y_variable", "Y Variable", column_names, selected = "Mean_outflow_CY"),
+            sliderInput("time_span",
+                          "Time Period:",
+                          min = min(df_compiled$Year),
+                          max = max(df_compiled$Year),
+                          value = c(min(df_compiled$Year),max(df_compiled$Year)))
+        ),
 
     # Show a plot of the generated distribution
-    fluidRow(
-        column(
-            width = 12, # width of entire row
-            selectInput(inputId = 'variable',
-                        multiple = TRUE,
-                        choices = unique(df_compiled$variable),
-                        label = 'Variable'
-                        )
-        )
-    ),
-
-    fluidRow(
-        column(
-            width = 12,
-            plotOutput("distPlot", height = '700px')
+    mainPanel(
+        plotOutput("varPlot")
         )
     )
 )
@@ -55,13 +44,14 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-    df_sub <- reactive({subset(df_compiled, variable %in% input$variable)})
+    df_sub <- reactive({subset(df_compiled_pivot, variable %in% input$variable)})
 
-    output$distPlot <- renderPlot({
-        # create histogram of all variables
-        ggplot(df_sub(), aes(x = value)) +
-            geom_histogram() +
-            facet_wrap(~variable, scales = 'free')
+    output$varPlot <- renderPlot({
+        ggplot(df_compiled %>% filter(Year %in% c(input$time_span[1]:input$time_span[2])), aes(x = .data[[input$x_variable]],
+                               y = .data[[input$y_variable]]
+                               )) +
+            geom_point(size = 4)+geom_smooth()+
+            theme_light()
     })
 }
 
