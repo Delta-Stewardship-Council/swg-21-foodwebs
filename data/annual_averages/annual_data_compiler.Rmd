@@ -27,19 +27,26 @@ library(ggplot2)
 
 ```{r}
 flow=read.csv("data/annual_averages/annual_average_deltawide_flow.csv")
-nutwq=read.csv("data/annual_averages/emp_waterquality_mean.csv")
+nutwq=read.csv("data/annual_averages/nutrient_data_yearly.csv")
 benthic=read.csv("data/annual_averages/benthic.csv")
 fishbm=read.csv("data/annual_averages/fish_FMWT.csv")
+fishbs=read.csv("data/annual_averages/fish_BayStudy.csv")
+fishdj=read.csv("data/annual_averages/fish_DJFMP.csv")
 zoop=read.csv("data/annual_averages/zoop.csv")
+temp=read.csv("data/annual_averages/temperature.csv") %>%
+  rename(Temperature_model=Temperature)
 
-zoopbm=select(zoop, Year, grep("BPUE", colnames(zoop)))
+zoopbm=dplyr::select(zoop, Year, grep("BPUE", colnames(zoop)))
 
 combined=flow %>% 
-  rename(Year=Calendar_Year) %>% select(-Water_year) %>% 
+  rename(Year=Calendar_Year) %>% dplyr::select(-Water_year) %>% 
   full_join(nutwq, by="Year") %>% 
+  full_join(temp, by="Year") %>% 
   full_join(benthic, by = c("Year"="year")) %>%
   #full_join(fishab, by="Year") %>% 
   full_join(fishbm, by="Year") %>% 
+  full_join(fishbs, by="Year") %>% 
+  full_join(fishdj, by="Year") %>% 
   full_join(zoopbm, by="Year") %>% 
   arrange(Year)
 
@@ -48,7 +55,7 @@ write.csv(combined, "data/annual_averages/annual_data_compiled.csv", row.names =
 
 Plots
 
-```{r, fig.width=8, fig.height=20}
+```{r, fig.width=8, fig.height=30}
 datalong=gather(combined,Var,Value,2:ncol(combined))
 datalong$Var=factor(datalong$Var,levels = unique(datalong$Var))
 

@@ -2,48 +2,46 @@
 output:
   html_document:
     code_folding: hide
-knit: (function(input, ...) {
+  knit: (function(input, ...) {
     rmarkdown::render(
       input,
       output_dir = 'docs',
       knit_root_dir = '.',
       envir = globalenv()
-    )
-  })
+      )
+    })
 ---
 
-```{r echo = FALSE, results='hide', message=FALSE, warning=FALSE}
+```{r imports, echo = FALSE, results='hide', message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggmap)
 library(readr)
 require(discretewq)
+source('functions/nutrient_funcs.R', local = TRUE)
+
+if(utils::packageVersion('discretewq') < '2.1.0') {
+    stop('discretewq version >= 2.1.0 is required, please update discretewq.')
+}
 ```
 
-```{r, warning = FALSE, message = FALSE}
+```{r read-in-data, warning = FALSE, message = FALSE}
 # read in data
-df_wq <- wq(Sources = c("EMP"))
-df_wq <- pivot_longer(df_wq, cols = c(Temperature, Chlorophyll:TKN, Salinity), names_to = 'Analyte', values_to = 'Value')
+df_wq <- read_wq_data(monthly = FALSE)
 ```
+
+Nutrients Included Are:
+* 'Chlorophyll' (Chlorophyll)
+* 'DissNitrateNitrite' (Dissolved Nitrate/Nitrite)
+* 'DissAmmonia' (Dissolved Ammonia)
+* 'Salinity' (Salinity)
+* 'Secchi' (Secchi)
+* 'Temperature' (Temperature)
+* 'TotPhos' (Total Phosphorous)
 
 # Check Temporal Coverage
-```{r fig.width=15, fig.height=8}
-# subset by wanted nutrients
-df_wq_sub <- df_wq[df_wq$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica','DOSurf','Salinity','TotPhos','Turbidity','Pheo', 'DON','TKN','DissChloride','TurbiditySurface','Secchi','Temperature'),]
-df_wq_sub <- subset(df_wq_sub, select = c('Date','Station','Latitude','Longitude','Analyte','Value'))
-
-# exclude dates where any of the analytes don't exist
-df_wq_sub <- na.omit(df_wq_sub)
-
-min_C10A_date <- min(df_wq_sub$Date[df_wq_sub$Station == 'C10A'])
-max_C3_date <- max(df_wq_sub$Date[df_wq_sub$Station == 'C3'])
-
-df_wq_sub <- subset(df_wq_sub, !(Station == 'C10' & Date >= min_C10A_date))
-df_wq_sub <- subset(df_wq_sub, !(Station == 'C3A' & Date <= max_C3_date))
-
+```{r check-temporal-coverage, fig.width=15, fig.height=8}
 # check temporal coverage
-plt <- ggplot(df_wq_sub, aes(Date, Station)) +
-  geom_point() +
-  theme(axis.text.x = element_text(angle = 90))
+plt <- check_temporal_coverage(df_wq)
 
 plt
 ```
@@ -63,101 +61,57 @@ Core stations are:
 * C10/C10A?
 
 # Subset out Relevant Stations
-```{r}
+```{r subset-relevant-stations}
 station_list <- c('P8','MD10','MD10A','D8','D7','D6','D41','D4','D28A','D26','C3','C3A','C10','C10A')
-df_wq_sub <- df_wq_sub [df_wq_sub$Station %in% station_list,]
+df_wq <- df_wq[df_wq$Station %in% station_list,]
 
 # check temporal coverage
-plt <- ggplot(df_wq_sub, aes(Date, Station)) +
-  geom_point() +
-  theme(axis.text.x = element_text(angle = 90))
+plt <- check_temporal_coverage(df_wq)
 
 plt
 ```
 
 # Check Spatial Coverage
-```{r, results='hide', message=FALSE, warning = FALSE, results = 'hide'}
-buffer <- 0.05
-coordDict = list(
-    'minLat' = min(df_wq_sub$Latitude) - buffer,
-    'maxLat' = max(df_wq_sub$Latitude) + buffer,
-    'minLon' = min(df_wq_sub$Longitude) - buffer,
-    'maxLon' = max(df_wq_sub$Longitude) + buffer
-)
-
-map_obj <- get_stamenmap(
-  bbox = c(left = coordDict[['minLon']], bottom = coordDict[['minLat']], right = coordDict[['maxLon']], top = coordDict[['maxLat']]),
-  zoom = 10,
-  maptype = 'terrain'
-  )
-
-# plot the map
-map <- ggmap(map_obj) +
-  theme_void() +
-  geom_point(data = df_wq_sub, aes(x = Longitude, y = Latitude, label = Station), shape = 21, fill = 'red', size = 3) +
-  geom_text(data = df_wq_sub, aes(label = Station, x = Longitude, y = Latitude), vjust = 0, hjust = 0)
-
+```{r check-spatial-coverage, results='hide', message=FALSE, warning = FALSE, results = 'hide'}
+map <- create_station_map(df_wq)
 map
 ```
 
 # Check if C3/C3A, MD10/MD10A, and C10/C10A can be combined {.tabset .tabset-pills}
-## MD10/MD10A
 ```{r, results='asis'}
-analytes <- unique(df_wq_sub$Analyte)
-for (analyte in analytes){
-  df_check <- df_wq_sub %>% filter(Station %in% c('MD10','MD10A'), Analyte == analyte)
-  plt <- ggplot(df_check) +
-    geom_line(aes(Date, Value, color = Station)) +
-    ylab(analyte)
+analytes <- unique(df_wq$Analyte)
+stations_list <- list(c('MD10','MD10A'),c('C10','C10A'),c('C3','C3A'))
 
-  plot(plt)
-}
-```
-
-## C10/C10A
-```{r, results='asis'}
-for (analyte in analytes){
-  df_check <- df_wq_sub %>% filter(Station %in% c('C10','C10A'), Analyte == analyte)
-  plt <- ggplot(df_check) +
-    geom_line(aes(Date, Value, color = Station)) +
-    ylab(analyte)
-
-  plot(plt)
-}
-```
-
-## C3/C3A
-```{r, results='asis'}
-for (analyte in analytes){
-  df_check <- df_wq_sub %>% filter(Station %in% c('C3','C3A'), Analyte == analyte)
-  plt <- ggplot(df_check) +
-    geom_line(aes(Date, Value, color = Station)) +
-    ylab(analyte)
-
-  plot(plt)
+for (stations in stations_list){
+  cat('\n##', stations, '{.tabset .tabset-fade .tabset-pills}')
+  for (analyte in analytes){
+    cat('\n###', analyte, '\n')
+    df_check <- df_wq %>% filter(Station %in% stations, Analyte == analyte)
+    plt <- ggplot(df_check) +
+      geom_line(aes(Date, Value, color = Station)) +
+      ylab(analyte)
+  
+    plot(plt)
+    cat('\n')
+  }
 }
 ```
 
 #
 Looks good to me, so will combine the stations.
-```{r}
-df_wq_sub$Station[df_wq_sub$Station == 'C10'] <- 'C10A'
-df_wq_sub$Station[df_wq_sub$Station == 'MD10'] <- 'MD10A'
-df_wq_sub$Station[df_wq_sub$Station == 'C3'] <- 'C3A'
+```{r combine-stations}
+df_wq <- combine_wq_stations(df_wq)
 
 # check temporal coverage
-plt <- ggplot(df_wq_sub, aes(Date, Station)) +
-  geom_point() +
-  theme(axis.text.x = element_text(angle = 90))
-
+plt <- check_temporal_coverage(df_wq)
 plt
 ```
 
 Calculate annual indices (first pass).
-```{r}
-df_wq_sub$Year <- lubridate::year(df_wq_sub$Date)
+```{r calc-annual-indices}
+df_wq$Year <- lubridate::year(df_wq$Date)
 
-empwq_annual_mean <- df_wq_sub %>%
+empwq_annual_mean <- df_wq %>%
 	dplyr::group_by(Analyte, Year) %>%
 	dplyr::summarize(MeanValue=mean(Value, na.rm=TRUE), .groups="drop")
 
@@ -165,41 +119,17 @@ empwq_annual_mean <- df_wq_sub %>%
 ggplot(data=empwq_annual_mean, aes(Year, MeanValue)) +
 	geom_point() +
 	facet_wrap( ~ Analyte, scales="free_y")
+```
 
+
+```{r export-csv}
 empwq_annual_mean_wide <- pivot_wider(data=empwq_annual_mean, id_cols=Year,
                                       names_from=Analyte, values_from=MeanValue)
 
-# write_csv(empwq_annual_mean_wide,
-#           file.path("annual_averages","emp_waterquality_mean.csv"))
 ```
 
-Check if Ammonia Paradox is observed with temporal/spatial averaging.
-
-```{r message=FALSE, warning = FALSE, results = 'hide'}
-empwq_annual_mean_wide$DissAmmonia_uM <- empwq_annual_mean_wide$DissAmmonia*100*0.5872
-
-plt <- ggplot(empwq_annual_mean_wide, aes(DissAmmonia_uM, Chlorophyll)) +
-  geom_point() +
-  geom_vline(xintercept = 4)
-  theme(axis.text.x = element_text(angle = 90))
-
-plt
+```{r export-csv, message=FALSE, warning = FALSE, results = 'hide'}
+write_csv(empwq_annual_mean_wide, 'data/annual_averages/nutrient_data_yearly.csv')
 ```
 
-Doesn't seem to be, but still see it when looking at raw (monthly, by station) data:
-
-```{r message=FALSE, warning = FALSE, results = 'hide'}
-df_wq_wide <- pivot_wider(data=df_wq_sub, id_cols=c(Date,Station,Year,Latitude,Longitude),
-                                      names_from=Analyte, values_from=Value)
-df_wq_wide$DissAmmonia_uM <- df_wq_wide$DissAmmonia*100*0.5872
-
-plt <- ggplot(df_wq_wide, aes(DissAmmonia_uM, Chlorophyll)) +
-  geom_point() +
-  geom_vline(xintercept = 4)
-  theme(axis.text.x = element_text(angle = 90))
-
-plt
-
-# write_csv(df_wq_wide, 'data/monthly_avgs/nutrient_data_monthly.csv')
-```
 
