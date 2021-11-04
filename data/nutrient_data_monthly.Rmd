@@ -102,6 +102,13 @@ plt <- check_temporal_coverage(df_wq)
 plt
 ```
 
+```{r check-scatter-plots, fig.width=15, fig.height=8}
+ggplot(data=df_wq, aes(Date, Value, color = Station)) +
+	geom_point() +
+	facet_wrap( ~ Analyte, ncol = 2, scales='free_y')
+```
+
+
 ```{r export-csv, message=FALSE, warning = FALSE, results = 'hide'}
 df_wq$Year <- lubridate::year(df_wq$Date)
 

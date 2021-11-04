@@ -119,7 +119,10 @@ empwq_annual_mean <- df_wq %>%
 ggplot(data=empwq_annual_mean, aes(Year, MeanValue)) +
 	geom_point() +
 	facet_wrap( ~ Analyte, scales="free_y")
+```
 
+
+```{r export-csv}
 empwq_annual_mean_wide <- pivot_wider(data=empwq_annual_mean, id_cols=Year,
                                       names_from=Analyte, values_from=MeanValue)
 
