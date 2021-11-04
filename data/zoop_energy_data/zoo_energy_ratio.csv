@@ -1,7 +1,6 @@
 group,specific,specific_type,primary_or_secondary,dry_to_wet_ratio,source
 Mysids,Mysids,order,secondary,0.16,Hanson 1997
 Cladoceran,Cladoceran,superorder,secondary,0.11,Hanson 1997
-Copepoda,Copepoda,subclass,secondary,0.125,Hanson 1997
 Cladoceran,Leptodora,genus,secondary,0.04,Hanson 1997
 Amphipods,Amphipods,order,secondary,0.26,Hanson 1997
 Cladoceran,Leptodora kindtii,species,secondary,0.04,Cummings 1967
@@ -11,3 +10,6 @@ Rotifers,Brachionus calyciflorus,species,secondary,0.0395,Pauli 1989
 Rotifers,Synchaeta spp.,genus,secondary,0.1155,Pauli 1989
 Rotifers,Synchaeta stylata,species,secondary,0.0445,Pauli 1989
 Rotifers,Synchaeta pectinata,species,secondary,0.0495,Pauli 1989
+Rotifers,asplanchna brightwellii,species,primary,0.039,Dumont 1975
+Predatory Copepoda ,Cyclopoida,order,primary,0.115,Dumont 1975
+Herbivorous Copepoda,Limnocalanus johanseni,species,primary,0.09,Comita 1956
