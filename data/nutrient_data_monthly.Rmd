@@ -2,12 +2,12 @@
 output:
   html_document:
     code_folding: hide
-    knit: (function(input, ...) {
-      rmarkdown::render(
-        input,
-        output_dir = 'docs',
-        knit_root_dir = '.',
-        envir = globalenv()
+  knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = 'docs',
+      knit_root_dir = '.',
+      envir = globalenv()
       )
     })
 ---
@@ -17,7 +17,11 @@ library(tidyverse)
 library(ggmap)
 library(readr)
 require(discretewq)
-source('nutrient_funcs.R', local = TRUE)
+source('functions/nutrient_funcs.R', local = TRUE)
+
+if(utils::packageVersion('discretewq') < '2.1.0') {
+    stop('discretewq version >= 2.1.0 is required, please update discretewq.')
+}
 ```
 
 ```{r read-in-data, warning = FALSE, message = FALSE}

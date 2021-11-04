@@ -2,12 +2,12 @@
 output:
   html_document:
     code_folding: hide
-    knit: (function(input, ...) {
-      rmarkdown::render(
-        input,
-        output_dir = 'docs',
-        knit_root_dir = '.',
-        envir = globalenv()
+  knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = 'docs',
+      knit_root_dir = '.',
+      envir = globalenv()
       )
     })
 ---
@@ -17,13 +17,26 @@ library(tidyverse)
 library(ggmap)
 library(readr)
 require(discretewq)
-source('nutrient_funcs.R', local = TRUE)
+source('functions/nutrient_funcs.R', local = TRUE)
+
+if(utils::packageVersion('discretewq') < '2.1.0') {
+    stop('discretewq version >= 2.1.0 is required, please update discretewq.')
+}
 ```
 
 ```{r read-in-data, warning = FALSE, message = FALSE}
 # read in data
 df_wq <- read_wq_data(monthly = FALSE)
 ```
+
+Nutrients Included Are:
+* 'Chlorophyll' (Chlorophyll)
+* 'DissNitrateNitrite' (Dissolved Nitrate/Nitrite)
+* 'DissAmmonia' (Dissolved Ammonia)
+* 'Salinity' (Salinity)
+* 'Secchi' (Secchi)
+* 'Temperature' (Temperature)
+* 'TotPhos' (Total Phosphorous)
 
 # Check Temporal Coverage
 ```{r check-temporal-coverage, fig.width=15, fig.height=8}
@@ -115,3 +128,5 @@ empwq_annual_mean_wide <- pivot_wider(data=empwq_annual_mean, id_cols=Year,
 ```{r export-csv, message=FALSE, warning = FALSE, results = 'hide'}
 write_csv(empwq_annual_mean_wide, 'data/annual_averages/nutrient_data_yearly.csv')
 ```
+
+

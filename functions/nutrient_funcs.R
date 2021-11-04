@@ -4,7 +4,7 @@ read_wq_data <- function(monthly = FALSE) {
   df <- tidyr::pivot_longer(df, cols = c(Temperature, Chlorophyll:TKN, Salinity), names_to = 'Analyte', values_to = 'Value')
 
   # subset by wanted nutrients
-  df_sub <- df[df$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'DissOrthophos', 'DissSilica','DOSurf','Salinity','TotPhos','Turbidity','Pheo', 'DON','TKN','DissChloride','TurbiditySurface','Secchi','Temperature'),]
+  df_sub <- df[df$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'Salinity', 'Secchi', 'Temperature', 'TotPhos'),]
   df_sub <- subset(df_sub, select = c('Date','Station','Latitude','Longitude','Analyte','Value'))
 
   # exclude dates where any of the analytes don't exist
