@@ -37,7 +37,7 @@ library(janitor)
     -  some sites moved slightly, and some years don't have lat/lons for the sites. Assume minor site movement is negligable (may need to verify)
 
 ```{r}
-ben <- tryCatch(
+ben_raw <- tryCatch(
   read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv", show_col_types = FALSE),
   error=function(cond) {
     message(paste("Benthic file does not exist locally, so get it from the KNB."))
@@ -50,7 +50,7 @@ ben <- tryCatch(
 
 
 ```{r, message=FALSE}
-ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
+ben <- ben_raw  %>% 
   mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
   mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% 
   group_by(StationClean) %>% 
