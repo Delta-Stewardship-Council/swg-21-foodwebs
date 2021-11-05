@@ -6,8 +6,6 @@ Secchi,secchi,Secchi,no
 Ammonia,ammonia,DissAmmonia,yes
 Phytoplankton,chla,Chlorophyll,yes
 Nitrate Nitrite,nitrate,DissNitrateNitrite,yes
-Dissolved Organic Nitrogen,don,DON,yes
-Dissolved Orthophosphorous,dop,DissOrthophos,yes
 Total Phosphorous,tphos,TotPhos,yes
 Temperature,temp,Temperature,no
 Temperature modelled,tempm,Temperature_model,no
