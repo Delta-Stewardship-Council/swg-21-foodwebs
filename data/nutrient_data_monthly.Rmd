@@ -1,15 +1,15 @@
 ---
+title: "Nutrient Data - Monthly"
 output:
   html_document:
     code_folding: hide
-  knit: (function(input, ...) {
-    rmarkdown::render(
-      input,
-      output_dir = 'docs',
-      knit_root_dir = '.',
-      envir = globalenv()
-      )
-    })
+knit: (function(input, ...) {
+  rmarkdown::render(
+    input,
+    output_dir = '../docs',
+    envir = globalenv()
+    )
+  })
 ---
 
 ```{r imports, echo = FALSE, results='hide', message=FALSE, warning=FALSE}
@@ -17,10 +17,11 @@ library(tidyverse)
 library(ggmap)
 library(readr)
 require(discretewq)
-source('functions/nutrient_funcs.R', local = TRUE)
+source('../functions/nutrient_funcs.R', local = TRUE)
 
 if(utils::packageVersion('discretewq') < '2.1.0') {
     stop('discretewq version >= 2.1.0 is required, please update discretewq.')
+    # https://github.com/sbashevkin/discretewq/
 }
 ```
 
@@ -111,11 +112,13 @@ ggplot(data=df_wq, aes(Date, Value, color = Station)) +
 
 ```{r export-csv, message=FALSE, warning = FALSE, results = 'hide'}
 df_wq$Year <- lubridate::year(df_wq$Date)
+df_wq$Month <- lubridate::month(df_wq$Date)
 
-df_wq_wide <- pivot_wider(data=df_wq, id_cols=c(Date,Station,Year,Latitude,Longitude),
-                                      names_from=Analyte, values_from=Value)
+df_wq_wide <- pivot_wider(data=df_wq, id_cols=c(Date,Station,Year,Month,
+                                                Latitude,Longitude),
+                          names_from=Analyte, values_from=Value)
 
 df_wq_wide$DissAmmonia_uM <- df_wq_wide$DissAmmonia*100*0.5872
 
-write_csv(df_wq_wide, 'data/monthly_averages/nutrient_data_monthly.csv')
+write_csv(df_wq_wide, 'monthly_averages/nutrient_data_monthly.csv')
 ```
