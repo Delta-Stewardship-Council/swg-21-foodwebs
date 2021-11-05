@@ -32,16 +32,20 @@ combo_dayflow$Water_year <- w.year
 combo_dayflow_CY<-combo_dayflow[-c(1:92), ]
 
 #######average monthly flow##
-combo_dayflow<-combo_dayflow[-c(1:92), ]
-monthly_average_deltawide_flow<-combo_dayflow %>%
-  group_by(Month) %>%
-  summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(MISC),
-            mean(SJR), mean(XGEO),mean(EXPORT))
-monthly_average_deltawide_flow<-rename(monthly_average_deltawide_flow,
-                                       c("Mean_OUT" = "value"))
-library(readr)
-write_csv(monthly_average_deltawide_flow, file.path("monthly_avgs","monthly_average_deltawide_flow.csv"))
 
+#monthly_average_deltawide_flow<-combo_dayflow %>%
+ # group_by(Month) %>%
+  #summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(MISC),
+   #         mean(SJR), mean(XGEO),mean(EXPORT))
+#monthly_average_deltawide_flow<-rename(monthly_average_deltawide_flow,
+ #                                      c("Mean_OUT" = "value"))
+
+monthly <- select(combo_dayflow_CY, c('Date','Month', 'Year','OUT', 'TOT', 'YOLO',
+                                      'SAC', 'MISC', 'SJR', 'XGEO','EXPORT') )
+write_csv(monthly, file.path("monthly_averages","monthly_average_flow.csv"))
+
+
+head(combo_dayflow_CY)
 ##average total outflow, inflow, Yolo, Sac, export by calendar year
 annual_average_deltawide_flow<-combo_dayflow_CY %>%
   group_by(Year) %>%
