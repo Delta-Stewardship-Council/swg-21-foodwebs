@@ -8,7 +8,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning= FALSE, message = FALSE)
 ```
 
 The purpose of this script is to evaluate the spatial and temporal overlap of 
@@ -25,27 +25,21 @@ Inventory datasets:
 # tidy data
 library(tidyverse)
 
-# S.B. packages
-library(zooper)
-library(LTMRdata)
-library(discretewq)
-
-# J.C. packages
 library(DT)
 library(leaflet)
 library(sf)
 library(janitor)
-
 ```
 
 # Fish surveys
 
 Query the CDFW Fall Midwater Trawl and Bay Study data sets from the LTMRdata package.
 ```{r}
+library(LTMRdata)
+
 Surveys <- LTMRdata::fish(sources=c("FMWT", "Baystudy"),
              species=NULL,
              convert_lengths=TRUE,
-             remove_unconverted_lengths=FALSE,
              size_cutoff=40,
              zero_fill = TRUE,
              remove_unknown_lengths = TRUE,
@@ -56,6 +50,8 @@ Surveys
 Surveys$Month <- lubridate::month(Surveys$Date)
 Surveys$Year <- lubridate::year(Surveys$Date)
 str(Surveys)
+
+detach(package:LTMRdata, unload=TRUE) # detach because it conflicts with discretewq
 ```
 
 
@@ -99,6 +95,10 @@ ggplot(Fallmwt, aes(Longitude, Latitude))+
 # Zoop surveys
 
 Query the EMP data from the Zooper package. Borrow code from "zoop.Rmd" by S.B.
+```{r}
+library(zooper)
+```
+
 
 Load core stations
 ```{r, message=FALSE}
@@ -113,6 +113,8 @@ Load zoop data
 zoop_data<-Zoopsynther(Data_type="Community", Sources="EMP", Time_consistency = TRUE)%>%
   filter(Station%in%zoop_stations$StationNZ)%>%
   mutate(Month=lubridate::month(Date))
+
+detach(package:zooper, unload=TRUE)
 ```
 
 Remove stations that aren't continuous
@@ -170,11 +172,12 @@ ggplot()+
 Same stations as EMP zooplankton that are already plotted.
 Data lives here.
 ```{r}
-# require(discretewq)
+# library(discretewq)
 # wq_stations <- wq(Sources = "EMP")
 # wq_stations <- pivot_longer(wq_stations, 
 #                             cols = c(Temperature, Chlorophyll:TKN, Salinity), 
 #                             names_to = 'Analyte', values_to = 'Value')
+# detach(package:discretewq, unload=TRUE)
 ```
 
 
@@ -182,7 +185,7 @@ Data lives here.
 
 Code borrowed from the benthic.Rmd by JC
 ```{r, message=FALSE}
-ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
+ben <- read_csv("data_in/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
   mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
   mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% 
   group_by(StationClean) %>% 
@@ -250,6 +253,7 @@ ggplot(core_data, aes(x = mon, y = StationClean), size = 3) +
 
 # Plot altogether
 ```{r, message = FALSE, echo = FALSE}
+# J.C. packages
 
 leaflet(sites) %>% 
   addTiles() %>% 
@@ -274,7 +278,8 @@ leaflet(sites) %>%
   addCircleMarkers(data = zoop_emp,
                          lat = ~Latitude,
                          lng = ~Longitude,
-                         radius = 2,                         fillColor = "blue",
+                         radius = 2,
+                        fillColor = "blue",
                          fillOpacity = 1,
                          weight = 0.1,
                          color = "black",
