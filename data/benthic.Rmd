@@ -41,8 +41,8 @@ ben_raw <- tryCatch(
   read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv", show_col_types = FALSE),
   error=function(cond) {
     message(paste("Benthic file does not exist locally, so get it from the KNB."))
-    ben <- read_csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a", method = "libcurl"), show_col_types = FALSE)
-    return(ben)
+    ben_raw <- read_csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a", method = "libcurl"), show_col_types = FALSE)
+    return(ben_raw)
   }
 )
 ```
@@ -145,7 +145,7 @@ leaflet(sites) %>%
                          label = ~StationClean)
 ```
 
-## Annual Average CPUE
+## Annual Average CPUE (potentially problematic)
 
 For both clam genera, Potamocorbula and Corbicula.
 
@@ -171,8 +171,26 @@ ben_clams$Date <- with(ben_clams, paste(Month, Year))
 # get grab variable
 df_grab_vari <- ben_clams[!duplicated(ben_clams$Date),]
 
+```
+
+Examine where data dropping  might havee issues
+
+```{r}
+i <- which(!duplicated(ben_clams$Date))
+
+ben_clams$keep <- "Yes"
+ben_clams$keep[i] <- "No"
+
+DT::datatable(select(ben_clams, keep, Grab_Count, Month, Year, Station_Count) %>% 
+                arrange(Year))
+
+```
+
+
+```{r}
+
 df_grab_vari <- df_grab_vari %>%
-  group_by(Year) %>%
+  group_by(Year) #%>%
   summarize(Grab_Count = sum(Grab_Count), .groups = "drop") 
 
 # create df of totals by year
@@ -193,10 +211,70 @@ df_year_CPUE <- df_year_sums %>%
 ```
 
 
+##  Corrected CPUE calcs
+
+**Needs review by Sarah**
+
+```{r}
+grabs_month  <- ben %>%
+  mutate(Date = paste(Month, Year)) %>% 
+  group_by(Date, StationCode, .drop = TRUE) %>%
+  mutate(Grab_Count = max(Grab)) %>%
+  distinct(Date, StationCode, Grab_Count) %>% 
+  group_by(Date) %>% 
+  summarise(Grab_Count = sum(Grab_Count))
+
+ben_clams_month <- ben %>% 
+  mutate(Date = paste(Month, Year)) %>%
+  group_by(Genus, Date) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(grabs_month) %>% 
+  mutate(CPUE_Total = Orgs_Total/Grab_Count/0.052) %>% 
+  mutate(Date = lubridate::my(Date))  %>% 
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))
+
+ben_clams_month_wide <- ben_clams_month %>% 
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(corbicula_cpue = Corbicula,
+         potamocorbula_cpue = Potamocorbula)  %>% 
+  clean_names()
+
+```
+
+```{r}
+grabs_year <- grabs_month %>% 
+  mutate(Date = lubridate::my(Date)) %>% 
+  mutate(Year = lubridate::year(Date)) %>% 
+  group_by(Year) %>% 
+  summarise(Grab_Count = sum(Grab_Count))
+
+
+ben_clams_year <- ben %>% 
+  group_by(Genus, Year) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(grabs_year) %>% 
+  mutate(CPUE_Total = Orgs_Total/Grab_Count/0.052) %>% 
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))
+
+
+ben_clams_year_wide <- ben_clams_year %>% 
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(corbicula_cpue = Corbicula,
+         potamocorbula_cpue = Potamocorbula)  %>% 
+  clean_names()
+
+```
+
+
+
 ```{r, echo = FALSE}
 ggplot() +
-  geom_line(data = df_year_CPUE, aes(x = year,  y = corbicula_cpue), color = "red") +
-  geom_line(data = df_year_CPUE, aes(x = year,  y = potamocorbula_cpue), color = "blue") +
+  geom_line(data = ben_clams_month_wide, aes(x = date,  y = corbicula_cpue), color = "red") +
+  geom_line(data = ben_clams_month_wide, aes(x = date,  y = potamocorbula_cpue), color = "blue") +
+    geom_line(data = ben_clams_year_wide, aes(x = as.Date(paste0(year, "-01-01")),  y = corbicula_cpue), color = "firebrick") +
+  geom_line(data = ben_clams_year_wide, aes(x = as.Date(paste0(year, "-01-01")),  y = potamocorbula_cpue), color = "dark blue") +
   theme_classic() +
   labs(x= "Year", y = "CPUE", title = "Annual Mean CPUE for Corbicula (red) and Potamocorbula (blue)")
 ```
