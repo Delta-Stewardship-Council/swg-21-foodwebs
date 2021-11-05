@@ -24,63 +24,43 @@ This script is to analyze the energy density of the categories of zooplankton us
 library(tidyverse)
 library(ggplot2)
 
-source("./breakout_zoop_energy_groups.R")
+source("./zoop_energy_functions.R")
 ```
 
 # Load the data
 All the files are generated with a excel macro so their file names all start the same way. I use map to read them all into a list
-```{r load_data}
-file_name_start = "./zoop_energy_data/zoo_energy_"
-catagories = na.omit(read.csv(paste0(file_name_start, "catagories.csv"))) %>% 
-  mutate_if(is.character, str_trim)
-file_names = as.list(c( "dry", "wet", "digestibility", "ratio"))
-data = file_names %>% 
-  map(~na.omit(read.csv(paste0(file_name_start, .x, ".csv"))) %>% 
-        mutate_if(is.character, str_trim)) %>% 
-  set_names(file_names)
+```{r load_data, }
+data = load_zoop_energy_density("./zoop_energy_data")
 ```
 
 # Process Data
 If there are groups that are larger then our categories, make entries for each sub
 category containing that data the rows for each one
 ```{r}
-higher_groups = catagories %>% 
-  na.omit()
-
-# break out the catagories
-data_brokenout = data %>% 
-  map(~break_out_groups(.x, higher_groups, "group"))
-
-data_ratio = data_brokenout$ratio %>% 
+summary_ratio = data$ratio %>% 
   group_by(group) %>% 
-  summarize(dry_to_wet_ratio = mean(dry_to_wet_ratio, na.rm = TRUE))
+  summarize(dry_to_wet_ratio = mean(dry_to_wet_ratio))
 
 # convert wet to dry if data available
-converted_dry = data_ratio %>% 
-  na.omit() %>% 
-  right_join(data_brokenout$wet, by = "group") %>% 
-  mutate(energy_density_j_per_g_dry_mass =
-           energy_density_j_per_g_wet_mass/dry_to_wet_ratio) %>% 
-  select(-energy_density_j_per_g_wet_mass, -dry_to_wet_ratio) %>%
-  bind_rows(data_brokenout$dry)
+converted_dry = convert_zoop_energy_density(ratio_df = summary_ratio,
+                                            energy_df = data$wet,
+                                            convert_to = "dry") %>% 
+  bind_rows(data$dry)
 
-converted_wet = data_ratio %>% 
-  na.omit() %>% 
-  right_join(data_brokenout$dry, by = "group") %>% 
-  mutate(energy_density_j_per_g_wet_mass =
-           energy_density_j_per_g_dry_mass*dry_to_wet_ratio) %>% 
-  select(-energy_density_j_per_g_dry_mass, -dry_to_wet_ratio) %>%
-  bind_rows(data_brokenout$wet)
+converted_wet = convert_zoop_energy_density(ratio_df = summary_ratio,
+                                            energy_df = data$dry,
+                                            convert_to = "wet") %>% 
+  bind_rows(data$wet)
 
 ```
 
 Convert all to wet weight and print a table
 ```{r}
-dry_summary = converted_wet %>% 
+wet_summary = converted_wet %>% 
   group_by(group) %>% 
   summarise(mean_energy_density = mean(energy_density_j_per_g_wet_mass),
             energy_density_sd = sd(energy_density_j_per_g_wet_mass))
-print(dry_summary)
+print(wet_summary)
 
 
 ```

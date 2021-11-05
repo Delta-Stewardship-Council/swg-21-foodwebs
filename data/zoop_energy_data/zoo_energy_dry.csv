@@ -3,31 +3,39 @@ Mysids,Mysids,order,secondary,22762.5,Hanson 1997
 Amphipods,Gammarid,family,secondary,17200,Forster 1999
 Cladoceran,Daphnids,family,secondary,20400,Forster 1999
 Cladoceran,Cladoceran,superorder,secondary,22843,Hanson 1997
-Copepoda,Copepoda,subclass,secondary,21765.5,Hanson 1997
 Cladoceran,Leptodora,genus,secondary,23718,Hanson 1997
 Amphipods,Amphipods,order,secondary,17045,Hanson 1997
 Cladoceran,Leptodora kindtii,species,secondary,21681.488,Cummings 1967
 Cladoceran,Daphinia pulex,species,secondary,16966.62,Cummings 1967
 Cladoceran,Daphinia pulex,species,secondary,17238.32,Cummings 1967
 Cladoceran,Daphinia pulex,species,secondary,21213.5,Cummings 1967
-Copepoda,tigriopus californicus,species,secondary,23219.9,Cummings 1967
-Copepoda,catanus helgolandicus,species,secondary,22572,Cummings 1967
-Herbivorous Calanoid,calanus finmarchicus,species,secondary,24720.52,Cummings 1967
-Herbivorous Calanoid,calanus hyperboreus,species,secondary,31065.76,Cummings 1967
-Herbivorous Calanoid,calanus finmarchicus,species,secondary,30848.4,Cummings 1967
-Predatory Calanoid ,diaptomus arcticus,species,secondary,22856.24,Cummings 1967
-Predatory Calanoid ,diaptomus arcticus,species,secondary,23098.68,Cummings 1967
-Omnivorous Calanoid ,diaptomus siciloides,species,secondary,22296.12,Cummings 1967
-Omnivorous Calanoid ,diaptomus siciloides,species,secondary,23587.74,Cummings 1967
-Herbivorous Calanoid,diaptomus leptopus,species,secondary,22555.28,Cummings 1967
-Herbivorous Calanoid,diaptomus leptopus,species,secondary,22722.48,Cummings 1967
-Cyclopoid,mesocyclops edax,species,secondary,22898.04,Cummings 1967
-Cyclopoid,Cyclopoid,order,primary,24925.34,Vijverberg 1976
-Calanoid,Diaptomus hyalinus,species,primary,26242.04,Vijverberg 1976
-Herbivorous Calanoid,Bosmina coregoni,species,primary,26363.26,Vijverberg 1976
-Herbivorous Calanoid,Chydorus sphaericus,species,primary,25581.6,Vijverberg 1976
+Herbivorous Copepoda,tigriopus californicus,species,secondary,23219.9,Cummings 1967
+Herbivorous Copepoda,calanus helgolandicus,species,secondary,22572,Cummings 1967
+Herbivorous Copepoda,calanus finmarchicus,species,secondary,24720.52,Cummings 1967
+Herbivorous Copepoda,calanus hyperboreus,species,secondary,31065.76,Cummings 1967
+Herbivorous Copepoda,calanus finmarchicus,species,secondary,30848.4,Cummings 1967
+Predatory Copepoda ,diaptomus arcticus,species,secondary,22856.24,Cummings 1967
+Predatory Copepoda ,diaptomus arcticus,species,secondary,23098.68,Cummings 1967
+Herbivorous Copepoda,diaptomus siciloides,species,secondary,22296.12,Cummings 1967
+Herbivorous Copepoda,diaptomus siciloides,species,secondary,23587.74,Cummings 1967
+Herbivorous Copepoda,diaptomus leptopus,species,secondary,22555.28,Cummings 1967
+Herbivorous Copepoda,diaptomus leptopus,species,secondary,22722.48,Cummings 1967
+Predatory Copepoda ,mesocyclops edax,species,secondary,22898.04,Cummings 1967
+Herbivorous Copepoda,Diaptomus hyalinus,species,primary,26242.04,Vijverberg 1976
+Herbivorous Copepoda,Bosmina coregoni,species,primary,26363.26,Vijverberg 1976
+Herbivorous Copepoda,Chydorus sphaericus,species,primary,25581.6,Vijverberg 1976
 Cladoceran,Leptodora kindtii,species,primary,24440.46,Vijverberg 1976
-Omnivorous Calanoid ,Euphonia affinis,species,primary,26555.54,Vijverberg 1976
+Herbivorous Copepoda,Euphonia affinis,species,primary,26555.54,Vijverberg 1976
 Mysids,Tupltromvsis bowmani,species,primary,18501.934,Johnson 1978
 Rotifers,Brachionus plicatilis,species,primary,18392,Theilacker 1984
 Rotifers,Brachionusplicatili,species,primary,19687.8,Yufera 1989
+Herbivorous Copepoda,Diaptomus minutus,species,primary,26018,Schindler 1971
+Cladoceran,Bosmina longirostris,species,primary,19869.63,Schindler 1971
+Herbivorous Copepoda,Cyclops bicuspidatus thomasi,species,primary,26781,Schindler 1971
+Cladoceran,Daphnia dubia,species,primary,19927.45333,Schindler 1971
+Cladoceran,Holopedium gibberum,species,primary,19813.2,Schindler 1971
+Rotifers,Kellicottia sp.,genus,primary,20337.79,Schindler 1971
+,,,,,
+,,,,,
+,,,,,
+,,,,,

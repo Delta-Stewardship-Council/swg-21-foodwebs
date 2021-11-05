@@ -2,12 +2,12 @@
 output:
   html_document:
     code_folding: hide
-    knit: (function(input, ...) {
-      rmarkdown::render(
-        input,
-        output_dir = 'docs',
-        knit_root_dir = '.',
-        envir = globalenv()
+  knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = 'docs',
+      knit_root_dir = '.',
+      envir = globalenv()
       )
     })
 ---
@@ -17,7 +17,11 @@ library(tidyverse)
 library(ggmap)
 library(readr)
 require(discretewq)
-source('nutrient_funcs.R', local = TRUE)
+source('functions/nutrient_funcs.R', local = TRUE)
+
+if(utils::packageVersion('discretewq') < '2.1.0') {
+    stop('discretewq version >= 2.1.0 is required, please update discretewq.')
+}
 ```
 
 ```{r read-in-data, warning = FALSE, message = FALSE}
@@ -97,6 +101,13 @@ df_wq <- combine_wq_stations(df_wq)
 plt <- check_temporal_coverage(df_wq)
 plt
 ```
+
+```{r check-scatter-plots, fig.width=15, fig.height=8}
+ggplot(data=df_wq, aes(Date, Value, color = Station)) +
+	geom_point() +
+	facet_wrap( ~ Analyte, ncol = 2, scales='free_y')
+```
+
 
 ```{r export-csv, message=FALSE, warning = FALSE, results = 'hide'}
 df_wq$Year <- lubridate::year(df_wq$Date)
