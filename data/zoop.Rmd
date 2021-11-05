@@ -41,28 +41,8 @@ zoop_stations<-read_csv(file.path(tempdir(), "zoop_station_lookup.csv"))%>%
 Load zoop data
 ```{r}
 zoop_data<-Zoopsynther(Data_type="Community", Sources="EMP", Time_consistency = TRUE)%>%
-  filter(Station%in%zoop_stations$StationNZ)%>%
   mutate(Month=month(Date))
 ```
-
-Summarize zoop effort by date and station
-```{r}
-zoop_data_station<-zoop_data%>%
-  select(Month, Year, Station)%>%
-  distinct()%>%
-  mutate(type="present")%>%
-  complete(Month, Year, Station, fill=list(type="missing"))%>%
-  mutate(Date=dmy(paste("1", Month, Year)))
-```
-
-Plot zoop effort by date and station
-```{r}
-ggplot(zoop_data_station, aes(x=Date, y=Station, color=type))+
-  geom_point()+
-  scale_color_manual(values=c("firebrick3", "black"))+
-  theme_bw()
-```
-
 
 Summarize zoop effort by month and year
 ```{r}
@@ -81,19 +61,89 @@ ggplot(zoop_data_sum, aes(y=Month, x=Year, fill=N))+
   theme_bw()
 ```
 
-Remove stations that aren't continuous
+Summarize zoop effort by date and station
 ```{r}
-zoop_data_continuous<-filter(zoop_data, !Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))
-
-# Make sure the right number of stations was removed
-length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))==6
+zoop_data_station<-zoop_data%>%
+  select(Month, Year, Station)%>%
+  distinct()%>%
+  mutate(type="present")%>%
+  complete(Month, Year, Station, fill=list(type="missing"))%>%
+  mutate(Date=dmy(paste("1", Month, Year)))
 ```
 
-Plot the final set of stations
+Plot zoop effort by date and station for annual metrics
+```{r}
+ggplot(zoop_data_station%>%filter(Station%in%zoop_stations$StationNZ), aes(x=Date, y=Station, color=type))+
+  geom_point()+
+  scale_color_manual(values=c("firebrick3", "black"))+
+  theme_bw()
+```
+
+Find zoop stations that can be used for monthly metrics
+```{r}
+zoop_stations_month<-zoop_data%>%
+  filter(Year>=1995)%>%
+  group_by(Station, Month)%>%
+  summarise(N_years=n_distinct(Year), .groups="drop")%>%
+  filter(N_years>=22)%>%
+  group_by(Station)%>%
+  summarise(N_months=n_distinct(Month))%>%
+  filter(N_months==12)
+```
+
+Plot zoop effort by date and station for monthly metrics
+```{r}
+ggplot(zoop_data_station%>%filter(Station%in%zoop_stations_month$Station), aes(x=Date, y=Station, color=type))+
+  geom_point()+
+  scale_color_manual(values=c("firebrick3", "black"))+
+  theme_bw()
+```
+
+Create annual data set with final set of annual stations
+```{r}
+zoop_data_annual<-zoop_data%>%
+  filter(Station%in%zoop_stations$StationNZ)%>%
+  filter(!Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))%>% # Renove stations that aren't continuous in time
+  filter(Month%in%3:11)
+
+# Make sure the right number of stations was removed
+length(setdiff(unique(zoop_data$Station), unique(zoop_data_annual$Station)))==6
+
+# Save list of annual stations
+zoop_data_annual%>%
+  select(Station, Latitude, Longitude)%>%
+  mutate(Survey="EMP zooplantkon")%>%
+  distinct()%>%
+  write_csv("data/stations/stations_zoop_annual.csv")
+```
+
+Plot the final set of annual stations
 ```{r}
 ggplot()+
   geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
-  geom_point(data=zoop_data_continuous%>%select(Station, Latitude, Longitude)%>%distinct(), 
+  geom_point(data=zoop_data_annual%>%select(Station, Latitude, Longitude)%>%distinct(), 
+             aes(x=Longitude, y=Latitude),
+             color="red")
+```
+
+Create monthly data set with final set of monthly stations
+```{r}
+zoop_data_month<-zoop_data%>%
+  filter(Station%in%zoop_stations_month$Station)
+
+# Save list of annual stations
+zoop_data_month%>%
+  select(Station, Latitude, Longitude)%>%
+  mutate(Survey="EMP zooplantkon")%>%
+  distinct()%>%
+  write_csv("data/stations/stations_zoop_month.csv")
+```
+
+Plot the final set of monthly stations
+```{r}
+ggplot()+
+  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
+  geom_point(data=zoop_data_month%>%select(Station, Latitude, Longitude)%>%distinct(), 
              aes(x=Longitude, y=Latitude),
              color="red")
 ```
@@ -127,26 +177,25 @@ zoop_mysid<-read_excel("data/data_in/1972-2020MysidBPUEMatrix.xlsx",
 
 Start processing the zoop data
 ```{r}
-zoop_data_mass<-zoop_data_continuous%>%
+zoop_data_mass<-zoop_data_annual%>%
+  mutate(Taxlifestage=str_remove(Taxlifestage, fixed("_UnID")))%>%
       filter(
         !(SizeClass=="Meso" & #eliminating species which are counted in meso and micro and retained better in the micro net from the meso calcs
             
-            Taxlifestage%in%paste(c("Asplancha Adult", "Copepoda Larva","Cyclopoida Juvenile", "Eurytemora affinis Larva", "Harpacticoida Undifferentiated",
+            Taxlifestage%in%c("Asplanchna Adult", "Copepoda Larva","Cyclopoida Juvenile", "Eurytemora affinis Larva", "Harpacticoida Undifferentiated",
                                     "Keratella Adult", "Limnoithona Adult", "Limnoithona Juvenile", "Limnoithona sinenesis Adult", "Limnoithona tetraspina
                                     Adult", "Oithona Adult", "Oithona Juvenile", "Oithona davisae Adult", "Polyarthra Adult","Pseudodiaptomus Larva", 
-                                    "Rotifera Adult", "Sinocalanus doerrii Larva", "Synchaeta Adult", "Synchaeta bicornis Adult", "Trichocerca Adult")))| 
+                                    "Rotifera Adult", "Sinocalanus doerrii Larva", "Synchaeta Adult", "Synchaeta bicornis Adult", "Trichocerca Adult")) &
             
           !(SizeClass=="Micro" & #removing categories better retained in meso net from micro net matrix
               
-             Taxlifestage%in%paste(c("Cirripedia Larva", "Cyclopoida Adult", "Oithona similis"))) |
-              
-          Family=="Mysidae")%>%
+             Taxlifestage%in%c("Cirripedia Larva", "Cyclopoida Adult", "Oithona similis")))%>%
       left_join(zoop_mass_group, by=c("Taxlifestage", "Lifestage", "Taxname"))%>%
       mutate(BPUE=CPUE*Carbon_mass_micrograms,
-             Group=if_else(Family=="Mysidae", "Mysida", Group))%>%
+             Group=if_else(Order=="Mysida", "Mysida", Group))%>%
   left_join(zoop_mysid, 
             by=c("Group", "SampleID"))%>%
-  filter(!is.na(Group))%>% # This removes the group copepod nauplii
+  filter(!is.na(Group))%>% # This removes anyone without an assigned group
   mutate(BPUE=if_else(is.na(BPUE), BPUE_mysid, BPUE))%>%
       group_by(Year, Group)%>%
       summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%

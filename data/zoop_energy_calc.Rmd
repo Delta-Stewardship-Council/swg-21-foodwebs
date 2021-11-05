@@ -24,13 +24,13 @@ This script is to analyze the energy density of the categories of zooplankton us
 library(tidyverse)
 library(ggplot2)
 
-source("./zoop_energy_functions.R")
+source("./data/zoop_energy_functions.R")
 ```
 
 # Load the data
 All the files are generated with a excel macro so their file names all start the same way. I use map to read them all into a list
 ```{r load_data, }
-data = load_zoop_energy_density("./zoop_energy_data")
+data = load_zoop_energy_density("./data/zoop_energy_data")
 ```
 
 # Process Data

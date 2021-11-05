@@ -1,0 +1,270 @@
+# ---
+# title: "Preliminary SEM Analyses 2"
+# author: "Delta Food Web Team"
+# date: "10/25/2021"
+# output: html_document
+# knit: (function(input, ...) {
+#     rmarkdown::render(
+#       input,
+#       output_dir = '../docs',
+#       knit_root_dir = '..',
+#       envir = globalenv()
+#     )
+#   })
+# ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, message=FALSE}
+library(dplyr)
+library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
+library(lavaan)
+# library(semPlot)
+```
+
+### Import data
+
+```{r dataprep}
+combined=read.csv("data/annual_averages/annual_data_compiled.csv")
+cnames=read.csv("analysis/column_names.csv", stringsAsFactors = F)
+dsub=filter(combined, Year>=1975)
+focaldata=dsub[,cnames$Datacolumn]
+fvars=cnames$Shortname
+colnames(focaldata)=fvars
+```
+
+### Data prep
+
+Log transform, scale
+
+```{r histo}
+#log transform
+logvars=fvars[cnames$Log=="yes"]
+logtrans=function(x) {
+  x2=x[which(!is.na(x))]
+  if(any(x2==0)) {log(x+min(x2[which(x2>0)],na.rm=T))}
+  else {log(x)}
+}
+focaldatalog = focaldata %>% 
+  mutate_at(logvars,logtrans)
+
+#scale data
+fd=focaldatalog
+fd=fd %>% 
+  mutate_at(2:length(fvars),list("1"=lag)) %>% #lag 1
+  mutate_at(2:length(fvars),list("fd"=function(x) c(NA,diff(x)))) %>% #first difference
+  mutate_at(2:length(fvars),list("dtr"=function(x) { #detrend
+    x2=x
+    x2[x2==0]=NA
+    res=residuals(lm(x2~fd$year))
+    out=x
+    out[which(!is.na(x2))]=res
+    return(out)
+  })) %>%
+  mutate_at(-1,scale)
+```
+
+### Time series plots
+
+Original units
+
+```{r timeseries1, fig.width=8, fig.height=11, echo=FALSE}
+#original units
+par(mfrow=c(7,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=focaldata[,1],y=focaldata[,i],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+Log scaled
+
+```{r timeseries2, fig.width=8, fig.height=11, echo=FALSE}
+#log scaled
+par(mfrow=c(7,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+First difference
+
+```{r timeseries3, fig.width=8, fig.height=11, echo=FALSE}
+#first diff
+par(mfrow=c(7,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i+2*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+Detrended
+
+```{r timeseries4, fig.width=8, fig.height=11, echo=FALSE}
+#detrended
+par(mfrow=c(7,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i+3*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+### Bivariate plots
+
+```{r bivariate, fig.width=9, fig.height=9, echo=FALSE}
+psych::pairs.panels(dplyr::select(fd, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, clams, tphos),lm = T)
+```
+
+### SEM model
+
+Best model so far
+
+```{r}
+model4='zoop=~hcope+clad+mysid
+        fish=~estfish+estfish_bsmt+estfish_bsot
+        zoop~sside+chla
+        chla~clams+flow
+        fish~zoop+flow+sside
+        hcope~~mysid
+        clad~~mysid
+        hcope~~clad'
+modfit4=sem(model4, data=fd)
+summary(modfit4, standardized=T, rsq=T)
+semPaths(modfit4, "std", edge.label.cex = 1, residuals = F)
+semPaths(modfit4, "par", edge.label.cex = 1, residuals = F)
+```
+
+Same model with detrended data
+
+```{r}
+model4b='zoop=~hcope_dtr+clad_dtr+mysid_dtr
+        fish=~estfish_dtr+estfish_bsmt_dtr+estfish_bsot_dtr
+        zoop~sside_dtr+chla_dtr
+        chla_dtr~clams_dtr+flow_dtr
+        fish~zoop+flow_dtr+sside_dtr'
+modfit4b=sem(model4b, data=fd)
+summary(modfit4b, standardized=T, rsq=T)
+semPaths(modfit4b, "std", edge.label.cex = 1, residuals = F)
+semPaths(modfit4b, "par", edge.label.cex = 1, residuals = F)
+```
+
+Old models (not run)
+
+```{r, eval=FALSE}
+model1='clams~year+flow
+        sside~year+flow
+        chla~flow+clams #+year?
+        hcope~chla+pcope #+year?
+        clad~chla+pcope
+        #pcope~year+clams
+        mysid~hcope+pcope
+        estfish~hcope+pcope+mysid+sside'
+modfit1=sem(model1, data=fd)
+summary(modfit1, standardized=T, rsq=T)
+semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
+
+residuals(modfit1)
+
+model1='clams~year+flow
+        sside~year+flow
+        foodsupply=~chla+hcope+clad+mysid
+        foodsupply~clams+flow+sside
+        fish=~estfish+estfish_bsmt
+        fish~foodsupply'
+modfit1=sem(model1, data=fd)
+summary(modfit1, standardized=T, rsq=T)
+semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
+
+model1='foodsupply=~chla+hcope+clad+mysid
+        fish=~estfish+estfish_bsmt
+        foodsupply~clams+flow+sside
+        fish~foodsupply'
+modfit1=sem(model1, data=fd)
+summary(modfit1, standardized=T, rsq=T)
+semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
+
+model2='foodsupply=~chla+hcope+clad+mysid
+        fish=~estfish+estfish_bsmt
+        foodsupply~clams+flow+sside
+        fish~foodsupply+flow+sside'
+modfit2=sem(model2, data=fd)
+summary(modfit2, standardized=T, rsq=T)
+semPaths(modfit2, "std", edge.label.cex = 1, residuals = F)
+
+residuals(modfit2)
+
+
+model3='zoop=~hcope+clad+mysid
+        fish=~estfish+estfish_bsmt
+        zoop~clams+flow+sside+chla
+        chla~clams #+tphos+nitrate+ammonia
+        fish~zoop+flow+sside'
+modfit3=sem(model3, data=fd)
+summary(modfit3, standardized=T, rsq=T)
+semPaths(modfit3, "std", edge.label.cex = 1, residuals = F)
+
+residuals(modfit3, type="cor")
+modificationindices(modfit3)
+
+model4='zoop=~hcope+clad+mysid
+        fish=~estfish+estfish_bsmt+estfish_bsot
+        zoop~sside+chla
+        chla~clams+flow
+        fish~zoop+flow+sside
+        hcope~~mysid
+        clad~~mysid
+        hcope~~clad'
+modfit4=sem(model4, data=fd)
+summary(modfit4, standardized=T, rsq=T)
+semPaths(modfit4, "std", edge.label.cex = 1, residuals = F)
+semPaths(modfit4, "par", edge.label.cex = 1, residuals = F)
+
+residuals(modfit4, type="cor")
+modificationindices(modfit4)
+```
+
+```{r, eval=FALSE}
+#using estfish instead of smelt
+model1f='chla~year+flow+secchi
+        hcope~year+flow+temp+chla+pcope+secchi
+        pcope~year
+        mysid~year+hcope+pcope
+        estfish~year+secchi+hcope+pcope+mysid'
+modfit1f=sem(model1f, data=fd)
+#summary(modfit1f, standardized=T, rsq=T)
+semPaths(modfit1f, "std", edge.label.cex = 1, residuals = F)
+
+#using marfish instead of smelt
+model1g='chla~year+flow+secchi
+        hcope~year+flow+temp+chla+pcope+secchi
+        pcope~year
+        mysid~year+hcope+pcope
+        marfish~year+secchi+hcope+pcope+mysid'
+modfit1g=sem(model1g, data=fd)
+#summary(modfit1g, standardized=T, rsq=T)
+semPaths(modfit1g, "std", edge.label.cex = 1, residuals = F)
+```
+
+Detrended (anomalies) without year effect
+
+```{r, eval=FALSE}
+#smelt
+model2a='chla_dtr~flow_dtr+temp_dtr+secchi_dtr
+         hzoop_dtr~flow_dtr+temp_dtr+secchi_dtr+chla_dtr+pcope_dtr
+         pcope_dtr~flow_dtr+temp_dtr+secchi_dtr
+         mysid_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr
+         smelt_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr+mysid_dtr'
+modfit2a=sem(model2a, data=fd)
+#summary(modfit2a, standardized=T, rsq=T)
+semPaths(modfit2a, "std", edge.label.cex = 1, residuals = F)
+
+#estuarine fishes
+model2b='chla_dtr~flow_dtr+temp_dtr+secchi_dtr
+         hzoop_dtr~flow_dtr+temp_dtr+secchi_dtr+chla_dtr+pcope_dtr
+         pcope_dtr~flow_dtr+temp_dtr+secchi_dtr
+         mysid_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr
+         estfish_dtr~flow_dtr+temp_dtr+secchi_dtr+hzoop_dtr+pcope_dtr+mysid_dtr'
+modfit2b=sem(model2b, data=fd)
+#summary(modfit2b, standardized=T, rsq=T)
+semPaths(modfit2b, "std", edge.label.cex = 1, residuals = F)
+```
+
