@@ -36,6 +36,19 @@ library(janitor)
 * take mean of lat/lon for each site
     -  some sites moved slightly, and some years don't have lat/lons for the sites. Assume minor site movement is negligable (may need to verify)
 
+```{r}
+ben <- tryCatch(
+  read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv", show_col_types = FALSE),
+  error=function(cond) {
+    message(paste("Benthic file does not exist locally, so get it from the KNB."))
+    ben <- read_csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a", method = "libcurl"), show_col_types = FALSE)
+    return(ben)
+  }
+)
+```
+
+
+
 ```{r, message=FALSE}
 ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
   mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
