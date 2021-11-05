@@ -4,13 +4,12 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 knit: (function(input, ...) {
+    )
     rmarkdown::render(
       input,
       output_dir = 'docs',
       knit_root_dir = "../",
       envir = globalenv()
-    )
-  })
 ---
 
 ```{r setup, include=FALSE}
@@ -129,24 +128,21 @@ Start processing the zoop data
 ```{r}
 zoop_data_mass<-zoop_data_continuous%>%
       filter(
-        (SizeClass=="Meso" & 
-           Taxlifestage%in%paste(c("Acartiella sinensis", "Acartia", "Diaptomidae", 
-                                         "Eurytemora affinis", "Calanoida", "Pseudodiaptomus forbesi", 
-                                         "Pseudodiaptomus marinus", "Sinocalanus doerrii", "Tortanus", 
-                                         "Acanthocyclops", "Cyclopoida", "Bosmina longirostris", 
-                                         "Daphnia", "Diaphanosoma", "Cladocera"), 
-                                       "Adult")) | 
-          (SizeClass=="Micro" & 
-             Taxlifestage%in%paste(c("Limnoithona", "Limnoithona sinensis", "Limnoithona tetraspina", 
-                                           "Oithona davisae", "Oithona similis", "Oithona"), 
-                                         "Adult")) |
+        !(SizeClass=="Meso" & #eliminating species which are counted in meso and micro and retained better in the micro net from the meso calcs
+            
+            Taxlifestage%in%paste(c("Asplancha Adult", "Copepoda Larva","Cyclopoida Juvenile", "Eurytemora affinis Larva", "Harpacticoida Undifferentiated",                                      "Keratella Adult", "Limnoithona Adult", "Limnoithona Juvenile", "Limnoithona sinenesis Adult", "Limnoithona tetraspina                                         Adult", "Oithona Adult", "Oithona Juvenile", "Oithona davisae Adult", "Polyarthra Adult","Pseudodiaptomus Larva",                                             "Rotifera Adult", "Sinocalanus doerrii Larva", "Synchaeta Adult", "Synchaeta bicornis Adult", "Trichocerca Adult")))| 
+            
+          !(SizeClass=="Micro" & #removing categories better retained in meso net from micro net matrix
+              
+             Taxlifestage%in%paste(c("Cirripedia Larva", "Cyclopoida Adult", "Oithona similis"))) |
+              
           Family=="Mysidae")%>%
       left_join(zoop_mass_group, by=c("Taxlifestage", "Lifestage", "Taxname"))%>%
       mutate(BPUE=CPUE*Carbon_mass_micrograms,
              Group=if_else(Family=="Mysidae", "Mysida", Group))%>%
   left_join(zoop_mysid, 
             by=c("Group", "SampleID"))%>%
-  filter(!is.na(Group))%>% # This removes the cirripedia, harpacticoids, diaptomidae, and all oithona because they aren't Delta Smelt prey
+  filter(!is.na(Group))%>% # This removes the group copepod nauplii
   mutate(BPUE=if_else(is.na(BPUE), BPUE_mysid, BPUE))%>%
       group_by(Year, Group)%>%
       summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
