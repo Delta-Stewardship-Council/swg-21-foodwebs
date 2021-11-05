@@ -23,7 +23,7 @@ library(LTMRdata)
 library(tidyverse)
 library(lubridate)
 library(ggmap)
-source('functions/nutrient_funcs.R', local = TRUE)
+source('../functions/nutrient_funcs.R', local = TRUE)
 
 ```
 
@@ -139,7 +139,7 @@ DJFMP_Silverside_seine_subset$Station<-as.factor(DJFMP_Silverside_seine_subset$S
 levels(DJFMP_Silverside_seine_subset$Station)[levels(DJFMP_Silverside_seine_subset$Station)=="SR012W"] <- "SR012E"
 
 DJFMP_Silverside_seine_subset<- DJFMP_Silverside_seine %>% mutate(Month=month(Date),Year=year(Date),Biomass=ifelse(is.na(Length),0, (0.0097*(Length^2.87))*Count)) %>%
-  filter(Station %in% DJFMP_Coords_study_stations_subset$Station & Month %in% c(1:5)) %>%
+  filter(Station %in% DJFMP_Coords_study_stations_subset_annual$Station & Month %in% c(1:5)) %>%
   group_by(Year, Month, Station, Datetime) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%
   group_by(Year, Month, Station) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
   group_by(Year, Month) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
@@ -148,4 +148,32 @@ DJFMP_Silverside_seine_subset<- DJFMP_Silverside_seine %>% mutate(Month=month(Da
 write.csv(DJFMP_Silverside_seine_subset,row.names=FALSE,file=file.path("annual_averages/fish_DJFMP.csv"))
 
 ```
+
+## List of stations for monthly data
+
+Show sampling effort since 1995 for stations
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+DJFMP_seine_sampling_effort_monthly<- DJFMP_seine_sampling_effort %>% filter(Station %in% DJFMP_Coords_study_stations$Station, Year >=1995)
+
+ggplot(DJFMP_seine_sampling_effort_monthly,aes(x=Year,y=Month,fill=sample_size))+geom_tile()+facet_wrap(~Station)+
+  scale_x_continuous(breaks=c(1995,2000,2005,2010,2015,2020))+ scale_y_continuous(breaks=c(1:12)) + labs(title= "DJFMP station sampling effort by month and year")
+```
+
+Combine SJ058E with SJ058W and SR012E with SR012W
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+DJFMP_seine_sampling_effort_monthly$Station<-as.factor(DJFMP_seine_sampling_effort_monthly$Station)
+levels(DJFMP_seine_sampling_effort_monthly$Station)[levels(DJFMP_seine_sampling_effort_monthly$Station)=="SR012W"] <- "SR012E"
+levels(DJFMP_seine_sampling_effort_monthly$Station)[levels(DJFMP_seine_sampling_effort_monthly$Station)=="SJ058E"] <- "SJ058W"
+
+ggplot(DJFMP_seine_sampling_effort_monthly,aes(x=Year,y=Month,fill=sample_size))+geom_tile()+facet_wrap(~Station)+
+  scale_x_continuous(breaks=c(1995,2000,2005,2010,2015,2020))+ scale_y_continuous(breaks=c(1:12)) + labs(title= "DJFMP station sampling effort by month and year")
+```
+
+All stations look somewhat usable. Export current list of monthly stations to data_stations folder.
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+write.csv((DJFMP_Coords_study_stations %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("data_stations/Final_stations_fish_DJFMP_monthly.csv"))
+```
+
 
