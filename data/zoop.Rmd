@@ -130,7 +130,10 @@ zoop_data_mass<-zoop_data_continuous%>%
       filter(
         !(SizeClass=="Meso" & #eliminating species which are counted in meso and micro and retained better in the micro net from the meso calcs
             
-            Taxlifestage%in%paste(c("Asplancha Adult", "Copepoda Larva","Cyclopoida Juvenile", "Eurytemora affinis Larva", "Harpacticoida Undifferentiated",                                      "Keratella Adult", "Limnoithona Adult", "Limnoithona Juvenile", "Limnoithona sinenesis Adult", "Limnoithona tetraspina                                         Adult", "Oithona Adult", "Oithona Juvenile", "Oithona davisae Adult", "Polyarthra Adult","Pseudodiaptomus Larva",                                             "Rotifera Adult", "Sinocalanus doerrii Larva", "Synchaeta Adult", "Synchaeta bicornis Adult", "Trichocerca Adult")))| 
+            Taxlifestage%in%paste(c("Asplancha Adult", "Copepoda Larva","Cyclopoida Juvenile", "Eurytemora affinis Larva", "Harpacticoida Undifferentiated",
+                                    "Keratella Adult", "Limnoithona Adult", "Limnoithona Juvenile", "Limnoithona sinenesis Adult", "Limnoithona tetraspina
+                                    Adult", "Oithona Adult", "Oithona Juvenile", "Oithona davisae Adult", "Polyarthra Adult","Pseudodiaptomus Larva", 
+                                    "Rotifera Adult", "Sinocalanus doerrii Larva", "Synchaeta Adult", "Synchaeta bicornis Adult", "Trichocerca Adult")))| 
             
           !(SizeClass=="Micro" & #removing categories better retained in meso net from micro net matrix
               
