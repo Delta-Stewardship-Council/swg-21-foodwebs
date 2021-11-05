@@ -1,9 +1,11 @@
 ---
-title: "Data_wrangling_fish"
+title: "Survey extents"
 author: "Denise-Colombano"
-date: "10/28/2021"
-output: html_document
-editor_options: 
+date: "11/5/2021"
+output:
+  html_document: default
+  pdf_document: default
+editor_options:
   chunk_output_type: console
 ---
 
@@ -15,9 +17,18 @@ The purpose of this script is to evaluate the spatial and temporal overlap of
 the different surveys used in the SEM.
 
 Inventory datasets:
-- Fish: FMWT, Bay Study
-- Zoop: EMP
-- [TBD]
+
+Annual SEM:
+- Fish: FMWT, Bay Study, DJFMP Beach seine (ISS)
+- Zoop/nutrients: EMP
+- Benthic: EMP Benthic
+- Flows: Dayflow
+
+Monthly SEM:
+- Fish:
+- Zoop/ nutrients:
+- Benthic: 
+- Flows: Dayflow
 
 
 # Load libraries
@@ -34,6 +45,8 @@ library(janitor)
 # Fish surveys
 
 Query the CDFW Fall Midwater Trawl and Bay Study data sets from the LTMRdata package.
+
+## FMWT
 ```{r}
 library(LTMRdata)
 
@@ -92,6 +105,49 @@ ggplot(Fallmwt, aes(Longitude, Latitude))+
 ```
 
 
+## DJFMP Seine
+
+Load data using Sam's LTMRdata package and show map of beach seine stations. Code from BM "fish_DJFMP.Rmd"
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+library(ggmap)
+
+DJFMP_Silverside_seine <-LTMRdata::fish(sources="DJFMP", 
+                                        species="Menidia audens", 
+                                        size_cutoff=NULL,remove_unknown_lengths=FALSE) %>%
+                                  filter(Method=="Beach seine")
+
+#Map
+DJFMP_Coords<-DJFMP_Silverside_seine %>% group_by(Station) %>% 
+  summarise(Latitude=mean(Latitude),Longitude=mean(Longitude))
+DJFMP_Coords<-DJFMP_Coords[complete.cases(DJFMP_Coords), ]
+
+buffer <- 0.05
+coordDict = list(
+  'minLat' = min(DJFMP_Coords$Latitude) - buffer,
+  'maxLat' = max(DJFMP_Coords$Latitude) + buffer,
+  'minLon' = min(DJFMP_Coords$Longitude) - buffer,
+  'maxLon' = max(DJFMP_Coords$Longitude) + buffer
+)
+
+map_obj <- get_stamenmap(
+  bbox = c(left = coordDict[['minLon']], bottom = coordDict[['minLat']], right = coordDict[['maxLon']], top = coordDict[['maxLat']]),
+  zoom = 10,
+  maptype = 'terrain'
+)
+
+# plot the map
+map <- ggmap(map_obj) +
+  theme_void() +
+  geom_point(data = DJFMP_Coords, aes(x = Longitude, y = Latitude), shape = 21, fill = 'red', size = 3) +
+  geom_text(data = DJFMP_Coords, aes(label = Station, x = Longitude, y = Latitude), vjust = 0, hjust = 0, size=2.5)
+
+map
+
+```
+
+
+
 # Zoop surveys
 
 Query the EMP data from the Zooper package. Borrow code from "zoop.Rmd" by S.B.
@@ -145,7 +201,7 @@ ggplot(zoop_emp, aes(Longitude, Latitude))+
   scale_color_viridis_d()
 ```
 
-# Fish + Zoop
+## Fish + Zoop
 Layer them on top of each other
 ```{r}
 # map for each year
@@ -185,7 +241,7 @@ Data lives here.
 
 Code borrowed from the benthic.Rmd by JC
 ```{r, message=FALSE}
-ben <- read_csv("data_in/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
+ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
   mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
   mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% 
   group_by(StationClean) %>% 
@@ -250,13 +306,57 @@ ggplot(core_data, aes(x = mon, y = StationClean), size = 3) +
 ```
 
 
+## Pesticide data
+```{r}
+# library(dataRetrieval)
+# ?dataRetrieval
+```
 
-# Plot altogether
+
+# Regional designations
+
+Code from deltamapr documentation. https://github.com/InteragencyEcologicalProgram/deltamapr#regions
+```{r}
+library(deltamapr)
+library(ggplot2)
+library(sf)
+
+# query region
+deltamapr::R_EDSM_Regions_1617P1
+st_crs(R_EDSM_Regions_1617P1) <- 26910
+ggplot(R_EDSM_Regions_1617P1)+
+   geom_sf(aes(fill=Region))+
+   theme_bw()
+
+deltamapr::R_EDSM_Subregions_Mahardja
+st_crs(R_EDSM_Subregions_Mahardja) <- 26910
+ggplot(R_EDSM_Subregions_Mahardja)+
+   geom_sf(aes(fill=Region))+
+   theme_bw()
+
+
+polygon%>%st_transform(crs=4326)%>%st_coordinates()
+```
+
+# Annual map
 ```{r, message = FALSE, echo = FALSE}
 # J.C. packages
 
+#If you want to use predefined palettes in the RColorBrewer package:
+# Call RColorBrewer::display.brewer.all() to see all possible palettes
+pal <- colorFactor(
+  palette = 'viridis',
+  domain = R_EDSM_Subregions_Mahardja$SubRegion
+)
+
+?colorFactor
+
+
 leaflet(sites) %>% 
   addTiles() %>% 
+  addPolygons(data=R_EDSM_Subregions_Mahardja %>% st_transform(crs=4326),
+              color = ~pal(SubRegion),
+              label = ~SubRegion) %>% 
   addCircleMarkers(data = Fallmwt,
                          lat = ~Latitude,
                          lng = ~Longitude,
@@ -264,7 +364,6 @@ leaflet(sites) %>%
                          fillColor = "gray",
                          fillOpacity = 0.5,
                          weight = 0.1,
-                         color = "black",
                          label = ~Station) %>% 
   addCircleMarkers(data = Baystudy,
                          lat = ~Latitude,
@@ -294,4 +393,9 @@ leaflet(sites) %>%
                          color = "black",
                          label = ~StationClean)
 ```
+
+
+
+
+
 

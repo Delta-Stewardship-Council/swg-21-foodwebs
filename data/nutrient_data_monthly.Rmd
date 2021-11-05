@@ -1,0 +1,124 @@
+---
+title: "Nutrient Data - Monthly"
+output:
+  html_document:
+    code_folding: hide
+knit: (function(input, ...) {
+  rmarkdown::render(
+    input,
+    output_dir = '../docs',
+    envir = globalenv()
+    )
+  })
+---
+
+```{r imports, echo = FALSE, results='hide', message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggmap)
+library(readr)
+require(discretewq)
+source('../functions/nutrient_funcs.R', local = TRUE)
+
+if(utils::packageVersion('discretewq') < '2.1.0') {
+    stop('discretewq version >= 2.1.0 is required, please update discretewq.')
+    # https://github.com/sbashevkin/discretewq/
+}
+```
+
+```{r read-in-data, warning = FALSE, message = FALSE}
+# read in data
+df_wq <- read_wq_data(monthly = TRUE)
+```
+
+# Check Temporal Coverage
+```{r check-temporal-coverage, fig.width=15, fig.height=8}
+# check temporal coverage
+plt <- check_temporal_coverage(df_wq)
+
+plt
+```
+
+Core stations are:
+
+* P8
+* MD10A
+* D8
+* D7
+* D6
+* D41
+* D4
+* D28A
+* D26
+* D22
+* D16
+* D12
+* D10
+* C3/C3A?
+* C10/C10A?
+
+# Subset out Relevant Stations
+```{r subset-relevant-stations}
+# subset stations
+station_list <- c('P8','MD10A','D8','D7','D6','D41','D4','D28A','D26','D22','D16','D12','D10','C3','C3A','C10','C10A')
+df_wq <- df_wq[df_wq$Station %in% station_list,]
+
+# check temporal coverage
+plt <- check_temporal_coverage(df_wq)
+plt
+```
+
+# Check Spatial Coverage
+```{r check-spatial-coverage, results='hide', message=FALSE, warning = FALSE, results = 'hide'}
+map <- create_station_map(df_wq)
+map
+```
+
+# Check if C3/C3A and C10/C10A can be combined {.tabset .tabset-pills}
+```{r, results='asis'}
+analytes <- unique(df_wq$Analyte)
+stations_list <- list(c('C10','C10A'),c('C3','C3A'))
+
+for (stations in stations_list){
+  cat('\n##', stations, '{.tabset .tabset-fade .tabset-pills}')
+  for (analyte in analytes){
+    cat('\n###', analyte, '\n')
+    df_check <- df_wq %>% filter(Station %in% stations, Analyte == analyte)
+    plt <- ggplot(df_check) +
+      geom_line(aes(Date, Value, color = Station)) +
+      ylab(analyte)
+  
+    plot(plt)
+    cat('\n')
+  }
+}
+```
+
+#
+Looks good to me, so will combine the stations.
+```{r final-temporal-check}
+df_wq <- combine_wq_stations(df_wq)
+
+# check temporal coverage
+plt <- check_temporal_coverage(df_wq)
+plt
+```
+
+```{r check-scatter-plots, fig.width=15, fig.height=8}
+ggplot(data=df_wq, aes(Date, Value, color = Station)) +
+	geom_point() +
+	facet_wrap( ~ Analyte, ncol = 2, scales='free_y')
+```
+
+
+```{r export-csv, message=FALSE, warning = FALSE, results = 'hide'}
+df_wq$Year <- lubridate::year(df_wq$Date)
+df_wq$Month <- lubridate::month(df_wq$Date)
+
+df_wq_wide <- pivot_wider(data=df_wq, id_cols=c(Date,Station,Year,Month,
+                                                Latitude,Longitude),
+                          names_from=Analyte, values_from=Value)
+
+df_wq_wide$DissAmmonia_uM <- df_wq_wide$DissAmmonia*100*0.5872
+
+write_csv(df_wq_wide, 'monthly_averages/nutrient_data_monthly.csv')
+```

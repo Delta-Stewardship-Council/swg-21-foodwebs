@@ -1,0 +1,79 @@
+---
+title: "Zoo Energy Densities"
+author: "Peter Dudley"
+date: "10/29/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Get Zoo energy density
+This script is to analyze the energy density of the categories of zooplankton used in out SEM food web model. 
+
+# Libraries and sourced functions used
+```{r load_libraries, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+
+source("./zoop_energy_functions.R")
+```
+
+# Load the data
+All the files are generated with a excel macro so their file names all start the same way. I use map to read them all into a list
+```{r load_data, }
+data = load_zoop_energy_density("./zoop_energy_data")
+```
+
+# Process Data
+If there are groups that are larger then our categories, make entries for each sub
+category containing that data the rows for each one
+```{r}
+summary_ratio = summarize_zoop(data$ratio,
+                             "dry_to_wet_ratio")
+
+# convert wet to dry if data available
+converted_dry = convert_zoop_energy_density(ratio_df = summary_ratio,
+                                            energy_df = data$wet,
+                                            convert_to = "dry") %>% 
+  bind_rows(data$dry)
+
+converted_wet = convert_zoop_energy_density(ratio_df = summary_ratio,
+                                            energy_df = data$dry,
+                                            convert_to = "wet") %>% 
+  bind_rows(data$wet)
+
+```
+
+Convert all to wet weight and print a table
+```{r}
+
+wet_summary = summarize_zoop(converted_wet,
+                             "energy_density_j_per_g_wet_mass") 
+print(wet_summary)
+
+```
+# Plots
+Print a box plot of the data
+```{r fig1, fig.height = 8, fig.width = 5}
+density_plot = ggplot(data = converted_wet,
+                      aes(x = fct_reorder(group, energy_density_j_per_g_wet_mass),
+                          y = energy_density_j_per_g_wet_mass)) + 
+  theme_classic(base_size = 20) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(x = "Group",
+       y = "Energy Density (j/g wet mass)" ) +
+  geom_boxplot() +
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=2, binwidth = 30, alpha = 0.2)+
+  stat_summary(fun=mean, geom="point", color = "red", shape=23, size=4, stroke = 2)
+print(density_plot)
+```
+

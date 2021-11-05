@@ -30,21 +30,47 @@ combo_dayflow$Water_year <- w.year
 
 #remove 1969 because there's no matching year it in water year, since sampling started in october.
 combo_dayflow_CY<-combo_dayflow[-c(1:92), ]
+
+#######average monthly flow##
+
+#monthly_average_deltawide_flow<-combo_dayflow %>%
+ # group_by(Month) %>%
+  #summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(MISC),
+   #         mean(SJR), mean(XGEO),mean(EXPORT))
+#monthly_average_deltawide_flow<-rename(monthly_average_deltawide_flow,
+ #                                      c("Mean_OUT" = "value"))
+
+monthly <- select(combo_dayflow_CY, c('Date','Month', 'Year','OUT', 'TOT', 'YOLO',
+                                      'SAC', 'MISC', 'SJR', 'XGEO','EXPORT') )
+monthly2<- monthly %>%
+  group_by(Year, Month) %>%
+  summarise(mean_outflow = mean(OUT), mean_inflow = mean(TOT), mean_SAC = mean(YOLO), mean_SAC = mean(SAC), mean_export = mean(EXPORT),
+           mean_MISC = mean(MISC), mean_SJR = mean(SJR), mean_XGEO = mean(XGEO), mean_EXPORT = mean(EXPORT))
+write_csv(monthly2, file.path("monthly_averages","monthly_average_flow.csv"))
+
+
+head(combo_dayflow_CY)
 ##average total outflow, inflow, Yolo, Sac, export by calendar year
 annual_average_deltawide_flow<-combo_dayflow_CY %>%
   group_by(Year) %>%
   summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(EXPORT))
 #name column for flow
-annual_average_deltawide_flow_CY<-rename(annual_average_deltawide_flow,c("Calendar_Year" = "Year","Mean_outflow_CY" = "value", "Mean_inflow_CY" = "mean(TOT)",
-                                      "Mean_YOLO_CY" = "mean(YOLO)", "Mean_SAC_CY" = "mean(SAC)", "Mean_Export_CY" = "mean(EXPORT)"))
+annual_average_deltawide_flow_CY<-rename(annual_average_deltawide_flow,
+                                         c("Calendar_Year" = "Year","Mean_outflow_CY" =
+                                             "value", "Mean_inflow_CY" = "mean(TOT)",
+                                      "Mean_YOLO_CY" = "mean(YOLO)", "Mean_SAC_CY" =
+                                        "mean(SAC)", "Mean_Export_CY" = "mean(EXPORT)"))
 
 ##average total outflow, inflow, Yolo, Sac, export by water year
 WY_annual_average_deltawide_flow<-combo_dayflow %>%
   group_by(Water_year) %>%
   summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(EXPORT))
 #name column for flow
-annual_average_deltawide_flow_WY<-rename(WY_annual_average_deltawide_flow,c("Mean_outflow_WY" = "value", "Mean_inflow_WY" = "mean(TOT)",
-                                                                      "Mean_YOLO_WY" = "mean(YOLO)", "Mean_SAC_WY" = "mean(SAC)", "Mean_Export_WY" = "mean(EXPORT)"))
+annual_average_deltawide_flow_WY<-rename(WY_annual_average_deltawide_flow,
+                                         c("Mean_outflow_WY" = "value", "Mean_inflow_WY" =
+                                             "mean(TOT)", "Mean_YOLO_WY" = "mean(YOLO)",
+                                           "Mean_SAC_WY" = "mean(SAC)",
+                                           "Mean_Export_WY" = "mean(EXPORT)"))
 cy_wy_average_flow<- cbind(annual_average_deltawide_flow_CY,annual_average_deltawide_flow_WY)
 
 library(readr)
@@ -90,7 +116,8 @@ ggplot(combo_dayflow, aes(factor(Month), OUT)) +
   scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) + annotation_logticks(sides = "l")
 
 #data points against julian day.#
-ggplot(combo_dayflow, aes(JDay, OUT)) + geom_point() + geom_smooth() + labs(x = "Julian Day",
-                                                                            y = "Flow (cfs)") + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) +
+ggplot(combo_dayflow, aes(JDay, OUT)) + geom_point() + geom_smooth() +
+  labs(x = "Julian Day",
+  y = "Flow (cfs)") + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)) +
   annotation_logticks(sides = "l")
 
