@@ -12,18 +12,21 @@ convert_zoop_energy_density = function(ratio_df,
                                        energy_df,
                                        convert_to){
   converted_df_1 = ratio_df %>% 
-    na.omit() %>% 
     right_join(energy_df, by = "group") 
   if(convert_to == "dry"){
     converted_df_2 = converted_df_1 %>% 
       mutate(energy_density_j_per_g_dry_mass =
-             energy_density_j_per_g_wet_mass/dry_to_wet_ratio) %>% 
-    select(-energy_density_j_per_g_wet_mass, -dry_to_wet_ratio) 
+             energy_density_j_per_g_wet_mass/dry_to_wet_ratio_mean) %>% 
+    select(-energy_density_j_per_g_wet_mass,
+           -dry_to_wet_ratio_mean,
+           -dry_to_wet_ratio_sd) 
   } else if(convert_to == "wet"){
     converted_df_2 = converted_df_1 %>% 
       mutate(energy_density_j_per_g_wet_mass =
-               energy_density_j_per_g_dry_mass*dry_to_wet_ratio) %>% 
-      select(-energy_density_j_per_g_dry_mass, -dry_to_wet_ratio) 
+               energy_density_j_per_g_dry_mass*dry_to_wet_ratio_mean) %>% 
+      select(-energy_density_j_per_g_dry_mass,
+             -dry_to_wet_ratio_mean,
+             -dry_to_wet_ratio_sd) 
   } else{
     stop("Please select 'wet' or 'dry' for convert_to")
   }
@@ -44,24 +47,30 @@ load_zoop_energy_density = function(foulder){
   return(data)
 }
 
+# a general summarize function for the zoop data frames
+summarize_zoop = function(df, variable){
+  output = df %>% 
+    group_by(group) %>% 
+    summarise(across(c({variable}),
+                     list(mean = mean, sd = sd),
+                     na.rm = TRUE))
+  return(output)
+}
+
 # This is a function you can just run to get the symmary df
 get_zoop_energy_density = function(foulder){
   data = load_zoop_energy_density(foulder) 
   
-  summary_ratio = data$ratio %>% 
-    group_by(group) %>% 
-    summarize(dry_to_wet_ratio = mean(dry_to_wet_ratio))
+  summary_ratio = summarize_zoop(data$ratio,
+                                 "dry_to_wet_ratio")
   
   converted_wet = convert_zoop_energy_density(ratio_df = summary_ratio,
                                               energy_df = data$dry,
                                               convert_to = "wet") %>% 
     bind_rows(data$wet)
   
-  wet_summary = converted_wet %>% 
-    group_by(group) %>% 
-    summarise(mean_energy_density = mean(energy_density_j_per_g_wet_mass),
-              energy_density_sd = sd(energy_density_j_per_g_wet_mass))
-  print(wet_summary)
+  wet_summary = summarize_zoop(converted_wet,
+                               "energy_density_j_per_g_wet_mass") 
   
   return(wet_summary)
   
