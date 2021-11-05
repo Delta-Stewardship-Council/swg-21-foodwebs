@@ -42,7 +42,11 @@ combo_dayflow_CY<-combo_dayflow[-c(1:92), ]
 
 monthly <- select(combo_dayflow_CY, c('Date','Month', 'Year','OUT', 'TOT', 'YOLO',
                                       'SAC', 'MISC', 'SJR', 'XGEO','EXPORT') )
-write_csv(monthly, file.path("monthly_averages","monthly_average_flow.csv"))
+monthly2<- monthly %>%
+  group_by(Year, Month) %>%
+  summarise(mean_outflow = mean(OUT), mean_inflow = mean(TOT), mean_SAC = mean(YOLO), mean_SAC = mean(SAC), mean_export = mean(EXPORT),
+           mean_MISC = mean(MISC), mean_SJR = mean(SJR), mean_XGEO = mean(XGEO), mean_EXPORT = mean(EXPORT))
+write_csv(monthly2, file.path("monthly_averages","monthly_average_flow.csv"))
 
 
 head(combo_dayflow_CY)
