@@ -181,7 +181,23 @@ zoop_data_continuous<-filter(zoop_data, !Station%in%c("NZEZ6", "NZEZ2", "NZD16",
 length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))==6
 
 str(zoop_data_continuous)
+
+zoop_data_continuous2 <- zoop_data_continuous %>% 
+  distinct(Station)
 ```
+
+
+"Final" stations for annual model (12)
+```{r}
+zoop_annual <- read_csv("data/stations/stations_zoop_annual.csv")
+```
+
+
+"Final" stations for monthly model (15)
+```{r}
+zoop_month <- read_csv("data/stations/stations_zoop_month.csv")
+```
+
 
 Assess sampling density across space and time
 ```{r}
@@ -340,16 +356,12 @@ polygon%>%st_transform(crs=4326)%>%st_coordinates()
 
 # Annual map
 ```{r, message = FALSE, echo = FALSE}
-# J.C. packages
-
 #If you want to use predefined palettes in the RColorBrewer package:
 # Call RColorBrewer::display.brewer.all() to see all possible palettes
 pal <- colorFactor(
   palette = 'viridis',
   domain = R_EDSM_Subregions_Mahardja$SubRegion
 )
-
-?colorFactor
 
 
 leaflet(sites) %>% 
