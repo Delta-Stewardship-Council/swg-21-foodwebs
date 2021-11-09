@@ -33,6 +33,8 @@ The FMWT is mandated by the Delta Smelt Biological Opinion for the coordinated o
 library(LTMRdata)
 library(tidyverse)
 library(lubridate)
+library(ggmap)
+source('../functions/nutrient_funcs.R', local = TRUE)
 
 ```
 ## Sampling effort summary
