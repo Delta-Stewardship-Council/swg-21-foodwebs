@@ -113,23 +113,30 @@ df_wq$Year <- lubridate::year(df_wq$Date)
 
 empwq_annual_mean <- df_wq %>%
 	dplyr::group_by(Analyte, Year) %>%
-	dplyr::summarize(MeanValue=mean(Value, na.rm=TRUE), .groups="drop")
+	dplyr::summarize(MeanValue=mean(Value, na.rm=TRUE), .groups='drop')
 
 
 ggplot(data=empwq_annual_mean, aes(Year, MeanValue)) +
 	geom_point() +
-	facet_wrap( ~ Analyte, scales="free_y")
+	facet_wrap( ~ Analyte, scales='free_y')-
 ```
 
 
-```{r export-csv}
+```{r create-stations-df}
+df_stations <- subset(df_wq, select = c(Station, Latitude, Longitude))
+df_stations <- distinct(df_stations)
+
+# subset out coords for merged stations
+df_stations <- df_stations[!(df_stations$Latitude %in% c(38.04381, 37.67575, 38.34575)),]
+```
+
+
+```{r export-csvs, message=FALSE, warning = FALSE, results = 'hide'}
 empwq_annual_mean_wide <- pivot_wider(data=empwq_annual_mean, id_cols=Year,
                                       names_from=Analyte, values_from=MeanValue)
 
-```
-
-```{r export-csv, message=FALSE, warning = FALSE, results = 'hide'}
 write_csv(empwq_annual_mean_wide, 'data/annual_averages/nutrient_data_yearly.csv')
+write_csv(df_stations, 'data/stations/stations_nutrients_annual.csv')
 ```
 
 
