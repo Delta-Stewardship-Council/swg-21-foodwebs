@@ -22,6 +22,7 @@ library(dplyr)
 library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
 library(lavaan)
 library(semPlot)
+library(DiagrammeR)
 ```
 
 ### Import data
@@ -33,6 +34,8 @@ dsub=filter(combined, Year>=1975)
 focaldata=dsub[,cnames$Datacolumn]
 fvars=cnames$Shortname
 colnames(focaldata)=fvars
+
+source("analysis/myLavaanPlot.r")
 ```
 
 ### Data prep
@@ -131,6 +134,24 @@ modfit4=sem(model4, data=fd)
 summary(modfit4, standardized=T, rsq=T)
 semPaths(modfit4, "std", edge.label.cex = 1, residuals = F)
 semPaths(modfit4, "par", edge.label.cex = 1, residuals = F)
+
+# lavaan::parameterestimates(modfit4)
+
+labels1 <- createLabels(modfit4, cnames)
+
+## Diagram without model covariances:
+myLavaanPlot(model=modfit4, labels=labels1, 
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+
+## Diagram with model covariances:
+myLavaanPlot(model=modfit4, labels=labels1, 
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
 ```
 
 Same model with detrended data
