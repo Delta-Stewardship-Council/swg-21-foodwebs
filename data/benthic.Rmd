@@ -45,6 +45,41 @@ ben_raw <- tryCatch(
     return(ben_raw)
   }
 )
+
+# read in absolute fp
+abs_path <- function(fp_rel = NULL, org = ) {
+  # set org fp
+  if (org == 'dwr'){
+    fp_org <- 'California Department of Water Resources'
+  }
+  
+  fp_fastr <- 'California Department of Water Resources/Drought Synthesis - Documents/'
+  
+  if (is.null(fp_rel)) {
+    fp_abs <- normalizePath(file.path(Sys.getenv('USERPROFILE'), fp_fastr))
+  } else {
+    fp_abs <- normalizePath(file.path(Sys.getenv('USERPROFILE'), fp_fastr, fp_rel))
+  }
+  
+  return(fp_abs)
+}
+
+import_benthic_data <- function(method = 'tryCatch', org = NULL) {
+  if(method == 'tryCatch'){
+    tryCatch(
+      read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv", show_col_types = FALSE),
+      error=function(cond) {
+        message(paste("Benthic file does not exist locally, so get it from the KNB."))
+        ben_raw <- read_csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a", method = "libcurl"), show_col_types = FALSE)
+        return(ben_raw)
+  }
+)
+  if(method == 'sharepoint_dwr'){
+    
+  }
+    
+  }
+}
 ```
 
 
@@ -150,70 +185,6 @@ leaflet(sites) %>%
 For both clam genera, Potamocorbula and Corbicula.
 
 Code adapted from [Sarah's work here](https://github.com/emp-des/annual-report-graphs/blob/master/Benthic/Benthic_AR_Template.Rmd)
-
-```{r}
-ben_clams  <- ben %>%
-  filter(Genus %in% c("Potamocorbula", "Corbicula")) %>% 
-  group_by(Month, Year, StationCode) %>%
-  mutate(Grab_Count = max(Grab)) %>%
-  ungroup() %>%
-  group_by(Month, Year) %>%
-  mutate(Station_Count = n_distinct(StationCode),
-         Grab_Count = Grab_Count*Station_Count) %>%
-  ungroup() %>%
-  group_by(Genus, Month, Year, Grab_Count, Station_Count) %>%
-  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop")
-
-
-
-ben_clams$Date <- with(ben_clams, paste(Month, Year))
-
-# get grab variable
-df_grab_vari <- ben_clams[!duplicated(ben_clams$Date),]
-
-```
-
-Examine where data dropping  might havee issues
-
-```{r}
-i <- which(!duplicated(ben_clams$Date))
-
-ben_clams$keep <- "Yes"
-ben_clams$keep[i] <- "No"
-
-DT::datatable(select(ben_clams, keep, Grab_Count, Month, Year, Station_Count) %>% 
-                arrange(Year))
-
-```
-
-
-```{r}
-
-df_grab_vari <- df_grab_vari %>%
-  group_by(Year) #%>%
-  summarize(Grab_Count = sum(Grab_Count), .groups = "drop") 
-
-# create df of totals by year
-df_year_sums <- ben_clams %>%
-  group_by(Genus, Year) %>%
-  summarize(Orgs_Total = sum(Orgs_Total, na.rm = TRUE), .groups = "drop") 
-
-df_year_sums <-  merge(df_year_sums, df_grab_vari, by = 'Year', all.x=FALSE, all.y=FALSE)
-
-df_year_CPUE <- df_year_sums %>%
-  mutate(CPUE_Total = Orgs_Total/Grab_Count/0.052) %>%
-  select(-Orgs_Total, -Grab_Count) %>% 
-  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
-  rename(corbicula_cpue = Corbicula,
-         potamocorbula_cpue = Potamocorbula)  %>% 
-  clean_names()
-
-```
-
-
-##  Corrected CPUE calcs
-
-**Needs review by Sarah**
 
 ```{r}
 grabs_month  <- ben %>%
