@@ -180,7 +180,7 @@ leaflet(sites) %>%
                          label = ~StationClean)
 ```
 
-## Annual Average CPUE (potentially problematic)
+## Annual Average CPUE
 
 For both clam genera, Potamocorbula and Corbicula.
 
