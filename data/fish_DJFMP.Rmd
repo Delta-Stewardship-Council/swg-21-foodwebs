@@ -173,7 +173,7 @@ ggplot(DJFMP_seine_sampling_effort_monthly,aes(x=Year,y=Month,fill=sample_size))
 All stations look somewhat usable. Export current list of monthly stations to data_stations folder.
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-write.csv((DJFMP_Coords_study_stations %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("data_stations/Final_stations_fish_DJFMP_monthly.csv"))
+write.csv((DJFMP_Coords_study_stations %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("stations/Final_stations_fish_DJFMP_monthly.csv"))
 ```
 
 
