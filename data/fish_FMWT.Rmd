@@ -228,10 +228,17 @@ plot(FMWT_annual_values_CPUE$FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fi
 
 FMWT_annual_values<-full_join(FMWT_annual_values_CPUE,FMWT_annual_values_biomass)
 
-
 write.csv(FMWT_annual_values,row.names=FALSE,file=file.path("annual_averages/fish_FMWT.csv"))
 
 ```
 
+Lastly, export out station list to data/stations folder
 
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+
+FMWT_Coords_stations<- data.frame(FMWT_combined) %>% filter(Station %in% FMWT_index_stations_only$Station) %>% group_by(Station) %>% summarise(Latitude=mean(Latitude, na.rm = TRUE),Longitude=mean(Longitude, na.rm = TRUE)) %>% mutate(Survey="Fall Midwater Trawl")
+
+write.csv(FMWT_Coords_stations,row.names = FALSE,file=file.path("stations/stations_fish_FMWT_annual.csv"))
+
+```
 
