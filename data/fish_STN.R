@@ -77,12 +77,14 @@ ggplot(STN_sample_size,aes(x=Year,y=as.factor(Station),fill=sample_size))+geom_t
   scale_x_continuous(breaks=c(1970,1980,1990,2000,2010,2015,2020)) + labs(title= "STN")
 
 
-#We probably need to remove site 326 and 325 since they're only sampled in one year
+#We probably need to remove the sites below due to lack of repeated data
 `%notin%` <- Negate(`%in%`)
-BayStudyCoords_studyregion<-BayStudyCoords_studyregion %>% filter(Station %notin% c(324,326))
+STNCoords_studyregion<-STNCoords %>% filter(Station %notin%
+  c(797,796,795,723,722,721,719,716,713,36,35,336,335,334,329,328,
+    326,322,320,32,315,312,302,301,24,23,22,21,20 ))
 
-#And add regions from Bay Study for summarizing annual values
-BayStudyCoords_studyregion<-BayStudyCoords_studyregion %>%
+#And add regions from STN for summarizing annual values
+STNCoords_studyregion<-STNCoords_studyregion %>%
   mutate(Region = case_when(
     Station>=300&Station<400 ~ "San Pablo Bay",
     Station>=400&Station<=534 ~ "Suisun Bay",
@@ -92,23 +94,27 @@ BayStudyCoords_studyregion<-BayStudyCoords_studyregion %>%
 #Map showing final list of stations
 map2 <- ggmap(map_obj) +
   theme_void() +
-  geom_point(data = BayStudyCoords_studyregion, aes(x = Longitude, y = Latitude, fill=as.factor(Region)), shape = 21, size = 3) +
-  geom_text(data = BayStudyCoords_studyregion, aes(label = Station, x = Longitude, y = Latitude), vjust = 0, hjust = 0, size=2.5)+
+  geom_point(data = STNCoords_studyregion, aes(x = Longitude, y = Latitude, fill=as.factor(Region)), shape = 21, size = 3) +
+  geom_text(data = STNCoords_studyregion, aes(label = Station, x = Longitude, y = Latitude), vjust = 0, hjust = 0, size=2.5)+
   labs(fill=NULL)
 
 map2
 
 #Subset to just final stations
-BayStudy_combined_derived<-BayStudy_combined %>% filter(Station %in% BayStudyCoords_studyregion$Station)
-BayStudyCoords_studyregion$Station<-as.numeric(BayStudyCoords_studyregion$Station)
-BayStudy_combined_derived<-left_join(BayStudy_combined_derived,BayStudyCoords_studyregion)
-
+STN_combined_derived<-STN_combined %>% filter(Station %in% STNCoords_studyregion$Station)
+STNCoords_studyregion$Station<-as.numeric(STNCoords_studyregion$Station)
+STN_combined_derived<-left_join(STN_combined_derived,STNCoords_studyregion)
+str(STN_combined_derived)
+str(STNCoords_studyregion)
+STNCoords_studyregion$Station<-as.character(STNCoords_studyregion$Station)
+STN_combined_derived$Station<-as.character(STN_combined_derived$Station)
+STN_combined_derived<-left_join(STN_combined_derived,STNCoords_studyregion)
 #Calculate final annual values by:
 #1) Calculate biomass based on Kimmerer et al. 2005
 #2) Averaging CPUE and biomass by region for each year
 #3) Average across region for each year to get an annual value
 
-BayStudy_combined_derived <- BayStudy_combined_derived %>%
+STN_combined <- STN_combined %>%
   mutate(Length=ifelse(is.na(Length),0,Length)) %>%
   mutate(Year=year(Date)) %>%
   mutate(Biomass = case_when(
@@ -122,7 +128,7 @@ BayStudy_combined_derived <- BayStudy_combined_derived %>%
 
 
 
-BayStudy_annual_values <- BayStudy_combined_derived %>%
+STN_annual_values <- STN_combined_derived %>%
   group_by(Year,Region,Method,Taxa) %>%
   summarise(Biomass=mean(Biomass),Catch_per_tow=mean(Count)) %>%
   group_by(Year,Method,Taxa) %>%
@@ -140,58 +146,35 @@ BayStudy_annual_values <- BayStudy_combined_derived %>%
 #Summarize biomass as you would normally
 
 
-BayStudy_Midwater_annual_values_CPUE <- BayStudy_annual_values %>% filter(Method=="Midwater trawl") %>% subset(select=c(Year,CommonName,Catch_per_tow)) %>%
-  pivot_wider(names_from =CommonName,values_from = Catch_per_tow,names_prefix="BayStudy_MidwaterTrawl_fish_catch_per_tow_") %>%
-  mutate(BayStudy_MidwaterTrawl_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=sum(BayStudy_MidwaterTrawl_fish_catch_per_tow_AmericanShad,
-                                                                                       BayStudy_MidwaterTrawl_fish_catch_per_tow_ThreadfinShad,
-                                                                                       BayStudy_MidwaterTrawl_fish_catch_per_tow_DeltaSmelt,
-                                                                                       BayStudy_MidwaterTrawl_fish_catch_per_tow_LongfinSmelt,
-                                                                                       BayStudy_MidwaterTrawl_fish_catch_per_tow_StripedBass_age0),
-         BayStudy_MidwaterTrawl_fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(BayStudy_MidwaterTrawl_fish_catch_per_tow_NorthernAnchovy,
-                                                                                    BayStudy_MidwaterTrawl_fish_catch_per_tow_PacificHerring))
-
-
-BayStudy_Otter_annual_values_CPUE <- BayStudy_annual_values %>% filter(Method=="Otter trawl") %>% subset(select=c(Year,CommonName,Catch_per_tow)) %>%
-  pivot_wider(names_from =CommonName,values_from = Catch_per_tow,names_prefix="BayStudy_OtterTrawl_fish_catch_per_tow_") %>%
-  mutate(BayStudy_OtterTrawl_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=sum(BayStudy_OtterTrawl_fish_catch_per_tow_AmericanShad,
-                                                                                    BayStudy_OtterTrawl_fish_catch_per_tow_ThreadfinShad,
-                                                                                    BayStudy_OtterTrawl_fish_catch_per_tow_DeltaSmelt,
-                                                                                    BayStudy_OtterTrawl_fish_catch_per_tow_LongfinSmelt,
-                                                                                    BayStudy_OtterTrawl_fish_catch_per_tow_StripedBass_age0),
-         BayStudy_OtterTrawl_fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(BayStudy_OtterTrawl_fish_catch_per_tow_NorthernAnchovy,
-                                                                                 BayStudy_OtterTrawl_fish_catch_per_tow_PacificHerring))
+STN_annual_values_CPUE <- STN_annual_values  %>% filter(Method=="STN Net") %>% subset(select=c(Year,CommonName,Catch_per_tow)) %>%
+  pivot_wider(names_from =CommonName,values_from = Catch_per_tow,names_prefix="STN_fish_catch_per_tow_") %>%
+  mutate(STN_fish_biomass_Estuarine_pelagic_forage_fishes=sum(STN_fish_catch_per_tow_AmericanShad,
+                                    STN_fish_catch_per_tow_ThreadfinShad,
+                                    STN_fish_catch_per_tow_DeltaSmelt,
+                                    STN_fish_catch_per_tow_LongfinSmelt,
+                                    STN_fish_catch_per_tow_StripedBass_age0),
+       STN_fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(STN_fish_catch_per_tow_NorthernAnchovy,
+                                                                                    STN_fish_catch_per_tow_PacificHerring))
 
 
 
-BayStudy_Midwater_annual_values_biomass <- BayStudy_annual_values %>% filter(Method=="Midwater trawl") %>% subset(select=c(Year,CommonName,Biomass)) %>%
-  pivot_wider(names_from =CommonName,values_from = Biomass,names_prefix="BayStudy_MidwaterTrawl_fish_biomass_") %>%
-  mutate(BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes=sum(BayStudy_MidwaterTrawl_fish_biomass_AmericanShad,
-                                                                                 BayStudy_MidwaterTrawl_fish_biomass_ThreadfinShad,
-                                                                                 BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,
-                                                                                 BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,
-                                                                                 BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0),
-         BayStudy_MidwaterTrawl_fish_biomass_Marine_pelagic_forage_fishes=sum(BayStudy_MidwaterTrawl_fish_biomass_NorthernAnchovy,
-                                                                              BayStudy_MidwaterTrawl_fish_biomass_PacificHerring))
 
 
-BayStudy_Otter_annual_values_biomass <- BayStudy_annual_values %>% filter(Method=="Otter trawl") %>% subset(select=c(Year,CommonName,Biomass)) %>%
-  pivot_wider(names_from =CommonName,values_from = Biomass,names_prefix="BayStudy_OtterTrawl_fish_biomass_") %>%
-  mutate(BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes=sum(BayStudy_OtterTrawl_fish_biomass_AmericanShad,
-                                                                              BayStudy_OtterTrawl_fish_biomass_ThreadfinShad,
-                                                                              BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,
-                                                                              BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,
-                                                                              BayStudy_OtterTrawl_fish_biomass_StripedBass_age0),
-         BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes=sum(BayStudy_OtterTrawl_fish_biomass_NorthernAnchovy,
-                                                                           BayStudy_OtterTrawl_fish_biomass_PacificHerring))
 
-BayStudy_Otter_annual_values_biomass
-BayStudy_Midwater_annual_values_CPUE
-BayStudy_Otter_annual_values_CPUE
+STN_values_biomass <- STN_annual_values %>% filter(Method=="STN Net") %>% subset(select=c(Year,CommonName,Biomass)) %>%
+  pivot_wider(names_from =CommonName,values_from = Biomass,names_prefix="STN_fish_biomass_") %>%
+  mutate(STN_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes=sum(STN_fish_biomass_AmericanShad,
+                                                                            STN_fish_biomass_ThreadfinShad,
+                                                                            STN_fish_biomass_DeltaSmelt,
+                                                                            STN_fish_biomass_LongfinSmelt,
+                                                                            STN_fish_biomass_StripedBass_age0),
+        STN_fish_biomass_Marine_pelagic_forage_fishes=sum(STN_fish_biomass_NorthernAnchovy,
+                                                                              STN_fish_biomass_PacificHerring))
 
-BayStudy_annual_values_final_Midwater<-full_join(BayStudy_Midwater_annual_values_CPUE,
-                                                 BayStudy_Midwater_annual_values_biomass)
-BayStudy_annual_values_final_Otter<-full_join(BayStudy_Otter_annual_values_CPUE,
-                                              BayStudy_Otter_annual_values_biomass)
-BayStudy_annual_values_final<-full_join(BayStudy_annual_values_final_Midwater,BayStudy_annual_values_final_Otter)
 
-write.csv(BayStudy_annual_values_final,row.names=FALSE,file=file.path("data/annual_averages/fish_data_BayStudy.csv"))
+
+STN_annual_values_final<-full_join(STN_annual_values_CPUE,
+                                            STN_values_biomass)
+
+
+write.csv(STN_annual_values_final,row.names=FALSE,file=file.path("data/annual_averages/fish_data_STN.csv"))
