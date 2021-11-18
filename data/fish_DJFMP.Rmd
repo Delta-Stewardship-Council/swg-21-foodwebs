@@ -132,7 +132,7 @@ Mahardja B, Conrad JL, Lusher L, Schreier B. 2016. Abundance Trends, Distributio
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-write.csv((DJFMP_Coords_study_stations_subset_annual %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("data_stations/Final_stations_fish_DJFMP_annual.csv"))
+write.csv((DJFMP_Coords_study_stations_subset_annual %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("stations/stations_fish_DJFMP_annual.csv"))
 
 DJFMP_Silverside_seine_subset<- DJFMP_Silverside_seine
 DJFMP_Silverside_seine_subset$Station<-as.factor(DJFMP_Silverside_seine_subset$Station)
@@ -173,7 +173,7 @@ ggplot(DJFMP_seine_sampling_effort_monthly,aes(x=Year,y=Month,fill=sample_size))
 All stations look somewhat usable. Export current list of monthly stations to data_stations folder.
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-write.csv((DJFMP_Coords_study_stations %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("stations/Final_stations_fish_DJFMP_monthly.csv"))
+write.csv((DJFMP_Coords_study_stations %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("stations/stations_fish_DJFMP_monthly.csv"))
 ```
 
 
