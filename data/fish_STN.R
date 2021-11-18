@@ -163,7 +163,7 @@ STN_annual_values_CPUE <- STN_annual_values  %>% filter(Method=="STN Net") %>% s
 
 STN_values_biomass <- STN_annual_values %>% filter(Method=="STN Net") %>% subset(select=c(Year,CommonName,Biomass)) %>%
   pivot_wider(names_from =CommonName,values_from = Biomass,names_prefix="STN_fish_biomass_") %>%
-  mutate(STN_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes=sum(STN_fish_biomass_AmericanShad,
+  mutate(STN_fish_biomass_Estuarine_pelagic_forage_fishes=sum(STN_fish_biomass_AmericanShad,
                                                                             STN_fish_biomass_ThreadfinShad,
                                                                             STN_fish_biomass_DeltaSmelt,
                                                                             STN_fish_biomass_LongfinSmelt,
