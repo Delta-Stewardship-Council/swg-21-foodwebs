@@ -1,3 +1,4 @@
+devtools::install_github("sbashevkin/LTMRdata")
 library(LTMRdata)
 library(tidyverse)
 library(lubridate)
@@ -5,8 +6,6 @@ library(ggmap)
 
 setwd("~/GitHub/swg-21-foodwebs")
 
-#Load California Department of Fish and Wildlife
-#San Francisco Bay Study
 #From Sam's LTMRdata package
 
 
@@ -76,9 +75,7 @@ STN_sample_size <- STN_combined %>% group_by(SampleID,Date,Month,Station,Method)
 #Plot effort across stations and years for midwater trawl
 ggplot(STN_sample_size,aes(x=Year,y=as.factor(Station),fill=sample_size))+geom_tile()+
   scale_x_continuous(breaks=c(1970,1980,1990,2000,2010,2015,2020)) + labs(title= "STN")
-#Plot effort across stations and years for otter trawl
-ggplot(Baystudy_sample_size %>% filter(Method== "Otter trawl"),aes(x=Year,y=as.factor(Station),fill=sample_size))+geom_tile()+
-  scale_x_continuous(breaks=c(1970,1980,1990,2000,2010,2015,2020)) + labs(title= "Bay Study Otter Trawl")
+
 
 #We probably need to remove site 326 and 325 since they're only sampled in one year
 `%notin%` <- Negate(`%in%`)
