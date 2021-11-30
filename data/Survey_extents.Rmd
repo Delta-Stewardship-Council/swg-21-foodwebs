@@ -144,6 +144,11 @@ map <- ggmap(map_obj) +
 
 map
 
+# Import final station list and filter 
+
+seine_stations <- read_csv("data/stations/Final_stations_fish_DJFMP_annual.csv") %>% 
+  mutate(Method="Beach seine")
+View(seine_stations)
 ```
 
 
