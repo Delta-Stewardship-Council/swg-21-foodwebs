@@ -38,6 +38,7 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-data_raw/
+# the big benthic file
+**/DWR Benthic raw count data 1975-2020 2021_10_01.csv
 
 .DS_Store
