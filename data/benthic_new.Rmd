@@ -1,0 +1,35 @@
+---
+title: "EMP Benthic Data Analysis"
+author: "Christina Burdi"
+date: "11/30/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Benthic sampling includes both clam and amphipod data that we're interested in.
+
+Redoing benthic script with correct stations that were continuously monitored over the time series
+
+Load packages
+
+```{r, echo= FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(leaflet)
+```
+
+## Read in raw benthic count data
+
+Exists locally, too big to go on GitHub, but can be found on KNB at https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a
+
+```{r}
+ben_raw <- tryCatch(
+  read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv"))
+```
+
