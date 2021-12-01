@@ -3,16 +3,7 @@ title: "EMP Benthic Data Analysis"
 author: "Christina Burdi"
 date: "11/30/2021"
 output: html_document
-knit: (function(input, ...) {
-    rmarkdown::render(
-      input,
-      output_dir = 'docs',
-      knit_root_dir = "../",
-      envir = globalenv()
-    )
-    })
-editor_options: 
-  chunk_output_type: console
+
 ---
 
 ```{r setup, include=FALSE}
@@ -36,14 +27,11 @@ library(leaflet)
 
 ## Read in raw benthic count data
 
+Benthic file does not exist locally so can get it from KMB: https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a
 
 ```{r}
+
 ben_raw = read.csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")
-  error=function(cond) {
-    message(paste("Benthic file does not exist locally, so get it from the KNB."))
-    ben_raw <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a"))
-    return(ben_raw)
-  }
 
 ```
 
@@ -70,7 +58,9 @@ sites_mon <- ben  %>%
   distinct(StationClean, Latitude, Longitude, mon)
 ```
 
+
 ## Graph which stations were sampled continuously over the time series
+
 
 ```{r}
 
@@ -93,7 +83,9 @@ Additional stations picked up in the late 1990s
 
 May want to eliminate clams from annual analysis based on small coverage with just those 3 sites, or combine sites close together. Need to explore.
 
-## Map of sites scaled with stations sampled continuously from 1980s, and 1990s
+
+
+## Map of sites colored with stations sampled continuously from 1980s, and 1990s. Scaled by months sampled
 
 First specify which stations are from the 1980s and which are from the 1990s
 
@@ -180,6 +172,7 @@ write.csv(sites %>%
 
 * Do CPUE with 1980 stations first for annual analysis. Need to explore other stations that we might need to combine to expand spatial coverage for annual data
 
+
 ```{r}
 
 ben_LT = filter(ben, StationClean %in% c("D7", "D4", "D28A"))
@@ -252,12 +245,15 @@ write.csv(LT_amph_year_wide, "data/annual_averages/amphipod_LT_annual.csv")
 
 ```
 
+
 ## Monthly CPUE for monthly/ regional analysis
 
 Now need to calc monthly CPUE for the stations sampled in the 1990s for the monthly/ regional short term analysis
 Stations: D41, D41A, C9, D16, D24, D6, P8, D7, D4, D28A
 
+
 CPUE with 10 ST stations, and limit to 1997 to present since D16 did not start till 1997
+
 
 ```{r}
 ben_ST = filter(ben, StationClean %in% c("D41", "D41A", "C9", "D16", "D24", "D6", "P8", "D7", "D4", "D28A"), Year >1996)
@@ -271,7 +267,9 @@ ST_grabs_month  <- ben_ST %>%
   summarise(Grab_Count = sum(Grab_Count))
 ```
 
+
 ## Calc monthly CPUE for just clams at the 1990 stations
+
 
 ```{r}
 ST_clams_mon <- ben_ST %>% 
@@ -294,7 +292,9 @@ write.csv(ST_clams_mon_wide, "data/monthly_averages/clams_ST_monthly.csv")
 
 ```
 
+
 ## Amphipod monthly CPUE
+
 
 ```{r}
 ST_amph_mon <- ben_ST %>% 
