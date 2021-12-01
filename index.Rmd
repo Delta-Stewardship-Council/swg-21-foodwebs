@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Data exploration
 
 ## [EMP zooplankton core data](zoop.html)
-## [Benthic Sampling](benthic.html)
+## [Benthic Sampling](benthic_new.html)
 ## [Nutrient Sampling](nutrient_data.html)
 ## [FMWT Fish Sampling](fish_FMWT.html)
 ## [Bay Study Fish Sampling](fish_BayStudy.html)
