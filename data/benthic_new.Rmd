@@ -171,3 +171,151 @@ write.csv(sites %>%
             filter(StationClean %in% c(ben_1980, ben_1990)) %>% 
             select(-n_months), "data/stations/stations_benthic_monthly.csv")
 ```
+
+
+## Calculate CPUE 
+
+* Do all critters first and then filter out later for what we want
+* Benthic CPUE (organisms/ m2) = (Sum of organisms per visit/ # of grabs per visit)/ (0.052 grabs/ m2)
+
+* Do CPUE with 1980 stations first for annual analysis. Need to explore other stations that we might need to combine to expand spatial coverage for annual data
+
+```{r}
+
+ben_LT = filter(ben, StationClean %in% c("D7", "D4", "D28A"))
+
+LT_grabs_month  <- ben_LT %>%
+  mutate(Date = paste(Month, Year)) %>% 
+  group_by(Date, StationCode, .drop = TRUE) %>%
+  mutate(Grab_Count = max(Grab)) %>%
+  distinct(Date, StationCode, Grab_Count) %>% 
+  group_by(Date) %>% 
+  summarise(Grab_Count = sum(Grab_Count))
+
+LT_grabs_year <- LT_grabs_month %>% 
+  mutate(Date = lubridate::my(Date)) %>% 
+  mutate(Year = lubridate::year(Date)) %>% 
+  group_by(Year) %>% 
+  summarise(Grab_Count = sum(Grab_Count))
+
+#verified grab totals by comparing to old EMP benthic CPUE file from Betsy Wells
+
+```
+
+## Calculate Annual CPUE for Clams
+
+* Uses only the 1980s stations, and both clam genera
+
+
+```{r}
+LT_clams_year <- ben_LT %>% 
+  group_by(Genus, Year) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(LT_grabs_year) %>% 
+  mutate(CPUE_Total = (Orgs_Total/Grab_Count)/0.052) %>% 
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))
+
+#wide format for clams/ year
+
+LT_clams_year_wide <- LT_clams_year %>% 
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(LT_clams_year_wide, "data/annual_averages/clams_LT_annual.csv")
+
+```
+
+
+## Calculate Annual CPUE for Amphipods
+
+* 1980s stations, and combine all amphipod species for total amphipod CPUE
+
+```{r}
+LT_amph_year <- ben_LT %>% 
+  group_by(Order_level, Year) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(LT_grabs_year) %>% 
+  mutate(CPUE_Total = (Orgs_Total/Grab_Count)/0.052) %>% 
+  filter(Order_level == "Amphipoda")
+
+
+LT_amph_year_wide <- LT_amph_year %>% 
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
+  rename(Amphipoda_cpue = Amphipoda)
+
+write.csv(LT_amph_year_wide, "data/annual_averages/amphipod_LT_annual.csv")
+
+#verified both amphipods and clam annual values by comparing it to Betsy's file
+
+```
+
+## Monthly CPUE for monthly/ regional analysis
+
+Now need to calc monthly CPUE for the stations sampled in the 1990s for the monthly/ regional short term analysis
+Stations: D41, D41A, C9, D16, D24, D6, P8, D7, D4, D28A
+
+CPUE with 10 ST stations, and limit to 1997 to present since D16 did not start till 1997
+
+```{r}
+ben_ST = filter(ben, StationClean %in% c("D41", "D41A", "C9", "D16", "D24", "D6", "P8", "D7", "D4", "D28A"), Year >1996)
+
+ST_grabs_month  <- ben_ST %>%
+  mutate(Date = paste(Month, Year)) %>% 
+  group_by(Date, StationCode, .drop = TRUE) %>%
+  mutate(Grab_Count = max(Grab)) %>%
+  distinct(Date, StationCode, Grab_Count) %>% 
+  group_by(Date) %>% 
+  summarise(Grab_Count = sum(Grab_Count))
+```
+
+## Calc monthly CPUE for just clams at the 1990 stations
+
+```{r}
+ST_clams_mon <- ben_ST %>% 
+  mutate(Date = paste(Month, Year)) %>% 
+  group_by(Genus,Date) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(ST_grabs_month) %>% 
+  mutate(CPUE_Total = (Orgs_Total/Grab_Count)/0.052) %>% 
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))
+
+#wide format for clams/ month
+
+ST_clams_mon_wide <- ST_clams_mon %>% 
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(ST_clams_mon_wide, "data/monthly_averages/clams_ST_monthly.csv")
+
+```
+
+## Amphipod monthly CPUE
+
+```{r}
+ST_amph_mon <- ben_ST %>% 
+  mutate(Date = paste(Month, Year)) %>% 
+  group_by(Order_level,Date) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(ST_grabs_month) %>% 
+  mutate(CPUE_Total = (Orgs_Total/Grab_Count)/0.052) %>% 
+  filter(Order_level == "Amphipoda")
+
+#wide format for amph/ month
+
+ST_amph_mon_wide <- ST_amph_mon %>%
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
+  rename(Amphipod_cpue = Amphipoda)
+
+write.csv(ST_amph_mon_wide, "data/monthly_averages/amphipod_ST_monthly.csv")
+
+#verified monthly averages by randomly comparing to CPUE of old EMP benthic file
+
+```
+
+
