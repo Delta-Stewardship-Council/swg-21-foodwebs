@@ -3,6 +3,16 @@ title: "EMP Benthic Data Analysis"
 author: "Christina Burdi"
 date: "11/30/2021"
 output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = 'docs',
+      knit_root_dir = "../",
+      envir = globalenv()
+    )
+    })
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +25,7 @@ Redoing benthic script with correct stations that were continuously monitored ov
 
 Load packages
 
-```{r, echo= FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(readr)
 library(dplyr)
@@ -26,10 +36,138 @@ library(leaflet)
 
 ## Read in raw benthic count data
 
-Exists locally, too big to go on GitHub, but can be found on KNB at https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a
 
 ```{r}
-ben_raw <- tryCatch(
-  read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv"))
+ben_raw = read.csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")
+  error=function(cond) {
+    message(paste("Benthic file does not exist locally, so get it from the KNB."))
+    ben_raw <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a"))
+    return(ben_raw)
+  }
+
 ```
 
+## Clean and reprocess data
+
+* Benthic survey used to sample on the L, R, or C of a site location historically, and eventually picked a side to monitor continuously, so need to remove the "Left, Right, Center" from the station names so can combine sites over the years. 
+* Want to make sure that we use all of the data from that site, despite which side it was sampled on
+* Still want to keep A as a station designation
+
+
+* Create a monthly time step to see which stations were sampled continuously over the years
+* Take mean of lat/ long for each site since some sites moved slightly over the years based on the L, R, C
+
+```{r}
+ben <- ben_raw  %>% 
+  mutate(StationClean =  gsub("-[B-Z]","",StationCode)) %>% #Remove LRC from station code. Keep A station designation
+  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% #create a month time step
+  group_by(StationClean) %>% 
+  mutate(Latitude = mean(Latitude, na.rm = T), #take means of station locations
+         Longitude = mean(Longitude, na.rm = T)) %>% 
+  ungroup()
+
+sites_mon <- ben  %>% 
+  distinct(StationClean, Latitude, Longitude, mon)
+```
+
+## Graph which stations were sampled continuously over the time series
+
+```{r}
+
+#sites and number of months sampled to look at which were sampled continuously for analysis
+
+sites <- ben %>% 
+  group_by(StationClean, Latitude, Longitude) %>% 
+  summarise(n_months = length(unique(mon)), .groups  =  "drop")
+
+#graph of monthly sampling of each site over the time series
+
+ggplot(sites_mon, aes(x = mon, y = StationClean), size = 3) +
+  geom_point() +
+  theme_classic()
+```
+
+only three stations were sampled consistently from 1977 to present.Stations D7 (Grizzly Bay), D4 (Chipps), D28A (franks Tract)
+
+Additional stations picked up in the late 1990s
+
+May want to eliminate clams from annual analysis based on small coverage with just those 3 sites, or combine sites close together. Need to explore.
+
+## Map of sites scaled with stations sampled continuously from 1980s, and 1990s
+
+First specify which stations are from the 1980s and which are from the 1990s
+
+```{r}
+#stations sampled continuously since the 1980s
+
+ben_1980 = c("D7", 
+               "D4", 
+               "D28A")
+
+#stations sampled continuously since the 1990s
+
+ben_1990 = c("P8", 
+             "D6", 
+             "D41", 
+             "D41A", 
+             "D24", 
+             "D16", 
+             "C9")
+
+```
+
+## Map of all stations
+
+* Red = sites sampled continuously from the 1980s
+* Blue = from the 1990s
+* Black = sites not sampled continuously
+
+```{r}
+
+leaflet(sites) %>% 
+  addTiles() %>% #adds the default base map
+  addCircleMarkers(data= sites, #all benthic sites 
+             lat = ~Latitude,
+             lng = ~Longitude, 
+             label = ~StationClean, 
+             radius = ~n_months/ 50, #arbitrary scaling to show number of months each site was sampled 
+             color = "black",
+             fillColor = "black",
+             weight = 0.25, 
+             fillOpacity = 1) %>% 
+  addCircleMarkers(data = sites %>% filter(StationClean %in% ben_1980), #sites continuously from the 1980s
+                   lat = ~Latitude,
+                   lng = ~Longitude, 
+                   label = ~StationClean, 
+                   radius = ~n_months/ 50, 
+                   color = "black",
+                   fillColor = "red",
+                   weight = 0.25, 
+                   fillOpacity = 1) %>% 
+  addCircleMarkers(data = sites %>% filter(StationClean %in% ben_1990), #sites from the 1990s
+                 lat = ~Latitude,
+                 lng = ~Longitude, 
+                 label = ~StationClean, 
+                 radius = ~n_months/ 50, 
+                 color = "black",
+                 fillColor = "blue",
+                 weight = 0.25, 
+                 fillOpacity = 1) 
+
+```
+
+Write csv of stations sampled continuously for region analysis
+
+```{r}
+#stations for annual analysis (1980 to present)
+
+write.csv(sites %>% 
+            filter(StationClean %in% ben_1980) %>% 
+            select(-n_months), "data/stations/stations_benthic_annual.csv")
+
+#stations for monthly analysis (1997 to present)
+
+write.csv(sites %>% 
+            filter(StationClean %in% c(ben_1980, ben_1990)) %>% 
+            select(-n_months), "data/stations/stations_benthic_monthly.csv")
+```
