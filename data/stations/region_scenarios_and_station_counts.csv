@@ -1,0 +1,17 @@
+Scenario,Region,EMP Benthic,EMP Nutrients,EMP Zooplankton and water quality,Fall Midwater Trawl,San Francisco Bay Study,Delta Juvenile Fish Monitoring Program
+1,Far West,2,1,1,30,12,NA
+1,North,2,3,2,10,1,11
+1,South,4,5,5,24,1,13
+1,West,2,4,6,36,8,NA
+2,Far West,2,1,1,21,10,NA
+2,North,1,2,1,6,NA,10
+2,South,4,4,4,20,NA,11
+2,West,3,6,8,53,12,3
+3,Far West,2,1,1,22,10,NA
+3,North,2,3,2,10,1,11
+3,South,4,5,5,24,1,13
+3,West,2,4,6,44,10,NA
+4,Far West,2,1,1,30,12,NA
+4,North,1,2,1,6,NA,10
+4,South,4,4,4,20,NA,11
+4,West,3,6,8,44,10,3
