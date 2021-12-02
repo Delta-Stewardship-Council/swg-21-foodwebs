@@ -1,0 +1,33 @@
+Analysis,Scenario,Region,EMP Benthic,EMP Nutrients,EMP Zoop/WQ,DJFMP
+Monthly,1,Far West,2,1,1,NA
+Monthly,1,North,2,3,2,11
+Monthly,1,South,4,5,5,13
+Monthly,1,West,2,4,6,NA
+Monthly,2,Far West,2,1,1,NA
+Monthly,2,North,1,2,1,10
+Monthly,2,South,4,4,4,11
+Monthly,2,West,3,6,8,3
+Monthly,3,Far West,2,1,1,NA
+Monthly,3,North,2,3,2,11
+Monthly,3,South,4,5,5,13
+Monthly,3,West,2,4,6,NA
+Monthly,4,Far West,2,1,1,NA
+Monthly,4,North,1,2,1,10
+Monthly,4,South,4,4,4,11
+Monthly,4,West,3,6,8,3
+Annual,1,Far West,NA,NA,NA,NA
+Annual,1,North,1,NA,NA,10
+Annual,1,South,1,NA,NA,8
+Annual,1,West,1,NA,NA,NA
+Annual,2,Far West,NA,NA,NA,NA
+Annual,2,North,NA,NA,NA,9
+Annual,2,South,1,NA,NA,6
+Annual,2,West,2,NA,NA,3
+Annual,3,Far West,NA,NA,NA,NA
+Annual,3,North,1,NA,NA,10
+Annual,3,South,1,NA,NA,8
+Annual,3,West,1,NA,NA,NA
+Annual,4,Far West,NA,NA,NA,NA
+Annual,4,North,NA,NA,NA,9
+Annual,4,South,1,NA,NA,6
+Annual,4,West,2,NA,NA,3

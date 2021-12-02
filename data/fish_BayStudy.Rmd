@@ -4,12 +4,13 @@ author: "Brian Mahardja"
 date: "10/29/2021"
 output: html_document
 knit: (function(input, ...) {
+    )
     rmarkdown::render(
       input,
       output_dir = '../docs',
       envir = globalenv()
-    )
-  })
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -269,5 +270,32 @@ write.csv(BayStudy_annual_values_final,row.names=FALSE,file=file.path("annual_av
 
 write.csv((BayStudyCoords_studyregion %>% select(-Region) %>% mutate(Survey="San Francisco Bay Study")),row.names = FALSE,file=file.path("stations/stations_fish_BayStudy_annual.csv"))
 
+```
+
+
+Denise code:
+Create a dataframe for the consistent monthly stations since 1994. Do not include stations 324 and 326 (sampled one year only)
+```{r}
+# look at Brian's Bay Study full dataframe from Line 95
+View(BayStudy_full)
+
+# monthly (expanded) station list
+BayStudy_full_monthly <- BayStudy_full %>% 
+  select(Source, Station, Latitude, Longitude) %>% 
+  distinct() %>% 
+  filter(Station != "326" & Station != "324" & Station != "753") %>% 
+  filter(Station > 300) %>% #remove central and south bay stations
+  mutate(Monthly=TRUE)
+View(BayStudy_full_monthly)
+
+#Map showing final list of monthly stations
+map3 <- ggmap(map_obj) +
+  theme_void() +
+  geom_point(data = BayStudy_full_monthly, aes(x = Longitude, y = Latitude), shape = 21, size = 3) +
+  geom_text(data = BayStudy_full_monthly, aes(label = Station, x = Longitude, y = Latitude), vjust = 0, hjust = 0, size=2.5)+
+  labs(fill=NULL)
+map3
+
+BayStudy_full_monthly %>% write.csv("data/stations/stations_fish_BayStudy_monthly.csv") # exported on 12/2/2021 by Denise
 ```
 

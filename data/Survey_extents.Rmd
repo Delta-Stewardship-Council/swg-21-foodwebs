@@ -16,7 +16,9 @@ knitr::opts_chunk$set(echo = TRUE, warning= FALSE, message = FALSE)
 The purpose of this script is to evaluate the spatial and temporal overlap of 
 the different surveys used in the SEM.
 
-Inventory datasets:
+TASK LIST:
+
+1) Inventory datasets:
 
 Annual SEM:
 - Fish: FMWT, Bay Study, DJFMP Beach seine (ISS)
@@ -25,313 +27,166 @@ Annual SEM:
 - Flows: Dayflow
 
 Monthly SEM:
-- Fish:
-- Zoop/ nutrients:
-- Benthic: 
+- Fish: FMWT, Bay Study, DJFMP Beach seine (ISS)
+- Zoop/ nutrients: EMP
+- Benthic: EMP Benthic
 - Flows: Dayflow
+
+
+2) Plot them:
+- Plot all monthly stations on one map
+- Evaluate overlap with region designations
+- Create new region map, based on station overlap
+- Export polygon layer and station designations
+- Use new polygon layer to get dayflow estimates
 
 
 # Load libraries
 ```{r}
 # tidy data
 library(tidyverse)
+library(ggthemes)
+library(patchwork)
 
 library(DT)
 library(leaflet)
 library(sf)
 library(janitor)
+
+#devtools::install_github("yutannihilation/ggsflabel")
+library(ggsflabel)
+
+#devtools::install_github("tomroh/leaflegend")
+library(leaflegend)
 ```
+
 
 # Fish surveys
 
-Query the CDFW Fall Midwater Trawl and Bay Study data sets from the LTMRdata package.
-
-## FMWT
+## Bay Study
 ```{r}
-library(LTMRdata)
-
-Surveys <- LTMRdata::fish(sources=c("FMWT", "Baystudy"),
-             species=NULL,
-             convert_lengths=TRUE,
-             size_cutoff=40,
-             zero_fill = TRUE,
-             remove_unknown_lengths = TRUE,
-             univariate = FALSE,
-             quiet = FALSE)
-Surveys
-
-Surveys$Month <- lubridate::month(Surveys$Date)
-Surveys$Year <- lubridate::year(Surveys$Date)
-str(Surveys)
-
-detach(package:LTMRdata, unload=TRUE) # detach because it conflicts with discretewq
+bay_annual <- read_csv("data/stations/stations_fish_BayStudy_annual.csv") %>% 
+  mutate(Category="Fish", Survey="Bay Study")
+bay_annual$Station <- as.character(bay_annual$Station)
+View(bay_annual)
 ```
 
-
-Assess sampling density across space and time
 ```{r}
-SamplingDensity <- Surveys %>%
-  select(Source, Method, Station, Latitude, Longitude, Year, Month) %>% 
-  distinct(Source, Method, Station, Latitude, Longitude, Year, Month) %>% 
-  mutate(Sampling=1)
-
-summary(SamplingDensity)
-
-# Bay Study
-Baystudy <- SamplingDensity %>% 
-  filter(Source=="Bay Study") %>% 
-  group_by(Station, Longitude, Latitude, Year) %>% 
-  summarize(Sampling=sum(Sampling)/24) # 2 gears x 12 months = 24 sampling points per year
-Baystudy
-
-ggplot(Baystudy, aes(Longitude, Latitude))+
-  geom_point(aes(color=Station, size=Sampling), pch=21)+
-  theme_bw()+
-  facet_wrap(Year~.)+
-  scale_color_viridis_d()
-
-# FMWT
-Fallmwt <- SamplingDensity %>% 
-  filter(Source=="FMWT") %>% 
-  group_by(Station, Longitude, Latitude, Year) %>% 
-  summarize(Sampling=sum(Sampling)) 
-Fallmwt
-
-ggplot(Fallmwt, aes(Longitude, Latitude))+
-  geom_point(aes(color=Station, size=Sampling), pch=21)+
-  theme_bw()+
-  facet_wrap(Year~.)+
-  scale_color_viridis_d()
+bay_month <- read.csv("data/stations/stations_fish_BayStudy_monthly.csv") %>% 
+  mutate(Category="Fish", Survey="Bay Study") %>% 
+  select(Station, Latitude, Longitude, Survey, Category) # rearrange columns
+bay_month$Station <- as.character(bay_month$Station)
+View(bay_month)
 ```
 
 
-## DJFMP Seine
-
-Load data using Sam's LTMRdata package and show map of beach seine stations. Code from BM "fish_DJFMP.Rmd"
-```{r, echo = FALSE, message=FALSE, warning=FALSE}
-
-library(ggmap)
-
-DJFMP_Silverside_seine <-LTMRdata::fish(sources="DJFMP", 
-                                        species="Menidia audens", 
-                                        size_cutoff=NULL,remove_unknown_lengths=FALSE) %>%
-                                  filter(Method=="Beach seine")
-
-#Map
-DJFMP_Coords<-DJFMP_Silverside_seine %>% group_by(Station) %>% 
-  summarise(Latitude=mean(Latitude),Longitude=mean(Longitude))
-DJFMP_Coords<-DJFMP_Coords[complete.cases(DJFMP_Coords), ]
-
-buffer <- 0.05
-coordDict = list(
-  'minLat' = min(DJFMP_Coords$Latitude) - buffer,
-  'maxLat' = max(DJFMP_Coords$Latitude) + buffer,
-  'minLon' = min(DJFMP_Coords$Longitude) - buffer,
-  'maxLon' = max(DJFMP_Coords$Longitude) + buffer
-)
-
-map_obj <- get_stamenmap(
-  bbox = c(left = coordDict[['minLon']], bottom = coordDict[['minLat']], right = coordDict[['maxLon']], top = coordDict[['maxLat']]),
-  zoom = 10,
-  maptype = 'terrain'
-)
-
-# plot the map
-map <- ggmap(map_obj) +
-  theme_void() +
-  geom_point(data = DJFMP_Coords, aes(x = Longitude, y = Latitude), shape = 21, fill = 'red', size = 3) +
-  geom_text(data = DJFMP_Coords, aes(label = Station, x = Longitude, y = Latitude), vjust = 0, hjust = 0, size=2.5)
-
-map
-
-# Import final station list and filter 
-
-seine_stations <- read_csv("data/stations/Final_stations_fish_DJFMP_annual.csv") %>% 
-  mutate(Method="Beach seine")
-View(seine_stations)
+## Fall Midwater Trawl
+```{r}
+FMWT_annual <- read_csv("data/stations/stations_fish_FMWT_annual.csv")%>% 
+  mutate(Category="Fish", Survey="FMWT")
+FMWT_annual$Station <- as.character(FMWT_annual$Station)
+View(FMWT_annual)
 ```
 
+## Delta Juvenile Fish Monitoring Program
+```{r}
+seine_annual <- read_csv("data/stations/stations_fish_DJFMP_annual.csv")%>% 
+  mutate(Category="Fish", Survey="DJFMP")
+seine_annual$Station <- as.character(seine_annual$Station)
+View(seine_annual)
+```
+
+```{r}
+seine_month <- read_csv("data/stations/stations_fish_DJFMP_monthly.csv")%>% 
+  mutate(Category="Fish", Survey="DJFMP")
+seine_month$Station <- as.character(seine_month$Station)
+View(seine_month)
+```
 
 
 # Zoop surveys
 
-Query the EMP data from the Zooper package. Borrow code from "zoop.Rmd" by S.B.
 ```{r}
-library(zooper)
+zoop_annual <- read_csv("data/stations/stations_zoop_annual.csv")%>% 
+  mutate(Category="Zoop/WQ", Survey="EMP Zoop/WQ")
+View(zoop_annual)
 ```
 
-
-Load core stations
-```{r, message=FALSE}
-download.file("https://portal.edirepository.org/nis/dataviewer?packageid=edi.522.7&entityid=71dd301f30a2bc2e40f5da573dde9f97", destfile = file.path(tempdir(), "zoop_station_lookup.csv"))
-
-zoop_stations<-read_csv(file.path(tempdir(), "zoop_station_lookup.csv"))%>%
-  filter(Core%in%c(1, 2))
-```
-
-Load zoop data
 ```{r}
-zoop_data<-Zoopsynther(Data_type="Community", Sources="EMP", Time_consistency = TRUE)%>%
-  filter(Station%in%zoop_stations$StationNZ)%>%
-  mutate(Month=lubridate::month(Date))
-
-detach(package:zooper, unload=TRUE)
-```
-
-Remove stations that aren't continuous
-```{r}
-zoop_data_continuous<-filter(zoop_data, !Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))
-
-# Make sure the right number of stations was removed
-length(setdiff(unique(zoop_data$Station), unique(zoop_data_continuous$Station)))==6
-
-str(zoop_data_continuous)
-
-zoop_data_continuous2 <- zoop_data_continuous %>% 
-  distinct(Station)
-```
-
-
-"Final" stations for annual model (12)
-```{r}
-zoop_annual <- read_csv("data/stations/stations_zoop_annual.csv")
-```
-
-
-"Final" stations for monthly model (15)
-```{r}
-zoop_month <- read_csv("data/stations/stations_zoop_month.csv")
-```
-
-
-Assess sampling density across space and time
-```{r}
-zoop_surveys <- zoop_data_continuous %>% 
-  select(Month, Year, Station, Longitude, Latitude) %>% 
-  distinct(Month, Year, Station, Longitude, Latitude) %>% 
-  mutate(Sampling=1)
-
-zoop_emp <- zoop_surveys %>% 
-  group_by(Station, Year, Longitude, Latitude) %>% 
-  summarize(Sampling=sum(Sampling))
-
-ggplot(zoop_emp, aes(Longitude, Latitude))+
-  geom_point(aes(color=Station, size=Sampling), pch=21)+
-  theme_bw()+
-  facet_wrap(Year~.)+
-  scale_color_viridis_d()
-```
-
-## Fish + Zoop
-Layer them on top of each other
-```{r}
-# map for each year
-ggplot()+
-  geom_point(data=Fallmwt, aes(Longitude, Latitude), pch=21, color="gray50")+
-  geom_point(data=Baystudy, aes(Longitude, Latitude), pch=21, color="orange")+
-  geom_point(data=zoop_emp, aes(Longitude, Latitude), pch=4, color="slateblue")+  
-  theme_bw()+
-  facet_wrap(Year~.)+
-  labs(subtitle="Spatial overlap - annual")
-
-# map for all years
-ggplot()+
-  geom_point(data=Fallmwt, aes(Longitude, Latitude), pch=21, color="gray50", size=3)+
-  geom_point(data=Baystudy, aes(Longitude, Latitude), pch=21, color="orange", size=3)+
-  geom_point(data=zoop_emp, aes(Longitude, Latitude), pch=3, color="slateblue", size=3)+  
-  theme_bw()+
-  labs(subtitle="Spatial overlap - overall")
+zoop_month <- read_csv("data/stations/stations_zoop_month.csv")%>% 
+  mutate(Category="Zoop/WQ", Survey="EMP Zoop/WQ")
+View(zoop_month)
 ```
 
 
 # Water quality
 
-Same stations as EMP zooplankton that are already plotted.
-Data lives here.
+Same stations as EMP zooplankton.
+
+
+# Nutrient surveys
 ```{r}
-# library(discretewq)
-# wq_stations <- wq(Sources = "EMP")
-# wq_stations <- pivot_longer(wq_stations, 
-#                             cols = c(Temperature, Chlorophyll:TKN, Salinity), 
-#                             names_to = 'Analyte', values_to = 'Value')
-# detach(package:discretewq, unload=TRUE)
-```
-
-
-# Benthic 
-
-Code borrowed from the benthic.Rmd by JC
-```{r, message=FALSE}
-ben <- read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
-  mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
-  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% 
-  group_by(StationClean) %>% 
-  mutate(Latitude = mean(Latitude, na.rm = T), 
-         Longitude = mean(Longitude, na.rm = T)) %>% 
-  ungroup()
+nutrients_annual <- read_csv("data/stations/stations_nutrients_annual.csv")%>% 
+  mutate(Category="Nutrients", Survey="EMP Nutrients")
+View(nutrients_annual)
 ```
 
 ```{r}
-sites_mon <- ben  %>% 
-  distinct(StationClean, Latitude, Longitude, mon) 
-
-sites <- ben %>% 
-  group_by(StationClean, Latitude, Longitude) %>% 
-  summarise(n_months = length(unique(mon)), .groups  =  "drop") %>% 
-  st_as_sf(coords = c('Longitude','Latitude'), crs = 4326,  remove = FALSE)
-```
-
-## Sites that were sampled each month
-
-
-```{r, echo=F}
-ggplot(sites_mon, aes(x = mon, y = StationClean), size = 3) +
-  geom_point() +
-  theme_classic()
+nutrients_month <- read_csv("data/stations/stations_nutrients_monthly.csv")%>% 
+  mutate(Category="Nutrients", Survey="EMP Nutrients")
+View(nutrients_month)
 ```
 
 
-## Table of site information
-
-```{r, echo = FALSE}
-datatable(as.data.frame(sites))
+# Benthic surveys
+```{r}
+benthic_month <- read_csv("data/stations/stations_benthic_monthly.csv")%>% 
+  mutate(Category="Clams", Survey="EMP Benthic") %>% 
+  rename(Station=StationClean) %>% 
+  select(Station:Survey)
+View(benthic_month)
 ```
-
-## Core Stations
 
 ```{r}
-core <- c("P8",
-          "MD10",
-          "D8",
-          "D7",
-          "D6",
-          "D41",
-          "D4",
-          "D28A",
-          "D26",
-          "C3",
-          "C10")
-
-core_data <-  sites_mon %>% 
-  filter(StationClean %in% core)
-
-sites_core <- sites %>% 
-  filter(StationClean %in% core)
+benthic_annual <- read_csv("data/stations/stations_benthic_annual.csv")%>% 
+  mutate(Category="Clams", Survey="EMP Benthic") %>% 
+  rename(Station=StationClean) %>% 
+  select(Station:Survey)
+View(benthic_annual)
 ```
 
 
-```{r, echo=F}
-ggplot(core_data, aes(x = mon, y = StationClean), size = 3) +
-  geom_point() +
-  theme_classic()
-```
-
-
-## Pesticide data
+# Pesticide data
+TBD.
 ```{r}
 # library(dataRetrieval)
 # ?dataRetrieval
 ```
+
+
+# Stitch together
+
+Monthly
+```{r}
+station_list_month <- bind_rows(bay_month, seine_month, zoop_month, benthic_month, nutrients_month)
+station_list_month$Survey <- factor(station_list_month$Survey)
+station_list_month$Station <- factor(station_list_month$Station)
+View(station_list_month)
+
+station_list_month %>% write_csv("data/stations/station_list_for_monthly_analysis.csv")
+```
+
+Annual
+```{r}
+station_list_annual <- bind_rows(bay_annual, FMWT_annual, seine_annual, zoop_annual, benthic_annual, nutrients_annual)
+station_list_annual$Survey <- factor(station_list_annual$Survey)
+station_list_annual$Station <- factor(station_list_annual$Station)
+View(station_list_annual)
+
+station_list_annual %>% write_csv("data/stations/station_list_for_annual_analysis.csv")
+```
+
+
 
 
 # Regional designations
@@ -351,68 +206,588 @@ ggplot(R_EDSM_Regions_1617P1)+
 
 deltamapr::R_EDSM_Subregions_Mahardja
 st_crs(R_EDSM_Subregions_Mahardja) <- 26910
-ggplot(R_EDSM_Subregions_Mahardja)+
-   geom_sf(aes(fill=Region))+
-   theme_bw()
 
+ggplot(R_EDSM_Subregions_Mahardja)+
+  geom_sf(aes(fill=Region))+
+  geom_sf_label(aes(label=SubRegion), size=2) +
+  theme_bw()+
+  ggthemes::scale_fill_colorblind()
 
 polygon%>%st_transform(crs=4326)%>%st_coordinates()
 ```
 
-# Annual map
+
+
+# Monthly map: leaflet
 ```{r, message = FALSE, echo = FALSE}
 #If you want to use predefined palettes in the RColorBrewer package:
 # Call RColorBrewer::display.brewer.all() to see all possible palettes
+
 pal <- colorFactor(
-  palette = 'viridis',
+  palette = 'grey',
   domain = R_EDSM_Subregions_Mahardja$SubRegion
 )
 
-
-leaflet(sites) %>% 
+# plot with separate dataframes
+leaflet() %>% 
   addTiles() %>% 
-  addPolygons(data=R_EDSM_Subregions_Mahardja %>% st_transform(crs=4326),
+  addPolygons(data=R_EDSM_Subregions_Mahardja %>% 
+              st_transform(crs=4326),
               color = ~pal(SubRegion),
               label = ~SubRegion) %>% 
-  addCircleMarkers(data = Fallmwt,
+    addCircleMarkers(data = seine_month,
                          lat = ~Latitude,
                          lng = ~Longitude,
-                         radius = 2, 
-                         fillColor = "gray",
+                         radius = 4,
+                         fillColor = "black",
                          fillOpacity = 0.5,
                          weight = 0.1,
-                         label = ~Station) %>% 
-  addCircleMarkers(data = Baystudy,
+                         label = ~Station) %>%
+  # addCircleMarkers(data = FMWT_annual, # only in Fall
+  #                        lat = ~Latitude,
+  #                        lng = ~Longitude,
+  #                        radius = 4,
+  #                        fillColor = "green",
+  #                        fillOpacity = 0.5,
+  #                        weight = 0.1,
+  #                        label = ~Station) %>%
+  addCircleMarkers(data = bay_month, # same as month
                          lat = ~Latitude,
                          lng = ~Longitude,
-                         radius = 2,
+                         radius = 4,
                          fillColor = "yellow",
                          fillOpacity = 0.5,
                          weight = 0.1,
                          color = "black",
-                         label = ~Station) %>% 
-  addCircleMarkers(data = zoop_emp,
+                         label = ~Station) %>%
+  addCircleMarkers(data = zoop_month,
                          lat = ~Latitude,
                          lng = ~Longitude,
-                         radius = 2,
+                         radius = 4,
                         fillColor = "blue",
                          fillOpacity = 1,
                          weight = 0.1,
                          color = "black",
                          label = ~Station) %>% 
-  addCircleMarkers(data = sites_core,
+  addCircleMarkers(data = nutrients_month, 
                          lat = ~Latitude,
                          lng = ~Longitude,
-                         radius = 3, 
+                         radius = 4,
+                        fillColor = "purple",
+                         fillOpacity = 1,
+                         weight = 0.1,
+                         color = "black",
+                         label = ~Station) %>%
+  addCircleMarkers(data = benthic_month,  
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                         radius = 4,
                          fillColor = "red",
                          fillOpacity = 1,
                          weight = 0.1,
                          color = "black",
-                         label = ~StationClean)
+                         label = ~Station) 
+
+
+
+
+# plot with single dataframe for simplicity
+
+pal2 <- colorFactor(
+  palette = c("green", "purple", "pink", "black", "white", "yellow"),
+  domain = station_list_month$Survey
+)
+
+leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(data=R_EDSM_Subregions_Mahardja %>% 
+              st_transform(crs=4326),
+              color = ~pal(SubRegion),
+              label = ~SubRegion,
+              group = "polygons",
+              weight=2,
+              opacity=1) %>% 
+    addCircleMarkers(data = station_list_month,  
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                          color = ~pal2(Survey),
+                          radius = 2,
+                          weight = 2,
+                          opacity= 1,
+                          label = ~Station) %>% 
+  # help here-- need the legend to show one label for each survey type
+    addLegend(data=station_list_month,
+                          "bottomleft",
+                          #values = ~Survey,
+                          colors = ~pal2(Survey),
+                          title = "Survey stations",
+                          labels = ~Survey,
+                          opacity = 1,
+                          group = "circles", 
+                          labFormat = labelFormat(style = list(
+                  "font-family" = "serif",
+                  "font-size" = "8px"))) %>%
+    addLayersControl(baseGroups = c("polygons"))
+```
+
+
+# Extract subregions of interest and combine
+```{r}
+Regions <- R_EDSM_Subregions_Mahardja %>%
+  filter(SubRegion != "South Bay") %>% 
+  filter(SubRegion != "San Francisco Bay") %>% 
+  filter(SubRegion != "Upper Napa River") %>% 
+    filter(SubRegion != "Upper Yolo Bypass") %>% 
+    filter(SubRegion != "Cache Slough and Lindsey Slough") %>% 
+    filter(SubRegion !="Liberty Island") %>% 
+    filter(SubRegion != "Upper Sacramento River Ship Channel") %>% 
+    filter(SubRegion != "Grant Line Canal and Old River") %>% 
+    filter(SubRegion != "Disappointment Slough") %>% 
+    filter(SubRegion != "Rock Slough and Discovery Bay") %>% 
+    filter(SubRegion != "Steamboat and Miner Slough") %>% 
+    filter(SubRegion != "Franks Tract")
+View(Regions)
+```
+
+```{r}
+# plot with single dataframe for simplicity
+
+pal2 <- colorFactor(
+  palette = c("green", "purple", "pink", "black", "white", "yellow"),
+  domain = station_list_month$Survey
+)
+
+leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(data=Regions %>% 
+              st_transform(crs=4326),
+              color = ~pal(SubRegion),
+              label = ~SubRegion,
+              group = "polygons",
+              weight=2,
+              opacity=1) %>% 
+    addCircleMarkers(data = station_list_month,  
+                         lat = ~Latitude,
+                         lng = ~Longitude,
+                          color = ~pal2(Survey),
+                          radius = 2,
+                          weight = 2,
+                          opacity= 1,
+                          label = ~Station) %>% 
+  # help here-- need the legend to show one label for each survey type
+    addLegend(data=station_list_month,
+                          "bottomleft",
+                          #values = ~Survey,
+                          colors = ~pal2(Survey),
+                          title = "Survey stations",
+                          labels = ~Survey,
+                          opacity = 1,
+                          group = "circles", 
+                          labFormat = labelFormat(style = list(
+                  "font-family" = "serif",
+                  "font-size" = "8px"))) %>%
+    addLayersControl(baseGroups = c("polygons"))
+```
+
+## stations as simple features
+```{r}
+station_month_tbl <- tibble(lat=station_list_month$Latitude, lon=station_list_month$Longitude)
+
+station_month_points <- st_as_sf(station_list_month, coords = c("Longitude", "Latitude"), 
+                 crs= 4326, agr = "constant") %>% 
+                  st_transform(crs=4326)
+View(station_month_points)
+```
+
+```{r}
+station_annual_tbl <- tibble(lat=station_list_annual$Latitude, lon=station_list_annual$Longitude)
+
+station_annual_points <- st_as_sf(station_list_annual, coords = c("Longitude", "Latitude"), 
+                 crs= 4326, agr = "constant") %>% 
+                  st_transform(crs=4326)
+View(station_annual_points)
+```
+
+
+## regions as simple features
+URL: https://r-spatial.github.io/sf/reference/geos_combine.html
+
+Pilot code for joining regions with st_union function
+Compare different regional designations for San Pablo Bay as an example
+```{r}
+# san pablo bay only
+sanpablo1 <- Regions %>% 
+  filter(SubRegion == "San Pablo Bay") %>% 
+  mutate(Designation = "San Pablo Bay")
+  
+sanpablo1_union <- st_union(sanpablo1$geometry, by_feature= FALSE)
+plot(sanpablo1_union)
+
+# san pablo bay, lower napa, and carquinez strait
+sanpablo2 <- Regions %>% 
+  filter(SubRegion == "San Pablo Bay" |
+        SubRegion == "Lower Napa River" |
+        SubRegion == "Carquinez Strait") %>% 
+  mutate(Designation = "San Pablo Bay")
+
+sanpablo2_union <- st_union(sanpablo2$geometry, by_feature= FALSE)
+plot(sanpablo2_union)
 ```
 
 
 
+
+## scenario 1, 2, 3, 4
+```{r}
+region_scenarios <- Regions %>% 
+      mutate(Scenario1 = case_when(
+                                  # far west
+                                  SubRegion == "San Pablo Bay" | 
+                                  SubRegion == "Carquinez Strait" | 
+                                  SubRegion == "Lower Napa River" ~ "Far West",
+                                  # west
+                                  SubRegion == "West Suisun Bay" |
+                                  SubRegion == "Mid Suisun Bay" |
+                                  SubRegion == "Grizzly Bay" | 
+                                  SubRegion == "Suisun Marsh" |
+                                  SubRegion == "Honker Bay" |
+                                  SubRegion == "Confluence" ~ "West",
+                                  # north
+                                  SubRegion == "Lower Sacramento River" ~ "North",
+                                  Region == "North" ~ "North",
+                                  # south
+                                  SubRegion == "Lower San Joaquin River" ~ "South",
+                                  Region == "South" ~ "South",
+                                  TRUE ~ "Other")) %>% 
+    mutate(Scenario2 = case_when(
+                                  # far west
+                                  SubRegion == "San Pablo Bay" |
+                                  SubRegion == "Lower Napa River" ~ "Far West",
+                                  # north
+                                  Region == "North" ~ "North",
+                                  # south
+                                  Region == "South" ~ "South",
+                                  # west
+                                  SubRegion == "Lower Sacramento River" ~ "West",
+                                  TRUE ~ "West")) %>% 
+  mutate(Scenario3 = case_when (
+                                  # far west
+                                  SubRegion == "San Pablo Bay" |
+                                  SubRegion == "Lower Napa River" ~ "Far West",
+                                  # north
+                                  Scenario1 == "North" ~ "North",
+                                  # south
+                                  Scenario1 == "South" ~ "South",
+                                  # west
+                                  TRUE ~ "West")) %>% 
+  mutate(Scenario4 = case_when(
+                                  # far west
+                                  Scenario1 == "Far West" ~ "Far West",
+                                  # north
+                                  Scenario2 == "North" ~ "North",
+                                  # south
+                                  Scenario2 == "South" ~ "South",
+                                  # west
+                                  TRUE ~ "West"))
+  
+
+View(region_scenarios)
+
+# create simple feature
+region_scenarios_sf <- st_as_sf(region_scenarios, crs = 4326) %>% 
+              st_transform(crs=4326)
+
+
+# use st_union code to combine these designated polygons for each scenario
+
+# scenario 1 - two approaches
+scenario1 <- region_scenarios %>% 
+  select(Scenario1, geometry)
+st_combine(scenario1)
+st_crs(scenario1, crs=4326)
+plot(st_union(scenario1, by_feature= TRUE))
+
+scenario1b <- region_scenarios_sf %>% 
+  select(Scenario1, geometry) 
+plot1 <- ggplot(scenario1b)+
+  geom_sf(aes(fill=Scenario1))+
+  scale_fill_viridis_d(name="Region")+
+  theme_bw()+
+  labs(title="Scenario 1")
+plot1
+
+# scenario 2
+scenario2 <- region_scenarios %>% 
+  select(Scenario2, geometry)
+st_combine(scenario2)
+plot(st_union(scenario2, by_feature= TRUE))
+
+scenario2b <- region_scenarios_sf %>% 
+  select(Scenario2, geometry) 
+plot2 <- ggplot(scenario2b)+
+  geom_sf(aes(fill=Scenario2))+ 
+  labs(title="Scenario 2")+
+  scale_fill_viridis_d(name="Region")+
+  theme_bw()+
+  labs(title="Scenario 2")
+plot2
+
+# scenario 3
+scenario3 <- region_scenarios %>% 
+  select(Scenario3, geometry)
+st_combine(scenario3)
+plot(st_union(scenario3, by_feature= TRUE))
+
+scenario3b <- region_scenarios_sf %>% 
+  select(Scenario3, geometry) 
+plot3 <- ggplot(scenario3b)+
+  geom_sf(aes(fill=Scenario3))+ 
+  labs(title="Scenario 3")+
+  scale_fill_viridis_d(name="Region")+
+  theme_bw()+
+  labs(title="Scenario 3")
+plot3
+
+# scenario 4
+scenario4 <- region_scenarios %>% 
+  select(Scenario4, geometry)
+st_combine(scenario4)
+plot(st_union(scenario4, by_feature= TRUE))
+
+scenario4b <- region_scenarios_sf %>% 
+  select(Scenario4, geometry) 
+plot4 <- ggplot(scenario4b)+
+  geom_sf(aes(fill=Scenario4))+ 
+  labs(title="Scenario 4")+
+  scale_fill_viridis_d(name="Region")+
+  theme_bw()+
+  labs(title="Scenario 4")
+plot4
+
+plot1 + plot2 + plot3 + plot4 + plot_layout(nrow=2)
+```
+
+## station densities
+
+### Monthly
+```{r}
+scenario1_month_stations <- st_intersection(scenario1b, station_month_points)
+scenario2_month_stations <- st_intersection(scenario2b, station_month_points)
+scenario3_month_stations <- st_intersection(scenario3b, station_month_points)
+scenario4_month_stations <- st_intersection(scenario4b, station_month_points)
+
+# scenario 1 with stations
+plot1b <- ggplot()+
+  geom_sf(data=scenario1b, aes(fill=Scenario1))+
+  geom_sf(data=scenario1_month_stations, aes(color=Survey, shape=Survey))+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_color_viridis_d(name="Survey")+
+  scale_shape_manual(name="Survey", values=c(1,2,15,18,4))+
+  labs(title="Scenario 1: Monthly", subtitle="1990s to present")
+plot1b
+
+# scenario 2 with stations
+plot2b <- ggplot()+
+  geom_sf(data=scenario2b, aes(fill=Scenario2))+
+  geom_sf(data=scenario2_month_stations, aes(color=Survey, shape=Survey))+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_color_viridis_d(name="Survey")+
+  scale_shape_manual(name="Survey", values=c(1,2,15,18,4))+
+  labs(title="Scenario 2: Monthly", subtitle="1990s to present")
+plot2b
+
+# scenario 3 with stations
+plot3b <- ggplot()+
+  geom_sf(data=scenario3b, aes(fill=Scenario3))+
+  geom_sf(data=scenario3_month_stations, aes(color=Survey, shape=Survey))+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_color_viridis_d(name="Survey")+
+  scale_shape_manual(name="Survey", values=c(1,2,15,18,4))+
+  labs(title="Scenario 3: Monthly", subtitle="1990s to present")
+plot3b
+
+# scenario 4 with stations
+plot4b <- ggplot()+
+  geom_sf(data=scenario4b, aes(fill=Scenario4))+
+  geom_sf(data=scenario4_month_stations, aes(color=Survey, shape=Survey))+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_color_viridis_d(name="Survey")+
+  scale_shape_manual(name="Survey", values=c(1,2,15,18,4))+
+  labs(title="Scenario 4: Monthly", subtitle="1990s to present")
+plot4b
+
+plot1b + plot2b + plot3b + plot4b + plot_layout(nrow=2)
+```
+
+Ugly code to identify which regions they fall in
+```{r}
+scenario1_month_count <- scenario1_month_stations %>% 
+  select(Scenario1, Survey) %>% 
+  rename(Scenario=Scenario1) %>% 
+  mutate(Count=1) %>% 
+  group_by(Scenario, Survey) %>% 
+  summarize(Count=sum(Count)) %>%
+  tibble() %>%  
+  pivot_wider(id_cols= "Scenario", names_from="Survey", values_from="Count") %>% 
+  mutate(Region=Scenario,Scenario="1")
+View(scenario1_month_count)
+
+scenario2_month_count <- scenario2_month_stations %>% 
+  select(Scenario2, Survey) %>% 
+  rename(Scenario=Scenario2) %>% 
+  mutate(Count=1) %>% 
+  group_by(Scenario, Survey) %>% 
+  summarize(Count=sum(Count)) %>%
+  tibble() %>%  
+  pivot_wider(id_cols= "Scenario", names_from="Survey", values_from="Count") %>% 
+  mutate(Region=Scenario, Scenario="2")
+View(scenario2_month_count)
+
+scenario3_month_count <- scenario3_month_stations %>% 
+  select(Scenario3, Survey) %>% 
+  rename(Scenario=Scenario3) %>% 
+  mutate(Count=1) %>% 
+  group_by(Scenario, Survey) %>% 
+  summarize(Count=sum(Count)) %>%
+  tibble() %>%  
+  pivot_wider(id_cols= "Scenario", names_from="Survey", values_from="Count") %>% 
+  mutate(Region=Scenario,Scenario="3")
+View(scenario3_month_count)
+
+scenario4_month_count <- scenario4_month_stations %>%
+  select(Scenario4, Survey) %>% 
+  rename(Scenario=Scenario4) %>% 
+  mutate(Count=1) %>% 
+  group_by(Scenario, Survey) %>% 
+  summarize(Count=sum(Count)) %>%
+  tibble() %>%  
+  pivot_wider(id_cols= "Scenario", names_from="Survey", values_from="Count") %>% 
+  mutate(Region=Scenario,Scenario="4")
+View(scenario4_month_count)
+
+scenario_month_counts <- bind_rows(scenario1_month_count, scenario2_month_count, 
+                                   scenario3_month_count, scenario4_month_count) %>% 
+  mutate(Analysis="Monthly") %>% 
+  select(Analysis, Scenario, Region, `Bay Study`: `DJFMP`)
+print(scenario_month_counts)
+View(scenario_month_counts)
+
+scenario_month_counts %>% write_csv("data/stations/region_scenarios_and_station_counts_monthly.csv")
+```
+
+
+### Annual
+```{r}
+scenario1_annual_stations <- st_intersection(scenario1b, station_annual_points)
+scenario2_annual_stations <- st_intersection(scenario2b, station_annual_points)
+scenario3_annual_stations <- st_intersection(scenario3b, station_annual_points)
+scenario4_annual_stations <- st_intersection(scenario4b, station_annual_points)
+
+# scenario 1 with stations
+plot1c <- ggplot()+
+  geom_sf(data=scenario1b, aes(fill=Scenario1))+
+  geom_sf(data=scenario1_annual_stations, aes(color=Survey, shape=Survey))+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_color_viridis_d(name="Survey")+
+  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4))+
+  labs(title="Scenario 1: Annual", subtitle="1980 to present")
+plot1c
+
+# scenario 2 with stations
+plot2c <- ggplot()+
+  geom_sf(data=scenario2b, aes(fill=Scenario2))+
+  geom_sf(data=scenario2_annual_stations, aes(color=Survey, shape=Survey))+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_color_viridis_d(name="Survey")+
+  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4))+
+  labs(title="Scenario 2: Annual", subtitle="1980 to present")
+plot2c
+
+# scenario 3 with stations
+plot3c <- ggplot()+
+  geom_sf(data=scenario3b, aes(fill=Scenario3))+
+  geom_sf(data=scenario3_annual_stations, aes(color=Survey, shape=Survey))+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4))+
+  scale_color_viridis_d(name="Survey")+
+  labs(title="Scenario 3: Annual", subtitle="1980 to present")
+plot3c
+
+# scenario 4 with stations
+plot4c <- ggplot()+
+  geom_sf(data=scenario4b, aes(fill=Scenario4))+
+  geom_sf(data=scenario4_annual_stations, aes(color=Survey, shape=Survey))+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_color_viridis_d(name="Survey")+
+  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4))+
+  labs(title="Scenario 4: Annual", subtitle="1980 to present")
+plot4c
+
+plot1c + plot2c + plot3c + plot4c + plot_layout(nrow=2)
+```
+
+Ugly code to identify which regions they fall in
+```{r}
+scenario1_annual_count <- scenario1_annual_stations %>% 
+  select(Scenario1, Survey) %>% 
+  rename(Scenario=Scenario1) %>% 
+  mutate(Count=1) %>% 
+  group_by(Scenario, Survey) %>% 
+  summarize(Count=sum(Count)) %>%
+  tibble() %>%  
+  pivot_wider(id_cols= "Scenario", names_from="Survey", values_from="Count") %>% 
+  mutate(Region=Scenario,Scenario="1")
+View(scenario1_annual_count)
+
+scenario2_annual_count <- scenario2_annual_stations %>% 
+  select(Scenario2, Survey) %>% 
+  rename(Scenario=Scenario2) %>% 
+  mutate(Count=1) %>% 
+  group_by(Scenario, Survey) %>% 
+  summarize(Count=sum(Count)) %>%
+  tibble() %>%  
+  pivot_wider(id_cols= "Scenario", names_from="Survey", values_from="Count") %>% 
+  mutate(Region=Scenario, Scenario="2")
+View(scenario2_annual_count)
+
+scenario3_annual_count <- scenario3_annual_stations %>% 
+  select(Scenario3, Survey) %>% 
+  rename(Scenario=Scenario3) %>% 
+  mutate(Count=1) %>% 
+  group_by(Scenario, Survey) %>% 
+  summarize(Count=sum(Count)) %>%
+  tibble() %>%  
+  pivot_wider(id_cols= "Scenario", names_from="Survey", values_from="Count") %>% 
+  mutate(Region=Scenario,Scenario="3")
+View(scenario3_annual_count)
+
+scenario4_annual_count <- scenario4_annual_stations %>%
+  select(Scenario4, Survey) %>% 
+  rename(Scenario=Scenario4) %>% 
+  mutate(Count=1) %>% 
+  group_by(Scenario, Survey) %>% 
+  summarize(Count=sum(Count)) %>%
+  tibble() %>%  
+  pivot_wider(id_cols= "Scenario", names_from="Survey", values_from="Count") %>% 
+  mutate(Region=Scenario,Scenario="4")
+View(scenario4_annual_count)
+
+scenario_annual_counts <- bind_rows(scenario1_annual_count, scenario2_annual_count, 
+                                   scenario3_annual_count, scenario4_annual_count) %>% 
+  mutate(Analysis="Annual") %>% 
+  select(Analysis, Scenario, Region, `Bay Study`: `EMP Zoop/WQ`)
+print(scenario_annual_counts)
+View(scenario_annual_counts)
+
+scenario_annual_counts %>% write_csv("data/stations/region_scenarios_and_station_counts_annual.csv")
+```
+
+### stitch together
+```{r}
+scenario_counts_all <- bind_rows(scenario_month_counts, scenario_annual_counts)
+scenario_counts_all %>% write_csv("data/stations/region_scenarios_and_station_counts_all.csv")
+View(scenario_counts_all)
+```
 
 
 
