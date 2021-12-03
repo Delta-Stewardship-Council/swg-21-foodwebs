@@ -664,7 +664,19 @@ region_scenarios_cropped<-region_scenarios%>%
   summarise()%>% 
   st_make_valid()%>%
   rename(Region=Scenario3)
+```
 
+Plot the spatial extent
+```{r}
+ggplot()+
+  geom_sf(data=deltamapr::WW_Delta, color="slategray1", fill="slategray1")+
+  geom_sf(data=region_scenarios_cropped%>%st_transform(crs=st_crs(deltamapr::WW_Delta)), aes(fill=Region), alpha=0.4)+
+  theme_bw()
+```
+
+
+Plot the stations within the annual or monthly regional extents
+```{r, fig.width=12, fig.height=12}
 plot1<-ggplot()+
   geom_sf(data=region_scenarios_cropped, aes(fill=Region))+
   geom_sf(data=station_month_points_filtered%>%mutate(Survey=factor(Survey, levels=levels(station_annual_points_filtered$Survey))), aes(color=Survey, shape=Survey))+
@@ -710,6 +722,10 @@ kable(scenario_counts_cropped)
 
 Output the regions
 ```{r}
+# For use in R
 saveRDS(object=region_scenarios_cropped, file="data/data_in/regions.Rds")
+
+# Shapefile for use anywhere
+write_sf(region_scenarios_cropped%>%st_transform(crs=26910), "data/data_in/regions_shapefile/regions.shp")
 ```
 
