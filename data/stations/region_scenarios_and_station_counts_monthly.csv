@@ -1,17 +1,17 @@
-Analysis,Scenario,Region,EMP Benthic,EMP Nutrients,EMP Zoop/WQ,DJFMP
-Monthly,1,Far West,2,1,1,NA
-Monthly,1,North,2,3,2,11
-Monthly,1,South,4,5,5,13
-Monthly,1,West,2,4,6,NA
-Monthly,2,Far West,2,1,1,NA
-Monthly,2,North,1,2,1,10
-Monthly,2,South,4,4,4,11
-Monthly,2,West,3,6,8,3
-Monthly,3,Far West,2,1,1,NA
-Monthly,3,North,2,3,2,11
-Monthly,3,South,4,5,5,13
-Monthly,3,West,2,4,6,NA
-Monthly,4,Far West,2,1,1,NA
-Monthly,4,North,1,2,1,10
-Monthly,4,South,4,4,4,11
-Monthly,4,West,3,6,8,3
+Analysis,Scenario,Region,Bay Study,EMP Benthic,EMP Nutrients,EMP Zoop
+Monthly,1,Far West,12,2,1,1
+Monthly,1,North,7,2,3,2
+Monthly,1,South,5,4,5,5
+Monthly,1,West,8,2,4,6
+Monthly,2,Far West,10,2,1,1
+Monthly,2,North,5,1,2,1
+Monthly,2,South,3,4,4,4
+Monthly,2,West,14,3,6,8
+Monthly,3,Far West,10,2,1,1
+Monthly,3,North,7,2,3,2
+Monthly,3,South,5,4,5,5
+Monthly,3,West,10,2,4,6
+Monthly,4,Far West,12,2,1,1
+Monthly,4,North,5,1,2,1
+Monthly,4,South,3,4,4,4
+Monthly,4,West,12,3,6,8
