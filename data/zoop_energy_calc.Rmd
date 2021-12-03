@@ -61,9 +61,20 @@ wet_summary = summarize_zoop(converted_wet,
                              "energy_density_j_per_g_wet_mass") 
 print(wet_summary)
 
-write.csv(wet_summary, file ="./data/zoop_energy_data/zoop_energy_density.csv")
+write.csv(wet_summary, file ="./data/zoop_energy_data/zoop_energy_density_wet.csv")
 
 ```
+Convert all to day weight and print a table
+```{r}
+
+dry_summary = summarize_zoop(converted_dry,
+                             "energy_density_j_per_g_dry_mass") 
+print(dry_summary)
+
+write.csv(dry_summary, file ="./data/zoop_energy_data/zoop_energy_density_dry.csv")
+
+```
+
 # Plots
 Print a box plot of the data
 ```{r fig1, fig.height = 8, fig.width = 5}
