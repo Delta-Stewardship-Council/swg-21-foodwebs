@@ -15,6 +15,10 @@ if(!analysis%in%c("monthly", "annual")){
     stop("data must contain columns named 'Latitude' and 'Longitude'")
   }
 
+  if("Region"%in%names(data)){
+    stop("You can't have another column named 'Region' in your dataset. Please remove or rename that column before using this function")
+  }
+
   regions<-readRDS("data/data_in/regions.Rds")
 
 data_regions<-data%>%
