@@ -47,11 +47,18 @@ zoop_data<-Zoopsynther(Data_type="Community", Sources="EMP", Time_consistency = 
 
 
 Read in zoop mass conversions and groupings
+Also Read in the energy density data and join to the mass grouping
 ```{r}
+zoop_energy_data<-read.csv("data/zoop_energy_data/zoop_energy_density.csv") %>% 
+  mutate(Group = str_replace(group, " Copepoda", "_Copepods")) %>% 
+  select(Group, energy_density_j_per_g_wet_mass_mean) %>% 
+  rename(energyj_per_g_wet_mass = energy_density_j_per_g_wet_mass_mean)
+
 zoop_mass_group<-read_excel("data/data_in/Zoop Categories for SEM.xlsx", na = "NA")%>%
   mutate(Taxlifestage=paste(Taxname, Lifestage))%>%
   rename(Group=`SEM Category`)%>%
-  mutate(Group=str_replace_all(Group, " ", "_"))
+  mutate(Group=str_replace_all(Group, " ", "_")) %>% 
+  left_join(zoop_energy_data, by = "Group")
 
 # List all the zoop groups
 unique(zoop_mass_group$Group)
