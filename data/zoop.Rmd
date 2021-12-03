@@ -28,6 +28,7 @@ require(ggplot2)
 require(readxl)
 require(stringr)
 require(sf)
+source("functions/region_assigner.R")
 ```
 
 Load core stations
@@ -44,109 +45,6 @@ zoop_data<-Zoopsynther(Data_type="Community", Sources="EMP", Time_consistency = 
   mutate(Month=month(Date))
 ```
 
-Summarize zoop effort by month and year
-```{r}
-zoop_data_sum<-zoop_data%>%
-  group_by(Month, Year)%>%
-  summarise(N=n(), .groups="drop")
-```
-
-Plot heat map
-```{r}
-ggplot(zoop_data_sum, aes(y=Month, x=Year, fill=N))+
-  geom_tile()+
-  scale_fill_viridis_c()+
-  scale_y_continuous(breaks=1:12)+
-  coord_cartesian(expand=FALSE)+
-  theme_bw()
-```
-
-Summarize zoop effort by date and station
-```{r}
-zoop_data_station<-zoop_data%>%
-  select(Month, Year, Station)%>%
-  distinct()%>%
-  mutate(type="present")%>%
-  complete(Month, Year, Station, fill=list(type="missing"))%>%
-  mutate(Date=dmy(paste("1", Month, Year)))
-```
-
-Plot zoop effort by date and station for annual metrics
-```{r}
-ggplot(zoop_data_station%>%filter(Station%in%zoop_stations$StationNZ), aes(x=Date, y=Station, color=type))+
-  geom_point()+
-  scale_color_manual(values=c("firebrick3", "black"))+
-  theme_bw()
-```
-
-Find zoop stations that can be used for monthly metrics
-```{r}
-zoop_stations_month<-zoop_data%>%
-  filter(Year>=1995)%>%
-  group_by(Station, Month)%>%
-  summarise(N_years=n_distinct(Year), .groups="drop")%>%
-  filter(N_years>=22)%>%
-  group_by(Station)%>%
-  summarise(N_months=n_distinct(Month))%>%
-  filter(N_months==12)
-```
-
-Plot zoop effort by date and station for monthly metrics
-```{r}
-ggplot(zoop_data_station%>%filter(Station%in%zoop_stations_month$Station), aes(x=Date, y=Station, color=type))+
-  geom_point()+
-  scale_color_manual(values=c("firebrick3", "black"))+
-  theme_bw()
-```
-
-Create annual data set with final set of annual stations
-```{r}
-zoop_data_annual<-zoop_data%>%
-  filter(Station%in%zoop_stations$StationNZ)%>%
-  filter(!Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))%>% # Renove stations that aren't continuous in time
-  filter(Month%in%3:11)
-
-# Make sure the right number of stations was removed
-length(setdiff(unique(zoop_data$Station), unique(zoop_data_annual$Station)))==6
-
-# Save list of annual stations
-zoop_data_annual%>%
-  select(Station, Latitude, Longitude)%>%
-  mutate(Survey="EMP zooplantkon")%>%
-  distinct()%>%
-  write_csv("data/stations/stations_zoop_annual.csv")
-```
-
-Plot the final set of annual stations
-```{r}
-ggplot()+
-  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
-  geom_point(data=zoop_data_annual%>%select(Station, Latitude, Longitude)%>%distinct(), 
-             aes(x=Longitude, y=Latitude),
-             color="red")
-```
-
-Create monthly data set with final set of monthly stations
-```{r}
-zoop_data_month<-zoop_data%>%
-  filter(Station%in%zoop_stations_month$Station)
-
-# Save list of annual stations
-zoop_data_month%>%
-  select(Station, Latitude, Longitude)%>%
-  mutate(Survey="EMP zooplantkon")%>%
-  distinct()%>%
-  write_csv("data/stations/stations_zoop_month.csv")
-```
-
-Plot the final set of monthly stations
-```{r}
-ggplot()+
-  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
-  geom_point(data=zoop_data_month%>%select(Station, Latitude, Longitude)%>%distinct(), 
-             aes(x=Longitude, y=Latitude),
-             color="red")
-```
 
 Read in zoop mass conversions and groupings
 ```{r}
@@ -177,33 +75,174 @@ zoop_mysid<-read_excel("data/data_in/1972-2020MysidBPUEMatrix.xlsx",
 
 Start processing the zoop data
 ```{r}
-zoop_data_mass<-zoop_data_annual%>%
+zoop_data_mass<-zoop_data%>%
   mutate(Taxlifestage=str_remove(Taxlifestage, fixed("_UnID")))%>%
-      filter(
-        !(SizeClass=="Meso" & #eliminating species which are counted in meso and micro and retained better in the micro net from the meso calcs
-            
-            Taxlifestage%in%c("Asplanchna Adult", "Copepoda Larva","Cyclopoida Juvenile", "Eurytemora affinis Larva", "Harpacticoida Undifferentiated",
-                                    "Keratella Adult", "Limnoithona Adult", "Limnoithona Juvenile", "Limnoithona sinenesis Adult", "Limnoithona tetraspina
+  filter(
+    !(SizeClass=="Meso" & #eliminating species which are counted in meso and micro and retained better in the micro net from the meso calcs
+        
+        Taxlifestage%in%c("Asplanchna Adult", "Copepoda Larva","Cyclopoida Juvenile", "Eurytemora affinis Larva", "Harpacticoida Undifferentiated",
+                          "Keratella Adult", "Limnoithona Adult", "Limnoithona Juvenile", "Limnoithona sinenesis Adult", "Limnoithona tetraspina
                                     Adult", "Oithona Adult", "Oithona Juvenile", "Oithona davisae Adult", "Polyarthra Adult","Pseudodiaptomus Larva", 
-                                    "Rotifera Adult", "Sinocalanus doerrii Larva", "Synchaeta Adult", "Synchaeta bicornis Adult", "Trichocerca Adult")) &
-            
-          !(SizeClass=="Micro" & #removing categories better retained in meso net from micro net matrix
-              
-             Taxlifestage%in%c("Cirripedia Larva", "Cyclopoida Adult", "Oithona similis")))%>%
-      left_join(zoop_mass_group, by=c("Taxlifestage", "Lifestage", "Taxname"))%>%
-      mutate(BPUE=CPUE*Carbon_mass_micrograms,
-             Group=if_else(Order=="Mysida", "Mysida", Group))%>%
+                          "Rotifera Adult", "Sinocalanus doerrii Larva", "Synchaeta Adult", "Synchaeta bicornis Adult", "Trichocerca Adult")) &
+      
+      !(SizeClass=="Micro" & #removing categories better retained in meso net from micro net matrix
+          
+          Taxlifestage%in%c("Cirripedia Larva", "Cyclopoida Adult", "Oithona similis")))%>%
+  left_join(zoop_mass_group, by=c("Taxlifestage", "Lifestage", "Taxname"))%>%
+  mutate(BPUE=CPUE*Carbon_mass_micrograms,
+         Group=if_else(Order=="Mysida", "Mysida", Group))%>%
   left_join(zoop_mysid, 
             by=c("Group", "SampleID"))%>%
   filter(!is.na(Group))%>% # This removes anyone without an assigned group
-  mutate(BPUE=if_else(is.na(BPUE), BPUE_mysid, BPUE))%>%
-      group_by(Year, Group)%>%
-      summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
-  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
-    names_glue = "{Group}_{.value}")
-
-str(zoop_data_mass)
-
-write_csv(zoop_data_mass, "data/annual_averages/zoop.csv")
+  mutate(BPUE=if_else(is.na(BPUE), BPUE_mysid, BPUE))
 ```
+
+
+
+Summarize zoop effort by month and year
+```{r}
+zoop_data_sum<-zoop_data_mass%>%
+  select(Month, Year, SampleID)%>%
+  distinct()%>%
+  group_by(Month, Year)%>%
+  summarise(N=n(), .groups="drop")
+```
+
+Plot heat map
+```{r}
+ggplot(zoop_data_sum, aes(y=Month, x=Year, fill=N))+
+  geom_tile()+
+  scale_fill_viridis_c()+
+  scale_y_continuous(breaks=1:12)+
+  coord_cartesian(expand=FALSE)+
+  theme_bw()
+```
+
+Summarize zoop effort by date and station
+```{r}
+zoop_data_station<-zoop_data_mass%>%
+  select(Month, Year, Station)%>%
+  distinct()%>%
+  mutate(type="present")%>%
+  complete(Month, Year, Station, fill=list(type="missing"))%>%
+  mutate(Date=dmy(paste("1", Month, Year)))
+```
+
+Plot zoop effort by date and station for annual metrics
+```{r}
+ggplot(zoop_data_station%>%filter(Station%in%zoop_stations$StationNZ), aes(x=Date, y=Station, color=type))+
+  geom_point()+
+  scale_color_manual(values=c("firebrick3", "black"))+
+  theme_bw()
+```
+
+Find zoop stations that can be used for monthly metrics
+```{r}
+zoop_stations_month<-zoop_data_mass%>%
+  filter(Year>=1995)%>%
+  group_by(Station, Month)%>%
+  summarise(N_years=n_distinct(Year), .groups="drop")%>%
+  filter(N_years>=22)%>%
+  group_by(Station)%>%
+  summarise(N_months=n_distinct(Month))%>%
+  filter(N_months==12)
+```
+
+Plot zoop effort by date and station for monthly metrics
+```{r}
+ggplot(zoop_data_station%>%filter(Station%in%zoop_stations_month$Station), aes(x=Date, y=Station, color=type))+
+  geom_point()+
+  scale_color_manual(values=c("firebrick3", "black"))+
+  theme_bw()
+```
+
+Create annual data set with final set of annual stations
+```{r}
+zoop_data_annual<-zoop_data_mass%>%
+  filter(Station%in%zoop_stations$StationNZ)%>%
+  filter(!Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))%>% # Renove stations that aren't continuous in time
+  filter(Month%in%3:11)
+
+# Make sure the right number of stations was removed
+length(setdiff(unique(zoop_data_mass$Station), unique(zoop_data_annual$Station)))==6
+
+# Save list of annual stations
+zoop_data_annual%>%
+  select(Station, Latitude, Longitude)%>%
+  mutate(Survey="EMP zooplantkon")%>%
+  distinct()%>%
+  write_csv("data/stations/stations_zoop_annual.csv")
+```
+
+Plot the final set of annual stations
+```{r}
+ggplot()+
+  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
+  geom_point(data=zoop_data_annual%>%select(Station, Latitude, Longitude)%>%distinct(), 
+             aes(x=Longitude, y=Latitude),
+             color="red")
+```
+
+Create monthly data set with final set of monthly stations
+```{r}
+zoop_data_month<-zoop_data_mass%>%
+  filter(Station%in%zoop_stations_month$Station)
+
+# Save list of annual stations
+zoop_data_month%>%
+  select(Station, Latitude, Longitude)%>%
+  mutate(Survey="EMP zooplantkon")%>%
+  distinct()%>%
+  write_csv("data/stations/stations_zoop_month.csv")
+```
+
+Plot the final set of monthly stations
+```{r}
+ggplot()+
+  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
+  geom_point(data=zoop_data_month%>%select(Station, Latitude, Longitude)%>%distinct(), 
+             aes(x=Longitude, y=Latitude),
+             color="red")
+```
+
+# Export zoop data for analysis
+
+Annual data
+```{r}
+zoop_data_annual_final<-zoop_data_annual%>%
+  region_assigner(analysis="annual")
+
+zoop_data_annual_final_noregions<-zoop_data_annual_final%>%
+  group_by(Year, Group)%>%
+  summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
+  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
+              names_glue = "{Group}_{.value}")
+
+zoop_data_annual_final_noregions
+write_csv(zoop_data_annual_final_noregions, "data/annual_averages/zoop_annual_noregions.csv")
+
+zoop_data_annual_final_regions<-zoop_data_annual_final%>%
+  group_by(Year, Group, Region)%>%
+  summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
+  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
+              names_glue = "{Group}_{.value}")
+
+zoop_data_annual_final_regions
+write_csv(zoop_data_annual_final_regions, "data/annual_averages/zoop_annual_regions.csv")
+```
+
+Monthly data
+```{r}
+zoop_data_month_final<-zoop_data_month%>%
+  region_assigner(analysis="monthly")%>%
+  group_by(Year, Group, Region)%>%
+  summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
+  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
+              names_glue = "{Group}_{.value}")
+
+str(zoop_data_month_final)
+
+write_csv(zoop_data_month_final, "data/annual_averages/zoop_month.csv")
+```
+
 
