@@ -6,10 +6,11 @@ output: html_document
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
-      output_dir = '../docs',
+      output_dir = 'docs',
+      knit_root_dir = "../",
       envir = globalenv()
     )
-  })
+    })
 ---
 
 ```{r setup, include=FALSE}
@@ -19,11 +20,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 #devtools::install_github("sbashevkin/LTMRdata")
 
+#Set to project directory
 library(LTMRdata)
 library(tidyverse)
 library(lubridate)
 library(ggmap)
-source('../functions/nutrient_funcs.R', local = TRUE)
+library(sf)
+source('functions/nutrient_funcs.R', local = TRUE)
+source('functions/region_assigner.R', local = TRUE)
 
 ```
 
@@ -105,6 +109,7 @@ DJFMP_Coords_study_stations_subset_annual
 map <- create_station_map(DJFMP_Coords_study_stations_subset_annual) + labs(title="DJFMP stations for annual data")
 map
 ```
+
 ## Finalize list of stations for annual data
 
 Show sampling effort by month and year for the final list of stations:
@@ -127,25 +132,45 @@ Mahardja B, Conrad JL, Lusher L, Schreier B. 2016. Abundance Trends, Distributio
 * Join SR012E and SR012W together
 * Add length-weight conversion to get biomass
 * Use just January-May
+* Filtered to region boundaries as defined by Denise
 * Write csv to annual averages folder
 
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-write.csv((DJFMP_Coords_study_stations_subset_annual %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("stations/stations_fish_DJFMP_annual.csv"))
+write.csv((DJFMP_Coords_study_stations_subset_annual %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("data/stations/stations_fish_DJFMP_annual.csv"))
 
-DJFMP_Silverside_seine_subset<- DJFMP_Silverside_seine
-DJFMP_Silverside_seine_subset$Station<-as.factor(DJFMP_Silverside_seine_subset$Station)
-levels(DJFMP_Silverside_seine_subset$Station)[levels(DJFMP_Silverside_seine_subset$Station)=="SR012W"] <- "SR012E"
+DJFMP_Silverside_seine_annual_station_fixed<- DJFMP_Silverside_seine
+DJFMP_Silverside_seine_annual_station_fixed$Station<-factor(DJFMP_Silverside_seine_annual_station_fixed$Station)
+levels(DJFMP_Silverside_seine_annual_station_fixed$Station)[levels(DJFMP_Silverside_seine_annual_station_fixed$Station)=="SR012W"] <- "SR012E"
 
-DJFMP_Silverside_seine_subset<- DJFMP_Silverside_seine %>% mutate(Month=month(Date),Year=year(Date),Biomass=ifelse(is.na(Length),0, (0.0097*(Length^2.87))*Count)) %>%
+DJFMP_Silverside_seine_annual<- DJFMP_Silverside_seine_annual_station_fixed %>% mutate(Month=month(Date),Year=year(Date),Biomass=ifelse(is.na(Length),0, (0.0097*(Length^2.87))*Count)) %>%
   filter(Station %in% DJFMP_Coords_study_stations_subset_annual$Station & Month %in% c(1:5)) %>%
+  #filter to just the regions that Denise defined
+  region_assigner(analysis="annual",plot=FALSE) %>%
   group_by(Year, Month, Station, Datetime) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%
   group_by(Year, Month, Station) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
   group_by(Year, Month) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
   group_by(Year) %>% summarise(DJFMP_fish_catch_per_seine_Silverside=mean(Catch_per_seine),DJFMP_fish_biomass_Silverside=mean(Biomass))
 
-write.csv(DJFMP_Silverside_seine_subset,row.names=FALSE,file=file.path("annual_averages/fish_DJFMP.csv"))
+write.csv(DJFMP_Silverside_seine_annual,row.names=FALSE,file=file.path("data/annual_averages/fish_DJFMP.csv"))
+
+```
+
+### Create annual data by region
+* Same as above, but calculated for north and south region
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+DJFMP_Silverside_seine_annual_region<- DJFMP_Silverside_seine_annual_station_fixed %>% mutate(Month=month(Date),Year=year(Date),Biomass=ifelse(is.na(Length),0, (0.0097*(Length^2.87))*Count)) %>%
+  filter(Station %in% DJFMP_Coords_study_stations_subset_annual$Station & Month %in% c(1:5)) %>%
+  region_assigner(analysis="annual") %>%
+  group_by(Year, Month, Station, Datetime, Region) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%
+  group_by(Year, Month, Station, Region) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
+  group_by(Year, Month, Region) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
+  group_by(Year, Region) %>% summarise(DJFMP_fish_catch_per_seine_Silverside=mean(Catch_per_seine),DJFMP_fish_biomass_Silverside=mean(Biomass))
+
+write.csv(DJFMP_Silverside_seine_annual_region,row.names=FALSE,file=file.path("data/annual_averages/fish_DJFMP_by_region.csv"))
 
 ```
 
@@ -159,7 +184,8 @@ ggplot(DJFMP_seine_sampling_effort_monthly,aes(x=Year,y=Month,fill=sample_size))
   scale_x_continuous(breaks=c(1995,2000,2005,2010,2015,2020))+ scale_y_continuous(breaks=c(1:12)) + labs(title= "DJFMP station sampling effort by month and year")
 ```
 
-Combine SJ058E with SJ058W and SR012E with SR012W
+Combine SJ058E with SJ058W and SR012E with SR012W.
+All stations look somewhat usable. 
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 DJFMP_seine_sampling_effort_monthly$Station<-as.factor(DJFMP_seine_sampling_effort_monthly$Station)
@@ -170,10 +196,42 @@ ggplot(DJFMP_seine_sampling_effort_monthly,aes(x=Year,y=Month,fill=sample_size))
   scale_x_continuous(breaks=c(1995,2000,2005,2010,2015,2020))+ scale_y_continuous(breaks=c(1:12)) + labs(title= "DJFMP station sampling effort by month and year")
 ```
 
-All stations look somewhat usable. Export current list of monthly stations to data_stations folder.
+
+## Final data processing for monthly data
+
+* Join SR012E and SR012W together, SJ058E and SJ058W
+* Add length-weight conversion to get biomass
+* Use all months, but from 1995 and on
+* Filtered to region boundaries as defined by Denise
+* Write csv to monthly averages folder
+* Export stations to data_stations folder??
+
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-write.csv((DJFMP_Coords_study_stations %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("stations/stations_fish_DJFMP_monthly.csv"))
+DJFMP_Silverside_seine_monthly_station_fixed<- DJFMP_Silverside_seine
+DJFMP_Silverside_seine_monthly_station_fixed$Station<-factor(DJFMP_Silverside_seine_monthly_station_fixed$Station)
+levels(DJFMP_Silverside_seine_monthly_station_fixed$Station)[levels(DJFMP_Silverside_seine_monthly_station_fixed$Station)=="SR012W"] <- "SR012E"
+levels(DJFMP_Silverside_seine_monthly_station_fixed$Station)[levels(DJFMP_Silverside_seine_monthly_station_fixed$Station)=="SJ058E"] <- "SJ058W"
+
+
+DJFMP_Silverside_seine_monthly_region<- DJFMP_Silverside_seine_monthly_station_fixed %>% mutate(Month=month(Date),Year=year(Date),Biomass=ifelse(is.na(Length),0, (0.0097*(Length^2.87))*Count)) %>%
+  filter(Station %in% unique(DJFMP_seine_sampling_effort_monthly$Station) & Year>=1995) %>%
+  region_assigner(analysis="monthly",plot=FALSE) %>%
+  group_by(Year,Month, Station, Datetime, Region) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%
+  group_by(Year,Month, Station, Region) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
+  group_by(Year,Month, Region) %>% summarise(DJFMP_fish_catch_per_seine_Silverside=mean(Catch_per_seine),DJFMP_fish_biomass_Silverside=mean(Biomass))
+
+write.csv(DJFMP_Silverside_seine_monthly_region,row.names=FALSE,file=file.path("data/monthly_averages/fish_DJFMP_monthly.csv"))
+
+```
+
+### Map export for monthly stations
+
+Leftover code. Not sure how Denise wants to do this. To export all stations that can be potentially used or just the subset?
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+write.csv((DJFMP_Coords_study_stations %>% mutate(Survey="Delta Juvenile Fish Monitoring Program")),row.names = FALSE,file=file.path("data/stations/stations_fish_DJFMP_monthly.csv"))
 ```
 
 
