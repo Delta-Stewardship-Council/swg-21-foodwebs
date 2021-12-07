@@ -164,13 +164,13 @@ BayStudy_annual_derived <- BayStudy_annual %>%
   mutate(Length=ifelse(is.na(Length),0,Length)) %>%
   mutate(Year=year(Date)) %>%
   mutate(Biomass = case_when(
-    Taxa=="Hypomesus transpacificus" ~ (0.0018*(Length^3.38))*Count/1000,
-    Taxa=="Spirinchus thaleichthys" ~ (0.0005*(Length^3.69))*Count/1000,
-    Taxa=="Dorosoma petenense" ~ (0.0072*(Length^3.16))*Count/1000,
-    Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count/1000,
-    Taxa=="Engraulis mordax" ~ (0.0015*(Length^3.37))*Count/1000,
-    Taxa=="Clupea pallasii" ~ (0.0015*(Length^3.44))*Count/1000,
-    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count/1000))
+    Taxa=="Hypomesus transpacificus" ~ (0.0018*(Length^3.38))*Count,
+    Taxa=="Spirinchus thaleichthys" ~ (0.0005*(Length^3.69))*Count,
+    Taxa=="Dorosoma petenense" ~ (0.0072*(Length^3.16))*Count,
+    Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count,
+    Taxa=="Engraulis mordax" ~ (0.0015*(Length^3.37))*Count,
+    Taxa=="Clupea pallasii" ~ (0.0015*(Length^3.44))*Count,
+    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count))
 
 BayStudy_annual_values <- BayStudy_annual_derived %>%
   group_by(Year,Date,Station,Method,Taxa) %>%
@@ -316,13 +316,13 @@ BayStudy_monthly_derived <- BayStudy_full %>% mutate(Month=month(Date)) %>%
   mutate(Length=ifelse(is.na(Length),0,Length)) %>%
   mutate(Year=year(Date)) %>%
   mutate(Biomass = case_when(
-    Taxa=="Hypomesus transpacificus" ~ (0.0018*(Length^3.38))*Count/1000,
-    Taxa=="Spirinchus thaleichthys" ~ (0.0005*(Length^3.69))*Count/1000,
-    Taxa=="Dorosoma petenense" ~ (0.0072*(Length^3.16))*Count/1000,
-    Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count/1000,
-    Taxa=="Engraulis mordax" ~ (0.0015*(Length^3.37))*Count/1000,
-    Taxa=="Clupea pallasii" ~ (0.0015*(Length^3.44))*Count/1000,
-    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count/1000))
+    Taxa=="Hypomesus transpacificus" ~ (0.0018*(Length^3.38))*Count,
+    Taxa=="Spirinchus thaleichthys" ~ (0.0005*(Length^3.69))*Count,
+    Taxa=="Dorosoma petenense" ~ (0.0072*(Length^3.16))*Count,
+    Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count,
+    Taxa=="Engraulis mordax" ~ (0.0015*(Length^3.37))*Count,
+    Taxa=="Clupea pallasii" ~ (0.0015*(Length^3.44))*Count,
+    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count))
 
 BayStudy_monthly_values_by_region <- BayStudy_monthly_derived %>%
   group_by(Year,Month,Region,Date,Station,Method,Taxa) %>%

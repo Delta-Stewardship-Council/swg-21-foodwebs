@@ -199,6 +199,8 @@ ggplot(DJFMP_seine_sampling_effort_monthly,aes(x=Year,y=Month,fill=sample_size))
 
 ## Final data processing for monthly data
 
+Added Largemouth Bass and aggregate Centrarchids metrics.
+
 * Join SR012E and SR012W together, SJ058E and SJ058W
 * Add length-weight conversion to get biomass
 * Use all months, but from 1995 and on
@@ -208,20 +210,66 @@ ggplot(DJFMP_seine_sampling_effort_monthly,aes(x=Year,y=Month,fill=sample_size))
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-DJFMP_Silverside_seine_monthly_station_fixed<- DJFMP_Silverside_seine
-DJFMP_Silverside_seine_monthly_station_fixed$Station<-factor(DJFMP_Silverside_seine_monthly_station_fixed$Station)
-levels(DJFMP_Silverside_seine_monthly_station_fixed$Station)[levels(DJFMP_Silverside_seine_monthly_station_fixed$Station)=="SR012W"] <- "SR012E"
-levels(DJFMP_Silverside_seine_monthly_station_fixed$Station)[levels(DJFMP_Silverside_seine_monthly_station_fixed$Station)=="SJ058E"] <- "SJ058W"
+
+DJFMP_fish_monthly<-LTMRdata::fish(sources="DJFMP", species=c("Menidia audens","Micropterus salmoides"), size_cutoff=NULL,remove_unknown_lengths=FALSE)%>%
+  filter(Method=="Beach seine")
+
+DJFMP_centrarchids<-LTMRdata::fish(sources="DJFMP", species=c("Micropterus salmoides","Lepomis microlophus","Lepomis macrochirus"), size_cutoff=NULL,remove_unknown_lengths=FALSE)%>%
+  filter(Method=="Beach seine")
 
 
-DJFMP_Silverside_seine_monthly_region<- DJFMP_Silverside_seine_monthly_station_fixed %>% mutate(Month=month(Date),Year=year(Date),Biomass=ifelse(is.na(Length),0, (0.0097*(Length^2.87))*Count)) %>%
+DJFMP_seine_monthly_station_fixed<- DJFMP_fish_monthly
+DJFMP_seine_monthly_station_fixed$Station<-factor(DJFMP_seine_monthly_station_fixed$Station)
+levels(DJFMP_seine_monthly_station_fixed$Station)[levels(DJFMP_seine_monthly_station_fixed$Station)=="SR012W"] <- "SR012E"
+levels(DJFMP_seine_monthly_station_fixed$Station)[levels(DJFMP_seine_monthly_station_fixed$Station)=="SJ058E"] <- "SJ058W"
+
+#Calculate species metrics
+DJFMP_seine_monthly_region<- DJFMP_seine_monthly_station_fixed %>% mutate(Month=month(Date),Year=year(Date),Length=ifelse(is.na(Length),0,Length),
+                                                                          Biomass=
+                                                                            case_when(Taxa=="Menidia audens" ~ (0.0097*(Length^2.87))*Count/1000,
+                                                                          Taxa=="Micropterus salmoides" ~ (0.0097*(Length^2.87))*Count/1000)) %>%
   filter(Station %in% unique(DJFMP_seine_sampling_effort_monthly$Station) & Year>=1995) %>%
   region_assigner(analysis="monthly",plot=FALSE) %>%
-  group_by(Year,Month, Station, Datetime, Region) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%
-  group_by(Year,Month, Station, Region) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
-  group_by(Year,Month, Region) %>% summarise(DJFMP_fish_catch_per_seine_Silverside=mean(Catch_per_seine),DJFMP_fish_biomass_Silverside=mean(Biomass))
+  group_by(Year,Month, Taxa, Station, Datetime, Region) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%
+  group_by(Year,Month, Taxa, Station, Region) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
+  group_by(Year,Month, Taxa, Region) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass))%>%
+  mutate(CommonName= case_when(
+    Taxa=="Menidia audens" ~ "Silverside",
+    Taxa=="Micropterus salmoides" ~ "LargemouthBass"))
 
-write.csv(DJFMP_Silverside_seine_monthly_region,row.names=FALSE,file=file.path("data/monthly_averages/fish_DJFMP_monthly.csv"))
+DJFMP_monthly_values_biomass <- DJFMP_seine_monthly_region %>% ungroup() %>% select(Year,Month,Region,CommonName,Biomass) %>%
+  pivot_wider(names_from =CommonName,values_from =Biomass,names_prefix="DJFMP_fish_biomass_")
+
+DJFMP_monthly_values_catch <- DJFMP_seine_monthly_region %>% ungroup() %>% select(Year,Month,Region,CommonName,Catch_per_seine) %>%
+  pivot_wider(names_from =CommonName,values_from =Catch_per_seine,names_prefix="DJFMP_fish_catch_per_seine_")
+
+#Calculate centrarchid metric
+DJFMP_seine_monthly_station_fixed_centrarchids<- DJFMP_centrarchids
+DJFMP_seine_monthly_station_fixed_centrarchids$Station<-factor(DJFMP_seine_monthly_station_fixed_centrarchids$Station)
+levels(DJFMP_seine_monthly_station_fixed_centrarchids$Station)[levels(DJFMP_seine_monthly_station_fixed_centrarchids$Station)=="SR012W"] <- "SR012E"
+levels(DJFMP_seine_monthly_station_fixed_centrarchids$Station)[levels(DJFMP_seine_monthly_station_fixed_centrarchids$Station)=="SJ058E"] <- "SJ058W"
+
+DJFMP_seine_monthly_station_fixed_centrarchids<- DJFMP_seine_monthly_station_fixed_centrarchids %>% mutate(Month=month(Date),Year=year(Date),Length=ifelse(is.na(Length),0,Length),
+                                                                          Biomass=
+                                                                            case_when(Taxa=="Lepomis macrochirus" ~ (0.0097*(Length^2.87))*Count/1000,
+                                                                                      Taxa=="Lepomis microlophus" ~ (0.0097*(Length^2.87))*Count/1000,
+                                                                          Taxa=="Micropterus salmoides" ~ (0.0097*(Length^2.87))*Count/1000)) %>%
+  filter(Station %in% unique(DJFMP_seine_sampling_effort_monthly$Station) & Year>=1995) %>%
+  region_assigner(analysis="monthly",plot=FALSE) %>%
+  group_by(Year,Month, Taxa, Station, Datetime, Region) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%
+  group_by(Year,Month, Taxa, Station, Region) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass)) %>%
+  group_by(Year,Month, Taxa, Region) %>% summarise(Catch_per_seine=mean(Catch_per_seine),Biomass=mean(Biomass))%>%
+  mutate(CommonName= case_when(
+    Taxa=="Lepomis microlophus" ~ "Redear",
+    Taxa=="Lepomis macrochirus" ~ "Bluegill",
+    Taxa=="Micropterus salmoides" ~ "LargemouthBass")) %>% group_by(Year,Month,Region) %>%
+  summarise(DJFMP_fish_catch_per_seine_Centrarchids=sum(Catch_per_seine),DJFMP_fish_biomass_Centrarchids=sum(Biomass))
+
+#Combine all monthly data frames
+DJFMP_monthly_values_all<-full_join(DJFMP_monthly_values_catch,DJFMP_monthly_values_biomass) %>% full_join(DJFMP_seine_monthly_station_fixed_centrarchids)
+
+#Write out csv
+write.csv(DJFMP_monthly_values_all,row.names=FALSE,file=file.path("data/monthly_averages/fish_DJFMP_monthly.csv"))
 
 ```
 
