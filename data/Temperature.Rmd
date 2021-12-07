@@ -20,6 +20,7 @@ library(dplyr)
 library(ggplot2)
 library(lubridate)
 library(readr)
+source("functions/region_assigner.R")
 ```
 
 Load model-predicted temperature data
@@ -41,7 +42,7 @@ Data_effort <- temp_data%>%
   filter(n_years>=45)
 
 temp_predictions_filtered <- temp_predictions%>%
-  st_as_sf(coords=c("Longitude", "Latitude"), crs=4326)%>%
+  st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, remove=FALSE)%>%
   st_transform(crs=st_crs(Delta))%>%
   st_join(Delta)%>%
   semi_join(Data_effort, by=c("SubRegion", "Month"))

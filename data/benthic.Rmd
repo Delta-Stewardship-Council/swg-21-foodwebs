@@ -1,8 +1,10 @@
 ---
-title: "Benthic Sampling Effort"
-author: "Jeanette Clark"
-date: "10/25/2021"
+title: "EMP Benthic Data Analysis"
+author: "Christina Burdi"
+date: "11/30/2021"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
@@ -11,290 +13,306 @@ knit: (function(input, ...) {
       envir = globalenv()
     )
     })
-editor_options: 
-  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, echo = FALSE, message=FALSE, warning=FALSE}
+Benthic sampling includes both clam and amphipod data that we're interested in.
+
+Redoing benthic script with correct stations that were continuously monitored over the time series
+
+Load packages
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
 library(readr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(DT)
+require(lubridate)
 library(leaflet)
-library(sf)
-library(janitor)
+source("functions/region_assigner.R") #loads function to analyze regional data
 ```
 
-
-## Read and preprocess data
-
-* remove the L,R,C (left, right, center) from site names, so we can group those counts together
-    - may need to verify this doesn't create any statistical artifacts
-* create a monthly time stamp
-* take mean of lat/lon for each site
-    -  some sites moved slightly, and some years don't have lat/lons for the sites. Assume minor site movement is negligable (may need to verify)
-
+# Download benthic data if it's not already found locally in the data_raw folder
 ```{r}
-ben_raw <- tryCatch(
-  read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv", show_col_types = FALSE),
-  error=function(cond) {
-    message(paste("Benthic file does not exist locally, so get it from the KNB."))
-    ben_raw <- read_csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a", method = "libcurl"), show_col_types = FALSE)
-    return(ben_raw)
+if(!file.exists(file.path("data_raw", "DWR Benthic raw count data 1975-2020 2021_10_01.csv"))){
+  if(!dir.exists("data_raw")){
+    dir.create("data_raw")
   }
-)
-
-# read in absolute fp
-abs_path <- function(fp_rel = NULL, org = NULL) {
-  # set org fp
-  if (org == 'dwr'){
-    fp_org <- 'California Department of Water Resources'
-  }
-  
-  fp_fastr <- 'California Department of Water Resources/Drought Synthesis - Documents/'
-  
-  if (is.null(fp_rel)) {
-    fp_abs <- normalizePath(file.path(Sys.getenv('USERPROFILE'), fp_fastr))
-  } else {
-    fp_abs <- normalizePath(file.path(Sys.getenv('USERPROFILE'), fp_fastr, fp_rel))
-  }
-  
-  return(fp_abs)
-}
-
-import_benthic_data <- function(method = 'tryCatch', org = NULL) {
-  if(method == 'tryCatch'){
-    tryCatch(
-      read_csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv", show_col_types = FALSE),
-      error=function(cond) {
-        message(paste("Benthic file does not exist locally, so get it from the KNB."))
-        ben_raw <- read_csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a", method = "libcurl"), show_col_types = FALSE)
-        return(ben_raw)
-  }
-)
-  if(method == 'sharepoint_dwr'){
-    
-  }
-    
-  }
+  timeout<-getOption('timeout')
+  options(timeout=300)
+  download.file("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a", method = "libcurl",
+                destfile=file.path("data_raw", "DWR Benthic raw count data 1975-2020 2021_10_01.csv"))
+  options(timeout=timeout)
 }
 ```
 
 
+# Clean and reprocess data
 
-```{r, message=FALSE}
-ben <- ben_raw  %>% 
-  mutate(StationClean =  gsub("-[A-Z]","",StationCode)) %>% 
-  mutate(mon = lubridate::ym(paste0(Year, Month, sep = "-"))) %>% 
-  group_by(StationClean) %>% 
-  mutate(Latitude = mean(Latitude, na.rm = T), 
-         Longitude = mean(Longitude, na.rm = T)) %>% 
-  ungroup()
+Read in raw benthic count data
+
+Benthic file does not exist locally so can get it from KMB: https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a
+
+* Benthic survey used to sample on the L, R, or C of a site location historically, and eventually picked a side to monitor continuously, so need to remove the "Left, Right, Center" from the station names so can combine sites over the years. 
+* Want to make sure that we use all of the data from that site, despite which side it was sampled on
+* Still want to keep A as a station designation
+
+
+* Create a monthly time step to see which stations were sampled continuously over the years
+* Take mean of lat/ long for each site since some sites moved slightly over the years based on the L, R, C
+
+```{r}
+
+ben <- read.csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
+  filter(Genus %in% c("Potamocorbula", "Corbicula") | Order_level == "Amphipoda")%>%
+  select(SampleDate, Year, Month, StationCode, Grab, OrganismCode, Count, Order_level, Genus, Latitude, Longitude)%>%
+  mutate(mon = ym(paste0(Year, Month, sep = "-")), #create a month time step
+         CPUE=Count/0.052,
+         Month=month(mon))%>%
+  group_by(across(-c(Count, Grab, CPUE)))%>%
+  summarise(CPUE=mean(CPUE), .groups="drop")%>%
+  mutate(Latitude=if_else(StationCode=="D7-C", 38.1171292, Latitude),
+         Longitude=if_else(StationCode=="D7-C", -122.0395539, Longitude))
 ```
 
 
+# Graph which stations were sampled continuously over the time series
+
 
 ```{r}
+
+#sites and number of months sampled to look at which were sampled continuously for analysis
+
 sites_mon <- ben  %>% 
-  distinct(StationClean, Latitude, Longitude, mon) 
+  distinct(StationCode, Latitude, Longitude, mon)
+
+#graph of monthly sampling of each site over the time series
+
+ggplot(sites_mon, aes(x = mon, y = StationCode), size = 3) +
+  geom_point() +
+  theme_classic()
+```
+
+only three stations were sampled consistently from 1977 to present.Stations D7 (Grizzly Bay), D4 (Chipps), D28A (franks Tract)
+
+Additional stations picked up in the late 1990s
+
+May want to eliminate clams from annual analysis based on small coverage with just those 3 sites, or combine sites close together. Need to explore.
+
+
+
+# Map of sites colored with stations sampled continuously from 1980s, and 1990s. Scaled by months sampled
+
+First specify which stations are from the 1980s and which are from the 1990s
+
+```{r}
+#stations sampled continuously since the 1980s
+
+ben_1980 = c("D7-C", 
+               "D4-L", 
+               "D28A-L")
+
+#stations sampled continuously since the 1990s
+
+ben_1990 = c("P8-R", 
+             "D6-R", 
+             "D41-C", 
+             "D41A-C", 
+             "D24-L", 
+             "D16-L", 
+             "C9-L")
+
+```
+
+# Map of all stations
+
+* Red = sites sampled continuously from the 1980s
+* Blue = from the 1990s
+* Black = sites not sampled continuously
+
+```{r}
 
 sites <- ben %>% 
-  group_by(StationClean, Latitude, Longitude) %>% 
-  summarise(n_months = length(unique(mon)), .groups  =  "drop") %>% 
-  st_as_sf(coords = c('Longitude','Latitude'), crs = 4326,  remove = FALSE)
-```
-
-
-## Sites that were sampled each month
-
-
-```{r, echo=F}
-ggplot(sites_mon, aes(x = mon, y = StationClean), size = 3) +
-  geom_point() +
-  theme_classic()
-```
-
-
-## Table of site information
-
-```{r, echo = FALSE}
-datatable(as.data.frame(sites))
-```
-
-## Core Stations
-
-```{r}
-core <- c("P8",
-          "MD10",
-          "D8",
-          "D7",
-          "D6",
-          "D41",
-          "D4",
-          "D28A",
-          "D26",
-          "C3",
-          "C10")
-
-core_data <-  sites_mon %>% 
-  filter(StationClean %in% core)
-```
-
-
-```{r, echo=F}
-ggplot(core_data, aes(x = mon, y = StationClean), size = 3) +
-  geom_point() +
-  theme_classic()
-```
-
-## Location of sites, sized according to total number of months sampled
-
-Red are core sites
-
-```{r, message = FALSE, echo = FALSE}
-sites_core <- sites %>% 
-  filter(StationClean %in% core)
-
+  group_by(StationCode, Latitude, Longitude) %>% 
+  summarise(n_months = length(unique(mon)), .groups  =  "drop")
 
 leaflet(sites) %>% 
-  addTiles() %>% 
-  addCircleMarkers(data = sites,
-                         lat = ~Latitude,
-                         lng = ~Longitude,
-                         radius = ~(n_months/50), # arbitrary scaling
-                         fillColor = "blue",
-                         fillOpacity = 1,
-                         weight = 0.25,
-                         color = "black",
-                         label = ~StationClean) %>% 
-  addCircleMarkers(data = sites_core,
-                         lat = ~Latitude,
-                         lng = ~Longitude,
-                         radius = ~(n_months/50), # arbitrary scaling
-                         fillColor = "red",
-                         fillOpacity = 1,
-                         weight = 0.25,
-                         color = "black",
-                         label = ~StationClean)
-```
-
-# Plotting and selecting just the continuously sampled sites from the mid 80s and 90s
-
-Black: non-continuous stations, Green: continuous since 1980s, Blue: continuous since 1990s 
-```{r}
-sites_cont <- sites %>% 
-  filter(StationClean %in% c("D7", "D28A", "D4", "P8", "D6", "D41", "D41A", "D24", "D16", "C9"))%>%
-  mutate(Start=c(rep("1980s", 3), rep("1990s", 7)))
-
-
-leaflet(sites) %>% 
-  addTiles() %>% 
-  addCircleMarkers(data = sites,
-                         lat = ~Latitude,
-                         lng = ~Longitude,
-                         radius = ~(n_months/50), # arbitrary scaling
-                         fillColor = "black",
-                         fillOpacity = 1,
-                         weight = 0.25,
-                         color = "black",
-                         label = ~StationClean) %>% 
-  addCircleMarkers(data = sites_cont,
-                         lat = ~Latitude,
-                         lng = ~Longitude,
-                         radius = ~(n_months/50), # arbitrary scaling
-                         fillColor = ~colorFactor(palette=c("chartreuse4", "dodgerblue3"), domain=unique(sites_cont$Start))(Start),
-                         fillOpacity = 1,
-                         weight = 0.25,
-                         color = "black",
-                         label = ~StationClean)
-```
-
-Export stations for regions
-```{r}
-sites_cont%>%
-  st_drop_geometry()%>%
-  select(Station=StationClean, Latitude, Longitude)%>%
-  write_csv("data/stations/stations_benthic.csv")
-```
-
-## Annual Average CPUE
-
-For both clam genera, Potamocorbula and Corbicula.
-
-Code adapted from [Sarah's work here](https://github.com/emp-des/annual-report-graphs/blob/master/Benthic/Benthic_AR_Template.Rmd)
-
-```{r}
-grabs_month  <- ben %>%
-  mutate(Date = paste(Month, Year)) %>% 
-  group_by(Date, StationCode, .drop = TRUE) %>%
-  mutate(Grab_Count = max(Grab)) %>%
-  distinct(Date, StationCode, Grab_Count) %>% 
-  group_by(Date) %>% 
-  summarise(Grab_Count = sum(Grab_Count))
-
-ben_clams_month <- ben %>% 
-  mutate(Date = paste(Month, Year)) %>%
-  group_by(Genus, Date) %>%
-  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
-  left_join(grabs_month) %>% 
-  mutate(CPUE_Total = Orgs_Total/Grab_Count/0.052) %>% 
-  mutate(Date = lubridate::my(Date))  %>% 
-  filter(Genus %in% c("Potamocorbula", "Corbicula"))
-
-ben_clams_month_wide <- ben_clams_month %>% 
-  select(-Orgs_Total, -Grab_Count) %>% 
-  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
-  rename(corbicula_cpue = Corbicula,
-         potamocorbula_cpue = Potamocorbula)  %>% 
-  clean_names()
+  addTiles() %>% #adds the default base map
+  addCircleMarkers(data= sites, #all benthic sites 
+             lat = ~Latitude,
+             lng = ~Longitude, 
+             label = ~StationCode, 
+             radius = ~n_months/ 50, #arbitrary scaling to show number of months each site was sampled 
+             color = "black",
+             fillColor = "black",
+             weight = 0.25, 
+             fillOpacity = 1) %>% 
+  addCircleMarkers(data = sites %>% filter(StationCode %in% ben_1980), #sites continuously from the 1980s
+                   lat = ~Latitude,
+                   lng = ~Longitude, 
+                   label = ~StationCode, 
+                   radius = ~n_months/ 50, 
+                   color = "black",
+                   fillColor = "red",
+                   weight = 0.25, 
+                   fillOpacity = 1) %>% 
+  addCircleMarkers(data = sites %>% filter(StationCode %in% ben_1990), #sites from the 1990s
+                 lat = ~Latitude,
+                 lng = ~Longitude, 
+                 label = ~StationCode, 
+                 radius = ~n_months/ 50, 
+                 color = "black",
+                 fillColor = "blue",
+                 weight = 0.25, 
+                 fillOpacity = 1) 
 
 ```
 
+# Write csv of stations sampled continuously for region analysis
+
 ```{r}
-grabs_year <- grabs_month %>% 
-  mutate(Date = lubridate::my(Date)) %>% 
-  mutate(Year = lubridate::year(Date)) %>% 
-  group_by(Year) %>% 
-  summarise(Grab_Count = sum(Grab_Count))
+#stations for annual analysis (1980 to present)
+
+write.csv(sites %>% 
+            filter(StationCode %in% ben_1980) %>% 
+            select(-n_months), "data/stations/stations_benthic_annual.csv")
+
+#stations for monthly analysis (1997 to present)
+
+write.csv(sites %>% 
+            filter(StationCode %in% c(ben_1980, ben_1990)) %>% 
+            select(-n_months), "data/stations/stations_benthic_monthly.csv")
+```
 
 
-ben_clams_year <- ben %>% 
+# Calculate summarised CPUE 
+
+* Do all critters first and then filter out later for what we want
+* Benthic CPUE (organisms/ m2) = (Sum of organisms per visit/ # of grabs per visit)/ (0.052 grabs/ m2)
+
+* Do CPUE with 1980 stations first for annual analysis. Need to explore other stations that we might need to combine to expand spatial coverage for annual data
+
+* Calculate average CPUE for 
+* 1. Clam and Amphipod Annual w/o Regions 
+* 2. Clam and Amphipod Annual with Regions and 
+* 3. Clam and Amphipod monthly with Regions
+
+
+```{r}
+ben_LT <- ben %>% 
+  filter(StationCode %in% ben_1980)%>%
+  region_assigner(analysis = "annual")
+
+#verified grab totals by comparing to old EMP benthic CPUE file from Betsy Wells
+
+```
+
+## Calculate Annual CPUE for Clams
+
+* Uses only the 1980s stations, and both clam genera
+
+
+```{r}
+LT_clams_year_noregions <- ben_LT%>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>%
   group_by(Genus, Year) %>%
-  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
-  left_join(grabs_year) %>% 
-  mutate(CPUE_Total = Orgs_Total/Grab_Count/0.052) %>% 
-  filter(Genus %in% c("Potamocorbula", "Corbicula"))
-
-
-ben_clams_year_wide <- ben_clams_year %>% 
-  select(-Orgs_Total, -Grab_Count) %>% 
+  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
   pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
-  rename(corbicula_cpue = Corbicula,
-         potamocorbula_cpue = Potamocorbula)  %>% 
-  clean_names()
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(LT_clams_year_noregions, "data/annual_averages/clams_annual_noregions.csv")
+
+LT_clams_year_regions <- ben_LT%>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
+  group_by(Region, Genus, Year) %>%
+  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv")
 
 ```
 
 
+## Calculate Annual CPUE for Amphipods
 
-```{r, echo = FALSE}
-ggplot() +
-  geom_line(data = ben_clams_month_wide, aes(x = date,  y = corbicula_cpue), color = "red") +
-  geom_line(data = ben_clams_month_wide, aes(x = date,  y = potamocorbula_cpue), color = "blue") +
-    geom_line(data = ben_clams_year_wide, aes(x = as.Date(paste0(year, "-01-01")),  y = corbicula_cpue), color = "firebrick") +
-  geom_line(data = ben_clams_year_wide, aes(x = as.Date(paste0(year, "-01-01")),  y = potamocorbula_cpue), color = "dark blue") +
-  theme_classic() +
-  labs(x= "Year", y = "CPUE", title = "Annual Mean CPUE for Corbicula (red) and Potamocorbula (blue)")
+* 1980s stations, and combine all amphipod species for total amphipod CPUE
+
+```{r}
+LT_amph_year_noregions <- ben_LT%>%
+  filter(Order_level == "Amphipoda")%>%
+  group_by(Order_level, Year) %>%
+  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
+  rename(Amphipoda_cpue = Amphipoda)
+
+write.csv(LT_amph_year_noregions, "data/annual_averages/amphipod_annual_noregions.csv")
+
+LT_amph_year_regions <- ben_LT%>%
+  filter(Order_level == "Amphipoda")%>%
+  group_by(Region, Order_level, Year) %>%
+  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
+  rename(Amphipoda_cpue = Amphipoda)
+
+write.csv(LT_amph_year_regions, "data/annual_averages/amphipod_annual_regions.csv")
+
+#verified both amphipods and clam annual values by comparing it to Betsy's file
+
 ```
+
+
+## Monthly CPUE for monthly/ regional analysis
+
+Now need to calc monthly CPUE for the stations sampled in the 1990s for the monthly/ regional short term analysis
+Stations: D41, D41A, C9, D16, D24, D6, P8, D7, D4, D28A
+
+
+CPUE with 10 ST stations, and limit to 1997 to present since D16 did not start till 1997
 
 
 ```{r}
-write_csv(ben_clams_year_wide, "data/annual_averages/benthic.csv")
+ben_ST <- filter(ben, StationCode %in% c(ben_1990, ben_1980) & Year >1996)%>%
+  region_assigner(analysis = "monthly")
 ```
 
 
+## Calc monthly CPUE for just clams at the 1990 stations
+
+
+```{r}
+ST_clams_mon <- ben_ST %>%
+    filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
+    group_by(Region, Genus, Year, Month) %>%
+    summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
+    pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+    rename(Corbicula_cpue = Corbicula,
+           Potamocorbula_cpue = Potamocorbula)
+
+write.csv(ST_clams_mon, "data/monthly_averages/clams_monthly_regions.csv")
+
+```
+
+
+## Amphipod monthly CPUE
+
+
+```{r}
+ST_amph_mon <- ben_ST%>%
+  filter(Order_level == "Amphipoda")%>%
+  group_by(Region, Order_level, Year, Month) %>%
+  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
+  rename(Amphipoda_cpue = Amphipoda)
+
+write.csv(ST_amph_mon, "data/monthly_averages/amphipod_monthly_regions.csv")
+
+#verified monthly averages by randomly comparing to CPUE of old EMP benthic file
+
+```
