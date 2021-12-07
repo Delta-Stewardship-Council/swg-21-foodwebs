@@ -312,7 +312,7 @@ Create dataset for month and region
 BayStudy_monthly_derived <- BayStudy_full %>% mutate(Month=month(Date)) %>%
   filter(Station != "326" & Station != "324" & Station != "753") %>% 
   filter(!is.na(Latitude) & !is.na(Longitude)) %>%
-  region_assigner(analysis="annual",plot=TRUE) %>%
+  region_assigner(analysis="monthly",plot=TRUE) %>%
   mutate(Length=ifelse(is.na(Length),0,Length)) %>%
   mutate(Year=year(Date)) %>%
   mutate(Biomass = case_when(
