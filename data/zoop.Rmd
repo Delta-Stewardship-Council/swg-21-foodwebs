@@ -256,7 +256,7 @@ zoop_data_month_final<-zoop_data_month%>%
 
 str(zoop_data_month_final)
 
-write_csv(zoop_data_month_final, "data/annual_averages/zoop_month.csv")
+write_csv(zoop_data_month_final, "data/monthly_averages/zoop_month.csv")
 ```
 
 
