@@ -23,6 +23,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(leaflet)
+source("functions/region_assigner.R") #loads function to analyze regional data
 ```
 
 ## Read in raw benthic count data
@@ -216,7 +217,7 @@ LT_clams_year_wide <- LT_clams_year %>%
   rename(Corbicula_cpue = Corbicula,
          Potamocorbula_cpue = Potamocorbula)
 
-write.csv(LT_clams_year_wide, "data/annual_averages/clams_LT_annual.csv")
+write.csv(LT_clams_year_wide, "data/annual_averages/clams_annual_noregions.csv")
 
 ```
 
@@ -239,7 +240,7 @@ LT_amph_year_wide <- LT_amph_year %>%
   pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
   rename(Amphipoda_cpue = Amphipoda)
 
-write.csv(LT_amph_year_wide, "data/annual_averages/amphipod_LT_annual.csv")
+write.csv(LT_amph_year_wide, "data/annual_averages/amphipod_annual_noregions.csv")
 
 #verified both amphipods and clam annual values by comparing it to Betsy's file
 
@@ -317,5 +318,141 @@ write.csv(ST_amph_mon_wide, "data/monthly_averages/amphipod_ST_monthly.csv")
 #verified monthly averages by randomly comparing to CPUE of old EMP benthic file
 
 ```
+
+## Regional Analyses
+
+* Assign annual and monthly stations to regions
+* Plot to make sure all stations fall into a region
+* Add region assignments to benthic file for monthly and annual analysis
+
+```{r}
+ben_LT_Reg= ben_LT %>%
+  region_assigner(analysis="annual")
+
+ben_st_reg= ben_ST %>%
+  region_assigner(analysis="monthly") #Stations C9 and P8 are dropped due to being outside the south region
+
+```
+
+## Calculating CPUE with regions assigned
+
+* Recalculate CPUE for 
+* 1. Clam and Amphipod Annual w/o Regions (already done earlier) 
+* 2. Clam and Amphipod Annual with Regions and 
+* 3. Clam and Amphipod monthly with Regions
+
+
+```{r}
+
+#clam annual CPUE with region
+
+Reg_clams_year <- ben_LT_Reg %>% 
+  group_by(Genus, Year, Region) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(LT_grabs_year) %>% 
+  mutate(CPUE_Total = (Orgs_Total/Grab_Count)/0.052) %>% 
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))
+
+reg_clams_year_wide <- Reg_clams_year %>% 
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(reg_clams_year_wide, "data/annual_averages/clams_annual_regions.csv")
+
+#amphipod annual with regions
+
+reg_amph_year <- ben_LT_Reg %>% 
+  group_by(Order_level, Year, Region) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(LT_grabs_year) %>% 
+  mutate(CPUE_Total = (Orgs_Total/Grab_Count)/0.052) %>% 
+  filter(Order_level == "Amphipoda")
+
+reg_amph_year_wide <- reg_amph_year %>% 
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
+  rename(Amphipoda_cpue = Amphipoda)
+
+write.csv(reg_amph_year_wide, "data/annual_averages/amphipod_annual_regions.csv")
+
+
+#clam monthly with region
+
+reg_clams_mon <- ben_st_reg %>% 
+  mutate(Date = paste(Month, Year)) %>% 
+  group_by(Genus,Date, Region) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(ST_grabs_month) %>% 
+  mutate(CPUE_Total = (Orgs_Total/Grab_Count)/0.052) %>% 
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))
+
+reg_clams_mon_wide <- reg_clams_mon %>% 
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(ST_clams_mon_wide, "data/monthly_averages/clams_monthly_regions.csv")
+
+
+#amphipod monthly with regions
+
+reg_amph_mon <- ben_st_reg %>% 
+  mutate(Date = paste(Month, Year)) %>% 
+  group_by(Order_level,Date, Region) %>%
+  summarize(Orgs_Total = sum(Count, na.rm = TRUE), .groups = "drop") %>% 
+  left_join(ST_grabs_month) %>% 
+  mutate(CPUE_Total = (Orgs_Total/Grab_Count)/0.052) %>% 
+  filter(Order_level == "Amphipoda")
+
+reg_amph_mon_wide <- reg_amph_mon %>%
+  select(-Orgs_Total, -Grab_Count) %>% 
+  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
+  rename(Amphipod_cpue = Amphipoda)
+
+write.csv(reg_amph_mon_wide, "data/monthly_averages/amphipod_monthly_regions.csv")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
