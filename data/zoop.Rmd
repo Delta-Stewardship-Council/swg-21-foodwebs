@@ -13,6 +13,10 @@ knit: (function(input, ...) {
     })
 ---
 
+TODO:
+1) Need to get energy density to work with Mysids. 
+Need to remove Mysids from the dry weights, and add it with energy density but just as an overall Mysid category
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -52,13 +56,16 @@ Also Read in the energy density data and join to the mass grouping
 zoop_energy_data<-read.csv("data/zoop_energy_data/zoop_energy_density_dry.csv") %>% 
   mutate(Group = str_replace(group, " Copepoda", "_Copepods")) %>% 
   select(Group, energy_density_j_per_g_dry_mass_mean) %>% 
-  rename(energyj_per_g_wet_mass = energy_density_j_per_g_dry_mass_mean)
+  rename(energyj_per_g_dry_mass = energy_density_j_per_g_dry_mass_mean)
 
 zoop_mass_group<-read_excel("data/data_in/Zoop Categories for SEM.xlsx", na = "NA")%>%
   mutate(Taxlifestage=paste(Taxname, Lifestage))%>%
   rename(Group=`SEM Category`)%>%
-  mutate(Group=str_replace_all(Group, " ", "_")) %>% 
-  left_join(zoop_energy_data, by = "Group")
+  mutate(Group=str_replace_all(Group, " ", "_"))%>%
+  filter(!is.na(Carbon_mass_micrograms)) %>% 
+  full_join(zoop_energy_data, by = "Group")%>%
+  mutate(Taxlifestage=if_else(Group=="Mysids", "Mysida", Taxlifestage))%>%
+  select(Group, Taxlifestage, Carbon_mass_micrograms, energyj_per_g_dry_mass)
 
 # List all the zoop groups
 unique(zoop_mass_group$Group)
@@ -72,10 +79,8 @@ zoop_mysid<-read_excel("data/data_in/1972-2020MysidBPUEMatrix.xlsx",
   select(Date=SampleDate, Station=StationNZ, `Acanthomysis aspera`:Unidentified)%>%
   mutate(BPUE_mysid=rowSums(select(., -Date, -Station), na.rm=T))%>%
   mutate(BPUE_mysid=BPUE_mysid*1000, # Convert to ug
-         Group="Mysida")%>%
+         Group="Mysids")%>%
   mutate(SampleID=paste("EMP", Station, Date))%>%
-  filter(Station%in%zoop_stations$StationNZ)%>%
-  filter(!Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))%>%
   select(SampleID, Group, BPUE_mysid)
 ```
 
@@ -95,13 +100,18 @@ zoop_data_mass<-zoop_data%>%
       !(SizeClass=="Micro" & #removing categories better retained in meso net from micro net matrix
           
           Taxlifestage%in%c("Cirripedia Larva", "Cyclopoida Adult", "Oithona similis")))%>%
-  left_join(zoop_mass_group, by=c("Taxlifestage", "Lifestage", "Taxname"))%>%
+  mutate(Taxlifestage=if_else(Order=="Mysida", "Mysida", Taxlifestage), # Need to summarise Mysid CPUE first before joining to Mysid BPUE
+         Taxname=if_else(Order=="Mysida", "Mysida", Taxname))%>%
+  group_by(across(-c(Species, Genus, Family, CPUE)))%>%
+  summarise(CPUE=sum(CPUE), .groups="drop")%>%
+  left_join(zoop_mass_group, by=c("Taxlifestage"))%>%
   mutate(BPUE=CPUE*Carbon_mass_micrograms,
-         Group=if_else(Order=="Mysida", "Mysida", Group))%>%
+         Group=if_else(Order=="Mysida", "Mysids", Group))%>%
   left_join(zoop_mysid, 
             by=c("Group", "SampleID"))%>%
   filter(!is.na(Group))%>% # This removes anyone without an assigned group
-  mutate(BPUE=if_else(is.na(BPUE), BPUE_mysid, BPUE))
+  mutate(BPUE=if_else(is.na(BPUE), BPUE_mysid, BPUE),
+         JPUE=(BPUE/1000)*energyj_per_g_dry_mass)
 ```
 
 
@@ -170,9 +180,6 @@ zoop_data_annual<-zoop_data_mass%>%
   filter(!Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))%>% # Renove stations that aren't continuous in time
   filter(Month%in%3:11)
 
-# Make sure the right number of stations was removed
-length(setdiff(unique(zoop_data_mass$Station), unique(zoop_data_annual$Station)))==6
-
 # Save list of annual stations
 zoop_data_annual%>%
   select(Station, Latitude, Longitude)%>%
@@ -221,20 +228,20 @@ zoop_data_annual_final<-zoop_data_annual%>%
 
 zoop_data_annual_final_noregions<-zoop_data_annual_final%>%
   group_by(Year, Group)%>%
-  summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
-  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
+  summarise(across(c(BPUE, CPUE, JPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
+  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE, JPUE),
               names_glue = "{Group}_{.value}")
 
-zoop_data_annual_final_noregions
+str(zoop_data_annual_final_noregions)
 write_csv(zoop_data_annual_final_noregions, "data/annual_averages/zoop_annual_noregions.csv")
 
 zoop_data_annual_final_regions<-zoop_data_annual_final%>%
   group_by(Year, Group, Region)%>%
-  summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
-  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
+  summarise(across(c(BPUE, CPUE, JPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
+  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE, JPUE),
               names_glue = "{Group}_{.value}")
 
-zoop_data_annual_final_regions
+str(zoop_data_annual_final_regions)
 write_csv(zoop_data_annual_final_regions, "data/annual_averages/zoop_annual_regions.csv")
 ```
 
@@ -243,8 +250,8 @@ Monthly data
 zoop_data_month_final<-zoop_data_month%>%
   region_assigner(analysis="monthly")%>%
   group_by(Year, Group, Region)%>%
-  summarise(across(c(BPUE, CPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
-  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE),
+  summarise(across(c(BPUE, CPUE, JPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
+  pivot_wider(names_from = Group, values_from = c(BPUE, CPUE, JPUE),
               names_glue = "{Group}_{.value}")
 
 str(zoop_data_month_final)
