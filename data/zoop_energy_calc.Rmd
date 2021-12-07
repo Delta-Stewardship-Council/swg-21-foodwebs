@@ -78,13 +78,13 @@ write.csv(dry_summary, file ="./data/zoop_energy_data/zoop_energy_density_dry.cs
 # Plots
 Print a box plot of the data
 ```{r fig1, fig.height = 8, fig.width = 5}
-density_plot = ggplot(data = converted_wet,
-                      aes(x = fct_reorder(group, energy_density_j_per_g_wet_mass),
-                          y = energy_density_j_per_g_wet_mass)) + 
+density_plot = ggplot(data = converted_dry,
+                      aes(x = fct_reorder(group, energy_density_j_per_g_dry_mass),
+                          y = energy_density_j_per_g_dry_mass)) + 
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x = "Group",
-       y = "Energy Density (j/g wet mass)" ) +
+       y = "Energy Density (j/g dry mass)" ) +
   geom_boxplot() +
   geom_dotplot(binaxis='y', stackdir='center', dotsize=2, binwidth = 30, alpha = 0.2)+
   stat_summary(fun=mean, geom="point", color = "red", shape=23, size=4, stroke = 2)
