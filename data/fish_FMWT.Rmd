@@ -211,6 +211,7 @@ FMWT_regional_values <- FMWT_combined_sum %>%
   summarise(Biomass=mean(Biomass),Catch_per_tow=mean(Catch_per_tow)) %>%
   group_by(Year,Taxa, Region) %>%
   summarise(Biomass=mean(Biomass),Catch_per_tow=mean(Catch_per_tow)) %>%
+  ungroup() %>% 
   mutate(CommonName= case_when(
     Taxa=="Hypomesus transpacificus" ~ "DeltaSmelt",
     Taxa=="Spirinchus thaleichthys" ~ "LongfinSmelt",
@@ -218,7 +219,16 @@ FMWT_regional_values <- FMWT_combined_sum %>%
     Taxa=="Alosa sapidissima" ~ "AmericanShad",
     Taxa=="Engraulis mordax" ~ "NorthernAnchovy",
     Taxa=="Clupea pallasii" ~ "PacificHerring",
-    Taxa=="Morone saxatilis" ~ "StripedBass_age0"))
+    Taxa=="Morone saxatilis" ~ "StripedBass_age0")) %>% 
+  # Take out biomasses for years where they didn't measure the length of the fish 
+  mutate(Biomass = ifelse((Year<=1970 & CommonName == "AmericanShad")|
+                             (Year<=1973 & CommonName == "ThreadfinShad")|
+                             (Year<=1973 & CommonName == "DeltaSmelt")|
+                             (Year<=1973 & CommonName == "LongfinSmelt")|
+                             (Year<=1968 & CommonName == "StripedBass_age0")|
+                             (Year<=1972 & CommonName == "NorthernAnchovy")|
+                             (Year<=1972 & CommonName == "PacificHerring"),
+                          NA, Biomass))
 
 ```
 
