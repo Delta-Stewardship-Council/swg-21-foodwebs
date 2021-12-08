@@ -17,12 +17,15 @@ knitr::opts_chunk$set(echo = TRUE)
 # Data exploration
 
 ## [EMP zooplankton core data](zoop.html)
+## [Zooplankton energy calculations](zoop_energy_calc.html)
 ## [Benthic Sampling](benthic_new.html)
-## [Nutrient Sampling](nutrient_data.html)
+## [Nutrient Sampling monthly](nutrient_data_monthly.html)
+## [Nutrient Sampling yearly](nutrient_data_yearly.html)
 ## [FMWT Fish Sampling](fish_FMWT.html)
 ## [Bay Study Fish Sampling](fish_BayStudy.html)
+## [DJFMP Fish Sampling](fish_DJFMP.html)
 ## [Modeled temperature data](Temperature.html)
-## [Spatial extent of surveys](Spatial_extents.html)
+## [Spatial extent of surveys](Survey_extents.html)
 ## [Compiled annual data](annual_data_compiler.html)
 
 # Models

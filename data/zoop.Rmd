@@ -249,7 +249,7 @@ Monthly data
 ```{r}
 zoop_data_month_final<-zoop_data_month%>%
   region_assigner(analysis="monthly")%>%
-  group_by(Year, Group, Region)%>%
+  group_by(Year, Month, Group, Region)%>%
   summarise(across(c(BPUE, CPUE, JPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
   pivot_wider(names_from = Group, values_from = c(BPUE, CPUE, JPUE),
               names_glue = "{Group}_{.value}")
