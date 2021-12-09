@@ -237,20 +237,25 @@ FMWT_regional_values_wide = FMWT_regional_values %>%
          FMWT_fish_catch_per_tow = Catch_per_tow) %>% 
   pivot_wider(names_from =CommonName,
               values_from =c(FMWT_fish_biomass, FMWT_fish_catch_per_tow)) %>%
-  mutate(FMWT_fish_biomass_Estuarine_pelagic_forage_fishes=sum(FMWT_fish_biomass_AmericanShad,
-                                                          FMWT_fish_biomass_ThreadfinShad,
-                                                          FMWT_fish_biomass_DeltaSmelt,
-                                                          FMWT_fish_biomass_LongfinSmelt,
-                                                          FMWT_fish_biomass_StripedBass_age0),
-         FMWT_fish_biomass_Marine_pelagic_forage_fishes=sum(FMWT_fish_biomass_NorthernAnchovy,
-                                                       FMWT_fish_biomass_PacificHerring),
-         FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=sum(FMWT_fish_catch_per_tow_AmericanShad,
-                                                                FMWT_fish_catch_per_tow_ThreadfinShad,
-                                                                FMWT_fish_catch_per_tow_DeltaSmelt,
-                                                                FMWT_fish_catch_per_tow_LongfinSmelt,
-                                                                FMWT_fish_catch_per_tow_StripedBass_age0),
-         FMWT_fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(FMWT_fish_catch_per_tow_NorthernAnchovy,
-                                                             FMWT_fish_catch_per_tow_PacificHerring))
+  mutate(FMWT_fish_biomass_Estuarine_pelagic_forage_fishes=(
+            FMWT_fish_biomass_AmericanShad + 
+            FMWT_fish_biomass_ThreadfinShad + 
+            FMWT_fish_biomass_DeltaSmelt + 
+            FMWT_fish_biomass_LongfinSmelt + 
+            FMWT_fish_biomass_StripedBass_age0),
+         FMWT_fish_biomass_Marine_pelagic_forage_fishes=(
+            FMWT_fish_biomass_NorthernAnchovy + 
+            FMWT_fish_biomass_PacificHerring),
+         FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=(
+            FMWT_fish_catch_per_tow_AmericanShad + 
+            FMWT_fish_catch_per_tow_ThreadfinShad + 
+            FMWT_fish_catch_per_tow_DeltaSmelt + 
+            FMWT_fish_catch_per_tow_LongfinSmelt + 
+            FMWT_fish_catch_per_tow_StripedBass_age0),
+         FMWT_fish_catch_per_tow_Marine_pelagic_forage_fishes=(
+            FMWT_fish_catch_per_tow_NorthernAnchovy + 
+            FMWT_fish_catch_per_tow_PacificHerring)
+         )
 
 ```
 
@@ -291,24 +296,32 @@ FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1972, "FMWT_fish_bio
 FMWT_annual_values_biomass[FMWT_annual_values_biomass$Year<=1972, "FMWT_fish_biomass_PacificHerring" ] <- NA
 
 
-FMWT_annual_values_biomass <- FMWT_annual_values_biomass %>% mutate(FMWT_fish_biomass_Estuarine_pelagic_forage_fishes=sum(FMWT_fish_biomass_AmericanShad,
-                                                          FMWT_fish_biomass_ThreadfinShad,
-                                                          FMWT_fish_biomass_DeltaSmelt,
-                                                          FMWT_fish_biomass_LongfinSmelt,
-                                                          FMWT_fish_biomass_StripedBass_age0),
-         FMWT_fish_biomass_Marine_pelagic_forage_fishes=sum(FMWT_fish_biomass_NorthernAnchovy,
-                                                       FMWT_fish_biomass_PacificHerring))
+FMWT_annual_values_biomass <- FMWT_annual_values_biomass %>% mutate(FMWT_fish_biomass_Estuarine_pelagic_forage_fishes=(
+          FMWT_fish_biomass_AmericanShad + 
+          FMWT_fish_biomass_ThreadfinShad + 
+          FMWT_fish_biomass_DeltaSmelt + 
+          FMWT_fish_biomass_LongfinSmelt + 
+          FMWT_fish_biomass_StripedBass_age0),
+       FMWT_fish_biomass_Marine_pelagic_forage_fishes=(
+         FMWT_fish_biomass_NorthernAnchovy + 
+         FMWT_fish_biomass_PacificHerring)
+       )
 
-
-FMWT_annual_values_CPUE <- FMWT_annual_values %>% select(Year,CommonName,Catch_per_tow) %>%
-  pivot_wider(names_from =CommonName,values_from = Catch_per_tow,names_prefix="FMWT_fish_catch_per_tow_") %>%
-  mutate(FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=sum(FMWT_fish_catch_per_tow_AmericanShad,
-                                                                FMWT_fish_catch_per_tow_ThreadfinShad,
-                                                                FMWT_fish_catch_per_tow_DeltaSmelt,
-                                                                FMWT_fish_catch_per_tow_LongfinSmelt,
-                                                                FMWT_fish_catch_per_tow_StripedBass_age0),
-         FMWT_fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(FMWT_fish_catch_per_tow_NorthernAnchovy,
-                                                             FMWT_fish_catch_per_tow_PacificHerring))
+FMWT_annual_values_CPUE <- FMWT_annual_values %>% 
+  select(Year,CommonName,Catch_per_tow) %>%
+  pivot_wider(names_from=CommonName, 
+              values_from=Catch_per_tow, 
+              names_prefix="FMWT_fish_catch_per_tow_") %>%
+  mutate(FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=(
+            FMWT_fish_catch_per_tow_AmericanShad + 
+            FMWT_fish_catch_per_tow_ThreadfinShad + 
+            FMWT_fish_catch_per_tow_DeltaSmelt + 
+            FMWT_fish_catch_per_tow_LongfinSmelt + 
+            FMWT_fish_catch_per_tow_StripedBass_age0),
+         FMWT_fish_catch_per_tow_Marine_pelagic_forage_fishes=(
+            FMWT_fish_catch_per_tow_NorthernAnchovy + 
+            FMWT_fish_catch_per_tow_PacificHerring)
+         )
 
 ```
 
