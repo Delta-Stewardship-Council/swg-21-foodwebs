@@ -46,8 +46,23 @@ monthly <- select(combo_dayflow_CY, c('Date','Month', 'Year','OUT', 'RIO', 'WEST
 #OUT is west and farwest because there isn't higher resolution data for this area. RIO is North, and WEST is South.
 monthly2<- monthly %>%
   group_by(Year, Month) %>%
-  summarise(meanflow_West = mean(OUT), meanflow_Farwest = mean(OUT), meanflow_North = mean(RIO), meanflow_South = mean(WEST))
-write_csv(monthly2, file.path("data/monthly_averages","monthly_average_flow_byregion.csv"))
+  summarise(West = mean(OUT), Farwest = mean(OUT), North = mean(RIO), South = mean(WEST))
+
+
+##convert from wide to long format
+##need to rename the wide columns to just the region for readability
+
+
+library(reshape2)
+
+monthly2_long<-melt(monthly2, id.vars=c("Year", "Month"),
+                              variable.name = "Region",
+                              value.name = "Flow")
+
+
+library(readr)
+
+write_csv(monthly2_long, file.path("data/monthly_averages","monthly_average_flow_byregion.csv"))
 
 
 ##########average annual flow########
@@ -55,7 +70,7 @@ head(combo_dayflow_CY)
 ##average total outflow, inflow, Yolo, Sac, export by calendar year
 CY_annual_average_deltawide_flow<-combo_dayflow_CY %>%
   group_by(Year) %>%
-  summarise(meanflow_West_CY = mean(OUT), meanflow_Farwest_CY = mean(OUT), meanflow_North_CY = mean(RIO), meanflow_South_CY = mean(WEST))
+  summarise(West = mean(OUT), Farwest = mean(OUT), North = mean(RIO), South = mean(WEST))
 
 
 ##average total outflow, inflow, Yolo, Sac, export by water year
@@ -67,9 +82,21 @@ WY_annual_average_deltawide_flow<-combo_dayflow %>%
 
 cy_wy_average_flow<- cbind(CY_annual_average_deltawide_flow,WY_annual_average_deltawide_flow)
 
+##convert from wide to long format
+#remove water_year since it's the same year for both calendar and water yr.
+
+cy_wy_average_flow<-subset(cy_wy_average_flow, select=-c(Water_year))
+
+library(reshape2)
+
+CY_annual_average_deltawide_flow_long<-melt(CY_annual_average_deltawide_flow, id.vars=c("Year"),
+     variable.name = "Region",
+     value.name = "Flow")
+
+
 library(readr)
 
-write_csv(cy_wy_average_flow, file.path("data/annual_averages","annual_average_deltawide_flow_byregion.csv"))
+write_csv(cy_wy_average_flow_long, file.path("data/annual_averages","annual_average_deltawide_flow_byregion.csv"))
 
 
 
