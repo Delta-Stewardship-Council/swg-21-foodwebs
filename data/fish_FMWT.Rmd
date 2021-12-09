@@ -6,10 +6,11 @@ output: html_document
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
-      output_dir = '../docs',
+      output_dir = 'docs',
+      knit_root_dir = "../",
       envir = globalenv()
     )
-  })
+    })
 ---
 
 ```{r setup, include=FALSE}
@@ -235,7 +236,21 @@ FMWT_regional_values_wide = FMWT_regional_values %>%
   rename(FMWT_fish_biomass = Biomass,
          FMWT_fish_catch_per_tow = Catch_per_tow) %>% 
   pivot_wider(names_from =CommonName,
-              values_from =c(FMWT_fish_biomass, FMWT_fish_catch_per_tow))
+              values_from =c(FMWT_fish_biomass, FMWT_fish_catch_per_tow)) %>%
+  mutate(FMWT_fish_biomass_Estuarine_pelagic_forage_fishes=sum(FMWT_fish_biomass_AmericanShad,
+                                                          FMWT_fish_biomass_ThreadfinShad,
+                                                          FMWT_fish_biomass_DeltaSmelt,
+                                                          FMWT_fish_biomass_LongfinSmelt,
+                                                          FMWT_fish_biomass_StripedBass_age0),
+         FMWT_fish_biomass_Marine_pelagic_forage_fishes=sum(FMWT_fish_biomass_NorthernAnchovy,
+                                                       FMWT_fish_biomass_PacificHerring),
+         FMWT_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=sum(FMWT_fish_catch_per_tow_AmericanShad,
+                                                                FMWT_fish_catch_per_tow_ThreadfinShad,
+                                                                FMWT_fish_catch_per_tow_DeltaSmelt,
+                                                                FMWT_fish_catch_per_tow_LongfinSmelt,
+                                                                FMWT_fish_catch_per_tow_StripedBass_age0),
+         FMWT_fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(FMWT_fish_catch_per_tow_NorthernAnchovy,
+                                                             FMWT_fish_catch_per_tow_PacificHerring))
 
 ```
 
@@ -321,7 +336,7 @@ Lastly, export out station list to data/stations folder
 
 FMWT_Coords_stations<- data.frame(FMWT_combined) %>% filter(Station %in% FMWT_index_stations_only$Station) %>% group_by(Station) %>% summarise(Latitude=mean(Latitude, na.rm = TRUE),Longitude=mean(Longitude, na.rm = TRUE)) %>% mutate(Survey="Fall Midwater Trawl")
 
-write.csv(FMWT_Coords_stations,row.names = FALSE,file=file.path("stations/stations_fish_FMWT_annual.csv"))
+write.csv(FMWT_Coords_stations,row.names = FALSE,file=file.path("data/stations/stations_fish_FMWT_annual.csv"))
 
 ```
 
