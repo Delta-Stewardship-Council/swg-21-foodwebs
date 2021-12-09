@@ -31,7 +31,7 @@ combo_dayflow$Water_year <- w.year
 #remove 1969 because there's no matching year it in water year, since sampling started in october.
 combo_dayflow_CY<-combo_dayflow[-c(1:92), ]
 
-#######average monthly flow##
+#######average monthly flow#########
 
 #monthly_average_deltawide_flow<-combo_dayflow %>%
  # group_by(Month) %>%
@@ -40,42 +40,36 @@ combo_dayflow_CY<-combo_dayflow[-c(1:92), ]
 #monthly_average_deltawide_flow<-rename(monthly_average_deltawide_flow,
  #                                      c("Mean_OUT" = "value"))
 
-monthly <- select(combo_dayflow_CY, c('Date','Month', 'Year','OUT', 'TOT', 'YOLO',
-                                      'SAC', 'MISC', 'SJR', 'XGEO','EXPORT') )
+###selecting the correct sites by region:
+monthly <- select(combo_dayflow_CY, c('Date','Month', 'Year','OUT', 'RIO', 'WEST' ) )
+
+#OUT is west and farwest because there isn't higher resolution data for this area. RIO is North, and WEST is South.
 monthly2<- monthly %>%
   group_by(Year, Month) %>%
-  summarise(mean_outflow = mean(OUT), mean_inflow = mean(TOT), mean_SAC = mean(YOLO), mean_SAC = mean(SAC), mean_export = mean(EXPORT),
-           mean_MISC = mean(MISC), mean_SJR = mean(SJR), mean_XGEO = mean(XGEO), mean_EXPORT = mean(EXPORT))
-write_csv(monthly2, file.path("monthly_averages","monthly_average_flow.csv"))
+  summarise(meanflow_West = mean(OUT), meanflow_Farwest = mean(OUT), meanflow_North = mean(RIO), meanflow_South = mean(WEST))
+write_csv(monthly2, file.path("data/monthly_averages","monthly_average_flow_byregion.csv"))
 
 
+##########average annual flow########
 head(combo_dayflow_CY)
 ##average total outflow, inflow, Yolo, Sac, export by calendar year
-annual_average_deltawide_flow<-combo_dayflow_CY %>%
+CY_annual_average_deltawide_flow<-combo_dayflow_CY %>%
   group_by(Year) %>%
-  summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(EXPORT))
-#name column for flow
-annual_average_deltawide_flow_CY<-rename(annual_average_deltawide_flow,
-                                         c("Calendar_Year" = "Year","Mean_outflow_CY" =
-                                             "value", "Mean_inflow_CY" = "mean(TOT)",
-                                      "Mean_YOLO_CY" = "mean(YOLO)", "Mean_SAC_CY" =
-                                        "mean(SAC)", "Mean_Export_CY" = "mean(EXPORT)"))
+  summarise(meanflow_West_CY = mean(OUT), meanflow_Farwest_CY = mean(OUT), meanflow_North_CY = mean(RIO), meanflow_South_CY = mean(WEST))
+
 
 ##average total outflow, inflow, Yolo, Sac, export by water year
 WY_annual_average_deltawide_flow<-combo_dayflow %>%
   group_by(Water_year) %>%
-  summarise(value = mean(OUT), mean(TOT), mean(YOLO), mean(SAC), mean(EXPORT))
-#name column for flow
-annual_average_deltawide_flow_WY<-rename(WY_annual_average_deltawide_flow,
-                                         c("Mean_outflow_WY" = "value", "Mean_inflow_WY" =
-                                             "mean(TOT)", "Mean_YOLO_WY" = "mean(YOLO)",
-                                           "Mean_SAC_WY" = "mean(SAC)",
-                                           "Mean_Export_WY" = "mean(EXPORT)"))
-cy_wy_average_flow<- cbind(annual_average_deltawide_flow_CY,annual_average_deltawide_flow_WY)
+  summarise(meanflow_West_WY = mean(OUT), meanflow_Farwes_WY = mean(OUT), meanflow_North_WY = mean(RIO), meanflow_South_WY = mean(WEST))
+
+
+
+cy_wy_average_flow<- cbind(CY_annual_average_deltawide_flow,WY_annual_average_deltawide_flow)
 
 library(readr)
 
-write_csv(cy_wy_average_flow, file.path("annual_averages","annual_average_deltawide_flow.csv"))
+write_csv(cy_wy_average_flow, file.path("data/annual_averages","annual_average_deltawide_flow_byregion.csv"))
 
 
 
