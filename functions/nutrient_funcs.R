@@ -1,6 +1,17 @@
 # read in all wq data, pivot to long
 read_wq_data <- function(monthly = FALSE) {
   df <- discretewq::wq(Sources = c('EMP'))
+
+  # temp corrections
+  df_time <-readr::read_csv('data/data_in/Time_correction_PST.csv')
+  df_time <- dplyr::rename(df_time, Time = Time_PST)
+
+  df <- df %>%
+    mutate(Time = round(as.integer(as.numeric(hms::as_hms(Datetime))), -1)) %>%
+    left_join(df_time, by = c('Time', 'Month')) %>%
+    mutate(Temperature = Temperature + Correction)
+
+  # pivot longer
   df <- tidyr::pivot_longer(df, cols = c(Temperature, Chlorophyll:TKN, Salinity), names_to = 'Analyte', values_to = 'Value')
 
   # subset by wanted nutrients
