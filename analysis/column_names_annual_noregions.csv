@@ -1,0 +1,32 @@
+Longname,Shortname,Diagramname,Datacolumn,Log
+Year,year,year,Year,no
+Flow,flow,flow,Mean_outflow_WY,yes
+Salinity,salinity,salinity,Salinity,no
+Secchi,secchi,Secchi,Secchi,no
+Ammonia,ammonia,ammonia,DissAmmonia,yes
+Phytoplankton,chla,phytoplankton,Chlorophyll,yes
+Nitrate Nitrite,nitrate,nitrate\nNitrite,DissNitrateNitrite,yes
+Total Phosphorous,tphos,total\nphosphorous,TotPhos,yes
+Temperature,temp,temperature,Temperature,no
+Temperature modelled,tempm,temperature\n(modelled),Temperature_model,no
+Clams,clams,clams,potamocorbula_cpue,no
+Herbivorous copepods,hcope,herbivorous\ncopepods,Herbivorous_Copepods_BPUE,yes
+Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes
+Mysids,mysid,mysids,Mysida_BPUE,yes
+Cladocera,clad,cladocera,Cladoceran_BPUE,yes
+Estuarine fishes,estfish,FMWT\nestuarine fishes,FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,yes
+Marine fishes,marfish,FMWT\nmarine fishes,FMWT_fish_biomass_Marine_pelagic_forage_fishes,yes
+Delta smelt,smelt,delta\nsmelt,FMWT_fish_biomass_DeltaSmelt,yes
+Striped bass,sbass,striped\nbass,FMWT_fish_biomass_StripedBass_age0,yes
+Longfin smelt,lfin,longfin\nsmelt,FMWT_fish_biomass_LongfinSmelt,yes
+Estuarine fishes,estfish_bsmt,BSMT\nestuarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes
+Marine fishes,marfish_bsmt,BSMT\nmarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes
+Delta smelt,smelt_bsmt,BSMT\ndelta smelt,BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,yes
+Striped bass,sbass_bsmt,BSMT\nstriped bass,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0,yes
+Longfin smelt,lfin_bsmt,BSMT\nlongfin smelt,BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,yes
+Estuarine fishes,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes
+Marine fishes,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes
+Delta smelt,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes
+Striped bass,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes
+Longfin smelt,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes
+Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes
