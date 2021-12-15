@@ -225,7 +225,8 @@ LT_clams_year_noregions <- ben_LT%>%
   rename(Corbicula_cpue = Corbicula,
          Potamocorbula_cpue = Potamocorbula)
 
-write.csv(LT_clams_year_noregions, "data/annual_averages/clams_annual_noregions.csv")
+write.csv(LT_clams_year_noregions, "data/annual_averages/clams_annual_noregions.csv",
+					row.names=FALSE)
 
 LT_clams_year_regions <- ben_LT%>%
   filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
@@ -235,7 +236,8 @@ LT_clams_year_regions <- ben_LT%>%
   rename(Corbicula_cpue = Corbicula,
          Potamocorbula_cpue = Potamocorbula)
 
-write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv")
+write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv",
+					row.names=FALSE)
 
 ```
 
@@ -252,7 +254,8 @@ LT_amph_year_noregions <- ben_LT%>%
   pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
   rename(Amphipoda_cpue = Amphipoda)
 
-write.csv(LT_amph_year_noregions, "data/annual_averages/amphipod_annual_noregions.csv")
+write.csv(LT_amph_year_noregions, "data/annual_averages/amphipod_annual_noregions.csv",
+					row.names=FALSE)
 
 LT_amph_year_regions <- ben_LT%>%
   filter(Order_level == "Amphipoda")%>%
@@ -261,7 +264,8 @@ LT_amph_year_regions <- ben_LT%>%
   pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
   rename(Amphipoda_cpue = Amphipoda)
 
-write.csv(LT_amph_year_regions, "data/annual_averages/amphipod_annual_regions.csv")
+write.csv(LT_amph_year_regions, "data/annual_averages/amphipod_annual_regions.csv",
+					row.names=FALSE)
 
 #verified both amphipods and clam annual values by comparing it to Betsy's file
 
@@ -295,7 +299,8 @@ ST_clams_mon <- ben_ST %>%
     rename(Corbicula_cpue = Corbicula,
            Potamocorbula_cpue = Potamocorbula)
 
-write.csv(ST_clams_mon, "data/monthly_averages/clams_monthly_regions.csv")
+write.csv(ST_clams_mon, "data/monthly_averages/clams_monthly_regions.csv",
+					row.names=FALSE)
 
 ```
 
@@ -311,7 +316,8 @@ ST_amph_mon <- ben_ST%>%
   pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
   rename(Amphipoda_cpue = Amphipoda)
 
-write.csv(ST_amph_mon, "data/monthly_averages/amphipod_monthly_regions.csv")
+write.csv(ST_amph_mon, "data/monthly_averages/amphipod_monthly_regions.csv",
+					row.names=FALSE)
 
 #verified monthly averages by randomly comparing to CPUE of old EMP benthic file
 

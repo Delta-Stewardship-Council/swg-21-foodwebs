@@ -278,7 +278,7 @@ BayStudy_Otter_annual_values_biomass_by_region <- fish_data_compiler(data=BayStu
 
 BayStudy_annual_values_final_by_region<-full_join(BayStudy_Midwater_annual_values_CPUE_by_region,
                                               BayStudy_Otter_annual_values_CPUE_by_region) %>%
-  full_join(BayStudy_Midwater_annual_values_biomass_by_region, by="Year") %>% full_join(BayStudy_Otter_annual_values_biomass_by_region, by="Year")
+  full_join(BayStudy_Midwater_annual_values_biomass_by_region) %>% full_join(BayStudy_Otter_annual_values_biomass_by_region)
 
 write.csv(BayStudy_annual_values_final_by_region,row.names=FALSE,file=file.path("data/annual_averages/fish_BayStudy_by_region.csv"))
 

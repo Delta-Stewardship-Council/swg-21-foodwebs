@@ -1,4 +1,5 @@
 ---
+title: "Nutrient Data - Yearly"
 output:
   html_document:
     code_folding: hide
@@ -15,9 +16,12 @@ output:
 ```{r imports, echo = FALSE, results='hide', message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggmap)
-library(readr)
+library(lubridate)
 require(discretewq)
-source('functions/nutrient_funcs.R', local = TRUE)
+source('../functions/nutrient_funcs.R', local = TRUE)
+source('../functions/region_assigner.R', local = TRUE)
+# source('functions/nutrient_funcs.R')
+# source('functions/region_assigner.R')
 
 if(utils::packageVersion('discretewq') < '2.1.0') {
     stop('discretewq version >= 2.1.0 is required, please update discretewq.')
@@ -118,9 +122,13 @@ empwq_annual_mean <- df_wq %>%
 
 ggplot(data=empwq_annual_mean, aes(Year, MeanValue)) +
 	geom_point() +
-	facet_wrap( ~ Analyte, scales='free_y')-
+	facet_wrap( ~ Analyte, scales='free_y')
 ```
 
+```{r assign regions}
+df_wq <- df_wq %>%
+region_assigner(analysis='annual')
+```
 
 ```{r create-stations-df}
 df_stations <- subset(df_wq, select = c(Station, Latitude, Longitude))

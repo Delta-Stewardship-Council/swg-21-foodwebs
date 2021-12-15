@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## [FMWT Fish Sampling](fish_FMWT.html)
 ## [Bay Study Fish Sampling](fish_BayStudy.html)
 ## [DJFMP Fish Sampling](fish_DJFMP.html)
-## [Spatial extent of surveys](Spatial_extents.html)
+## [Spatial extent of surveys](Survey_extents.html)
 ## [Compiled annual data](annual_data_compiler.html)
 
 # Models
