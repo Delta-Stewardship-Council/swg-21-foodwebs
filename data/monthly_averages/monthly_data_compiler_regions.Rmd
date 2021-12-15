@@ -1,0 +1,68 @@
+---
+title: "Data compiler - monthly averages, with regions"
+author: "Lara Mitchell"
+date: "12/9/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../../docs',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This combines the various csv files into `monthly_data_compiled_regions.csv`, and makes 
+some plots of the time series.
+
+```{r, message=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+```{r}
+amphipod=read.csv("amphipod_monthly_regions.csv")
+flow=read.csv("monthly_average_flow_byregion.csv")
+clams=read.csv("clams_monthly_regions.csv")
+fishbs=read.csv("fish_BayStudy_monthly.csv")
+fishdj=read.csv("fish_DJFMP_monthly.csv")
+
+## nutwq eventually needs to be updated:
+nutwq=read.csv("nutrient_data_monthly.csv") %>%
+  select(-c(Date,Station,Latitude,Longitude))
+
+zoop=read.csv("zoop_month.csv")
+
+zoopbm=dplyr::select(zoop, Year, Month, Region, grep("BPUE", colnames(zoop)))
+
+combined=flow %>% 
+  full_join(nutwq, by=c("Year","Month","Region")) %>% 
+  full_join(fishbs, by=c("Year","Month","Region")) %>% 
+  full_join(fishdj, by=c("Year","Month","Region")) %>% 
+  full_join(zoopbm, by=c("Year","Month","Region")) %>% 
+  full_join(clams, by=c("Year","Month","Region")) %>% 
+  full_join(amphipod, by=c("Year","Month","Region")) %>% 
+  arrange(Year, Region)
+
+write.csv(combined, "monthly_data_compiled_regions.csv", row.names = F)
+```
+
+Plots
+
+```{r, fig.width=8, fig.height=80}
+datalong=gather(combined,Var,Value,4:ncol(combined))
+datalong$Var=factor(datalong$Var,levels = unique(datalong$Var))
+datalong$Region=factor(datalong$Region, levels=c("Far West","West","North","South"))
+datalong$Month_Year=with(datalong, Year + (Month/12))
+
+ggplot(datalong, aes(y=Value, x=Month_Year, col=Region)) +
+  facet_wrap(.~Var, scales = "free_y", ncol = 1) +
+  geom_line() + geom_point() +
+  theme_bw() + 
+  theme(legend.position="top")
+```

@@ -1,0 +1,68 @@
+---
+title: "Data compiler - annual averages, no regions"
+author: "Lara Mitchell"
+date: "12/9/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../../docs',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This combines the various csv files into `annual_data_compiled_noregions.csv`, and makes 
+some plots of the time series.
+
+```{r, message=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+```{r}
+amphipod=read.csv("amphipod_annual_noregions.csv")
+flow=read.csv("annual_average_deltawide_flow.csv")
+clams=read.csv("clams_annual_noregions.csv")
+fishbs=read.csv("fish_BayStudy.csv")
+fishdj=read.csv("fish_DJFMP.csv")
+fishfm=read.csv("fish_FMWT.csv")
+nutwq=read.csv("nutrient_data_yearly.csv")
+temp=read.csv("temperature.csv") %>%
+	rename(Temperature_model=Temperature)
+zoop=read.csv("zoop_annual_noregions.csv")
+
+zoopbm=dplyr::select(zoop, Year, grep("BPUE", colnames(zoop)))
+
+combined=flow %>% 
+	rename(Year=Calendar_Year) %>% 
+	dplyr::select(-Water_year) %>% 
+  full_join(nutwq, by="Year") %>% 
+  full_join(temp, by="Year") %>% 
+  full_join(fishfm, by="Year") %>% 
+  full_join(fishbs, by="Year") %>% 
+  full_join(fishdj, by="Year") %>% 
+  full_join(zoopbm, by="Year") %>% 
+  full_join(clams, by="Year") %>% 
+  full_join(amphipod, by="Year") %>% 
+  arrange(Year)
+
+write.csv(combined, "annual_data_compiled_noregions.csv", row.names = F)
+```
+
+Plots
+
+```{r, fig.width=8, fig.height=30}
+datalong=gather(combined,Var,Value,2:ncol(combined))
+datalong$Var=factor(datalong$Var,levels = unique(datalong$Var))
+
+ggplot(datalong, aes(y=Value, x=Year)) +
+  facet_wrap(.~Var, scales = "free_y", ncol = 2) +
+  geom_line() + geom_point() +
+  theme_bw()
+```
