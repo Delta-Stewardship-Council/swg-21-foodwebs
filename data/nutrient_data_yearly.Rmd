@@ -18,10 +18,10 @@ library(tidyverse)
 library(ggmap)
 library(lubridate)
 require(discretewq)
-source('../functions/nutrient_funcs.R', local = TRUE)
-source('../functions/region_assigner.R', local = TRUE)
-# source('functions/nutrient_funcs.R')
-# source('functions/region_assigner.R')
+# source('../functions/nutrient_funcs.R', local = TRUE)
+# source('../functions/region_assigner.R', local = TRUE)
+source('functions/nutrient_funcs.R')
+source('functions/region_assigner.R')
 
 if(utils::packageVersion('discretewq') < '2.1.0') {
     stop('discretewq version >= 2.1.0 is required, please update discretewq.')
@@ -31,6 +31,12 @@ if(utils::packageVersion('discretewq') < '2.1.0') {
 ```{r read-in-data, warning = FALSE, message = FALSE}
 # read in data
 df_wq <- read_wq_data(monthly = FALSE)
+
+df_wq$DissAmmonia <- replace_rl(df_wq, 'DissAmmonia')
+df_wq$DissNitrateNitrite <- replace_rl(df_wq, 'DissNitrateNitrite')
+df_wq$DissOrthophos <- replace_rl(df_wq, 'DissOrthophos')
+
+df_wq <- clean_df(df_wq)
 ```
 
 Nutrients Included Are:
@@ -112,22 +118,22 @@ plt
 ```
 
 Calculate annual indices (first pass).
-```{r calc-annual-indices}
-df_wq$Year <- lubridate::year(df_wq$Date)
-
-empwq_annual_mean <- df_wq %>%
-	dplyr::group_by(Analyte, Year) %>%
-	dplyr::summarize(MeanValue=mean(Value, na.rm=TRUE), .groups='drop')
-
-
-ggplot(data=empwq_annual_mean, aes(Year, MeanValue)) +
-	geom_point() +
-	facet_wrap( ~ Analyte, scales='free_y')
-```
-
 ```{r assign regions}
 df_wq <- df_wq %>%
 region_assigner(analysis='annual')
+```
+```{r calc-annual-indices}
+df_wq$Year <- lubridate::year(df_wq$Date)
+
+df_wq <- df_wq %>%
+	dplyr::group_by(Analyte, Year, Region) %>%
+	dplyr::summarize(Value=mean(Value, na.rm=TRUE), .groups='drop')
+
+df_wq$Value <- round(df_wq$Value, 3)
+
+ggplot(data=df_wq, aes(Year, Value, color = Analyte)) +
+	geom_point() +
+	facet_wrap( ~ Analyte, scales='free_y')
 ```
 
 ```{r create-stations-df}
@@ -140,10 +146,10 @@ df_stations <- df_stations[!(df_stations$Latitude %in% c(38.04381, 37.67575, 38.
 
 
 ```{r export-csvs, message=FALSE, warning = FALSE, results = 'hide'}
-empwq_annual_mean_wide <- pivot_wider(data=empwq_annual_mean, id_cols=Year,
-                                      names_from=Analyte, values_from=MeanValue)
+df_wq_wide <- pivot_wider(data = df_wq, id_cols = c(Year,Region),
+                                      names_from = Analyte, values_from = Value)
 
-write_csv(empwq_annual_mean_wide, 'data/annual_averages/nutrient_data_yearly.csv')
+write_csv(df_wq_wide, 'data/annual_averages/nutrient_data_yearly.csv')
 write_csv(df_stations, 'data/stations/stations_nutrients_annual.csv')
 ```
 
