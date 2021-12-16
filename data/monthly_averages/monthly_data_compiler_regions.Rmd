@@ -31,11 +31,7 @@ flow=read.csv("monthly_average_flow_byregion.csv")
 clams=read.csv("clams_monthly_regions.csv")
 fishbs=read.csv("fish_BayStudy_monthly.csv")
 fishdj=read.csv("fish_DJFMP_monthly.csv")
-
-## nutwq eventually needs to be updated:
-nutwq=read.csv("nutrient_data_monthly.csv") %>%
-  select(-c(Date,Station,Latitude,Longitude))
-
+nutwq=read.csv("nutrient_data_monthly_regions.csv")
 zoop=read.csv("zoop_month.csv")
 
 zoopbm=dplyr::select(zoop, Year, Month, Region, grep("BPUE", colnames(zoop)))
