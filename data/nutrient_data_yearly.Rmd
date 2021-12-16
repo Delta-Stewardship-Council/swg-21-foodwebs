@@ -125,15 +125,21 @@ region_assigner(analysis='annual')
 ```{r calc-annual-indices}
 df_wq$Year <- lubridate::year(df_wq$Date)
 
-df_wq <- df_wq %>%
+df_wq$Value <- round(df_wq$Value, 3)
+
+
+df_wq_regions <- df_wq %>%
 	dplyr::group_by(Analyte, Year, Region) %>%
 	dplyr::summarize(Value=mean(Value, na.rm=TRUE), .groups='drop')
 
-df_wq$Value <- round(df_wq$Value, 3)
+df_wq_noregions <- df_wq %>%
+	dplyr::group_by(Analyte, Year) %>%
+	dplyr::summarize(Value=mean(Value, na.rm=TRUE), .groups='drop')
 
-ggplot(data=df_wq, aes(Year, Value, color = Analyte)) +
-	geom_point() +
-	facet_wrap( ~ Analyte, scales='free_y')
+
+# ggplot(data=df_wq, aes(Year, Value, color = Analyte)) +
+# 	geom_point() +
+# 	facet_wrap( ~ Analyte, scales='free_y')
 ```
 
 ```{r create-stations-df}
@@ -146,10 +152,14 @@ df_stations <- df_stations[!(df_stations$Latitude %in% c(38.04381, 37.67575, 38.
 
 
 ```{r export-csvs, message=FALSE, warning = FALSE, results = 'hide'}
-df_wq_wide <- pivot_wider(data = df_wq, id_cols = c(Year,Region),
+df_wq_wide_regions <- pivot_wider(data = df_wq_regions, id_cols = c(Year,Region),
                                       names_from = Analyte, values_from = Value)
 
-write_csv(df_wq_wide, 'data/annual_averages/nutrient_data_yearly.csv')
+df_wq_wide_noregions <- pivot_wider(data = df_wq_noregions, id_cols = Year,
+                                      names_from = Analyte, values_from = Value)
+
+write_csv(df_wq_wide_regions, 'data/annual_averages/nutrient_data_yearly_regions.csv')
+write_csv(df_wq_wide_noregions, 'data/annual_averages/nutrient_data_yearly_no_regions.csv')
 write_csv(df_stations, 'data/stations/stations_nutrients_annual.csv')
 ```
 
