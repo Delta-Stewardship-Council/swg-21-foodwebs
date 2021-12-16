@@ -33,6 +33,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ## [Prelim model 2](Model2.html)
 ## [Prelim GP model 1](GPModel1.html)
 
-## [Annual No Region](docs/Model_annual_regions.html)
-## [Annual Region](docs/Model_annual_noregions.html)
+## [Annual No Region](Model_annual_regions.html)
+## [Annual Region](Model_annual_noregions.html)
 
