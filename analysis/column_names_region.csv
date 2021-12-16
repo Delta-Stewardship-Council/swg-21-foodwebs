@@ -1,6 +1,7 @@
 Longname,Shortname,Diagramname,Datacolumn,Log
 Year,year,year,Year,no
-Flow,flow,flow,Mean_outflow_WY,yes
+Region,region,region,Region,no
+Flow,flow,flow,Flow,no
 Salinity,salinity,salinity,Salinity,no
 Secchi,secchi,secchi,Secchi,no
 Ammonia,ammonia,ammonia,DissAmmonia,yes

@@ -293,13 +293,14 @@ createLabels <- function(model_fit, var_name_df) {
   ## model_fit: a lavaan model object.
   ## name_map_df: a copy of the file column_names.csv as a data frame.
 
-  uniq_vars <- unique(c(lavaan::parameterestimates(modfit4)$lhs,
-                        lavaan::parameterestimates(modfit4)$rhs))
+  uniq_vars <- unique(c(lavaan::parameterestimates(model_fit)$lhs,
+                        lavaan::parameterestimates(model_fit)$rhs))
 
   lat_name_df <- data.frame("Shortname"=c("zoop","fish"),
-                            "Diagramname"=c("zooplankton","fish\nbiomass"))
-  varNameMap <- c(var_name_df$Diagramname, lat_name_df$Diagramname)
-  names(varNameMap) <- c(var_name_df$Shortname, lat_name_df$Shortname)
+                            "Diagramname"=c("zooplankton","fish\nbiomass"),
+                            stringsAsFactors = F)
+  varNameMap <- c(var_name_df[,"Diagramname"], lat_name_df[,"Diagramname"])
+  names(varNameMap) <- c(var_name_df[,"Shortname"], lat_name_df[,"Shortname"])
 
   ret <- varNameMap[uniq_vars]
   if(any(is.na(ret))) stop("missing variable name")

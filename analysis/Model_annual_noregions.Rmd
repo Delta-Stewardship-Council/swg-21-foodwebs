@@ -1,0 +1,210 @@
+---
+title: "Annual model - No Regions"
+author: "Tanya Rogers"
+date: "12/15/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      knit_root_dir = '..',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, message=FALSE}
+library(dplyr)
+library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
+library(lavaan)
+library(semPlot)
+library(DiagrammeR)
+```
+
+### Import data
+
+```{r dataprep}
+combined=read.csv("data/annual_averages/annual_data_compiled_noregions.csv")
+cnames=read.csv("analysis/column_names.csv", stringsAsFactors = F)
+dsub=filter(combined, Year>=1975)
+focaldata=dsub[,cnames$Datacolumn]
+fvars=cnames$Shortname
+colnames(focaldata)=fvars
+
+source("analysis/myLavaanPlot.r")
+```
+
+### Data prep
+
+Log transform, scale
+
+```{r prep}
+#log transform
+logvars=fvars[cnames$Log=="yes"]
+logtrans=function(x) {
+  x2=x[which(!is.na(x))]
+  if(any(x2==0)) {log(x+min(x2[which(x2>0)],na.rm=T))}
+  else {log(x)}
+}
+focaldatalog = focaldata %>% 
+  mutate_at(logvars,logtrans)
+
+#scale data
+fd=focaldatalog
+fd=fd %>% 
+  mutate_at(2:length(fvars),list("1"=lag)) %>% #lag 1
+  mutate_at(2:length(fvars),list("fd"=function(x) c(NA,diff(x)))) %>% #first difference
+  mutate_at(2:length(fvars),list("dtr"=function(x) { #detrend
+    x2=x
+    x2[x2==0]=NA
+    res=residuals(lm(x2~fd$year))
+    out=x
+    out[which(!is.na(x2))]=res
+    return(out)
+  })) %>%
+  mutate_at(-1,scale)
+```
+
+### Time series plots
+
+Original units
+
+```{r timeseries1, fig.width=8, fig.height=11, echo=FALSE}
+#original units
+par(mfrow=c(7,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=focaldata[,1],y=focaldata[,i],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+Log scaled
+
+```{r timeseries2, fig.width=8, fig.height=11, echo=FALSE}
+#log scaled
+par(mfrow=c(7,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+First difference
+
+```{r timeseries3, fig.width=8, fig.height=11, echo=FALSE, eval=FALSE}
+#first diff
+par(mfrow=c(7,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i+2*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+Detrended
+
+```{r timeseries4, fig.width=8, fig.height=11, echo=FALSE}
+#detrended
+par(mfrow=c(7,5),mar=c(2,2,3,1))
+for(i in 2:length(fvars)) {
+  plot.default(x=fd[,1],y=fd[,i+3*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
+}
+```
+
+### Bivariate plots
+
+```{r bivariate, fig.width=9, fig.height=9, echo=FALSE}
+psych::pairs.panels(dplyr::select(fd, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, clams, dophos),lm = T)
+```
+
+### SEM model
+
+```{r}
+model1='zoop=~hcope+clad+mysid +pcope
+        fish=~estfish+estfish_bsmt+estfish_bsot
+        zoop~sside+chla+clams
+        chla~clams+flow
+        fish~zoop+flow+sside
+'
+modfit1=sem(model1, data=fd)
+summary(modfit1, standardized=T, rsq=T)
+# par(mfrow=c(1,2))
+# semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
+# semPaths(modfit1, "par", edge.label.cex = 1, residuals = F)
+
+labels1 <- createLabels(modfit1, cnames)
+
+# residuals(modfit1)
+# modificationindices(modfit1)
+```
+
+Same model with detrended data
+
+```{r}
+model1b='zoop=~hcope_dtr+clad_dtr+mysid_dtr+pcope_dtr
+        fish=~estfish_dtr+estfish_bsmt_dtr+estfish_bsot_dtr
+        zoop~sside_dtr+chla_dtr+clams_dtr
+        chla_dtr~clams_dtr+flow_dtr
+        fish~zoop+flow_dtr+sside_dtr
+        # clad_dtr~~mysid_dtr+estfish_dtr
+'
+modfit1b=sem(model1b, data=fd)
+summary(modfit1b, standardized=T, rsq=T)
+# par(mfrow=c(1,2))
+# semPaths(modfit1b, "std", edge.label.cex = 1, residuals = F)
+# semPaths(modfit1b, "par", edge.label.cex = 1, residuals = F)
+
+cnames2 = mutate(cnames, Shortname=paste0(Shortname,"_dtr"))
+labels2 <- createLabels(modfit1b, cnames2)
+
+# residuals(modfit1b)
+# modificationindices(modfit1b)
+```
+
+Nice plots - without covariances
+
+Original units
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfit1, labels=labels1,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+
+```
+
+Detrended
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfit1b, labels=labels2, 
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
+
+Nice plots - with covariances
+
+Original units
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfit1, labels=labels1, 
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
+
+```
+
+Detrended
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfit1b, labels=labels2, 
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
+```
+
+
