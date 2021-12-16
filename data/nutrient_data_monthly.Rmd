@@ -138,17 +138,26 @@ df_wq$Year <- lubridate::year(df_wq$Date)
 df_wq$Month <- lubridate::month(df_wq$Date)
 
 # average by region
-df_wq <- df_wq %>%
+df_wq$Value <- round(df_wq$Value, 3)
+
+df_wq_regions <- df_wq %>%
   group_by(Year, Month, Region, Analyte) %>%
   summarize(Value = mean(Value), .groups = 'drop')
 
-df_wq$Value <- round(df_wq$Value, 3)
+df_wq_noregions <- df_wq %>%
+  group_by(Year, Month, Analyte) %>%
+  summarize(Value = mean(Value), .groups = 'drop')
 
-df_wq_wide <- pivot_wider(data=df_wq, id_cols=c(Year,Month,Region),
+
+df_wq_wide_regions <- pivot_wider(data=df_wq_regions, id_cols=c(Year,Month,Region),
+                          names_from=Analyte, values_from=Value)
+
+df_wq_wide_noregions <- pivot_wider(data=df_wq_noregions, id_cols=c(Year,Month),
                           names_from=Analyte, values_from=Value)
 ```
 
 ```{r export}
-write_csv(df_wq_wide, 'data/monthly_averages/nutrient_data_monthly.csv')
+write_csv(df_wq_wide_regions, 'data/monthly_averages/nutrient_data_monthly_regions.csv')
+write_csv(df_wq_wide_noregions, 'data/monthly_averages/nutrient_data_monthly_noregions.csv')
 write_csv(df_stations, 'data/stations/stations_nutrients_monthly.csv')
 ```
