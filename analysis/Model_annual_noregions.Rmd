@@ -114,7 +114,7 @@ for(i in 2:length(fvars)) {
 ### Bivariate plots
 
 ```{r bivariate, fig.width=9, fig.height=9, echo=FALSE}
-psych::pairs.panels(dplyr::select(fd, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, clams, dophos),lm = T)
+psych::pairs.panels(dplyr::select(fd, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, potam, dophos),lm = T)
 ```
 
 ### SEM model
@@ -122,8 +122,8 @@ psych::pairs.panels(dplyr::select(fd, year, flow, temp, secchi, chla, hcope, cla
 ```{r}
 model1='zoop=~hcope+clad+mysid
         fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+clams+flow
-        chla~clams+flow
+        zoop~chla+potam+flow
+        chla~potam+flow
         fish~zoop+flow
 '
 modfit1=sem(model1, data=fd)
@@ -143,8 +143,8 @@ Same model with detrended data
 ```{r}
 model1b='zoop=~hcope_dtr+clad_dtr+mysid_dtr
         fish=~estfish_bsmt_dtr+estfish_bsot_dtr
-        zoop~chla_dtr+clams_dtr+flow_dtr
-        chla_dtr~clams_dtr+flow_dtr
+        zoop~chla_dtr+potam_dtr+flow_dtr
+        chla_dtr~potam_dtr+flow_dtr
         fish~zoop+flow_dtr
 '
 modfit1b=sem(model1b, data=fd)

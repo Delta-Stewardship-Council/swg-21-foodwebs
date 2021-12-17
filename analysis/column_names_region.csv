@@ -9,8 +9,8 @@ Phytoplankton,chla,phytoplankton,Chlorophyll,yes
 Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes
 Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes
 Temperature,temp,temperature,Temperature,no
-Clams,clams,invasive clams,Potamocorbula_cpue,no
-Native Clams,nclams,native clams,Corbicula_cpue,no
+Potamocorbula,potam,Potamocorbula,Potamocorbula_cpue,no
+Corbicula,corbic,Corbicula,Corbicula_cpue,no
 Herbivorous copepods,hcope,herbivorous\ncopepods,Herbivorous_Copepods_BPUE,yes
 Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes
 Mysids,mysid,mysids,Mysids_BPUE,yes
