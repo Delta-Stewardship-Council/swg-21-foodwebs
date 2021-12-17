@@ -54,22 +54,22 @@ focaldatalog = focaldata %>%
   mutate_at(logvars,logtrans)
 
 #scale data
-fd=focaldatalog
-fd=fd %>% group_by(region) %>% 
+fdr=focaldatalog
+fdr=fdr %>% group_by(region) %>% 
   mutate_at(3:length(fvars),scale) %>% 
   mutate_at(3:length(fvars),list("1"=lag)) %>% 
   ungroup() #%>% #lag 1
-  #mutate_at(2:length(fvars),list("fd"=function(x) c(NA,diff(x)))) %>% #first difference
+  #mutate_at(2:length(fvars),list("fdr"=function(x) c(NA,diff(x)))) %>% #first difference
   # mutate_at(2:length(fvars),list("dtr"=function(x) { #detrend
   #   x2=x
   #   x2[x2==0]=NA
-  #   res=residuals(lm(x2~fd$year))
+  #   res=residuals(lm(x2~fdr$year))
   #   out=x
   #   out[which(!is.na(x2))]=res
   #   return(out)
   # })) %>%
 
-#ggplot(fd,aes(x=year, y=flow, color=region)) + geom_line()
+#ggplot(fdr,aes(x=year, y=flow, color=region)) + geom_line()
 ```
 
 ### Time series plots
@@ -90,7 +90,7 @@ Log scaled
 #log scaled
 par(mfrow=c(7,5),mar=c(2,2,3,1))
 for(i in 2:length(fvars)) {
-  plot.default(x=fd[,1],y=fd[,i],main=fvars[i], type="o",cex=0.5)
+  plot.default(x=fdr[,1],y=fdr[,i],main=fvars[i], type="o",cex=0.5)
 }
 ```
 
@@ -100,7 +100,7 @@ First difference
 #first diff
 par(mfrow=c(7,5),mar=c(2,2,3,1))
 for(i in 2:length(fvars)) {
-  plot.default(x=fd[,1],y=fd[,i+2*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
+  plot.default(x=fdr[,1],y=fdr[,i+2*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
 }
 ```
 
@@ -110,26 +110,26 @@ Detrended
 #detrended
 par(mfrow=c(7,5),mar=c(2,2,3,1))
 for(i in 2:length(fvars)) {
-  plot.default(x=fd[,1],y=fd[,i+3*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
+  plot.default(x=fdr[,1],y=fdr[,i+3*(length(fvars)-1)],main=fvars[i], type="o",cex=0.5)
 }
 ```
 
 ### Bivariate plots
 
 ```{r bivariate, fig.width=9, fig.height=9, echo=FALSE}
-psych::pairs.panels(dplyr::select(fd, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, clams, dophos),lm = T, bg=c("red","yellow","blue")[factor(fd$region)],pch=21)
+psych::pairs.panels(dplyr::select(fdr, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, clams, dophos),lm = T, bg=c("red","yellow","blue")[factor(fdr$region)],pch=21)
 ```
 
 ### SEM model
 
 ```{r}
-modnorth='zoop=~hcope+clad+mysid+pcope
-        fish=~estfish+estfish_bsmt+estfish_bsot
-        zoop~sside+chla+clams
+modnorth='zoop=~hcope+mysid
+        fish=~estfish_bsmt+estfish_bsot
+        zoop~chla+clams+flow
         chla~clams+flow
-        fish~zoop+flow+sside
+        fish~zoop+flow
 '
-modfitnorth=sem(modnorth, data=filter(fd,region=="North"))
+modfitnorth=sem(modnorth, data=filter(fdr,region=="North"))
 summary(modfitnorth, standardized=T, rsq=T)
 # par(mfrow=c(1,2))
 # semPaths(modfitnorth, "std", edge.label.cex = 1, residuals = F)
@@ -143,13 +143,13 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 
 ```{r}
 #south has no clams
-modsouth='zoop=~hcope+clad+mysid+pcope
-        fish=~estfish+estfish_bsmt+estfish_bsot
-        zoop~sside+chla
-        chla~flow
-        fish~zoop+flow+sside
+modsouth='zoop=~hcope+mysid
+        fish=~estfish_bsmt+estfish_bsot
+        zoop~chla+flow
+        chla~flow+flow
+        fish~zoop+flow
 '
-modfitsouth=sem(modsouth, data=filter(fd,region=="South"))
+modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
 summary(modfitsouth, standardized=T, rsq=T)
 # par(mfrow=c(1,2))
 # semPaths(modfitsouth, "std", edge.label.cex = 1, residuals = F)
@@ -163,13 +163,13 @@ labelssouth <- createLabels(modfitsouth, cnames)
 
 ```{r}
 #west has no ssides
-modwest='zoop=~hcope+clad+mysid+pcope
-        fish=~estfish+estfish_bsmt+estfish_bsot
-        zoop~chla+clams
+modwest='zoop=~hcope+mysid
+        fish=~estfish_bsmt+estfish_bsot
+        zoop~chla+clams+flow
         chla~clams+flow
         fish~zoop+flow
 '
-modfitwest=sem(modwest, data=filter(fd,region=="West"))
+modfitwest=sem(modwest, data=filter(fdr,region=="West"))
 summary(modfitwest, standardized=T, rsq=T)
 # par(mfrow=c(1,2))
 # semPaths(modfitwest, "std", edge.label.cex = 1, residuals = F)
@@ -181,15 +181,15 @@ labelswest <- createLabels(modfitwest, cnames)
 # modificationindices(modfitwest)
 ```
 
-Same model with detrended data
+Same model with detrended data (not updated)
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, echo=FALSE}
 model4b='zoop=~hcope_dtr+clad_dtr+mysid_dtr+pcope_dtr
         fish=~estfish_dtr+estfish_bsmt_dtr+estfish_bsot_dtr
         zoop~sside_dtr+chla_dtr+clams_dtr
         chla_dtr~clams_dtr+flow_dtr
         fish~zoop+flow_dtr+sside_dtr'
-modfit4b=sem(model4b, data=fd)
+modfit4b=sem(model4b, data=fdr)
 summary(modfit4b, standardized=T, rsq=T)
 par(mfrow=c(1,2))
 semPaths(modfit4b, "std", edge.label.cex = 1, residuals = F)
@@ -203,17 +203,29 @@ Nice plots - without covariances
 
 Original units
 
+*North*
+
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfitnorth, labels=labelsnorth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+```
+
+*South*
+
+```{r}
 myLavaanPlot(model=modfitsouth, labels=labelssouth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+```
+
+*West*
+
+```{r}
 myLavaanPlot(model=modfitwest, labels=labelswest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
