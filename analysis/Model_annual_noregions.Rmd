@@ -120,11 +120,11 @@ psych::pairs.panels(dplyr::select(fd, year, flow, temp, secchi, chla, hcope, cla
 ### SEM model
 
 ```{r}
-model1='zoop=~hcope+clad+mysid +pcope
-        fish=~estfish+estfish_bsmt+estfish_bsot
-        zoop~sside+chla+clams
+model1='zoop=~hcope+clad+mysid
+        fish=~estfish_bsmt+estfish_bsot
+        zoop~chla+clams+flow
         chla~clams+flow
-        fish~zoop+flow+sside
+        fish~zoop+flow
 '
 modfit1=sem(model1, data=fd)
 summary(modfit1, standardized=T, rsq=T)
@@ -141,12 +141,11 @@ labels1 <- createLabels(modfit1, cnames)
 Same model with detrended data
 
 ```{r}
-model1b='zoop=~hcope_dtr+clad_dtr+mysid_dtr+pcope_dtr
-        fish=~estfish_dtr+estfish_bsmt_dtr+estfish_bsot_dtr
-        zoop~sside_dtr+chla_dtr+clams_dtr
+model1b='zoop=~hcope_dtr+clad_dtr+mysid_dtr
+        fish=~estfish_bsmt_dtr+estfish_bsot_dtr
+        zoop~chla_dtr+clams_dtr+flow_dtr
         chla_dtr~clams_dtr+flow_dtr
-        fish~zoop+flow_dtr+sside_dtr
-        # clad_dtr~~mysid_dtr+estfish_dtr
+        fish~zoop+flow_dtr
 '
 modfit1b=sem(model1b, data=fd)
 summary(modfit1b, standardized=T, rsq=T)

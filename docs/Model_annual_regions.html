@@ -206,22 +206,22 @@ focaldatalog = focaldata %&gt;%
   mutate_at(logvars,logtrans)
 
 #scale data
-fd=focaldatalog
-fd=fd %&gt;% group_by(region) %&gt;% 
+fdr=focaldatalog
+fdr=fdr %&gt;% group_by(region) %&gt;% 
   mutate_at(3:length(fvars),scale) %&gt;% 
   mutate_at(3:length(fvars),list(&quot;1&quot;=lag)) %&gt;% 
   ungroup() #%&gt;% #lag 1
-  #mutate_at(2:length(fvars),list(&quot;fd&quot;=function(x) c(NA,diff(x)))) %&gt;% #first difference
+  #mutate_at(2:length(fvars),list(&quot;fdr&quot;=function(x) c(NA,diff(x)))) %&gt;% #first difference
   # mutate_at(2:length(fvars),list(&quot;dtr&quot;=function(x) { #detrend
   #   x2=x
   #   x2[x2==0]=NA
-  #   res=residuals(lm(x2~fd$year))
+  #   res=residuals(lm(x2~fdr$year))
   #   out=x
   #   out[which(!is.na(x2))]=res
   #   return(out)
   # })) %&gt;%
 
-#ggplot(fd,aes(x=year, y=flow, color=region)) + geom_line()</code></pre>
+#ggplot(fdr,aes(x=year, y=flow, color=region)) + geom_line()</code></pre>
 </div>
 <div id="time-series-plots" class="section level3">
 <h3>Time series plots</h3>
@@ -236,26 +236,26 @@ fd=fd %&gt;% group_by(region) %&gt;%
 </div>
 <div id="sem-model" class="section level3">
 <h3>SEM model</h3>
-<pre class="r"><code>modnorth=&#39;zoop=~hcope+clad+mysid+pcope
-        fish=~estfish+estfish_bsmt+estfish_bsot
-        zoop~sside+chla+clams
+<pre class="r"><code>modnorth=&#39;zoop=~hcope+mysid
+        fish=~estfish_bsmt+estfish_bsot
+        zoop~chla+clams+flow
         chla~clams+flow
-        fish~zoop+flow+sside
+        fish~zoop+flow
 &#39;
-modfitnorth=sem(modnorth, data=filter(fd,region==&quot;North&quot;))
+modfitnorth=sem(modnorth, data=filter(fdr,region==&quot;North&quot;))
 summary(modfitnorth, standardized=T, rsq=T)</code></pre>
-<pre><code>## lavaan 0.6-4 ended normally after 32 iterations
+<pre><code>## lavaan 0.6-4 ended normally after 29 iterations
 ## 
 ##   Optimization method                           NLMINB
-##   Number of free parameters                         23
+##   Number of free parameters                         16
 ## 
 ##                                                   Used       Total
 ##   Number of observations                            40          46
 ## 
 ##   Estimator                                         ML
-##   Model Fit Test Statistic                     129.214
-##   Degrees of freedom                                37
-##   P-value (Chi-square)                           0.000
+##   Model Fit Test Statistic                      23.743
+##   Degrees of freedom                                 9
+##   P-value (Chi-square)                           0.005
 ## 
 ## Parameter Estimates:
 ## 
@@ -266,54 +266,44 @@ summary(modfitnorth, standardized=T, rsq=T)</code></pre>
 ## Latent Variables:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
 ##   zoop =~                                                               
-##     hcope             1.000                               0.573    0.691
-##     clad              0.527    0.292    1.806    0.071    0.302    0.306
-##     mysid             1.427    0.302    4.730    0.000    0.818    0.896
-##     pcope            -0.982    0.261   -3.762    0.000   -0.563   -0.657
+##     hcope             1.000                               0.611    0.709
+##     mysid             1.559    0.301    5.186    0.000    0.953    0.978
 ##   fish =~                                                               
-##     estfish           1.000                               0.423    0.422
-##     estfish_bsmt      1.234    0.577    2.141    0.032    0.523    0.537
-##     estfish_bsot      1.410    0.615    2.294    0.022    0.597    0.631
+##     estfish_bsmt      1.000                               0.556    0.563
+##     estfish_bsot      0.923    0.361    2.555    0.011    0.514    0.532
 ## 
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
 ##   zoop ~                                                                
-##     sside            -0.305    0.105   -2.912    0.004   -0.533   -0.421
-##     chla              0.428    0.113    3.800    0.000    0.746    0.652
-##     clams             0.106    0.077    1.375    0.169    0.185    0.186
+##     chla              0.553    0.130    4.256    0.000    0.904    0.790
+##     clams             0.034    0.079    0.433    0.665    0.056    0.056
+##     flow             -0.163    0.081   -2.010    0.044   -0.267   -0.273
 ##   chla ~                                                                
 ##     clams            -0.241    0.149   -1.625    0.104   -0.241   -0.278
 ##     flow              0.105    0.146    0.714    0.475    0.105    0.122
 ##   fish ~                                                                
-##     zoop              0.419    0.214    1.953    0.051    0.567    0.567
-##     flow              0.103    0.076    1.348    0.177    0.242    0.248
-##     sside            -0.211    0.122   -1.732    0.083   -0.499   -0.394
+##     zoop              0.728    0.247    2.955    0.003    0.801    0.801
+##     flow              0.254    0.112    2.265    0.023    0.457    0.467
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
-##    .hcope             0.359    0.093    3.872    0.000    0.359    0.522
-##    .clad              0.880    0.199    4.410    0.000    0.880    0.906
-##    .mysid             0.164    0.085    1.922    0.055    0.164    0.197
-##    .pcope             0.418    0.105    3.984    0.000    0.418    0.569
-##    .estfish           0.829    0.196    4.229    0.000    0.829    0.822
-##    .estfish_bsmt      0.675    0.171    3.941    0.000    0.675    0.712
-##    .estfish_bsot      0.540    0.157    3.448    0.001    0.540    0.602
+##    .hcope             0.371    0.093    3.981    0.000    0.371    0.498
+##    .mysid             0.041    0.099    0.410    0.682    0.041    0.043
+##    .estfish_bsmt      0.666    0.197    3.387    0.001    0.666    0.683
+##    .estfish_bsot      0.667    0.185    3.605    0.000    0.667    0.717
 ##    .chla              0.666    0.149    4.472    0.000    0.666    0.873
-##    .zoop              0.142    0.064    2.202    0.028    0.432    0.432
-##    .fish              0.032    0.052    0.610    0.542    0.176    0.176
+##    .zoop              0.159    0.064    2.494    0.013    0.426    0.426
+##    .fish              0.065    0.130    0.502    0.616    0.211    0.211
 ## 
 ## R-Square:
 ##                    Estimate
-##     hcope             0.478
-##     clad              0.094
-##     mysid             0.803
-##     pcope             0.431
-##     estfish           0.178
-##     estfish_bsmt      0.288
-##     estfish_bsot      0.398
+##     hcope             0.502
+##     mysid             0.957
+##     estfish_bsmt      0.317
+##     estfish_bsot      0.283
 ##     chla              0.127
-##     zoop              0.568
-##     fish              0.824</code></pre>
+##     zoop              0.574
+##     fish              0.789</code></pre>
 <pre class="r"><code># par(mfrow=c(1,2))
 # semPaths(modfitnorth, &quot;std&quot;, edge.label.cex = 1, residuals = F)
 # semPaths(modfitnorth, &quot;par&quot;, edge.label.cex = 1, residuals = F)
@@ -323,26 +313,26 @@ labelsnorth &lt;- createLabels(modfitnorth, cnames)
 # residuals(modfitnorth)
 # modificationindices(modfitnorth)</code></pre>
 <pre class="r"><code>#south has no clams
-modsouth=&#39;zoop=~hcope+clad+mysid+pcope
-        fish=~estfish+estfish_bsmt+estfish_bsot
-        zoop~sside+chla
-        chla~flow
-        fish~zoop+flow+sside
+modsouth=&#39;zoop=~hcope+mysid
+        fish=~estfish_bsmt+estfish_bsot
+        zoop~chla+flow
+        chla~flow+flow
+        fish~zoop+flow
 &#39;
-modfitsouth=sem(modsouth, data=filter(fd,region==&quot;South&quot;))
+modfitsouth=sem(modsouth, data=filter(fdr,region==&quot;South&quot;))
 summary(modfitsouth, standardized=T, rsq=T)</code></pre>
-<pre><code>## lavaan 0.6-4 ended normally after 28 iterations
+<pre><code>## lavaan 0.6-4 ended normally after 37 iterations
 ## 
 ##   Optimization method                           NLMINB
-##   Number of free parameters                         21
+##   Number of free parameters                         14
 ## 
 ##                                                   Used       Total
 ##   Number of observations                            40          46
 ## 
 ##   Estimator                                         ML
-##   Model Fit Test Statistic                      64.130
-##   Degrees of freedom                                31
-##   P-value (Chi-square)                           0.000
+##   Model Fit Test Statistic                       4.992
+##   Degrees of freedom                                 6
+##   P-value (Chi-square)                           0.545
 ## 
 ## Parameter Estimates:
 ## 
@@ -353,52 +343,42 @@ summary(modfitsouth, standardized=T, rsq=T)</code></pre>
 ## Latent Variables:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
 ##   zoop =~                                                               
-##     hcope             1.000                               0.487    0.509
-##     clad              1.464    0.454    3.226    0.001    0.714    0.780
-##     mysid             1.703    0.498    3.422    0.001    0.830    0.907
-##     pcope            -0.356    0.279   -1.277    0.201   -0.173   -0.220
+##     hcope             1.000                               0.546    0.560
+##     mysid             1.633    0.430    3.799    0.000    0.892    0.923
 ##   fish =~                                                               
-##     estfish           1.000                               0.873    0.886
-##     estfish_bsmt      0.694    0.169    4.103    0.000    0.606    0.616
-##     estfish_bsot      0.477    0.172    2.781    0.005    0.417    0.441
+##     estfish_bsmt      1.000                               0.496    0.503
+##     estfish_bsot      0.910    0.586    1.552    0.121    0.452    0.478
 ## 
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
 ##   zoop ~                                                                
-##     sside            -0.087    0.060   -1.435    0.151   -0.178   -0.139
-##     chla              0.430    0.125    3.441    0.001    0.883    0.900
+##     chla              0.492    0.129    3.802    0.000    0.900    0.918
+##     flow             -0.069    0.051   -1.360    0.174   -0.126   -0.132
 ##   chla ~                                                                
 ##     flow              0.121    0.153    0.787    0.431    0.121    0.124
 ##   fish ~                                                                
-##     zoop              0.033    0.201    0.164    0.870    0.018    0.018
-##     flow              0.034    0.091    0.378    0.705    0.039    0.041
-##     sside            -0.974    0.128   -7.589    0.000   -1.116   -0.869
+##     zoop              0.579    0.315    1.839    0.066    0.637    0.637
+##     flow              0.051    0.113    0.451    0.652    0.103    0.107
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
-##    .hcope             0.681    0.157    4.337    0.000    0.681    0.741
-##    .clad              0.328    0.085    3.846    0.000    0.328    0.392
-##    .mysid             0.149    0.064    2.320    0.020    0.149    0.177
-##    .pcope             0.592    0.133    4.453    0.000    0.592    0.952
-##    .estfish           0.209    0.113    1.845    0.065    0.209    0.215
-##    .estfish_bsmt      0.602    0.146    4.121    0.000    0.602    0.621
-##    .estfish_bsot      0.718    0.165    4.336    0.000    0.718    0.805
+##    .hcope             0.653    0.152    4.287    0.000    0.653    0.687
+##    .mysid             0.138    0.104    1.332    0.183    0.138    0.148
+##    .estfish_bsmt      0.729    0.239    3.044    0.002    0.729    0.747
+##    .estfish_bsot      0.690    0.212    3.256    0.001    0.690    0.772
 ##    .chla              1.024    0.229    4.472    0.000    1.024    0.985
-##    .zoop              0.039    0.029    1.367    0.172    0.164    0.164
-##    .fish              0.168    0.110    1.535    0.125    0.221    0.221
+##    .zoop              0.051    0.041    1.230    0.219    0.169    0.169
+##    .fish              0.144    0.176    0.818    0.413    0.585    0.585
 ## 
 ## R-Square:
 ##                    Estimate
-##     hcope             0.259
-##     clad              0.608
-##     mysid             0.823
-##     pcope             0.048
-##     estfish           0.785
-##     estfish_bsmt      0.379
-##     estfish_bsot      0.195
+##     hcope             0.313
+##     mysid             0.852
+##     estfish_bsmt      0.253
+##     estfish_bsot      0.228
 ##     chla              0.015
-##     zoop              0.836
-##     fish              0.779</code></pre>
+##     zoop              0.831
+##     fish              0.415</code></pre>
 <pre class="r"><code># par(mfrow=c(1,2))
 # semPaths(modfitsouth, &quot;std&quot;, edge.label.cex = 1, residuals = F)
 # semPaths(modfitsouth, &quot;par&quot;, edge.label.cex = 1, residuals = F)
@@ -408,26 +388,26 @@ labelssouth &lt;- createLabels(modfitsouth, cnames)
 # residuals(modfitsouth)
 # modificationindices(modfitsouth)</code></pre>
 <pre class="r"><code>#west has no ssides
-modwest=&#39;zoop=~hcope+clad+mysid+pcope
-        fish=~estfish+estfish_bsmt+estfish_bsot
-        zoop~chla+clams
+modwest=&#39;zoop=~hcope+mysid
+        fish=~estfish_bsmt+estfish_bsot
+        zoop~chla+clams+flow
         chla~clams+flow
         fish~zoop+flow
 &#39;
-modfitwest=sem(modwest, data=filter(fd,region==&quot;West&quot;))
+modfitwest=sem(modwest, data=filter(fdr,region==&quot;West&quot;))
 summary(modfitwest, standardized=T, rsq=T)</code></pre>
-<pre><code>## lavaan 0.6-4 ended normally after 33 iterations
+<pre><code>## lavaan 0.6-4 ended normally after 26 iterations
 ## 
 ##   Optimization method                           NLMINB
-##   Number of free parameters                         21
+##   Number of free parameters                         16
 ## 
 ##                                                   Used       Total
 ##   Number of observations                            40          46
 ## 
 ##   Estimator                                         ML
-##   Model Fit Test Statistic                      80.794
-##   Degrees of freedom                                31
-##   P-value (Chi-square)                           0.000
+##   Model Fit Test Statistic                      12.041
+##   Degrees of freedom                                 9
+##   P-value (Chi-square)                           0.211
 ## 
 ## Parameter Estimates:
 ## 
@@ -438,52 +418,44 @@ summary(modfitwest, standardized=T, rsq=T)</code></pre>
 ## Latent Variables:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
 ##   zoop =~                                                               
-##     hcope             1.000                               0.735    0.877
-##     clad              0.639    0.208    3.076    0.002    0.469    0.465
-##     mysid             1.080    0.144    7.510    0.000    0.793    0.866
-##     pcope            -0.531    0.109   -4.868    0.000   -0.390   -0.666
+##     hcope             1.000                               0.736    0.879
+##     mysid             1.118    0.142    7.899    0.000    0.823    0.899
 ##   fish =~                                                               
-##     estfish           1.000                               0.843    0.844
-##     estfish_bsmt      0.951    0.152    6.253    0.000    0.801    0.809
-##     estfish_bsot      0.897    0.157    5.721    0.000    0.756    0.764
+##     estfish_bsmt      1.000                               0.807    0.818
+##     estfish_bsot      0.939    0.171    5.488    0.000    0.758    0.768
 ## 
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
 ##   zoop ~                                                                
-##     chla              0.621    0.093    6.690    0.000    0.846    0.722
-##     clams            -0.232    0.071   -3.259    0.001   -0.315   -0.315
+##     chla              0.670    0.101    6.609    0.000    0.911    0.778
+##     clams            -0.174    0.082   -2.128    0.033   -0.236   -0.236
+##     flow             -0.057    0.076   -0.754    0.451   -0.078   -0.080
 ##   chla ~                                                                
 ##     clams            -0.325    0.135   -2.407    0.016   -0.325   -0.380
 ##     flow              0.098    0.131    0.748    0.454    0.098    0.118
 ##   fish ~                                                                
-##     zoop              0.883    0.146    6.029    0.000    0.769    0.769
-##     flow              0.314    0.077    4.058    0.000    0.372    0.384
+##     zoop              0.800    0.148    5.416    0.000    0.729    0.729
+##     flow              0.379    0.088    4.317    0.000    0.469    0.484
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
-##    .hcope             0.162    0.048    3.395    0.001    0.162    0.230
-##    .clad              0.799    0.182    4.387    0.000    0.799    0.784
-##    .mysid             0.209    0.060    3.505    0.000    0.209    0.249
-##    .pcope             0.191    0.045    4.223    0.000    0.191    0.556
-##    .estfish           0.287    0.082    3.523    0.000    0.287    0.288
-##    .estfish_bsmt      0.339    0.090    3.784    0.000    0.339    0.345
-##    .estfish_bsot      0.409    0.102    3.987    0.000    0.409    0.417
+##    .hcope             0.160    0.050    3.183    0.001    0.160    0.228
+##    .mysid             0.161    0.056    2.875    0.004    0.161    0.192
+##    .estfish_bsmt      0.323    0.102    3.179    0.001    0.323    0.332
+##    .estfish_bsot      0.400    0.109    3.653    0.000    0.400    0.410
 ##    .chla              0.584    0.131    4.472    0.000    0.584    0.802
-##    .zoop              0.099    0.038    2.588    0.010    0.183    0.183
-##    .fish              0.040    0.050    0.797    0.425    0.056    0.056
+##    .zoop              0.123    0.046    2.680    0.007    0.227    0.227
+##    .fish              0.038    0.073    0.523    0.601    0.059    0.059
 ## 
 ## R-Square:
 ##                    Estimate
-##     hcope             0.770
-##     clad              0.216
-##     mysid             0.751
-##     pcope             0.444
-##     estfish           0.712
-##     estfish_bsmt      0.655
-##     estfish_bsot      0.583
+##     hcope             0.772
+##     mysid             0.808
+##     estfish_bsmt      0.668
+##     estfish_bsot      0.590
 ##     chla              0.198
-##     zoop              0.817
-##     fish              0.944</code></pre>
+##     zoop              0.773
+##     fish              0.941</code></pre>
 <pre class="r"><code># par(mfrow=c(1,2))
 # semPaths(modfitwest, &quot;std&quot;, edge.label.cex = 1, residuals = F)
 # semPaths(modfitwest, &quot;par&quot;, edge.label.cex = 1, residuals = F)
@@ -492,26 +464,28 @@ labelswest &lt;- createLabels(modfitwest, cnames)
 
 # residuals(modfitwest)
 # modificationindices(modfitwest)</code></pre>
-<p>Same model with detrended data</p>
-<pre class="r"><code>model4b=&#39;zoop=~hcope_dtr+clad_dtr+mysid_dtr+pcope_dtr
-        fish=~estfish_dtr+estfish_bsmt_dtr+estfish_bsot_dtr
-        zoop~sside_dtr+chla_dtr+clams_dtr
-        chla_dtr~clams_dtr+flow_dtr
-        fish~zoop+flow_dtr+sside_dtr&#39;
-modfit4b=sem(model4b, data=fd)
-summary(modfit4b, standardized=T, rsq=T)
-par(mfrow=c(1,2))
-semPaths(modfit4b, &quot;std&quot;, edge.label.cex = 1, residuals = F)
-semPaths(modfit4b, &quot;par&quot;, edge.label.cex = 1, residuals = F)
-
-cnames2 = mutate(cnames, Shortname=paste0(Shortname,&quot;_dtr&quot;))
-labels2 &lt;- createLabels(modfit4b, cnames2)</code></pre>
+<p>Same model with detrended data (not updated)</p>
 <p>Nice plots - without covariances</p>
 <p>Original units</p>
-<p><div id="htmlwidget-a2b776217d2d6d07dfcd" style="width:672px;height:480px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a2b776217d2d6d07dfcd">{"x":{"diagram":" digraph plot { \n graph [ overlap = true, fontsize = 10 ] \n node [ shape = box, fontname = Helvetica ] \n node [shape = box] \n sside; chla; clams; flow; hcope; clad; mysid; pcope; estfish; estfish_bsmt; estfish_bsot \n node [shape = oval] \n zoop; fish \n zoop [label = \"zooplankton\"]\nfish [label = \"fish\nbiomass\"]\nchla [label = \"phytoplankton\"]\nhcope [label = \"herbivorous\\ncopepods\"]\nclad [label = \"cladocera\"]\nmysid [label = \"mysids\"]\npcope [label = \"predatory\\ncopepods\"]\nestfish [label = \"FMWT\\nestuarine fishes\"]\nestfish_bsmt [label = \"BSMT\\nestuarine fishes\"]\nestfish_bsot [label = \"BSOT\\nestuarine fishes\"]\nsside [label = \"Mississippi\\nsilverside\"]\nclams [label = \"clams\"]\nflow [label = \"flow\"] \n edge [ color = black ] \n sside->zoop [label = \"-0.42\" penwidth = 3color = Red3] chla->zoop [label = \"0.65\" penwidth = 3color = Green4] clams->zoop [label = \"\" penwidth = 1color = Green4] clams->chla [label = \"\" penwidth = 1color = Red3] flow->chla [label = \"\" penwidth = 1color = Green4] zoop->fish [label = \"\" penwidth = 1color = Green4] flow->fish [label = \"\" penwidth = 1color = Green4] sside->fish [label = \"\" penwidth = 1color = Red3] zoop->hcope [label = \"0.69\" penwidth = 3color = Green4] zoop->clad [label = \"\" penwidth = 1color = Green4] zoop->mysid [label = \"0.9\" penwidth = 3color = Green4] zoop->pcope [label = \"-0.66\" penwidth = 3color = Red3] fish->estfish [label = \"0.42\" penwidth = 3color = Green4] fish->estfish_bsmt [label = \"0.54\" penwidth = 3color = Green4] fish->estfish_bsot [label = \"0.63\" penwidth = 3color = Green4] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div id="htmlwidget-951d3ca724fa7d2383ac" style="width:672px;height:480px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-951d3ca724fa7d2383ac">{"x":{"diagram":" digraph plot { \n graph [ overlap = true, fontsize = 10 ] \n node [ shape = box, fontname = Helvetica ] \n node [shape = box] \n sside; chla; flow; hcope; clad; mysid; pcope; estfish; estfish_bsmt; estfish_bsot \n node [shape = oval] \n zoop; fish \n zoop [label = \"zooplankton\"]\nfish [label = \"fish\nbiomass\"]\nchla [label = \"phytoplankton\"]\nhcope [label = \"herbivorous\\ncopepods\"]\nclad [label = \"cladocera\"]\nmysid [label = \"mysids\"]\npcope [label = \"predatory\\ncopepods\"]\nestfish [label = \"FMWT\\nestuarine fishes\"]\nestfish_bsmt [label = \"BSMT\\nestuarine fishes\"]\nestfish_bsot [label = \"BSOT\\nestuarine fishes\"]\nsside [label = \"Mississippi\\nsilverside\"]\nflow [label = \"flow\"] \n edge [ color = black ] \n sside->zoop [label = \"\" penwidth = 1color = Red3] chla->zoop [label = \"0.9\" penwidth = 3color = Green4] flow->chla [label = \"\" penwidth = 1color = Green4] zoop->fish [label = \"\" penwidth = 1color = Green4] flow->fish [label = \"\" penwidth = 1color = Green4] sside->fish [label = \"-0.87\" penwidth = 3color = Red3] zoop->hcope [label = \"0.51\" penwidth = 3color = Green4] zoop->clad [label = \"0.78\" penwidth = 3color = Green4] zoop->mysid [label = \"0.91\" penwidth = 3color = Green4] zoop->pcope [label = \"\" penwidth = 1color = Red3] fish->estfish [label = \"0.89\" penwidth = 3color = Green4] fish->estfish_bsmt [label = \"0.62\" penwidth = 3color = Green4] fish->estfish_bsot [label = \"0.44\" penwidth = 3color = Green4] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div id="htmlwidget-153c057e6cdda4c4b11b" style="width:672px;height:480px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-153c057e6cdda4c4b11b">{"x":{"diagram":" digraph plot { \n graph [ overlap = true, fontsize = 10 ] \n node [ shape = box, fontname = Helvetica ] \n node [shape = box] \n chla; clams; flow; hcope; clad; mysid; pcope; estfish; estfish_bsmt; estfish_bsot \n node [shape = oval] \n zoop; fish \n zoop [label = \"zooplankton\"]\nfish [label = \"fish\nbiomass\"]\nchla [label = \"phytoplankton\"]\nhcope [label = \"herbivorous\\ncopepods\"]\nclad [label = \"cladocera\"]\nmysid [label = \"mysids\"]\npcope [label = \"predatory\\ncopepods\"]\nestfish [label = \"FMWT\\nestuarine fishes\"]\nestfish_bsmt [label = \"BSMT\\nestuarine fishes\"]\nestfish_bsot [label = \"BSOT\\nestuarine fishes\"]\nclams [label = \"clams\"]\nflow [label = \"flow\"] \n edge [ color = black ] \n chla->zoop [label = \"0.72\" penwidth = 3color = Green4] clams->zoop [label = \"-0.31\" penwidth = 3color = Red3] clams->chla [label = \"-0.38\" penwidth = 3color = Red3] flow->chla [label = \"\" penwidth = 1color = Green4] zoop->fish [label = \"0.77\" penwidth = 3color = Green4] flow->fish [label = \"0.38\" penwidth = 3color = Green4] zoop->hcope [label = \"0.88\" penwidth = 3color = Green4] zoop->clad [label = \"0.46\" penwidth = 3color = Green4] zoop->mysid [label = \"0.87\" penwidth = 3color = Green4] zoop->pcope [label = \"-0.67\" penwidth = 3color = Red3] fish->estfish [label = \"0.84\" penwidth = 3color = Green4] fish->estfish_bsmt [label = \"0.81\" penwidth = 3color = Green4] fish->estfish_bsot [label = \"0.76\" penwidth = 3color = Green4] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script></p>
+<p><em>North</em></p>
+<div id="htmlwidget-03902d7dc25538fb3385" style="width:672px;height:480px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-03902d7dc25538fb3385">{"x":{"diagram":" digraph plot { \n graph [ overlap = true, fontsize = 10 ] \n node [ shape = box, fontname = Helvetica ] \n node [shape = box] \n chla; clams; flow; hcope; mysid; estfish_bsmt; estfish_bsot \n node [shape = oval] \n zoop; fish \n zoop [label = \"zooplankton\"]\nfish [label = \"fish\nbiomass\"]\nchla [label = \"phytoplankton\"]\nhcope [label = \"herbivorous\\ncopepods\"]\nmysid [label = \"mysids\"]\nestfish_bsmt [label = \"BSMT\\nestuarine fishes\"]\nestfish_bsot [label = \"BSOT\\nestuarine fishes\"]\nclams [label = \"invasive clams\"]\nflow [label = \"flow\"] \n edge [ color = black ] \n chla->zoop [label = \"0.79\" penwidth = 3color = Green4] clams->zoop [label = \"\" penwidth = 1color = Green4] flow->zoop [label = \"-0.27\" penwidth = 3color = Red3] clams->chla [label = \"\" penwidth = 1color = Red3] flow->chla [label = \"\" penwidth = 1color = Green4] zoop->fish [label = \"0.8\" penwidth = 3color = Green4] flow->fish [label = \"0.47\" penwidth = 3color = Green4] zoop->hcope [label = \"0.71\" penwidth = 3color = Green4] zoop->mysid [label = \"0.98\" penwidth = 3color = Green4] fish->estfish_bsmt [label = \"0.56\" penwidth = 3color = Green4] fish->estfish_bsot [label = \"0.53\" penwidth = 3color = Green4] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p><em>South</em></p>
+<pre class="r"><code>myLavaanPlot(model=modfitsouth, labels=labelssouth,
+                         node_options=list(shape=&quot;box&quot;, fontname=&quot;Helvetica&quot;), 
+                         coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+                         width=c(&quot;regress&quot;,&quot;latent&quot;),
+                         color=c(&quot;regress&quot;,&quot;latent&quot;))</code></pre>
+<div id="htmlwidget-eaffefc8985159de2b3c" style="width:672px;height:480px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-eaffefc8985159de2b3c">{"x":{"diagram":" digraph plot { \n graph [ overlap = true, fontsize = 10 ] \n node [ shape = box, fontname = Helvetica ] \n node [shape = box] \n chla; flow; hcope; mysid; estfish_bsmt; estfish_bsot \n node [shape = oval] \n zoop; fish \n zoop [label = \"zooplankton\"]\nfish [label = \"fish\nbiomass\"]\nchla [label = \"phytoplankton\"]\nhcope [label = \"herbivorous\\ncopepods\"]\nmysid [label = \"mysids\"]\nestfish_bsmt [label = \"BSMT\\nestuarine fishes\"]\nestfish_bsot [label = \"BSOT\\nestuarine fishes\"]\nflow [label = \"flow\"] \n edge [ color = black ] \n chla->zoop [label = \"0.92\" penwidth = 3color = Green4] flow->zoop [label = \"\" penwidth = 1color = Red3] flow->chla [label = \"\" penwidth = 1color = Green4] zoop->fish [label = \"\" penwidth = 1color = Green4] flow->fish [label = \"\" penwidth = 1color = Green4] zoop->hcope [label = \"0.56\" penwidth = 3color = Green4] zoop->mysid [label = \"0.92\" penwidth = 3color = Green4] fish->estfish_bsmt [label = \"0.5\" penwidth = 3color = Green4] fish->estfish_bsot [label = \"\" penwidth = 1color = Green4] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p><em>West</em></p>
+<pre class="r"><code>myLavaanPlot(model=modfitwest, labels=labelswest,
+                         node_options=list(shape=&quot;box&quot;, fontname=&quot;Helvetica&quot;), 
+                         coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+                         width=c(&quot;regress&quot;,&quot;latent&quot;),
+                         color=c(&quot;regress&quot;,&quot;latent&quot;))</code></pre>
+<div id="htmlwidget-a5695f146110a3de2241" style="width:672px;height:480px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a5695f146110a3de2241">{"x":{"diagram":" digraph plot { \n graph [ overlap = true, fontsize = 10 ] \n node [ shape = box, fontname = Helvetica ] \n node [shape = box] \n chla; clams; flow; hcope; mysid; estfish_bsmt; estfish_bsot \n node [shape = oval] \n zoop; fish \n zoop [label = \"zooplankton\"]\nfish [label = \"fish\nbiomass\"]\nchla [label = \"phytoplankton\"]\nhcope [label = \"herbivorous\\ncopepods\"]\nmysid [label = \"mysids\"]\nestfish_bsmt [label = \"BSMT\\nestuarine fishes\"]\nestfish_bsot [label = \"BSOT\\nestuarine fishes\"]\nclams [label = \"invasive clams\"]\nflow [label = \"flow\"] \n edge [ color = black ] \n chla->zoop [label = \"0.78\" penwidth = 3color = Green4] clams->zoop [label = \"-0.24\" penwidth = 3color = Red3] flow->zoop [label = \"\" penwidth = 1color = Red3] clams->chla [label = \"-0.38\" penwidth = 3color = Red3] flow->chla [label = \"\" penwidth = 1color = Green4] zoop->fish [label = \"0.73\" penwidth = 3color = Green4] flow->fish [label = \"0.48\" penwidth = 3color = Green4] zoop->hcope [label = \"0.88\" penwidth = 3color = Green4] zoop->mysid [label = \"0.9\" penwidth = 3color = Green4] fish->estfish_bsmt [label = \"0.82\" penwidth = 3color = Green4] fish->estfish_bsot [label = \"0.77\" penwidth = 3color = Green4] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <p>Detrended</p>
 <p>Nice plots - with covariances</p>
 <p>Original units</p>
