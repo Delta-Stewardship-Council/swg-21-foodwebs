@@ -133,15 +133,7 @@ STN_combined_derived <- STN_combined_derived %>%
     Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count,
     Taxa=="Engraulis mordax" ~ (0.0015*(Length^3.37))*Count,
     Taxa=="Clupea pallasii" ~ (0.0015*(Length^3.44))*Count,
-    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count))
-
-##add separating by region
-
-STN_annual_values <- STN_combined_derived %>%
-  group_by(Year,Region,Method,Taxa) %>%
-  summarise(Biomass=mean(Biomass),Catch_per_tow=mean(Count)) %>%
-  group_by(Year,Method,Taxa, Region) %>%
-  summarise(Biomass=mean(Biomass),Catch_per_tow=mean(Catch_per_tow)) %>%
+    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count)) %>%
   mutate(CommonName= case_when(
     Taxa=="Hypomesus transpacificus" ~ "DeltaSmelt",
     Taxa=="Spirinchus thaleichthys" ~ "LongfinSmelt",
@@ -151,39 +143,114 @@ STN_annual_values <- STN_combined_derived %>%
     Taxa=="Clupea pallasii" ~ "PacificHerring",
     Taxa=="Morone saxatilis" ~ "StripedBass_age0"))
 
+
 #If you check the original dataset, there are no unmeasured fish flag
 #Summarize biomass as you would normally
 
-##added "region" in the subset to have annual/regional values
-STN_annual_values_CPUE <- STN_annual_values  %>% filter(Method=="STN Net") %>% subset(select=c(Year,CommonName,Catch_per_tow, Region)) %>%
-  pivot_wider(names_from =CommonName,values_from = Catch_per_tow,names_prefix="STN_fish_catch_per_tow_") %>%
-  mutate(STN_fish_biomass_Estuarine_pelagic_forage_fishes=sum(STN_fish_catch_per_tow_AmericanShad,
-                                    STN_fish_catch_per_tow_ThreadfinShad,
-                                    STN_fish_catch_per_tow_DeltaSmelt,
-                                    STN_fish_catch_per_tow_LongfinSmelt,
-                                    STN_fish_catch_per_tow_StripedBass_age0),
-       STN_fish_catch_per_tow_Marine_pelagic_forage_fishes=sum(STN_fish_catch_per_tow_NorthernAnchovy,
-                                                                                    STN_fish_catch_per_tow_PacificHerring))
+
+## Annual, no regions:
+
+STN_annual_values <- STN_combined_derived %>%
+  group_by(Year, Method, CommonName) %>%
+  summarise(Biomass=mean(Biomass),
+            Catch_per_tow=mean(Count)) %>%
+  group_by(Year, Method, CommonName) %>%
+  summarise(Biomass=mean(Biomass),
+            Catch_per_tow=mean(Catch_per_tow))
+
+
+STN_annual_values_CPUE <- STN_annual_values %>%
+  filter(Method=="STN Net") %>%
+  subset(select=c(Year,CommonName,Catch_per_tow)) %>%
+  pivot_wider(names_from=CommonName,
+              values_from=Catch_per_tow,
+              names_prefix="STN_fish_catch_per_tow_") %>%
+  mutate(STN_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=
+           (STN_fish_catch_per_tow_AmericanShad +
+               STN_fish_catch_per_tow_ThreadfinShad +
+               STN_fish_catch_per_tow_DeltaSmelt +
+               STN_fish_catch_per_tow_LongfinSmelt +
+               STN_fish_catch_per_tow_StripedBass_age0),
+         STN_fish_catch_per_tow_Marine_pelagic_forage_fishes=
+           (STN_fish_catch_per_tow_NorthernAnchovy +
+               STN_fish_catch_per_tow_PacificHerring))
+
+
+STN_annual_values_biomass <- STN_annual_values %>%
+  filter(Method=="STN Net") %>%
+  subset(select=c(Year,CommonName,Biomass)) %>%
+  pivot_wider(names_from=CommonName,
+              values_from=Biomass,
+              names_prefix="STN_fish_biomass_") %>%
+  mutate(STN_fish_biomass_Estuarine_pelagic_forage_fishes=
+           (STN_fish_biomass_AmericanShad +
+               STN_fish_biomass_ThreadfinShad +
+               STN_fish_biomass_DeltaSmelt +
+               STN_fish_biomass_LongfinSmelt +
+               STN_fish_biomass_StripedBass_age0),
+         STN_fish_biomass_Marine_pelagic_forage_fishes=
+           (STN_fish_biomass_NorthernAnchovy +
+               STN_fish_biomass_PacificHerring))
+
+
+STN_annual_values_final <- full_join(STN_annual_values_CPUE,
+                                     STN_annual_values_biomass)
+
+
+write.csv(STN_annual_values_final, row.names=FALSE,
+          file=file.path("data/annual_averages/fish_STN_noregions.csv"))
 
 
 
+## Annual, with regions:
+
+STN_annual_regional_values <- STN_combined_derived %>%
+  group_by(Year, Region, Method, CommonName) %>%
+  summarise(Biomass=mean(Biomass),
+            Catch_per_tow=mean(Count)) %>%
+  group_by(Year, Method, CommonName, Region) %>%
+  summarise(Biomass=mean(Biomass),
+            Catch_per_tow=mean(Catch_per_tow))
 
 
+STN_annual_regional_values_CPUE <- STN_annual_regional_values %>%
+  filter(Method=="STN Net") %>%
+  subset(select=c(Year,CommonName,Catch_per_tow, Region)) %>%
+  pivot_wider(names_from=CommonName,
+              values_from=Catch_per_tow,
+              names_prefix="STN_fish_catch_per_tow_") %>%
+  mutate(STN_fish_catch_per_tow_Estuarine_pelagic_forage_fishes=
+           (STN_fish_catch_per_tow_AmericanShad +
+               STN_fish_catch_per_tow_ThreadfinShad +
+               STN_fish_catch_per_tow_DeltaSmelt +
+               STN_fish_catch_per_tow_LongfinSmelt +
+               STN_fish_catch_per_tow_StripedBass_age0),
+         STN_fish_catch_per_tow_Marine_pelagic_forage_fishes=
+           (STN_fish_catch_per_tow_NorthernAnchovy +
+               STN_fish_catch_per_tow_PacificHerring))
 
-STN_values_biomass <- STN_annual_values %>% filter(Method=="STN Net") %>% subset(select=c(Year,CommonName,Biomass, Region)) %>%
-  pivot_wider(names_from =CommonName,values_from = Biomass,names_prefix="STN_fish_biomass_") %>%
-  mutate(STN_fish_biomass_Estuarine_pelagic_forage_fishes=sum(STN_fish_biomass_AmericanShad,
-                                                                            STN_fish_biomass_ThreadfinShad,
-                                                                            STN_fish_biomass_DeltaSmelt,
-                                                                            STN_fish_biomass_LongfinSmelt,
-                                                                            STN_fish_biomass_StripedBass_age0),
-        STN_fish_biomass_Marine_pelagic_forage_fishes=sum(STN_fish_biomass_NorthernAnchovy,
-                                                                              STN_fish_biomass_PacificHerring))
+
+STN_annual_regional_values_biomass <- STN_annual_regional_values %>%
+  filter(Method=="STN Net") %>%
+  subset(select=c(Year,CommonName,Biomass, Region)) %>%
+  pivot_wider(names_from=CommonName,
+              values_from=Biomass,
+              names_prefix="STN_fish_biomass_") %>%
+  mutate(STN_fish_biomass_Estuarine_pelagic_forage_fishes=
+           (STN_fish_biomass_AmericanShad +
+               STN_fish_biomass_ThreadfinShad +
+               STN_fish_biomass_DeltaSmelt +
+               STN_fish_biomass_LongfinSmelt +
+               STN_fish_biomass_StripedBass_age0),
+         STN_fish_biomass_Marine_pelagic_forage_fishes=
+           (STN_fish_biomass_NorthernAnchovy +
+               STN_fish_biomass_PacificHerring))
 
 
+STN_annual_regional_values_final <- full_join(STN_annual_regional_values_CPUE,
+                                              STN_annual_regional_values_biomass)
 
-STN_annual_values_final<-full_join(STN_annual_values_CPUE,
-                                            STN_values_biomass)
 
+write.csv(STN_annual_regional_values_final, row.names=FALSE,
+          file=file.path("data/annual_averages/fish_STN_regions.csv"))
 
-write.csv(STN_annual_values_final,row.names=FALSE,file=file.path("data/annual_averages/fish_data_STN.csv"))

@@ -32,6 +32,7 @@ clams=read.csv("clams_annual_regions.csv")
 fishbs=read.csv("fish_BayStudy_by_region.csv")
 fishdj=read.csv("fish_DJFMP_by_region.csv")
 fishfm=read.csv("fish_FMWT_by_regions.csv")
+fishstn=read.csv("fish_STN_regions.csv")
 nutwq=read.csv("nutrient_data_yearly_regions.csv")
 zoop=read.csv("zoop_annual_regions.csv")
 
@@ -42,6 +43,7 @@ combined=flow %>%
   full_join(fishfm, by=c("Year","Region")) %>% 
   full_join(fishbs, by=c("Year","Region")) %>% 
   full_join(fishdj, by=c("Year","Region")) %>% 
+  full_join(fishstn, by=c("Year","Region")) %>% 
   full_join(zoopbm, by=c("Year","Region")) %>% 
   full_join(clams, by=c("Year","Region")) %>% 
   full_join(amphipod, by=c("Year","Region")) %>% 
@@ -52,7 +54,7 @@ write.csv(combined, "annual_data_compiled_regions.csv", row.names = F)
 
 Plots
 
-```{r, fig.width=8, fig.height=40}
+```{r, fig.width=8, fig.height=60}
 datalong=gather(combined,Var,Value,4:ncol(combined))
 datalong$Var=factor(datalong$Var,levels = unique(datalong$Var))
 datalong$Region=factor(datalong$Region, levels=c("West","North","South"))
