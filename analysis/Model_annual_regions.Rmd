@@ -117,7 +117,7 @@ for(i in 2:length(fvars)) {
 ### Bivariate plots
 
 ```{r bivariate, fig.width=9, fig.height=9, echo=FALSE}
-psych::pairs.panels(dplyr::select(fdr, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, clams, dophos),lm = T, bg=c("red","yellow","blue")[factor(fdr$region)],pch=21)
+psych::pairs.panels(dplyr::select(fdr, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, potam, corbic, dophos),lm = T, bg=c("red","yellow","blue")[factor(fdr$region)],pch=21)
 ```
 
 ### SEM model
@@ -125,8 +125,8 @@ psych::pairs.panels(dplyr::select(fdr, year, flow, temp, secchi, chla, hcope, cl
 ```{r}
 modnorth='zoop=~hcope+mysid
         fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+clams+flow
-        chla~clams+flow
+        zoop~chla+potam+flow
+        chla~potam+flow
         fish~zoop+flow
 '
 modfitnorth=sem(modnorth, data=filter(fdr,region=="North"))
@@ -142,11 +142,10 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 ```
 
 ```{r}
-#south has no clams
 modsouth='zoop=~hcope+mysid
         fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+flow
-        chla~flow+flow
+        zoop~chla+corbic+flow
+        chla~corbic+flow
         fish~zoop+flow
 '
 modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
@@ -165,8 +164,8 @@ labelssouth <- createLabels(modfitsouth, cnames)
 #west has no ssides
 modwest='zoop=~hcope+mysid
         fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+clams+flow
-        chla~clams+flow
+        zoop~chla+potam+flow
+        chla~potam+flow
         fish~zoop+flow
 '
 modfitwest=sem(modwest, data=filter(fdr,region=="West"))
@@ -186,8 +185,8 @@ Same model with detrended data (not updated)
 ```{r, eval=FALSE, echo=FALSE}
 model4b='zoop=~hcope_dtr+clad_dtr+mysid_dtr+pcope_dtr
         fish=~estfish_dtr+estfish_bsmt_dtr+estfish_bsot_dtr
-        zoop~sside_dtr+chla_dtr+clams_dtr
-        chla_dtr~clams_dtr+flow_dtr
+        zoop~sside_dtr+chla_dtr+potam_dtr
+        chla_dtr~potam_dtr+flow_dtr
         fish~zoop+flow_dtr+sside_dtr'
 modfit4b=sem(model4b, data=fdr)
 summary(modfit4b, standardized=T, rsq=T)
