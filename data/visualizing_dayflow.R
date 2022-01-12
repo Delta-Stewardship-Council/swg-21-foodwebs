@@ -96,7 +96,7 @@ CY_annual_average_deltawide_flow_long<-melt(CY_annual_average_deltawide_flow, id
 
 library(readr)
 
-write_csv(cy_wy_average_flow_long, file.path("data/annual_averages","annual_average_deltawide_flow_byregion.csv"))
+write_csv(CY_annual_average_deltawide_flow_long, file.path("data/annual_averages","annual_average_deltawide_flow_byregion.csv"))
 
 
 
