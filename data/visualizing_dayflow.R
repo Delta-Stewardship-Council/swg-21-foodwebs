@@ -48,7 +48,6 @@ monthly2<- monthly %>%
   group_by(Year, Month) %>%
   summarise(West = mean(OUT), Farwest = mean(OUT), North = mean(RIO), South = mean(WEST))
 
-
 ##convert from wide to long format
 ##need to rename the wide columns to just the region for readability
 
@@ -58,6 +57,8 @@ library(reshape2)
 monthly2_long<-melt(monthly2, id.vars=c("Year", "Month"),
                               variable.name = "Region",
                               value.name = "Flow")
+## Use region names that are consistent with the other datasets:
+monthly2_long$Region <- sub("Farwest", "Far West", monthly2_long$Region)
 
 
 library(readr)
@@ -92,7 +93,9 @@ library(reshape2)
 CY_annual_average_deltawide_flow_long<-melt(CY_annual_average_deltawide_flow, id.vars=c("Year"),
      variable.name = "Region",
      value.name = "Flow")
-
+## Remove Far West region from annual-regional data, for consistency with other datasets:
+CY_annual_average_deltawide_flow_long <- subset(CY_annual_average_deltawide_flow_long,
+                                                Region != "Farwest")
 
 library(readr)
 

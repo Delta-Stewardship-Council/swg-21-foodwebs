@@ -1,0 +1,67 @@
+---
+title: "Data compiler - annual averages, with regions"
+author: "Lara Mitchell"
+date: "12/9/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../../docs',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This combines the various csv files into `annual_data_compiled_regions.csv`, and makes 
+some plots of the time series.
+
+```{r, message=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+```{r}
+amphipod=read.csv("amphipod_annual_regions.csv")
+flow=read.csv("annual_average_deltawide_flow_byregion.csv")
+clams=read.csv("clams_annual_regions.csv")
+fishbs=read.csv("fish_BayStudy_by_region.csv")
+fishdj=read.csv("fish_DJFMP_by_region.csv")
+fishfm=read.csv("fish_FMWT_by_regions.csv")
+fishstn=read.csv("fish_STN_regions.csv")
+nutwq=read.csv("nutrient_data_yearly_regions.csv")
+zoop=read.csv("zoop_annual_regions.csv")
+
+zoopbm=dplyr::select(zoop, Year, Region, grep("BPUE", colnames(zoop)))
+
+combined=flow %>% 
+  full_join(nutwq, by=c("Year","Region")) %>% 
+  full_join(fishfm, by=c("Year","Region")) %>% 
+  full_join(fishbs, by=c("Year","Region")) %>% 
+  full_join(fishdj, by=c("Year","Region")) %>% 
+  full_join(fishstn, by=c("Year","Region")) %>% 
+  full_join(zoopbm, by=c("Year","Region")) %>% 
+  full_join(clams, by=c("Year","Region")) %>% 
+  full_join(amphipod, by=c("Year","Region")) %>% 
+  arrange(Year, Region)
+
+write.csv(combined, "annual_data_compiled_regions.csv", row.names = F)
+```
+
+Plots
+
+```{r, fig.width=8, fig.height=60}
+datalong=gather(combined,Var,Value,4:ncol(combined))
+datalong$Var=factor(datalong$Var,levels = unique(datalong$Var))
+datalong$Region=factor(datalong$Region, levels=c("West","North","South"))
+
+ggplot(datalong, aes(y=Value, x=Year, col=Region)) +
+  facet_wrap(.~Var, scales = "free_y", ncol = 2) +
+  geom_line() + geom_point() +
+  theme_bw() + 
+  theme(legend.position="top")
+```

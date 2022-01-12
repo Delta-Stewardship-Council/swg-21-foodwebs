@@ -1,0 +1,271 @@
+---
+title: "Annual model - No Regions"
+author: "Tanya Rogers"
+date: "12/15/2021"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      knit_root_dir = '..',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, message=FALSE}
+library(dplyr)
+#library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
+library(lavaan)
+library(semPlot)
+library(DiagrammeR)
+library(tidyr)
+library(ggplot2)
+```
+
+### Import data
+
+```{r dataprep}
+combined=read.csv("data/annual_averages/annual_data_compiled_noregions.csv")
+cnames=read.csv("analysis/column_names.csv", stringsAsFactors = F)
+dsub=filter(combined, Year>=1975)
+focaldata=dsub[,cnames$Datacolumn]
+fvars=cnames$Shortname
+colnames(focaldata)=fvars
+
+#focal variables
+varnames=c("temp","flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish","estfish_bsot","estfish_bsmt","estfish_stn")
+
+source("analysis/myLavaanPlot.r")
+```
+
+### Data prep
+
+Log transform, scale
+
+```{r prep}
+#log transform
+logvars=fvars[cnames$Log=="yes"]
+logtrans=function(x) {
+  x2=x[which(!is.na(x))]
+  if(any(x2==0)) {log(x+min(x2[which(x2>0)],na.rm=T))}
+  else {log(x)}
+}
+focaldatalog = focaldata %>% 
+  mutate_at(logvars,logtrans)
+
+#scale data
+fd0=focaldatalog
+tvars=fvars[-1]
+
+fd=fd0 %>% 
+  #lag
+  mutate_at(tvars,list("1"=lag)) %>% 
+  #scale
+  mutate_at(-1,scale) %>% 
+  as.data.frame()
+
+#detrended
+fd_dtr=fd0 %>% 
+  mutate_at(tvars,function(x) { #detrend
+    x2=x
+    x2[x2==0]=NA
+    res=residuals(lm(x2~fd$year))
+    out=x
+    out[which(!is.na(x2))]=res
+    return(out)
+  }) %>%
+  #lag
+  mutate_at(tvars,list("1"=lag)) %>% 
+  #scale
+  mutate_at(-1,scale)  %>% 
+  as.data.frame()
+```
+
+### Time series plots
+
+```{r timeseries, fig.width=8, fig.height=8, echo=FALSE, warning=FALSE}
+plot1=select(focaldata,year,varnames) %>% 
+  gather(Var,Value,varnames) %>% 
+  mutate(Var=factor(Var,levels = varnames))
+ggplot(plot1,aes(x=year,y=Value)) +
+  facet_wrap(Var~., scales="free_y",ncol = 4) +
+  geom_line() +
+  theme_bw() +
+  labs(title = "Original Units")
+
+plot2=select(fd,year,varnames) %>% 
+  gather(Var,Value,varnames) %>% 
+  mutate(Var=factor(Var,levels = varnames))
+ggplot(plot2,aes(x=year,y=Value)) +
+  facet_wrap(Var~.,ncol = 4) +
+  geom_line() +
+  theme_bw() +
+  labs(title = "Log scaled within region")
+
+plot3=select(fd_dtr,year,varnames) %>% 
+  gather(Var,Value,varnames) %>% 
+  mutate(Var=factor(Var,levels = varnames))
+ggplot(plot3,aes(x=year,y=Value)) +
+  facet_wrap(Var~.,ncol = 4) +
+  geom_line() +
+  theme_bw() +
+  labs(title = "Log scaled detrended")
+```
+
+### Cross-correlation matrices  
+(only sig correlations shown... no correction for multiple comparisons)
+
+```{r cc, fig.width=7, fig.height=6, echo=FALSE}
+#lag 0
+lags0=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
+                  stringsAsFactors = F)
+for(i in 1:nrow(lags0)) {
+  v1=fd[,lags0$V1[i]]
+  v2=fd[,lags0$V2[i]]
+  if(!all(is.na(v1)) & !all(is.na(v2))) {
+    tccf=cor.test(v1,v2)
+    lags0$Cor[i]=tccf$estimate
+    lags0$P[i]=tccf$p.value
+  }
+}
+lags0$V1=factor(lags0$V1,levels = varnames)
+lags0$V2=factor(lags0$V2,levels = varnames)
+ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+  geom_tile() +
+  geom_abline(slope=1,intercept = 0) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(x="V2 (t)", y="V1 (t)", title = "lag 0 cross-cor") +
+  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
+  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+
+#lag 1
+lags1=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
+                  stringsAsFactors = F)
+for(i in 1:nrow(lags1)) {
+  v1=fd[,lags1$V1[i]]
+  v2=fd[,lags1$V2[i]]
+  if(!all(is.na(v1)) & !all(is.na(v2))) {
+    tccf=cor.test(v1,lag(v2,1))
+    lags1$Cor[i]=tccf$estimate
+    lags1$P[i]=tccf$p.value
+  }
+}
+lags1$V1=factor(lags1$V1,levels = varnames)
+lags1$V2=factor(lags1$V2,levels = varnames)
+ggplot(filter(lags1,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+  geom_tile() +
+  geom_abline(slope=1,intercept = 0) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(x="V2 (t-1)", y="V1 (t)", title = "lag 1 cross-cor") +
+  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
+  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+
+#lag 1 seasonality removed
+lags1dtr=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
+                  stringsAsFactors = F)
+for(i in 1:nrow(lags1dtr)) {
+  v1=fd_dtr[,lags1dtr$V1[i]]
+  v2=fd_dtr[,lags1dtr$V2[i]]
+  if(!all(is.na(v1)) & !all(is.na(v2))) {
+    tccf=cor.test(v1,v2)
+    lags1dtr$Cor[i]=tccf$estimate
+    lags1dtr$P[i]=tccf$p.value
+  }
+}
+lags1dtr$V1=factor(lags1dtr$V1,levels = varnames)
+lags1dtr$V2=factor(lags1dtr$V2,levels = varnames)
+ggplot(filter(lags1dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+  geom_tile() +
+  geom_abline(slope=1,intercept = 0) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(x="V2 (t-1)", y="V1 (t)",title = "lag 0 cross-cor, detrended") +
+  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
+  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+```
+
+```{r bivariate, fig.width=9, fig.height=9, echo=FALSE, eval=FALSE}
+psych::pairs.panels(dplyr::select(fd, year, varnames),lm = T)
+```
+
+### SEM model
+
+With and without detrending.
+
+```{r}
+model1='zoop=~hcope+clad+mysid
+        fish=~estfish_bsmt+estfish_bsot
+        zoop~chla+potam+flow
+        chla~potam+flow
+        fish~zoop+flow
+'
+modfit1=sem(model1, data=fd)
+modfit1_dtr=sem(model1, data=fd_dtr)
+summary(modfit1, standardized=T, rsq=T)
+summary(modfit1_dtr, standardized=T, rsq=T)
+# par(mfrow=c(1,2))
+# semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
+# semPaths(modfit1, "par", edge.label.cex = 1, residuals = F)
+
+labels1 <- createLabels(modfit1, cnames)
+
+# residuals(modfit1)
+# modificationindices(modfit1)
+```
+
+### Nice plots
+
+#### Without covariances
+
+Original units
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfit1, labels=labels1,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
+
+Detrended
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfit1_dtr, labels=labels1, 
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
+
+#### With covariances
+
+Original units
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfit1, labels=labels1, 
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
+
+```
+
+Detrended
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfit1_dtr, labels=labels1, 
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
+```

@@ -9,22 +9,48 @@ read_wq_data <- function(monthly = FALSE) {
   df <- df %>%
     mutate(Time = round(as.integer(as.numeric(hms::as_hms(Datetime))), -1)) %>%
     left_join(df_time, by = c('Time', 'Month')) %>%
-    mutate(Temperature = Temperature + Correction)
+    mutate(Temperature = round(Temperature + Correction,2))
+
+  # if monthly, subset by when zoop starts
+  if(monthly){
+    df <- subset(df, Date >= '1995-01-01')
+  }
+
+  return(df)
+}
+
+replace_rl <- function(df_wq, val) {
+  # define variables
+  col_val <- paste0('df_wq$', val)
+  col_sign <- paste0('df_wq$', val, '_Sign')
+  col_zip <- mapply(list, eval_txt(col_sign), eval_txt(col_val), SIMPLIFY=F)
+
+  # replace unknown RLs with 0.01, since that's the closest RL chronologically
+  col_rls <- lapply(col_zip, function(x) ifelse(x[[1]] == '<' & is.na(x[[2]]), 0.01, x[[2]]))
+  col_rls <- unname(unlist(col_rls))
+  df_wq[val] <- col_rls
+
+  # replace RLs with simulated value
+  set.seed(42)
+  col_new <- lapply(col_zip, function(x) ifelse(!is.na(x[[2]]) & x[[1]] == '<', unif_analyte(x[[2]]), x[[2]]))
+  col_new <- unname(unlist(col_new))
+
+  return(col_new)
+}
+
+clean_df <- function(df){
+  df <- subset(df, select = -c(DissAmmonia_Sign,DissNitrateNitrite_Sign,DissOrthophos_Sign))
 
   # pivot longer
   df <- tidyr::pivot_longer(df, cols = c(Temperature, Chlorophyll:TKN, Salinity), names_to = 'Analyte', values_to = 'Value')
 
   # subset by wanted nutrients
-  df_sub <- df[df$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'Salinity', 'Secchi', 'Temperature', 'TotPhos'),]
+  df_sub <- df[df$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'Salinity', 'Secchi', 'Temperature', 'DissOrthophos'),]
   df_sub <- subset(df_sub, select = c('Date','Datetime','Station','Latitude','Longitude','Analyte','Value'))
+  df_sub$Value <- round(df_sub$Value, 3)
 
   # exclude dates where any of the analytes don't exist
   df_sub <- na.omit(df_sub)
-
-  # if monthly, subset by when zoop starts
-  if(monthly){
-    df_sub <- subset(df_sub, Date >= '1995-01-01')
-  }
 
   return(df_sub)
 }
@@ -85,3 +111,15 @@ check_temporal_coverage <- function(df){
 
   return(plt)
 }
+
+
+# helper funcs
+unif_analyte <- function(rl){
+  val <- stats::runif(1, min = 0.001, max = rl)
+  val <- round(val, 3)
+
+  return(val)
+}
+
+eval_txt <- function(txt){eval(parse(text = txt))}
+
