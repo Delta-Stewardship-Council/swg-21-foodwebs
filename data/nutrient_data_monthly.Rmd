@@ -27,6 +27,27 @@ if(utils::packageVersion('discretewq') < '2.1.0') {
 }
 ```
 
+```{r id-missing-data}
+df_wq_fill <- read_wq_data(monthly = TRUE)
+
+df_wq_fill <- df_wq_fill %>%
+  select(select = -c('DissAmmonia_Sign','DissNitrateNitrite_Sign','DissOrthophos_Sign'))
+
+df_wq_fill <- df_wq_fill %>%
+  pivot_longer(Chlorophyll:TKN, names_to = 'Analyte', values_to = 'Value') %>%
+  select('MonthYear', 'StationID', 'Analyte', 'Value')
+
+df_wq_fill <- df_wq_fill %>% pivot_wider(names_from = 'StationID', values_from = 'Value', values_fn = mean)
+
+
+
+for (analyte in (unique(df_wq_fill$Analyte))) {
+  df <- df_wq_fill %>% filter(Analyte == analyte)
+  
+  write_csv(df, paste0('data/nutrient_missingdat_dfs/missingdat_',analyte,'.csv'))
+}
+```
+
 ```{r read-in-data, warning = FALSE, message = FALSE}
 # read in data
 df_wq <- read_wq_data(monthly = TRUE)
@@ -36,6 +57,8 @@ df_wq$DissNitrateNitrite <- replace_rl(df_wq, 'DissNitrateNitrite')
 df_wq$DissOrthophos <- replace_rl(df_wq, 'DissOrthophos')
 
 df_wq <- clean_df(df_wq)
+
+df_chla <- test %>% filter(Analyte == 'Chlorophyll')
 ```
 
 # Check Temporal Coverage
