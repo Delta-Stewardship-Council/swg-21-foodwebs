@@ -37,9 +37,9 @@ df_wq_fill <- df_wq_fill %>%
   pivot_longer(Chlorophyll:TKN, names_to = 'Analyte', values_to = 'Value') %>%
   select('MonthYear', 'StationID', 'Analyte', 'Value')
 
+df_wq_fill <- df_wq_fill[df_wq_fill$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'Salinity', 'Secchi', 'Temperature', 'DissOrthophos'),]
+
 df_wq_fill <- df_wq_fill %>% pivot_wider(names_from = 'StationID', values_from = 'Value', values_fn = mean)
-
-
 
 for (analyte in (unique(df_wq_fill$Analyte))) {
   df <- df_wq_fill %>% filter(Analyte == analyte)
