@@ -233,7 +233,8 @@ Year <- lubridate::year(temp_table$Date)
 for (i in 1:ncol(tempwodate)) {
   #create time-series object
   dat_imp <- data.frame(Year, y = tempwodate[,i])
-  y <- ts(dat_imp[,i], start= c(1995,1), end = c(2020,12), frequency = 12) # time series object
+
+  y <- ts(dat_imp[2], start= c(1995,1), end = c(2020,12), frequency = 12) # time series object
   
   #add raw values into empty matrix
   Time_series_inter[,i] <- dat_imp[,c(-1)] # removing the Year column c(-1) allows me to get to the next column but still stops
