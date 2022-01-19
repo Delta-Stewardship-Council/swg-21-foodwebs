@@ -1,0 +1,317 @@
+---
+title: "ARIMA interpolation for missing nutrient data (monthly)"
+author: "Denise-Colombano"
+date: "1/13/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning= FALSE, message=FALSE)
+```
+
+# load library
+```{r}
+library(tidyverse)
+library(ggthemes)
+library(imputeTS)
+library(zoo)
+library(forecast)
+library(patchwork)
+```
+
+# import data
+
+This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
+```{r}
+missingdat_Temperature <- read_csv("data/missing_data/nutrient_missingdat_dfs/missingdat_Temperature.csv") %>% 
+  mutate(Date=lubridate::as_date(MonthYear)) %>% 
+  select(Date, Analyte:P8) %>%  # rearrange df with date, no time
+  arrange(Date)
+str(missingdat_Temperature)
+head(missingdat_Temperature)
+dim(missingdat_Temperature)
+View(missingdat_Temperature)
+```
+
+# tidy data format
+```{r}
+# check dataframe:
+## check number of rows: 26 years x 12 months = 312 rows
+## there are only 310 rows which means there are two missing rows of month x year that need NAs?
+## add them back in
+
+Date <- tibble(Date=seq(from=lubridate::as_date("1995-01-01"), to=lubridate::as_date("2020-12-01"), by="1 month")) # 312
+
+# create a new table with all combos = 312
+temp_table <- Date %>% 
+  left_join(missingdat_Temperature, by="Date")
+```
+
+
+
+# Pilot model
+Inspect a single station - see how the original time series is misleading,
+needed the full combination of station-month-year with NAs
+
+```{r}
+# visualize missing data points
+D28A_na <- temp_table %>% 
+  select(Date, D28A) %>% # filter out station of interest
+  filter(is.na(D28A)) %>% # find NAs
+  mutate(D28A=0) # for visualization purposes set to zero
+
+plot_D28A <- ggplot(temp_table, aes(Date, D28A))+
+  geom_line()+
+  geom_point(data=D28A_na, aes(Date, D28A), pch=4, col="red", size=3)+ # red x = NA
+  theme_bw()
+plot_D28A
+```
+
+
+Methods: 
+
+Interpolate missing values: ARIMA  
+Fit ARIMA models  
+
+ARIMA = complex linear model  
+ARIMA(p,d,q) is the series of d-th order difference of ARMA(p, q)   
+p = order of the autoregressive (AR) model,   
+d = order of non seasonal differences (I integrated part),   
+q = order of the movind average (MA) part  
+
+In other words:  
+p = dependence on prior values (the number of lag observations in the model; also known as the lag order)  
+q = dependence on longer-term values (size of moving average window or order of the moving average)  
+d =  degree of differencing of raw observations (number of times the raw data are differenced; allow for the time-series to become stationary by using the differences instead of raw values)  
+
+Other important parameter is the drift = degree of non-stationarity or trends in the data (add a constant corresponding to the mean of the trend yt - yt-1)  
+Attention non-stationarity means that the mean will always move by drift and the predicted variance will grow over time. Can be dangerous to forecast into the future!   
+
+Error terms are assumed to be random variables sampled from a normal distribution = random noise  
+
+
+Special cases  
+
+White noise 	ARIMA(0,0,0)  
+Random walk 	ARIMA(0,1,0) with no constant  
+Random walk with drift 	ARIMA(0,1,0) with a constant  
+Autoregression 	ARIMA(p,0,0)  
+Moving average 	ARIMA(0,0,q)   
+
+ 
+Seasonal ARIMA models  
+
+When data show intra-annual regular and predictable patterns  
+These models take into account the seasonality in the data and does the same ARIMA steps but on the seasonal pattern.   
+So, if the data has a seasonal pattern every quarter then the SARIMA will get an order for (p,d,q) for all the points and a (P,D,Q) for each quarter  
+In this case d is replaced by d + D where D is the order of seasonal differencing and d the order of non-seasonal differencing  
+
+ 
+The auto.arima function: forecast::auto.arima(y)  
+
+Provide an 'easy' way to estimate all the parameters using a model selection procedure  
+
+The way auto.arima picks the best model is by fitting several models and calculating its AICc score.   
+The model with the lowest score is selected as the best model.  
+Everything can be automatized and the algorith can skip several steps and approximate the results so that less models are fitted.  
+This is very useful for big datasets but can compromise performance so better to check how it works!  
+
+ 
+A few important parameters  
+ 
+If stationary=TRUE restricts search to stationary models  (default is FALSE)   
+If seasonal=FALSE restricts search to non-seasonal models D = 0  (default is TRUE)   
+If stepwise=FALSE will search over all models instead of doing a stepwise selection procedure [can be very slow, especially for sesonal models] (default is TRUE)  
+If allowdrift = TRUE (default), models with drift terms are considered  
+If allowmean = TRUE (default), models with a non-zero mean are considered  
+approximation = TRUE  (default)  can be used to avoid excessive computation time by approximating the AICc scores  
+lambda: box-cox transformation parameter; if you choose lambda="auto", the parameter will be automatically adjusted. The optimal transformation of the data is used to stabilize the variance of the original time-series (using a power or log transformation). It may produce simpler models and more accurate predictions. You can also choose to transform your values beforehand (e.g., log10)   
+Seasonality: auto.arima has the ability to decide whether or not the models needs a seasonal differencing but in noisy data it can be difficult for the algorith to distinguish (especially if using approximations, etc) so it can be useful to specify if you know that your data have a seasonal component. In this case you can specify D = 1 for seasonal model. If missing, will choose a value based on internal ?season.test?  
+
+
+# ARIMA
+
+## Create a clean time series object, fit ARIMA model
+```{r}
+# time series object using ts - monthly resolution for each year
+temp_D28A <- temp_table %>% 
+  select(Date, D28A) %>% 
+  arrange(Date) # single station still for now
+temp_ts <- ts(temp_D28A$D28A, frequency = 12, start = c(1995,1), end=c(2020,12))
+temp_ts
+
+
+# fit arima model
+temp_fit <- forecast::auto.arima(temp_ts, seasonal = TRUE, stationary=TRUE, trace = TRUE) #stationary=TRUE for forecasting
+# get the same answer with lambda="auto" and unlog data
+# if we let stationarity=FALSE, there's a different top model, but it doesn't allow forecasting?
+summary(temp_fit)
+```
+Series: temp_ts 
+ARIMA(5,0,0)(1,0,0)[12] with non-zero mean
+
+
+## Predict values using the calibration dataset
+```{r}
+temp_forecast <- forecast::forecast(temp_ts,model=temp_fit)
+```
+
+## Compare predicted versus observed values
+```{r}
+#Plot the observed and predicted temperatures
+par(mar=c(2,4,1,1))
+plot(temp_D28A$Date,temp_ts,xlab="Date",ylab="Temp (C)",lwd=2,type="l")
+lines(temp_D28A$Date,temp_forecast$fitted,col="red")
+
+#Plot predicted versus observed values
+plot(temp_ts,temp_forecast$fitted,xlab="Observed",ylab="Predicted",pch=".")
+abline(0,1,lty=2)
+R2 = round(cor.test(temp_ts,temp_forecast$fitted,na.rm=T)$estimate^2,2)
+mtext(side=3,line=-2,adj=0.1,bquote(R^2 == .(R2)))
+
+
+#Check the residuals
+forecast::checkresiduals(temp_fit) 
+#give also the results for the Ljung_Box test with H0 = randomly distributed errors (white noise)
+
+#plot residuals versus fitted values (=check for heterosedasticity)
+#if problems you might want to try to transform the data first
+par(mar=c(4,4,4,4))
+plot(temp_forecast$fitted,temp_forecast$residuals,ylab="Residuals",xlab="Fitted values")
+
+
+#Check several metrics of performance
+forecast::accuracy(object = temp_fit) # can also provide a test dataset for cross-validation using x = testUS 
+#? ME: Mean Error
+#? RMSE: Root Mean Squared Error
+#? MAE: Mean Absolute Error
+#? MPE: Mean Percentage Error
+#? MAPE: Mean Absolute Percentage Error
+#? MASE: Mean Absolute Scaled Error
+#? ACF1: Autocorrelation of errors at lag 1.
+
+
+#Missing data imputation
+#Interpolate missing values using a Kalman filter (=smoother)
+temp_inter <- na_kalman(temp_ts,model=temp_fit$model) #use the fitted model
+
+#Plot the results - Doesn't do a good job with 1980 NAs
+par(mar=c(2,4,1,1))
+plot(temp_inter,xlab="",ylab="Temperature (C)",col="red",main="Interpolation missing values")
+lines(temp_ts,col="black")
+```
+
+# Full model
+
+## For-loop and model output
+
+The problem here is looping over the different columns (=stations). Right now it loops over two stations and then quits.
+I have been trying different things with the "i" but don't know how to get further
+```{r}
+# prep dataframe for for-loop
+tempwodate <- temp_table %>% 
+  arrange(Date) %>%  # ensure it's in chronological order
+  select(-C3A) # this station has no missing data
+tempwodate <- tempwodate[,-c(1:2)] # then remove date and analyte columns
+summary(tempwodate)
+head(tempwodate) # 14 cols - 1 has no NAs so removed it for now
+
+
+### Run this code altogether 
+#create an empty matrix
+Time_series_inter <- matrix(NA,nrow(tempwodate),(ncol(tempwodate))) #create empty matrix
+dim(Time_series_inter)
+colnames(Time_series_inter) <- colnames(tempwodate)
+head(Time_series_inter)
+
+# Create a vector of years (for each month x year combo = 312)
+Year <- lubridate::year(temp_table$Date)
+
+## start for-loop, make sure to refresh Time_series_inter above
+for (i in 1:ncol(tempwodate)) {
+  #create time-series object
+  dat_imp <- data.frame(Year, y = tempwodate[,i])
+  y <- ts(dat_imp[,i], start= c(1995,1), end = c(2020,12), frequency = 12) # time series object
+  
+  #add raw values into empty matrix
+  Time_series_inter[,i] <- dat_imp[,c(-1)] # removing the Year column c(-1) allows me to get to the next column but still stops
+  
+  #interpolate missing values (if any)
+    if(length(which(is.na(y))) > 0){
+          
+        #fit ARIMA and impute missing values
+        fit <- auto.arima(y, seasonal = TRUE, stationary=TRUE) 
+        y_inter <- na_kalman(y,model=fit$model)
+
+        #identify missing values to impute (and replace in the matrix)
+        id.na <- which(is.na(y))
+
+        #remove missing values at the begining and end of time series
+        aa <- split(id.na, cumsum(c(1, diff(id.na) != 1)))  #split sequences of missing values 
+        last <- length(y)
+        first <- 1
+        is.first <- sapply(aa,function(x) length(which(x %in% first))) #identify series of NAs at the start of the time-series
+        is.last <- sapply(aa,function(x) length(which(x %in% last))) #idem with last value
+          
+        if(sum(is.first) > 0 | sum(is.last) > 0){
+            aa <- aa[-c(which(is.last == 1),which(is.first == 1))] #remove them from the list
+            id.na <- unlist(aa)
+        }
+
+        #replace missing values by imputed values into matrix
+        Time_series_inter[id.na,i] <- y_inter[id.na]
+
+# jpeg(paste0("Imputation_plots/Temperature",colnames(Time_series_inter)[i],".jpeg"))
+# plot(y_inter,xlab="",ylab="Temperature (C)",col="red",main=(Time_series_inter)[i])
+# lines(y,col="black")
+# mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
+# dev.off()
+# 
+# 		}else{
+# 		#save plot for non-imputed time-series
+# 		jpeg(paste0("Imputation_plots/TemperatureRaw",colnames(Time_series_inter)[i],".jpeg"))
+# 		plot(y,xlab="",ylab="Temperature (C)",col="black",main=(Time_series_inter)[i])
+# 		mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
+# 		dev.off()
+		}
+    print(i)
+     
+}
+## end for-loop
+
+#output of imputation
+View(Time_series_inter)
+
+# evaluate top model
+fit
+```
+Output:
+
+
+## Create new time series with interpolated values
+```{r}
+
+```
+
+
+## Diagnostic tests
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+## Back transform
+```{r}
+
+```
+
+
+
+
+
