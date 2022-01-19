@@ -207,8 +207,6 @@ lines(temp_ts,col="black")
 
 ## For-loop and model output
 
-The problem here is looping over the different columns (=stations). Right now it loops over two stations and then quits.
-I have been trying different things with the "i" but don't know how to get further
 ```{r}
 # prep dataframe for for-loop
 tempwodate <- temp_table %>% 
