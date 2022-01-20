@@ -1,5 +1,5 @@
 ---
-title: "ARIMA interpolation for missing nutrient data (monthly)"
+title: "ARIMA interpolation for missing data (monthly)"
 author: "Denise-Colombano"
 date: "1/13/2022"
 output: html_document
@@ -21,8 +21,11 @@ library(forecast)
 library(patchwork)
 ```
 
-# import data
 
+# TEMPERATURE
+
+# data wrangling
+## import data
 This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
 ```{r}
 missingdat_Temperature <- read_csv("data/missing_data/nutrient_missingdat_dfs/missingdat_Temperature.csv") %>% 
@@ -35,7 +38,7 @@ dim(missingdat_Temperature)
 View(missingdat_Temperature)
 ```
 
-# tidy data format
+## tidy data format
 ```{r}
 # check dataframe:
 ## check number of rows: 26 years x 12 months = 312 rows
@@ -51,7 +54,7 @@ temp_table <- Date %>%
 
 
 
-# Pilot model
+# pilot model
 Inspect a single station - see how the original time series is misleading,
 needed the full combination of station-month-year with NAs
 
@@ -131,9 +134,7 @@ lambda: box-cox transformation parameter; if you choose lambda="auto", the param
 Seasonality: auto.arima has the ability to decide whether or not the models needs a seasonal differencing but in noisy data it can be difficult for the algorith to distinguish (especially if using approximations, etc) so it can be useful to specify if you know that your data have a seasonal component. In this case you can specify D = 1 for seasonal model. If missing, will choose a value based on internal ?season.test?  
 
 
-# ARIMA
-
-## Create a clean time series object, fit ARIMA model
+## fit ARIMA model
 ```{r}
 # time series object using ts - monthly resolution for each year
 temp_D28A <- temp_table %>% 
@@ -153,12 +154,12 @@ Series: temp_ts
 ARIMA(5,0,0)(1,0,0)[12] with non-zero mean
 
 
-## Predict values using the calibration dataset
+## predict values using the calibration dataset
 ```{r}
 temp_forecast <- forecast::forecast(temp_ts,model=temp_fit)
 ```
 
-## Compare predicted versus observed values
+## compare predicted versus observed values
 ```{r}
 #Plot the observed and predicted temperatures
 par(mar=c(2,4,1,1))
@@ -202,20 +203,19 @@ par(mar=c(2,4,1,1))
 plot(temp_inter,xlab="",ylab="Temperature (C)",col="red",main="Interpolation missing values")
 lines(temp_ts,col="black")
 
-?auto.arima
+#?auto.arima
 ```
 
-# Full model
+# full model
 
-## For-loop and model output
+## for-loop and model output
 ```{r}
 # prep dataframe for for-loop
 tempwodate <- temp_table %>% 
   arrange(Date) #%>%  # ensure it's in chronological order
-  #select(-C3A) # this station has no missing data
 tempwodate <- tempwodate[,-c(1:2)] # then remove date and analyte columns
 summary(tempwodate)
-head(tempwodate) # 14 cols - 1 has no NAs so removed it for now
+head(tempwodate) # 15 cols
 
 
 ### Run this code altogether 
@@ -300,7 +300,7 @@ s.e.  0.7255  0.6193   0.7264   0.4129   0.0511  0.0166
 sigma^2 = 3.104:  log likelihood = -586.92
 AIC=1187.84   AICc=1188.23   BIC=1213.75
 
-## Create new time series with interpolated values
+## create new time series with interpolated values
 ```{r}
 #show wide table of imputed values with dates and analyte type
 Time_series_imp_wide <- as_tibble(Time_series_inter) %>% 
@@ -338,7 +338,7 @@ View(Time_series_imp2)
 ```
 
 
-## Diagnostic tests
+## diagnostic tests
 ```{r}
 #Plot the observed and predicted temperatures
 ggplot(Time_series_imp2, aes(Date, Imputed_values, color=Imputed))+
@@ -367,11 +367,896 @@ plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
 ```
 
 
-## Save new dataframe
+## export df
 ```{r}
 Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/temperature_imputed_data.csv")
 ```
 
+
+
+# CHLOROPHYLL
+
+# data wrangling
+## import data
+This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
+```{r}
+missingdat_Chlorophyll <- read_csv("data/missing_data/missing_data/missingdat_Chlorophyll.csv") %>% 
+  mutate(Date=lubridate::as_date(MonthYear)) %>% 
+  select(Date, Analyte:P8) %>%  # rearrange df with date, no time
+  arrange(Date)
+str(missingdat_Chlorophyll)
+summary(missingdat_Chlorophyll)
+dim(missingdat_Chlorophyll)
+View(missingdat_Chlorophyll)
+```
+
+## tidy data format
+```{r}
+# check dataframe:
+## check number of rows: 26 years x 12 months = 312 rows
+## there are only 310 rows which means there are two missing rows of month x year that need NAs?
+## add them back in
+
+Date <- tibble(Date=seq(from=lubridate::as_date("1995-01-01"), to=lubridate::as_date("2020-12-01"), by="1 month")) # 312
+
+# create a new table with all combos = 312
+chl_table <- Date %>% 
+  left_join(missingdat_Chlorophyll, by="Date")
+```
+
+
+
+# pilot model
+Inspect a single station - see how the original time series is misleading,
+needed the full combination of station-month-year with NAs
+
+```{r}
+# visualize missing data points - 14 missing Chl data points
+D28A_na <- chl_table %>% 
+  select(Date, D28A) %>% # filter out station of interest
+  filter(is.na(D28A)) %>% # find NAs
+  mutate(D28A=0) # for visualization purposes set to zero
+
+plot_D28A <- ggplot(chl_table, aes(Date, D28A))+
+  geom_line()+
+  geom_point(data=D28A_na, aes(Date, D28A), pch=4, col="red", size=3)+ # red x = NA
+  theme_bw()
+plot_D28A
+```
+
+
+## fit ARIMA model
+```{r}
+# time series object using ts - monthly resolution for each year
+chl_D28A <- chl_table %>% 
+  select(Date, D28A) %>% 
+  arrange(Date) # single station still for now
+chl_ts <- ts(chl_D28A$D28A, frequency = 12, start = c(1995,1), end=c(2020,12))
+chl_ts
+
+
+# fit arima model
+chl_fit <- forecast::auto.arima(chl_ts, seasonal=TRUE, trace = TRUE, lambda = "auto", stationary=TRUE) #stationary=TRUE for forecasting
+# get the same answer with lambda="auto" and unlog data
+# if we let stationarity=FALSE, there's a different top model, but it doesn't allow forecasting?
+summary(chl_fit)
+```
+Series: chl_ts 
+ARIMA(2,0,0)(2,0,0)[12] with non-zero mean
+
+
+## predict values using the calibration dataset
+```{r}
+chl_forecast <- forecast::forecast(chl_ts,model=chl_fit)
+```
+
+## compare predicted versus observed values
+```{r}
+#Plot the observed and predicted Chlorophyll
+par(mar=c(2,4,1,1))
+plot(chl_D28A$Date,chl_ts,xlab="Date",ylab="chl (C)",lwd=2,type="l")
+lines(chl_D28A$Date,chl_forecast$fitted,col="red")
+
+#Plot predicted versus observed values
+plot(chl_ts,chl_forecast$fitted,xlab="Observed",ylab="Predicted",pch=".")
+abline(0,1,lty=2)
+R2 = round(cor.test(chl_ts,chl_forecast$fitted,na.rm=T)$estimate^2,2)
+mtext(side=3,line=-2,adj=0.1,bquote(R^2 == .(R2)))
+
+
+#Check the residuals
+forecast::checkresiduals(chl_fit) 
+#give also the results for the Ljung_Box test with H0 = randomly distributed errors (white noise)
+
+#plot residuals versus fitted values (=check for heterosedasticity)
+#if problems you might want to try to transform the data first
+par(mar=c(4,4,4,4))
+plot(chl_forecast$fitted,chl_forecast$residuals,ylab="Residuals",xlab="Fitted values")
+
+
+#Check several metrics of performance
+forecast::accuracy(object = chl_fit) # can also provide a test dataset for cross-validation using x = testUS 
+#? ME: Mean Error
+#? RMSE: Root Mean Squared Error
+#? MAE: Mean Absolute Error
+#? MPE: Mean Percentage Error
+#? MAPE: Mean Absolute Percentage Error
+#? MASE: Mean Absolute Scaled Error
+#? ACF1: Autocorrelation of errors at lag 1.
+
+
+#Missing data imputation
+#Interpolate missing values using a Kalman filter (=smoother)
+chl_inter <- na_kalman(chl_ts,model=chl_fit$model) #use the fitted model
+
+#Plot the results - Doesn't do a good job with 1980 NAs
+par(mar=c(2,4,1,1))
+plot(chl_inter,xlab="",ylab="Chlorophyll (C)",col="red",main="Interpolation missing values")
+lines(chl_ts,col="black")
+
+#?auto.arima
+```
+
+# full model
+
+## for-loop and model output
+```{r}
+# prep dataframe for for-loop
+chlwodate <- chl_table %>% 
+  arrange(Date) #%>%  # ensure it's in chronological order
+chlwodate <- chlwodate[,-c(1:2)] # then remove date and analyte columns
+chlwodate <- log10(chlwodate + 1) # add one and log10 transform
+summary(chlwodate)
+head(chlwodate) # 15 cols
+
+
+### Run this code altogether 
+#create an empty matrix
+Time_series_inter <- matrix(NA,nrow(chlwodate),(ncol(chlwodate))) #create empty matrix
+dim(Time_series_inter)
+colnames(Time_series_inter) <- colnames(chlwodate)
+head(Time_series_inter)
+
+# Create a vector of years (for each month x year combo = 312)
+Year <- lubridate::year(chl_table$Date)
+
+## start for-loop, make sure to refresh Time_series_inter above
+for (i in 1:ncol(chlwodate)) {
+  #create time-series object
+  dat_imp <- data.frame(Year, y = chlwodate[,i])
+
+  y <- ts(dat_imp[2], start= c(1995,1), end = c(2020,12), frequency = 12) # time series object
+  
+  #add raw values into empty matrix
+  Time_series_inter[,i] <- dat_imp[,c(-1)] # removing the Year column c(-1)
+  
+  #interpolate missing values (if any)
+    if(length(which(is.na(y))) > 0){
+          
+        #fit ARIMA and impute missing values
+        fit <- auto.arima(y, seasonal = TRUE) # don't use lambda, already log10 transformed 
+        y_inter <- na_kalman(y,model=fit$model)
+
+        #identify missing values to impute (and replace in the matrix)
+        id.na <- which(is.na(y))
+
+        #remove missing values at the begining and end of time series
+        aa <- split(id.na, cumsum(c(1, diff(id.na) != 1)))  #split sequences of missing values 
+        last <- length(y)
+        first <- 1
+        is.first <- sapply(aa,function(x) length(which(x %in% first))) #identify series of NAs at the start of the time-series
+        is.last <- sapply(aa,function(x) length(which(x %in% last))) #idem with last value
+          
+        if(sum(is.first) > 0 | sum(is.last) > 0){
+            aa <- aa[-c(which(is.last == 1),which(is.first == 1))] #remove them from the list
+            id.na <- unlist(aa)
+        }
+
+        #replace missing values by imputed values into matrix
+        Time_series_inter[id.na,i] <- y_inter[id.na]
+
+# jpeg(paste0("Imputation_plots/Chlorophyll",colnames(Time_series_inter)[i],".jpeg"))
+# plot(y_inter,xlab="",ylab="Chlorophyll (C)",col="red",main=(Time_series_inter)[i])
+# lines(y,col="black")
+# mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
+# dev.off()
+# 
+# 		}else{
+# 		#save plot for non-imputed time-series
+# 		jpeg(paste0("Imputation_plots/ChlorophyllRaw",colnames(Time_series_inter)[i],".jpeg"))
+# 		plot(y,xlab="",ylab="Chlorophyll (C)",col="black",main=(Time_series_inter)[i])
+# 		mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
+# 		dev.off()
+		}
+    print(i)
+     
+}
+## end for-loop
+
+#output of imputation
+View(Time_series_inter)
+
+# back transform
+Time_series_inter2 <- 10^Time_series_inter -1
+
+# evaluate top model
+fit
+```
+Output:
+
+Not constrained by stationarity -- allows drift:
+ARIMA(5,1,0)(2,0,0)[12] 
+
+Coefficients:
+          ar1      ar2      ar3      ar4      ar5    sar1    sar2
+      -0.5685  -0.5078  -0.3061  -0.1870  -0.1446  0.2625  0.2608
+s.e.   0.0637   0.0708   0.0730   0.0665   0.0572  0.0602  0.0581
+
+sigma^2 = 0.05662:  log likelihood = 5.95
+AIC=4.11   AICc=4.58   BIC=34
+
+## create new time series with interpolated values
+```{r}
+#show wide table of imputed values with dates and analyte type
+Time_series_imp_wide <- as_tibble(Time_series_inter2) %>% 
+  mutate(Date = chl_table$Date, Analyte= chl_table$Analyte) %>% # add columns back
+  select(Date, Analyte, C10A:P8)  # rearrange columns
+
+Time_series_imp <- Time_series_imp_wide %>%
+  pivot_longer(
+    cols= "C10A":"P8",
+    names_to="Station", 
+    values_to = "Imputed_values")
+View(Time_series_imp)
+summary(Time_series_imp)
+dim(Time_series_imp) # 4680 rows - only 12 NAs remaining in first and last time steps
+
+# identify which values were imputed - which values DONT they have in common?
+# If Imputed_values has a value, where the raw data has an NA, and Missing=TRUE, it's imputed
+chl_table_long <- chl_table %>% 
+  pivot_longer(
+    cols="C10A":"P8",
+    names_to="Station",
+    values_to = "Raw_values"
+  ) %>% 
+  mutate(Missing=ifelse(is.na(Raw_values), TRUE, FALSE)) # Is it missing?
+View(chl_table_long)
+summary(chl_table_long)
+dim(chl_table_long) # 4680 rows- with 125 NAs present
+
+# Join them to create a master table tracking which values were modeled
+# Should still be 10 NAs that are missing but not imputed
+Time_series_imp2 <- Time_series_imp %>% 
+  left_join(chl_table_long) %>% 
+  mutate(Imputed=ifelse(Missing==TRUE & Imputed_values>0, TRUE, FALSE))
+View(Time_series_imp2)
+```
+
+
+## diagnostic tests
+```{r}
+#Plot the observed and predicted Chlorophyll
+ggplot(Time_series_imp2, aes(Date, Imputed_values, color=Imputed))+
+  geom_line(aes(Date, Imputed_values), col="gray60")+  
+  geom_point(size=1)+
+  facet_wrap(Station~., ncol=3, scales = "free_y")+
+  scale_color_manual(values=c("gray60", "red"))+
+  labs(title="Replacing missing values with ARIMA and Kalman filter", subtitle="Chlorophyll-a (mg/L)")+
+  theme_bw()
+```
+
+```{r}
+# model summary
+summary(fit)
+
+# Check the residuals
+forecast::checkresiduals(fit) 
+
+# Check several metrics of performance
+forecast::accuracy(object = fit)
+
+#plot residuals versus fitted values (=check for heterosedasticity)
+#if problems you might want to try to transform the data first
+par(mar=c(4,4,4,4))
+plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
+```
+
+
+## export df
+```{r}
+Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/chlorophyll_imputed_data.csv")
+```
+
+
+
+
+# DISSOLVED AMMONIA
+
+# data wrangling
+## import data
+This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
+```{r}
+missingdat_Ammonia <- read_csv("data/missing_data/missing_data/missingdat_DissAmmonia.csv") %>%  
+  mutate(Date=lubridate::as_date(MonthYear)) %>% 
+  select(Date, Analyte:P8) %>%  # rearrange df with date, no time
+  arrange(Date)
+str(missingdat_Ammonia)
+head(missingdat_Ammonia)
+dim(missingdat_Ammonia)
+View(missingdat_Ammonia)
+```
+
+## tidy data format
+```{r}
+# check dataframe:
+## check number of rows: 26 years x 12 months = 312 rows
+## there are only 310 rows which means there are two missing rows of month x year that need NAs?
+## add them back in
+
+Date <- tibble(Date=seq(from=lubridate::as_date("1995-01-01"), to=lubridate::as_date("2020-12-01"), by="1 month")) # 312
+
+# create a new table with all combos = 312
+amm_table <- Date %>% 
+  left_join(missingdat_Ammonia, by="Date")
+```
+
+
+
+# pilot model
+Inspect a single station - see how the original time series is misleading,
+needed the full combination of station-month-year with NAs
+
+```{r}
+# visualize missing data points - 7 missing amm data points
+D28A_na <- amm_table %>% 
+  select(Date, D28A) %>% # filter out station of interest
+  filter(is.na(D28A)) %>% # find NAs
+  mutate(D28A=0) # for visualization purposes set to zero
+
+plot_D28A <- ggplot(amm_table, aes(Date, D28A))+
+  geom_line()+
+  geom_point(data=D28A_na, aes(Date, D28A), pch=4, col="red", size=3)+ # red x = NA
+  theme_bw()
+plot_D28A
+```
+
+
+## fit ARIMA model
+```{r}
+# time series object using ts - monthly resolution for each year
+amm_D28A <- amm_table %>% 
+  select(Date, D28A) %>% 
+  arrange(Date) # single station still for now
+amm_ts <- ts(amm_D28A$D28A, frequency = 12, start = c(1995,1), end=c(2020,12))
+amm_ts
+
+
+# fit arima model
+amm_fit <- forecast::auto.arima(amm_ts, seasonal=TRUE, trace = TRUE, lambda = "auto", stationary=TRUE) #stationary=TRUE for forecasting
+# get the same answer with lambda="auto" and unlog data
+# if we let stationarity=FALSE, there's a different top model, but it doesn't allow forecasting?
+summary(amm_fit)
+```
+Series: amm_ts 
+ARIMA(2,0,0)(2,0,0)[12] with non-zero mean
+
+
+## predict values using the calibration dataset
+```{r}
+amm_forecast <- forecast::forecast(amm_ts,model=amm_fit)
+```
+
+## compare predicted versus observed values
+```{r}
+#Plot the observed and predicted Ammonia
+par(mar=c(2,4,1,1))
+plot(amm_D28A$Date,amm_ts,xlab="Date",ylab="amm (C)",lwd=2,type="l")
+lines(amm_D28A$Date,amm_forecast$fitted,col="red")
+
+#Plot predicted versus observed values
+plot(amm_ts,amm_forecast$fitted,xlab="Observed",ylab="Predicted",pch=".")
+abline(0,1,lty=2)
+R2 = round(cor.test(amm_ts,amm_forecast$fitted,na.rm=T)$estimate^2,2)
+mtext(side=3,line=-2,adj=0.1,bquote(R^2 == .(R2)))
+
+
+#Check the residuals
+forecast::checkresiduals(amm_fit) 
+#give also the results for the Ljung_Box test with H0 = randomly distributed errors (white noise)
+
+#plot residuals versus fitted values (=check for heterosedasticity)
+#if problems you might want to try to transform the data first
+par(mar=c(4,4,4,4))
+plot(amm_forecast$fitted,amm_forecast$residuals,ylab="Residuals",xlab="Fitted values")
+
+
+#Check several metrics of performance
+forecast::accuracy(object = amm_fit) # can also provide a test dataset for cross-validation using x = testUS 
+#? ME: Mean Error
+#? RMSE: Root Mean Squared Error
+#? MAE: Mean Absolute Error
+#? MPE: Mean Percentage Error
+#? MAPE: Mean Absolute Percentage Error
+#? MASE: Mean Absolute Scaled Error
+#? ACF1: Autocorrelation of errors at lag 1.
+
+
+#Missing data imputation
+#Interpolate missing values using a Kalman filter (=smoother)
+amm_inter <- na_kalman(amm_ts,model=amm_fit$model) #use the fitted model
+
+#Plot the results - Doesn't do a good job with 1980 NAs
+par(mar=c(2,4,1,1))
+plot(amm_inter,xlab="",ylab="Ammonia (C)",col="red",main="Interpolation missing values")
+lines(amm_ts,col="black")
+
+#?auto.arima
+```
+
+# full model
+
+## for-loop and model output
+```{r}
+# prep dataframe for for-loop
+ammwodate <- amm_table %>% 
+  arrange(Date)  # ensure it's in chronological order
+ammwodate <- ammwodate[,-c(1:2)] # then remove date and analyte columns
+ammwodate <- log10(ammwodate + 1) # add one and log10 transform
+summary(ammwodate)
+head(ammwodate) # 15 cols
+
+
+### Run this code altogether 
+#create an empty matrix
+Time_series_inter <- matrix(NA,nrow(ammwodate),(ncol(ammwodate))) #create empty matrix
+dim(Time_series_inter)
+colnames(Time_series_inter) <- colnames(ammwodate)
+head(Time_series_inter)
+
+# Create a vector of years (for each month x year combo = 312)
+Year <- lubridate::year(amm_table$Date)
+
+## start for-loop, make sure to refresh Time_series_inter above
+for (i in 1:ncol(ammwodate)) {
+  #create time-series object
+  dat_imp <- data.frame(Year, y = ammwodate[,i])
+
+  y <- ts(dat_imp[2], start= c(1995,1), end = c(2020,12), frequency = 12) # time series object
+  
+  #add raw values into empty matrix
+  Time_series_inter[,i] <- dat_imp[,c(-1)] # removing the Year column c(-1)
+  
+  #interpolate missing values (if any)
+    if(length(which(is.na(y))) > 0){
+          
+        #fit ARIMA and impute missing values
+        fit <- auto.arima(y, seasonal = TRUE) # it is log-transformed already  
+        y_inter <- na_kalman(y,model=fit$model)
+
+        #identify missing values to impute (and replace in the matrix)
+        id.na <- which(is.na(y))
+
+        #remove missing values at the begining and end of time series
+        aa <- split(id.na, cumsum(c(1, diff(id.na) != 1)))  #split sequences of missing values 
+        last <- length(y)
+        first <- 1
+        is.first <- sapply(aa,function(x) length(which(x %in% first))) #identify series of NAs at the start of the time-series
+        is.last <- sapply(aa,function(x) length(which(x %in% last))) #idem with last value
+          
+        if(sum(is.first) > 0 | sum(is.last) > 0){
+            aa <- aa[-c(which(is.last == 1),which(is.first == 1))] #remove them from the list
+            id.na <- unlist(aa)
+        }
+
+        #replace missing values by imputed values into matrix
+        Time_series_inter[id.na,i] <- y_inter[id.na]
+
+# jpeg(paste0("Imputation_plots/Ammonia",colnames(Time_series_inter)[i],".jpeg"))
+# plot(y_inter,xlab="",ylab="Ammonia (C)",col="red",main=(Time_series_inter)[i])
+# lines(y,col="black")
+# mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
+# dev.off()
+# 
+# 		}else{
+# 		#save plot for non-imputed time-series
+# 		jpeg(paste0("Imputation_plots/AmmoniaRaw",colnames(Time_series_inter)[i],".jpeg"))
+# 		plot(y,xlab="",ylab="Ammonia (C)",col="black",main=(Time_series_inter)[i])
+# 		mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
+# 		dev.off()
+		}
+    print(i)
+     
+}
+## end for-loop
+
+#output of imputation
+View(Time_series_inter)
+
+# back transform
+Time_series_inter2 <- 10^Time_series_inter -1
+
+# evaluate top model
+fit
+```
+Output:
+
+Not constrained by stationarity -- allows drift:
+ARIMA(4,1,0)(2,0,0)[12] 
+
+Coefficients:
+          ar1      ar2      ar3      ar4    sar1    sar2
+      -0.5318  -0.3322  -0.2730  -0.1933  0.3024  0.2314
+s.e.   0.0615   0.0699   0.0653   0.0567  0.0588  0.0584
+
+sigma^2 = 0.006396:  log likelihood = 340.57
+AIC=-667.14   AICc=-666.77   BIC=-640.99
+
+## create new time series with interpolated values
+```{r}
+#show wide table of imputed values with dates and analyte type
+Time_series_imp_wide <- as_tibble(Time_series_inter2) %>% 
+  mutate(Date = amm_table$Date, Analyte= amm_table$Analyte) %>% # add columns back
+  select(Date, Analyte, C10A:P8) # rearrange columns
+
+Time_series_imp <- Time_series_imp_wide %>%
+  pivot_longer(
+    cols= "C10A":"P8",
+    names_to="Station", 
+    values_to = "Imputed_values")
+View(Time_series_imp)
+summary(Time_series_imp)
+dim(Time_series_imp) # 4680 rows - only 10 NAs remaining in last time steps
+
+# identify which values were imputed - which values DONT they have in common?
+# If Imputed_values has a value, where the raw data has an NA, and Missing=TRUE, it's imputed
+amm_table_long <- amm_table %>% 
+  pivot_longer(
+    cols="C10A":"P8",
+    names_to="Station",
+    values_to = "Raw_values"
+  ) %>% 
+  mutate(Missing=ifelse(is.na(Raw_values), TRUE, FALSE)) # Is it missing?
+View(amm_table_long)
+summary(amm_table_long)
+dim(amm_table_long) # 4680 rows- with 1043 NAs present
+
+# Join them to create a master table tracking which values were modeled
+# Should still be 10 NAs that are missing but not imputed
+Time_series_imp2 <- Time_series_imp %>% 
+  left_join(amm_table_long) %>% 
+  mutate(Imputed=ifelse(Missing==TRUE & Imputed_values>0, TRUE, FALSE))
+View(Time_series_imp2)
+```
+
+
+## diagnostic tests
+```{r}
+#Plot the observed and predicted Ammonia
+ggplot(Time_series_imp2, aes(Date, Imputed_values, color=Imputed))+
+  #geom_line(aes(Date, Imputed_values), col="gray60")+  
+  geom_point(size=1)+
+  facet_wrap(Station~., ncol=3, scales = "free_y")+
+  scale_color_manual(values=c("gray60", "red", "black"))+
+  labs(title="Replacing missing values with ARIMA and Kalman filter", subtitle="Dissolved ammonia")+
+  theme_bw()
+```
+
+```{r}
+# model summary
+summary(fit)
+
+# Check the residuals
+forecast::checkresiduals(fit) 
+
+# Check several metrics of performance
+forecast::accuracy(object = fit)
+
+#plot residuals versus fitted values (=check for heterosedasticity)
+#if problems you might want to try to transform the data first
+par(mar=c(4,4,4,4))
+plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
+```
+
+
+## export df
+```{r}
+Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/diss_ammonia_imputed_data.csv")
+```
+
+
+
+# DISSOLVED NITRATE/NITRITE
+
+# data wrangling
+## import data
+This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
+```{r}
+missingdat_Nit <- read_csv("data/missing_data/missing_data/missingdat_DissNitrateNitrite.csv") %>%  
+  mutate(Date=lubridate::as_date(MonthYear)) %>% 
+  select(Date, Analyte:P8) %>%  # rearrange df with date, no time
+  arrange(Date)
+str(missingdat_Nit)
+head(missingdat_Nit)
+dim(missingdat_Nit)
+View(missingdat_Nit)
+```
+
+## tidy data format
+```{r}
+# check dataframe:
+## check number of rows: 26 years x 12 months = 312 rows
+## there are only 310 rows which means there are two missing rows of month x year that need NAs?
+## add them back in
+
+Date <- tibble(Date=seq(from=lubridate::as_date("1995-01-01"), to=lubridate::as_date("2020-12-01"), by="1 month")) # 312
+
+# create a new table with all combos = 312
+nit_table <- Date %>% 
+  left_join(missingdat_Nit, by="Date")
+```
+
+
+
+# pilot model
+Inspect a single station - see how the original time series is misleading,
+needed the full combination of station-month-year with NAs
+
+```{r}
+# visualize missing data points - 7 missing nit data points
+D28A_na <- nit_table %>% 
+  select(Date, D28A) %>% # filter out station of interest
+  filter(is.na(D28A)) %>% # find NAs
+  mutate(D28A=0) # for visualization purposes set to zero
+
+plot_D28A <- ggplot(nit_table, aes(Date, D28A))+
+  geom_line()+
+  geom_point(data=D28A_na, aes(Date, D28A), pch=4, col="red", size=3)+ # red x = NA
+  theme_bw()
+plot_D28A
+```
+
+
+## fit ARIMA model
+```{r}
+# time series object using ts - monthly resolution for each year
+nit_D28A <- nit_table %>% 
+  select(Date, D28A) %>% 
+  arrange(Date) # single station still for now
+nit_ts <- ts(nit_D28A$D28A, frequency = 12, start = c(1995,1), end=c(2020,12))
+nit_ts
+
+
+# fit arima model
+nit_fit <- forecast::auto.arima(nit_ts, seasonal=TRUE, trace = TRUE, lambda = "auto", stationary=TRUE) #stationary=TRUE for forecasting
+# get the same answer with lambda="auto" and unlog data
+# if we let stationarity=FALSE, there's a different top model, but it doesn't allow forecasting?
+summary(nit_fit)
+```
+Series: nit_ts 
+ARIMA(2,0,0)(2,0,0)[12] with non-zero mean
+
+
+## predict values using the calibration dataset
+```{r}
+nit_forecast <- forecast::forecast(nit_ts,model=nit_fit)
+```
+
+## compare predicted versus observed values
+```{r}
+#Plot the observed and predicted Nit
+par(mar=c(2,4,1,1))
+plot(nit_D28A$Date,nit_ts,xlab="Date",ylab="nit (C)",lwd=2,type="l")
+lines(nit_D28A$Date,nit_forecast$fitted,col="red")
+
+#Plot predicted versus observed values
+plot(nit_ts,nit_forecast$fitted,xlab="Observed",ylab="Predicted",pch=".")
+abline(0,1,lty=2)
+R2 = round(cor.test(nit_ts,nit_forecast$fitted,na.rm=T)$estimate^2,2)
+mtext(side=3,line=-2,adj=0.1,bquote(R^2 == .(R2)))
+
+
+#Check the residuals
+forecast::checkresiduals(nit_fit) 
+#give also the results for the Ljung_Box test with H0 = randomly distributed errors (white noise)
+
+#plot residuals versus fitted values (=check for heterosedasticity)
+#if problems you might want to try to transform the data first
+par(mar=c(4,4,4,4))
+plot(nit_forecast$fitted,nit_forecast$residuals,ylab="Residuals",xlab="Fitted values")
+
+
+#Check several metrics of performance
+forecast::accuracy(object = nit_fit) # can also provide a test dataset for cross-validation using x = testUS 
+#? ME: Mean Error
+#? RMSE: Root Mean Squared Error
+#? MAE: Mean Absolute Error
+#? MPE: Mean Percentage Error
+#? MAPE: Mean Absolute Percentage Error
+#? MASE: Mean Absolute Scaled Error
+#? ACF1: Autocorrelation of errors at lag 1.
+
+
+#Missing data imputation
+#Interpolate missing values using a Kalman filter (=smoother)
+nit_inter <- na_kalman(nit_ts,model=nit_fit$model) #use the fitted model
+
+#Plot the results - Doesn't do a good job with 1980 NAs
+par(mar=c(2,4,1,1))
+plot(nit_inter,xlab="",ylab="Nit (C)",col="red",main="Interpolation missing values")
+lines(nit_ts,col="black")
+
+#?auto.arima
+```
+
+# full model
+
+## for-loop and model output
+```{r}
+# prep dataframe for for-loop
+nitwodate <- nit_table %>% 
+  arrange(Date)  # ensure it's in chronological order
+nitwodate <- nitwodate[,-c(1:2)] # then remove date and analyte columns
+nitwodate <- log10(nitwodate + 1) # add one and log10 transform
+summary(nitwodate)
+head(nitwodate) # 15 cols
+
+
+### Run this code altogether 
+#create an empty matrix
+Time_series_inter <- matrix(NA,nrow(nitwodate),(ncol(nitwodate))) #create empty matrix
+dim(Time_series_inter)
+colnames(Time_series_inter) <- colnames(nitwodate)
+head(Time_series_inter)
+
+# Create a vector of years (for each month x year combo = 312)
+Year <- lubridate::year(nit_table$Date)
+
+## start for-loop, make sure to refresh Time_series_inter above
+for (i in 1:ncol(nitwodate)) {
+  #create time-series object
+  dat_imp <- data.frame(Year, y = nitwodate[,i])
+
+  y <- ts(dat_imp[2], start= c(1995,1), end = c(2020,12), frequency = 12) # time series object
+  
+  #add raw values into empty matrix
+  Time_series_inter[,i] <- dat_imp[,c(-1)] # removing the Year column c(-1)
+  
+  #interpolate missing values (if any)
+    if(length(which(is.na(y))) > 0){
+          
+        #fit ARIMA and impute missing values
+        fit <- auto.arima(y, seasonal = TRUE) # it is log-transformed already  
+        y_inter <- na_kalman(y,model=fit$model)
+
+        #identify missing values to impute (and replace in the matrix)
+        id.na <- which(is.na(y))
+
+        #remove missing values at the begining and end of time series
+        aa <- split(id.na, cumsum(c(1, diff(id.na) != 1)))  #split sequences of missing values 
+        last <- length(y)
+        first <- 1
+        is.first <- sapply(aa,function(x) length(which(x %in% first))) #identify series of NAs at the start of the time-series
+        is.last <- sapply(aa,function(x) length(which(x %in% last))) #idem with last value
+          
+        if(sum(is.first) > 0 | sum(is.last) > 0){
+            aa <- aa[-c(which(is.last == 1),which(is.first == 1))] #remove them from the list
+            id.na <- unlist(aa)
+        }
+
+        #replace missing values by imputed values into matrix
+        Time_series_inter[id.na,i] <- y_inter[id.na]
+
+# jpeg(paste0("Imputation_plots/Nit",colnames(Time_series_inter)[i],".jpeg"))
+# plot(y_inter,xlab="",ylab="Nit (C)",col="red",main=(Time_series_inter)[i])
+# lines(y,col="black")
+# mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
+# dev.off()
+# 
+# 		}else{
+# 		#save plot for non-imputed time-series
+# 		jpeg(paste0("Imputation_plots/NitRaw",colnames(Time_series_inter)[i],".jpeg"))
+# 		plot(y,xlab="",ylab="Nit (C)",col="black",main=(Time_series_inter)[i])
+# 		mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
+# 		dev.off()
+		}
+    print(i)
+     
+}
+## end for-loop
+
+#output of imputation
+View(Time_series_inter)
+
+# back transform
+Time_series_inter2 <- 10^Time_series_inter -1
+
+# evaluate top model
+fit
+```
+Output:
+
+Not constrained by stationarity -- allows drift:
+ARIMA(4,1,0)(2,0,0)[12] 
+
+Coefficients:
+          ar1      ar2      ar3      ar4    sar1    sar2
+      -0.5318  -0.3322  -0.2730  -0.1933  0.3024  0.2314
+s.e.   0.0615   0.0699   0.0653   0.0567  0.0588  0.0584
+
+sigma^2 = 0.006396:  log likelihood = 340.57
+AIC=-667.14   AICc=-666.77   BIC=-640.99
+
+## create new time series with interpolated values
+```{r}
+#show wide table of imputed values with dates and analyte type
+Time_series_imp_wide <- as_tibble(Time_series_inter2) %>% 
+  mutate(Date = nit_table$Date, Analyte= nit_table$Analyte) %>% # add columns back
+  select(Date, Analyte, C10A:P8) # rearrange columns
+
+Time_series_imp <- Time_series_imp_wide %>%
+  pivot_longer(
+    cols= "C10A":"P8",
+    names_to="Station", 
+    values_to = "Imputed_values")
+View(Time_series_imp)
+summary(Time_series_imp)
+dim(Time_series_imp) # 4680 rows - only 10 NAs remaining in last time steps
+
+# identify which values were imputed - which values DONT they have in common?
+# If Imputed_values has a value, where the raw data has an NA, and Missing=TRUE, it's imputed
+nit_table_long <- nit_table %>% 
+  pivot_longer(
+    cols="C10A":"P8",
+    names_to="Station",
+    values_to = "Raw_values"
+  ) %>% 
+  mutate(Missing=ifelse(is.na(Raw_values), TRUE, FALSE)) # Is it missing?
+View(nit_table_long)
+summary(nit_table_long)
+dim(nit_table_long) # 4680 rows- with 1043 NAs present
+
+# Join them to create a master table tracking which values were modeled
+# Should still be 10 NAs that are missing but not imputed
+Time_series_imp2 <- Time_series_imp %>% 
+  left_join(nit_table_long) %>% 
+  mutate(Imputed=ifelse(Missing==TRUE & Imputed_values>0, TRUE, FALSE))
+View(Time_series_imp2)
+```
+
+
+## diagnostic tests
+```{r}
+#Plot the observed and predicted Nit
+ggplot(Time_series_imp2, aes(Date, Imputed_values, color=Imputed))+
+  #geom_line(aes(Date, Imputed_values), col="gray60")+  
+  geom_point(size=1)+
+  facet_wrap(Station~., ncol=3, scales = "free_y")+
+  scale_color_manual(values=c("gray60", "red", "black"))+
+  labs(title="Replacing missing values with ARIMA and Kalman filter", subtitle="Dissolved Nitrate/Nitrite")+
+  theme_bw()
+```
+
+```{r}
+# model summary
+summary(fit)
+
+# Check the residuals
+forecast::checkresiduals(fit) 
+
+# Check several metrics of performance
+forecast::accuracy(object = fit)
+
+#plot residuals versus fitted values (=check for heterosedasticity)
+#if problems you might want to try to transform the data first
+par(mar=c(4,4,4,4))
+plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
+```
+
+
+## export df
+```{r}
+Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/diss_nitrate_nitrite_imputed_data.csv")
+```
 
 
 
