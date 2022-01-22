@@ -140,14 +140,14 @@ nutrients_month <- read_csv("data/stations/stations_nutrients_monthly.csv")%>%
 ```{r}
 benthic_month <- read_csv("data/stations/stations_benthic_monthly.csv")%>% 
   mutate(Category="Clams", Survey="EMP Benthic") %>% 
-  rename(Station=StationClean) %>% 
+  rename(Station=StationCode) %>% 
   select(Station:Survey)
 ```
 
 ```{r}
 benthic_annual <- read_csv("data/stations/stations_benthic_annual.csv")%>% 
   mutate(Category="Clams", Survey="EMP Benthic") %>% 
-  rename(Station=StationClean) %>% 
+  rename(Station=StationCode) %>% 
   select(Station:Survey)
 ```
 
@@ -727,5 +727,25 @@ saveRDS(object=region_scenarios_cropped, file="data/data_in/regions.Rds")
 
 # Shapefile for use anywhere
 write_sf(region_scenarios_cropped%>%st_transform(crs=26910), "data/data_in/regions_shapefile/regions.shp")
+```
+
+
+#HELP PLZ - code is breaking at line 657
+# Map figure for ppt
+```{r}
+## scenario 3 with stations for powerpoint slide
+tiff("data/data_in/regions_highres.tiff", units="in", width=6, height=5, res=500)
+# insert ggplot code
+ggplot()+
+  geom_sf(data=region_scenarios_cropped, aes(fill=Region))+
+  geom_sf(data=station_month_points_filtered%>%mutate(Survey=factor(Survey, levels=levels(station_annual_points_filtered$Survey))), aes(color=Survey, shape=Survey))+
+  coord_sf(xlim=st_bbox(station_month_points_filtered)[c(1,3)], ylim=st_bbox(station_month_points_filtered)[c(2,4)])+
+  scale_fill_grey(name="Region", start = 0.4)+
+  scale_color_viridis_d(name="Survey", drop=FALSE)+
+  scale_shape_manual(name="Survey", values=c("Bay Study"=1, "DJFMP"=2, "EMP Benthic"=15, 
+                                             "EMP Nutrients"=18, "EMP Zoop"=4, "FMWT"=20),
+                     drop=FALSE)+
+  labs(title="Scenario 3: Monthly cropped", subtitle="1990s to present")
+dev.off()
 ```
 
