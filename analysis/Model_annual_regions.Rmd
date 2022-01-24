@@ -40,8 +40,14 @@ regions=unique(focaldata$region)
 regionorder=c("West","North","South")
 years=1975:2021
 
+focaldata$tzoop=focaldata$hcope+focaldata$clad+focaldata$mysid+focaldata$pcope
+fvars=c(fvars,"tzoop")
+cnames=rbind(cnames,data.frame(Longname=NA,Shortname="tzoop",
+                               Diagramname="Total Zooplankton\nBiomass",
+                               Datacolumn=NA,Log="yes"))
+
 #focal variables
-varnames=c("temp", "flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt")
+varnames=c("temp", "flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop")
 
 source("analysis/myLavaanPlot.r")
 ```
@@ -222,13 +228,21 @@ psych::pairs.panels(dplyr::select(fdr, year, flow, temp, secchi, chla, hcope, cl
 With and without detrending.
 
 ```{r}
-#west has no ssides
-modwest='zoop=~hcope+mysid
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow
+#west has no ssides, corbic
+
+# modwest='zoop=~hcope+mysid
+#         fish=~estfish_bsmt+estfish_bsot
+#         zoop~chla+potam+flow
+#         chla~potam+flow
+#         fish~zoop+flow
+# '
+
+modwest='chla~potam+flow
+        tzoop~chla+potam+flow
+        estfish_bsmt~tzoop+flow
+        estfish_bsot~tzoop+flow
 '
+
 modfitwest=sem(modwest, data=filter(fdr,region=="West"))
 modfitwest_dtr=sem(modwest, data=filter(fdr_dtr,region=="West"))
 summary(modfitwest, standardized=T, rsq=T)
@@ -244,12 +258,26 @@ labelswest <- createLabels(modfitwest, cnames)
 ```
 
 ```{r}
-modnorth='zoop=~hcope+mysid
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow
+# modnorth='zoop=~hcope+mysid
+#         #fish=~estfish_bsmt+estfish_bsot
+#         zoop~chla+potam+flow
+#         chla~potam+flow
+#         estfish_bsmt~zoop+flow
+#         estfish_bsot~zoop+flow
+# '
+# modnorth='zoop=~clad
+#         zoop~chla+corbic+potam+flow
+#         chla~corbic+potam+flow
+#         estfish_bsmt~zoop+flow+sside+chla
+#         estfish_bsot~zoop+flow+sside+chla
+# '
+
+modnorth='chla~corbic+potam+flow
+        tzoop~chla+corbic+potam+flow
+        estfish_bsmt~tzoop+flow+chla
+        estfish_bsot~tzoop+flow
 '
+
 modfitnorth=sem(modnorth, data=filter(fdr,region=="North"))
 modfitnorth_dtr=sem(modnorth, data=filter(fdr_dtr,region=="North"))
 summary(modfitnorth, standardized=T, rsq=T)
@@ -265,12 +293,21 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 ```
 
 ```{r}
-modsouth='zoop=~hcope+mysid
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+corbic+flow
-        chla~corbic+flow
-        fish~zoop+flow
+#no potam
+# modsouth='zoop=~hcope+mysid
+#         #fish=~estfish_bsmt+estfish_bsot
+#         zoop~chla+corbic+flow
+#         chla~corbic+flow
+#         estfish_bsmt~zoop+flow
+#         estfish_bsot~zoop+flow
+# '
+
+modsouth='chla~corbic+flow
+        tzoop~chla+corbic+flow
+        estfish_bsmt~tzoop+flow+corbic
+        estfish_bsot~tzoop+flow+corbic
 '
+
 modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
 modfitsouth_dtr=sem(modsouth, data=filter(fdr_dtr,region=="South"))
 summary(modfitsouth, standardized=T, rsq=T)
@@ -294,7 +331,7 @@ Original units
 
 *West*
 
-```{r}
+```{r, echo=FALSE}
 myLavaanPlot(model=modfitwest, labels=labelswest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
@@ -315,7 +352,7 @@ myLavaanPlot(model=modfitnorth, labels=labelsnorth,
 
 *South*
 
-```{r}
+```{r, echo=FALSE}
 myLavaanPlot(model=modfitsouth, labels=labelssouth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
@@ -327,7 +364,7 @@ Detrended
 
 *West*
 
-```{r}
+```{r, echo=FALSE}
 myLavaanPlot(model=modfitwest_dtr, labels=labelswest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
@@ -348,7 +385,7 @@ myLavaanPlot(model=modfitnorth_dtr, labels=labelsnorth,
 
 *South*
 
-```{r}
+```{r, echo=FALSE}
 myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 

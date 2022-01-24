@@ -35,21 +35,13 @@ fvars=cnames$Shortname
 colnames(focaldata)=fvars
 ```
 
-### Derived variables
-
-```{r}
-focaldata = focaldata %>% 
-  mutate(hzoop=hcope+clad) #biomass, herbivorous zooplankton
-fvars=c(fvars,"hzoop")
-```
-
 ### Data prep
 
 Log transform, scale
 
 ```{r histo}
 #log transform
-logvars=fvars[c(cnames$Log=="yes",T)]
+logvars=fvars[cnames$Log=="yes"]
 logtrans=function(x) {
   x2=x[which(!is.na(x))]
   if(any(x2==0)) {log(x+min(x2[which(x2>0)],na.rm=T))}
@@ -116,40 +108,13 @@ for(i in 2:length(fvars)) {
 }
 ```
 
-Bivariate plots
+### Bivariate plots
 
-```{r bivariate, fig.width=8, fig.height=8, echo=FALSE}
-psych::pairs.panels(select(fd, year, flow, temp, secchi, chla, hzoop, pcope, mysid, smelt),lm = T)
+```{r bivariate, fig.width=9, fig.height=9, echo=FALSE}
+psych::pairs.panels(dplyr::select(fd, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, clams, tphos),lm = T)
 ```
 
-
-### GP model (with lags and year)
-
-```{r}
-gp1=fitGP(data=fd,yd="smelt",xd=c("smelt_1","mysid_1","pcope_1","hcope_1","chla_1","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
-summary(gp1)
-
-gp2=fitGP(data=fd,yd="mysid",xd=c("smelt_1","mysid_1","pcope_1","hcope_1","chla_1","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
-summary(gp2)
-
-gp3=fitGP(data=fd,yd="pcope",xd=c("smelt_1","mysid_1","pcope_1","hcope_1","chla_1","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
-summary(gp3)
-
-gp4=fitGP(data=fd,yd="hcope",xd=c("smelt_1","mysid_1","pcope_1","hcope_1","chla_1","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
-summary(gp4)
-
-gp5=fitGP(data=fd,yd="chla",xd=c("smelt_1","mysid_1","pcope_1","hcope_1","chla_1","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
-summary(gp5)
-
-ls=rbind(gp1$pars[1:9],gp2$pars[1:9],gp3$pars[1:9],gp4$pars[1:9],gp5$pars[1:9])
-colnames(ls)=gp1$inputs$xd_names[1:9]
-rownames(ls)=c("smelt","mysid","pcope","hcope","chla")
-ls[which(ls<1E-16)]=NA
-corrplot::corrplot(ls, method="color", tl.col = "black", is.cor=F,mar = c(0,0,0,0), na.label = "0",outline = T)
-
-```
-
-Plotting functions
+### GP Plotting functions
 
 ```{r plotting_functions}
 getcon_ggplot=function(model) {
@@ -179,42 +144,27 @@ pred_ggplot=function(model) {
 
 ```
 
-Predictions (leave-one-out) and conditional responses
-
-```{r}
-pred_ggplot(gp1)
-getcon_ggplot(gp1)
-pred_ggplot(gp2)
-getcon_ggplot(gp2)
-pred_ggplot(gp3)
-getcon_ggplot(gp3)
-pred_ggplot(gp4)
-getcon_ggplot(gp4)
-pred_ggplot(gp5)
-getcon_ggplot(gp5)
-```
-
 ### Without time lags
 
 ```{r}
-gp1=fitGP(data=fd,yd="smelt",xd=c("smelt_1","mysid","pcope","hcope","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
+gp1=fitGP(data=fd,yd="estfish",xd=c("estfish_1","mysid","pcope","hcope","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
 summary(gp1)
 
-gp2=fitGP(data=fd,yd="mysid",xd=c("smelt","mysid_1","pcope","hcope","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
+gp2=fitGP(data=fd,yd="mysid",xd=c("estfish","mysid_1","pcope","hcope","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
 summary(gp2)
 
-gp3=fitGP(data=fd,yd="pcope",xd=c("smelt","mysid","pcope_1","hcope","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
+gp3=fitGP(data=fd,yd="pcope",xd=c("estfish","mysid","pcope_1","hcope","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
 summary(gp3)
 
-gp4=fitGP(data=fd,yd="hcope",xd=c("smelt","mysid","pcope","hcope_1","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
+gp4=fitGP(data=fd,yd="hcope",xd=c("estfish","mysid","pcope","hcope_1","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
 summary(gp4)
 
-gp5=fitGP(data=fd,yd="chla",xd=c("smelt","mysid","pcope","hcope","chla_1","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
+gp5=fitGP(data=fd,yd="chla",xd=c("estfish","mysid","pcope","hcope","chla_1","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
 summary(gp5)
 
 ls=rbind(gp1$pars[1:9],gp2$pars[1:9],gp3$pars[1:9],gp4$pars[1:9],gp5$pars[1:9])
 colnames(ls)=gp1$inputs$xd_names[1:9]
-rownames(ls)=c("smelt","mysid","pcope","hcope","chla")
+rownames(ls)=c("estfish","mysid","pcope","hcope","chla")
 ls[which(ls<1E-16)]=NA
 corrplot::corrplot(ls, method="color", tl.col = "black", is.cor=F,mar = c(0,0,0,0), na.label = "0",outline = T)
 
@@ -235,25 +185,82 @@ pred_ggplot(gp5)
 getcon_ggplot(gp5)
 ```
 
-### Estuarine fishes
+### Without time lags, without year
 
 ```{r}
-gp1=fitGP(data=fd,yd="estfish",xd=c("estfish_1","mysid","pcope","hcope","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
-summary(gp1)
-pred_ggplot(gp1)
-getcon_ggplot(gp1)
-
-#without year
 gp1=fitGP(data=fd,yd="estfish",xd=c("estfish_1","mysid","pcope","hcope","chla","secchi", "flow","temp"),time = "year",predictmethod = "loo")
 summary(gp1)
-pred_ggplot(gp1)
-getcon_ggplot(gp1)
 
-#with time lags
-gp1=fitGP(data=fd,yd="estfish",xd=c("estfish_1","mysid_1","pcope_1","hcope_1","chla_1","secchi", "flow","temp"),time = "year",predictmethod = "loo")
-summary(gp1)
+gp2=fitGP(data=fd,yd="mysid",xd=c("estfish","mysid_1","pcope","hcope","chla","secchi", "flow","temp"),time = "year",predictmethod = "loo")
+summary(gp2)
+
+gp3=fitGP(data=fd,yd="pcope",xd=c("estfish","mysid","pcope_1","hcope","chla","secchi", "flow","temp"),time = "year",predictmethod = "loo")
+summary(gp3)
+
+gp4=fitGP(data=fd,yd="hcope",xd=c("estfish","mysid","pcope","hcope_1","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
+summary(gp4)
+
+gp5=fitGP(data=fd,yd="chla",xd=c("estfish","mysid","pcope","hcope","chla_1","secchi", "flow","temp"),time = "year",predictmethod = "loo")
+summary(gp5)
+
+ls=rbind(gp1$pars[1:9],gp2$pars[1:8],gp3$pars[1:8],gp4$pars[1:8],gp5$pars[1:8])
+colnames(ls)=gp1$inputs$xd_names[1:8]
+rownames(ls)=c("estfish","mysid","pcope","hcope","chla")
+ls[which(ls<1E-16)]=NA
+corrplot::corrplot(ls, method="color", tl.col = "black", is.cor=F,mar = c(0,0,0,0), na.label = "0",outline = T)
+
+```
+
+Predictions (leave-one-out) and conditional responses
+
+```{r}
 pred_ggplot(gp1)
 getcon_ggplot(gp1)
+pred_ggplot(gp2)
+getcon_ggplot(gp2)
+pred_ggplot(gp3)
+getcon_ggplot(gp3)
+pred_ggplot(gp4)
+getcon_ggplot(gp4)
+pred_ggplot(gp5)
+getcon_ggplot(gp5)
+```
+
+### Detrended without year
+
+```{r}
+gp1=fitGP(data=fd,yd="estfish_dtr",xd=c("mysid_dtr","pcope_dtr","hcope_dtr","chla_dtr","secchi_dtr", "flow_dtr","temp_dtr","sside_dtr"),time = "year",predictmethod = "loo")
+summary(gp1)
+
+gp2=fitGP(data=fd,yd="mysid_dtr",xd=c("estfish_dtr","mysid_dtr_1","pcope_dtr","hcope_dtr","chla_dtr","secchi_dtr", "flow_dtr","temp_dtr"),time = "year",predictmethod = "loo")
+summary(gp2)
+
+gp3=fitGP(data=fd,yd="pcope_dtr",xd=c("estfish_dtr","mysid_dtr","pcope_dtr_1","hcope_dtr","chla_dtr","secchi_dtr", "flow_dtr","temp_dtr"),time = "year",predictmethod = "loo")
+summary(gp3)
+
+gp4=fitGP(data=fd,yd="hcope_dtr",xd=c("estfish_dtr","mysid_dtr","pcope_dtr","hcope_dtr_1","chla_dtr","secchi_dtr", "flow_dtr","temp_dtr"),time = "year",predictmethod = "loo")
+summary(gp4)
+
+gp5=fitGP(data=fd,yd="chla_dtr",xd=c("estfish_dtr","mysid_dtr","pcope_dtr","hcope_dtr","chla_dtr_1","secchi_dtr", "flow_dtr","temp_dtr"),time = "year",predictmethod = "loo")
+summary(gp5)
+```
+
+Predictions (leave-one-out) and conditional responses
+
+```{r}
+pred_ggplot(gp1)
+getcon_ggplot(gp1)
+pred_ggplot(gp2)
+getcon_ggplot(gp2)
+pred_ggplot(gp3)
+getcon_ggplot(gp3)
+pred_ggplot(gp4)
+getcon_ggplot(gp4)
+pred_ggplot(gp5)
+getcon_ggplot(gp5)
+```
+
+```{r}
 
 #detrended, without year
 gp1=fitGP(data=fd,yd="estfish_dtr",xd=c("mysid_dtr","pcope_dtr","hcope_dtr","chla_dtr","secchi_dtr", "flow_dtr","temp_dtr"), time = "year",predictmethod = "loo")
@@ -262,41 +269,7 @@ pred_ggplot(gp1)
 getcon_ggplot(gp1)
 ```
 
-### Longfin smelt
-
-```{r}
-#with year
-gp1=fitGP(data=fd,yd="lfin",xd=c("lfin_1","mysid","pcope","hcope","chla","secchi", "flow","temp","year"),time = "year",predictmethod = "loo")
-summary(gp1)
-pred_ggplot(gp1)
-getcon_ggplot(gp1)
-
-#without year
-gp1=fitGP(data=fd,yd="lfin",xd=c("lfin_1","mysid","pcope","hcope","chla","secchi", "flow","temp"),time = "year",predictmethod = "loo")
-summary(gp1)
-pred_ggplot(gp1)
-getcon_ggplot(gp1)
-
-#without year or secchi
-gp1=fitGP(data=fd,yd="lfin",xd=c("lfin_1","mysid","pcope","hcope","chla", "flow","temp"),time = "year",predictmethod = "loo")
-summary(gp1)
-pred_ggplot(gp1)
-getcon_ggplot(gp1)
-
-#first difference, without year
-gp1=fitGP(data=fd,yd="lfin_fd",xd=c("lfin_1","mysid","pcope","hcope","chla","secchi", "flow","temp"), time = "year",predictmethod = "loo")
-summary(gp1)
-pred_ggplot(gp1)
-getcon_ggplot(gp1)
-
-#detrended, without year
-gp1=fitGP(data=fd,yd="lfin_dtr",xd=c("mysid_dtr","pcope_dtr","hcope_dtr","chla_dtr","secchi_dtr", "flow_dtr","temp_dtr"), time = "year",predictmethod = "loo")
-summary(gp1)
-pred_ggplot(gp1)
-getcon_ggplot(gp1)
-```
-
-### Growth rate
+### Growth rate, without year
 
 ```{r}
 gp1=fitGP(data=fd,yd="estfish_fd",xd=c("estfish_1","mysid","pcope","hcope","chla","secchi", "flow","temp"),time = "year",predictmethod = "loo")
@@ -314,9 +287,9 @@ summary(gp4)
 gp5=fitGP(data=fd,yd="chla_fd",xd=c("smelt","mysid","pcope","hcope","chla_1","secchi", "flow","temp"),time = "year",predictmethod = "loo")
 summary(gp5)
 
-ls=rbind(gp1$pars[1:9],gp2$pars[1:9],gp3$pars[1:9],gp4$pars[1:9],gp5$pars[1:9])
-colnames(ls)=gp1$inputs$xd_names[1:9]
-rownames(ls)=c("smelt","mysid","pcope","hcope","chla")
+ls=rbind(gp1$pars[1:8],gp2$pars[1:8],gp3$pars[1:8],gp4$pars[1:8],gp5$pars[1:8])
+colnames(ls)=gp1$inputs$xd_names[1:8]
+rownames(ls)=c("estfish","mysid","pcope","hcope","chla")
 ls[which(ls<1E-16)]=NA
 corrplot::corrplot(ls, method="color", tl.col = "black", is.cor=F,mar = c(0,0,0,0), na.label = "0",outline = T)
 
