@@ -63,6 +63,7 @@ combine_wq_stations <- function(df) {
     min_C10A_date <- min(df$Date[df$Station == 'C10A'])
     df <- subset(df, !(Station == 'C10' & Date >= min_C10A_date))
     df$Station[df$Station == 'C10'] <- 'C10A'
+
   }
 
   if('C3' %in% unique_stations & 'C3A' %in% unique_stations){

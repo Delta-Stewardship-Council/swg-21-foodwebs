@@ -1,6 +1,6 @@
 ---
 title: "ARIMA interpolation for missing data (monthly)"
-author: "Denise-Colombano"
+author: "Denise-Colombano, Sarah Perry"
 date: "1/13/2022"
 output: html_document
 editor_options: 
@@ -33,6 +33,7 @@ missingdat_Temperature <- read_csv("data/missing_data/missing_data/missingdat_Te
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
+
 str(missingdat_Temperature)
 head(missingdat_Temperature)
 dim(missingdat_Temperature)
@@ -209,175 +210,13 @@ lines(temp_ts,col="black")
 
 # full model
 ```{r}
-#show wide table of imputed values with dates and analyte type
-Time_series_imp_wide <- as_tibble(Time_series_inter) %>% 
-  mutate(Date = temp_table$Date, Analyte= temp_table$Analyte) %>% # add columns back
-  select(Date, Analyte, C10A:P8) # rearrange columns
-
-Time_series_imp <- Time_series_imp_wide %>%
-  pivot_longer(
-    cols= "C10A":"P8",
-    names_to="Station", 
-    values_to = "Imputed_values")
-View(Time_series_imp)
-summary(Time_series_imp)
-dim(Time_series_imp) # 4680 rows - only 10 NAs at final time steps
-
-# identify which values were imputed - which values DONT they have in common?
-# If Imputed_values has a value, where the raw data has an NA, and Missing=TRUE, it's imputed
-temp_table_long <- temp_table %>% 
-  pivot_longer(
-    cols="C10A":"P8",
-    names_to="Station",
-    values_to = "Raw_values"
-  ) %>% 
-  mutate(Missing=ifelse(is.na(Raw_values), TRUE, FALSE)) # Is it missing?
-View(temp_table_long)
-summary(temp_table_long)
-dim(temp_table_long) # 4680 rows- with 67 NAs present
-
-# Join them to create a master table tracking which values were modeled
-# Should still be 10 NAs that are missing but not imputed
-Time_series_imp2 <- Time_series_imp %>% 
-  left_join(temp_table_long) %>% 
-  mutate(Imputed=ifelse(Missing==TRUE & Imputed_values>0, TRUE, FALSE))
-View(Time_series_imp2)
+df_ts <- create_ts_df(temp_table)
 ```
-
-## for-loop and model output
-```{r}
-# prep dataframe for for-loop
-tempwodate <- temp_table %>% 
-  arrange(Date) #%>%  # ensure it's in chronological order
-tempwodate <- tempwodate[,-c(1:2)] # then remove date and analyte columns
-summary(tempwodate)
-head(tempwodate) # 15 cols
-
-
-### Run thisz code altogether 
-#create an empty matrix
-Time_series_inter <- matrix(NA,nrow(tempwodate),(ncol(tempwodate))) #create empty matrix
-dim(Time_series_inter)
-colnames(Time_series_inter) <- colnames(tempwodate)
-head(Time_series_inter)
-
-# Create a vector of years (for each month x year combo = 312)
-Year <- lubridate::year(temp_table$Date)
-
-## start for-loop, make sure to refresh Time_series_inter above
-for (i in 1:ncol(tempwodate)) {
-  #create time-series object
-  dat_imp <- data.frame(Year, y = tempwodate[,i])
-
-  y <- ts(dat_imp[2], start= c(1995,1), end = c(2020,12), frequency = 12) # time series object
-
-  #add raw values into empty matrix
-  Time_series_inter[,i] <- dat_imp[,c(-1)] # removing the Year column c(-1)
-  
-  #interpolate missing values (if any)
-    if(length(which(is.na(y))) > 0){
-          
-        #fit ARIMA and impute missing values
-        fit <- auto.arima(y, seasonal = TRUE) # do not use lambda=auto 
-        y_inter <- na_kalman(y,model=fit$model)
-
-        #identify missing values to impute (and replace in the matrix)
-        id.na <- which(is.na(y))
-
-        #remove missing values at the begining and end of time series
-        aa <- split(id.na, cumsum(c(1, diff(id.na) != 1)))  #split sequences of missing values 
-        last <- length(y)
-        first <- 1
-        is.first <- sapply(aa,function(x) length(which(x %in% first))) #identify series of NAs at the start of the time-series
-        is.last <- sapply(aa,function(x) length(which(x %in% last))) #idem with last value
-          
-        if(sum(is.first) > 0 | sum(is.last) > 0){
-            aa <- aa[-c(which(is.last == 1),which(is.first == 1))] #remove them from the list
-            id.na <- unlist(aa)
-        }
-
-        #replace missing values by imputed values into matrix
-        Time_series_inter[id.na,i] <- y_inter[id.na]
-
-# jpeg(paste0("Imputation_plots/Temperature",colnames(Time_series_inter)[i],".jpeg"))
-# plot(y_inter,xlab="",ylab="Temperature (C)",col="red",main=(Time_series_inter)[i])
-# lines(y,col="black")
-# mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
-# dev.off()
-# 
-# 		}else{
-# 		#save plot for non-imputed time-series
-# 		jpeg(paste0("Imputation_plots/TemperatureRaw",colnames(Time_series_inter)[i],".jpeg"))
-# 		plot(y,xlab="",ylab="Temperature (C)",col="black",main=(Time_series_inter)[i])
-# 		mtext(side=3,text=paste("Station #",colnames(Time_series_inter)[i]),line=-1,adj=0.9)
-# 		dev.off()
-		}
-    print(i)
-     
-}
-## end for-loop
-
-#output of imputation
-View(Time_series_inter)
-
-# evaluate top model
-fit
-```
-Output:
-
-Not constrained by stationarity -- allows drift:
-ARIMA(2,0,2)(1,1,0)[12] with drift 
-
-Coefficients:
-         ar1     ar2      ma1      ma2     sar1   drift
-      0.7090  0.1123  -0.4466  -0.0229  -0.5118  0.0040
-s.e.  0.7255  0.6193   0.7264   0.4129   0.0511  0.0166
-
-sigma^2 = 3.104:  log likelihood = -586.92
-AIC=1187.84   AICc=1188.23   BIC=1213.75
-
-## create new time series with interpolated values
-```{r}
-#show wide table of imputed values with dates and analyte type
-Time_series_imp_wide <- as_tibble(Time_series_inter) %>% 
-  mutate(Date = temp_table$Date, Analyte= temp_table$Analyte) %>% # add columns back
-  select(Date, Analyte, C10A:P8) # rearrange columns
-
-Time_series_imp <- Time_series_imp_wide %>%
-  pivot_longer(
-    cols= "C10A":"P8",
-    names_to="Station", 
-    values_to = "Imputed_values")
-View(Time_series_imp)
-summary(Time_series_imp)
-dim(Time_series_imp) # 4680 rows - only 10 NAs at final time steps
-
-# identify which values were imputed - which values DONT they have in common?
-# If Imputed_values has a value, where the raw data has an NA, and Missing=TRUE, it's imputed
-temp_table_long <- temp_table %>% 
-  pivot_longer(
-    cols="C10A":"P8",
-    names_to="Station",
-    values_to = "Raw_values"
-  ) %>% 
-  mutate(Missing=ifelse(is.na(Raw_values), TRUE, FALSE)) # Is it missing?
-View(temp_table_long)
-summary(temp_table_long)
-dim(temp_table_long) # 4680 rows- with 67 NAs present
-
-# Join them to create a master table tracking which values were modeled
-# Should still be 10 NAs that are missing but not imputed
-Time_series_imp2 <- Time_series_imp %>% 
-  left_join(temp_table_long) %>% 
-  mutate(Imputed=ifelse(Missing==TRUE & Imputed_values>0, TRUE, FALSE))
-View(Time_series_imp2)
-```
-
 
 ## diagnostic tests
 ```{r}
 #Plot the observed and predicted temperatures
-ggplot(Time_series_imp2, aes(Date, Imputed_values, color=Imputed))+
+ggplot(df_ts, aes(Date, Imputed_values, color=Imputed))+
   geom_line(aes(Date, Imputed_values), col="gray60")+  
   geom_point(size=1)+
   facet_wrap(Station~., ncol=3)+
@@ -407,8 +246,6 @@ plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
 ```{r}
 Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/temperature_imputed_data.csv")
 ```
-
-
 
 # CHLOROPHYLL
 
