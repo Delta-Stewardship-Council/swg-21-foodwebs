@@ -70,7 +70,6 @@ interp_missing_dat <- function(ts_obj, fit_return = FALSE){
     fit <- auto.arima(ts_obj, seasonal = TRUE) # do not use lambda=auto
 
     if(fit_return){
-      print('here')
       return(fit)
     }
 
