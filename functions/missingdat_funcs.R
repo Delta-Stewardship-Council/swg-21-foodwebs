@@ -9,16 +9,16 @@ create_ts_df <- function(df) {
   # convert to wide df
   df_ts <- as_tibble(mat_ts) %>%
     mutate(Date = df$Date, Analyte = df$Analyte) %>%
-    select(Date, Analyte, C10A:P8)
+    select(Date, Analyte, colnames(mat_ts))
 
   df_ts <- df_ts %>%
-    pivot_longer(cols = 'C10A':'P8',
+    pivot_longer(cols = colnames(mat_ts),
                  names_to = 'Station',
                  values_to = 'Imputed_values')
 
   # find missing vals
   df_missing <- df %>%
-    pivot_longer(cols= 'C10A':'P8',
+    pivot_longer(cols = colnames(mat_ts),
                  names_to = 'Station',
                  values_to = 'Raw_values') %>%
     mutate(Missing = ifelse(is.na(Raw_values), TRUE, FALSE))
@@ -42,14 +42,11 @@ create_ts_mat <- function(df){
   colnames(mat_ts) <- colnames(df_ts)
 
   for (i in 1:ncol(mat_ts)){
+    print(colnames(mat_ts)[i])
     # create ts object
     ts_obj <- create_ts_obj(Year, df_ts, i)
 
     # interpolate missing values (if any)
-    if(length(which(is.na(ts_obj))) > 0){
-      print(paste('Imputing values for',colnames(mat_ts)[i]))
-    }
-
     ts_obj <- interp_missing_dat(ts_obj)
 
     # add station data to matrix
@@ -67,10 +64,15 @@ create_ts_obj <- function(Year, df_ts, i){
   return(ts_obj)
 }
 
-interp_missing_dat <- function(ts_obj){
+interp_missing_dat <- function(ts_obj, fit_return = FALSE){
   if(length(which(is.na(ts_obj))) > 0) {
     # fit ARIMA and impute missing values
     fit <- auto.arima(ts_obj, seasonal = TRUE) # do not use lambda=auto
+
+    if(fit_return){
+      print('here')
+      return(fit)
+    }
 
     ts_interp <- na_kalman(ts_obj, model = fit$model)
 
@@ -100,4 +102,30 @@ remove_extra_nas <- function(id.na, ts_obj){
   }
 
   return(id.na)
+}
+
+
+eval_fit <- function(df, fit_return = TRUE){
+  # clean up df
+  df_all <- df %>% arrange(Date)
+  Year <- lubridate::year(df$Date)
+  df_ts <- df_all[,-c(1,2)]
+
+  for (i in 1:ncol(df_ts)){
+    print(colnames(df_ts)[i])
+    # create ts object
+    ts_obj <- create_ts_obj(Year, df_ts, i)
+
+    # interpolate missing values (if any)
+    fit <- interp_missing_dat(ts_obj, fit_return = TRUE)
+
+    if(i == 1){
+      list_fit <- fit
+    } else {
+      list_fit <- list(list_fit, fit)
+    }
+  }
+
+  names(list_fit) = colnames(df_ts)[length(which(is.na(ts_obj))) > 0]
+  return(list_fit)
 }
