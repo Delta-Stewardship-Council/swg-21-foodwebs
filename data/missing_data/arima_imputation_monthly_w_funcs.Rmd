@@ -217,6 +217,17 @@ model_fits <- eval_fit(temp_table)
 
 ## diagnostic tests
 ```{r}
+#Plot the observed and predicted temperatures
+ggplot(df_ts, aes(Date, Imputed_values, color=Imputed))+
+  geom_line(aes(Date, Imputed_values), col="gray60")+  
+  geom_point(size=1)+
+  facet_wrap(Station~., ncol=3)+
+  scale_color_manual(values=c("gray60", "red"))+
+  labs(title="Replacing missing values with ARIMA and Kalman filter", subtitle="Temperature (C)")+
+  theme_bw()
+```
+
+```{r}
 # model summary
 for (station in names(model_fits)){
   fit <- model_fits[station][[1]]
@@ -234,17 +245,6 @@ for (station in names(model_fits)){
   par(mar=c(4,4,4,4))
   plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
 }
-```
-
-```{r}
-#Plot the observed and predicted temperatures
-ggplot(df_ts, aes(Date, Imputed_values, color=Imputed))+
-  geom_line(aes(Date, Imputed_values), col="gray60")+  
-  geom_point(size=1)+
-  facet_wrap(Station~., ncol=3)+
-  scale_color_manual(values=c("gray60", "red"))+
-  labs(title="Replacing missing values with ARIMA and Kalman filter", subtitle="Temperature (C)")+
-  theme_bw()
 ```
 
 ## export df
