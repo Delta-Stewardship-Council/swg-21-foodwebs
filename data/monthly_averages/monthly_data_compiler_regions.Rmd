@@ -34,13 +34,14 @@ fishdj=read.csv("fish_DJFMP_monthly.csv")
 nutwq=read.csv("nutrient_data_monthly_regions.csv")
 zoop=read.csv("zoop_month.csv")
 
+# Leaving in this but changing bellow to just use zoop
 zoopbm=dplyr::select(zoop, Year, Month, Region, grep("BPUE", colnames(zoop)))
 
 combined=flow %>% 
   full_join(nutwq, by=c("Year","Month","Region")) %>% 
   full_join(fishbs, by=c("Year","Month","Region")) %>% 
   full_join(fishdj, by=c("Year","Month","Region")) %>% 
-  full_join(zoopbm, by=c("Year","Month","Region")) %>% 
+  full_join(zoop, by=c("Year","Month","Region")) %>% 
   full_join(clams, by=c("Year","Month","Region")) %>% 
   full_join(amphipod, by=c("Year","Month","Region")) %>% 
   arrange(Year, Region)
