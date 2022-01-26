@@ -200,7 +200,7 @@ model_params <- list(
   seasonal = TRUE, # default TRUE
   stationary = FALSE, # default FALSE
   trace = FALSE, # default FALSE
-  lambda = NULL #default NULL
+  lambda = NULL # default NULL
   )
 
 df_ts <- create_ts_df(temp_table, model_params)
@@ -340,7 +340,7 @@ model_params <- list(
   seasonal = TRUE, # default TRUE
   stationary = FALSE, # default FALSE
   trace = FALSE, # default FALSE
-  lambda = NULL #default NULL
+  lambda = NULL # default NULL
   )
 
 df_ts <- create_ts_df(chl_table, model_params)
@@ -483,7 +483,7 @@ model_params <- list(
   seasonal = TRUE, # default TRUE
   stationary = FALSE, # default FALSE
   trace = FALSE, # default FALSE
-  lambda = NULL #default NULL
+  lambda = NULL # default NULL
   )
 
 df_ts <- create_ts_df(amm_table, model_params)
@@ -627,7 +627,7 @@ model_params <- list(
   seasonal = TRUE, # default TRUE
   stationary = FALSE, # default FALSE
   trace = FALSE, # default FALSE
-  lambda = NULL #default NULL
+  lambda = NULL # default NULL
   )
 
 df_ts <- create_ts_df(nit_table, model_params)
