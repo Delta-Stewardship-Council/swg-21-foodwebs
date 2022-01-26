@@ -2,9 +2,9 @@
 # create timeseries df w/ imputed vals
 # ~~~~~~~~~~~
 
-create_ts_df <- function(df) {
+create_ts_df <- function(df, model_params) {
   # create matrix of timeseries w/ imputed values
-  mat_ts <- create_ts_mat(df)
+  mat_ts <- create_ts_mat(df, model_params)
 
   # convert to wide df
   df_ts <- as_tibble(mat_ts) %>%
@@ -31,7 +31,7 @@ create_ts_df <- function(df) {
   return(df_ts)
 }
 
-create_ts_mat <- function(df){
+create_ts_mat <- function(df, model_params){
   # clean up df
   df_all <- df %>% arrange(Date)
   Year <- lubridate::year(df$Date)
@@ -47,7 +47,7 @@ create_ts_mat <- function(df){
     ts_obj <- create_ts_obj(Year, df_ts, i)
 
     # interpolate missing values (if any)
-    ts_obj <- interp_missing_dat(ts_obj)
+    ts_obj <- interp_missing_dat(ts_obj, model_params)
 
     # add station data to matrix
     mat_ts[,i] <- ts_obj
@@ -64,10 +64,16 @@ create_ts_obj <- function(Year, df_ts, i){
   return(ts_obj)
 }
 
-interp_missing_dat <- function(ts_obj, fit_return = FALSE){
+interp_missing_dat <- function(ts_obj, model_params, fit_return = FALSE){
   if(length(which(is.na(ts_obj))) > 0) {
     # fit ARIMA and impute missing values
-    fit <- auto.arima(ts_obj, seasonal = TRUE) # do not use lambda=auto
+    fit <- auto.arima(
+      ts_obj,
+      seasonal = model_params$seasonal,
+      stationary = model_params$stationary,
+      trace = model_params$trace,
+      lambda = model_params$lambda
+      )
 
     if(fit_return){
       return(fit)
@@ -116,15 +122,27 @@ eval_fit <- function(df, fit_return = TRUE){
     ts_obj <- create_ts_obj(Year, df_ts, i)
 
     # interpolate missing values (if any)
-    fit <- interp_missing_dat(ts_obj, fit_return = TRUE)
+    fit <- interp_missing_dat(ts_obj, model_params, fit_return = TRUE)
 
     if(i == 1){
-      list_fit <- fit
+      list_fit <- list(fit)
     } else {
-      list_fit <- list(list_fit, fit)
+      list_fit <- c(list_fit, list(fit))
     }
   }
 
   names(list_fit) = colnames(df_ts)[length(which(is.na(ts_obj))) > 0]
   return(list_fit)
+}
+
+station_arima_fit <- function(ts, model_params){
+  model <- forecast::auto.arima(
+    ts,
+    seasonal = model_params$seasonal,
+    stationary = model_params$stationary,
+    trace = model_params$trace,
+    lambda = model_params$lambda
+  )
+
+  return(model)
 }
