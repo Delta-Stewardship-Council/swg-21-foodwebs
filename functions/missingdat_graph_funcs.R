@@ -40,6 +40,8 @@ plt_obs_vs_pred <- function(ts, forecast){
   plt <- plot(ts, forecast$fitted, xlab = 'Observed', ylab = 'Predicted', pch = '.')
   plt <- plt + abline(0, 1, lty = 2)
   plt <- plt + mtext(side=3,line=-2, adj=0.1, bquote(R^2 == .(R_sq)))
+
+  return(plt)
 }
 
 plt_diagnos_obs_pred <- function(df, label){
