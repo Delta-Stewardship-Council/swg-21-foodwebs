@@ -513,7 +513,7 @@ df_ts %>% write_csv("data/missing_data/imputed_data/diss_ammonia_imputed_data.cs
 
 
 
-# DISSOLVED NITRATE/NITRITE
+# 4) DISSOLVED NITRATE/NITRITE
 
 # data wrangling
 ## import data
@@ -576,7 +576,7 @@ nit_fit <- station_arima_fit(nit_ts, model_params) # stationary=TRUE for forecas
 summary(nit_fit)
 ```
 Series: nit_ts 
-ARIMA(2,0,0)(2,0,0)[12] with non-zero mean
+ARIMA(1,0,1) with non-zero mean
 
 
 ## predict values using the calibration dataset
@@ -654,4 +654,6 @@ model_sum(model_fits)
 ```{r}
 df_ts %>% write_csv("data/missing_data/imputed_data/diss_nitrate_nitrite_imputed_data.csv")
 ```
+
+
 
