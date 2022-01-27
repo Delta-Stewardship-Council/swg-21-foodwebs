@@ -11,7 +11,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, warning= FALSE, message=FALSE)
 ```
 
-# load library
+# load library and functions
 ```{r}
 library(tidyverse)
 library(ggthemes)
@@ -24,7 +24,7 @@ source('functions/missingdat_graph_funcs.R')
 ```
 
 
-# TEMPERATURE
+# 1) TEMPERATURE
 
 # data wrangling
 ## import data
@@ -223,11 +223,16 @@ model_sum(model_fits)
 df_ts %>% write_csv("data/missing_data/imputed_data/temperature_imputed_data.csv")
 ```
 
-# CHLOROPHYLL
+
+
+
+# 2) CHLOROPHYLL
 
 # data wrangling
 ## import data
 This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
+The chlorophyll-a pilot model uses "lambda=auto" to transform the data automatically, but the full model uses
+pre-log-transformed data, which then needs to be back-transformed afterward. The results are the same.
 ```{r}
 missingdat_Chlorophyll <- read_csv("data/missing_data/missing_data/missingdat_Chlorophyll.csv") %>% 
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
@@ -364,7 +369,7 @@ df_ts %>% write_csv("data/missing_data/imputed_data/chlorophyll_imputed_data.csv
 ```
 
 
-# DISSOLVED AMMONIA
+# 3) DISSOLVED AMMONIA
 
 # data wrangling
 ## import data
