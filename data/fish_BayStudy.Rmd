@@ -25,6 +25,7 @@ library(tidyverse)
 library(lubridate)
 library(ggmap)
 library(sf)
+library(readxl)
 
 source('functions/nutrient_funcs.R', local = TRUE)
 source('functions/region_assigner.R', local = TRUE)
@@ -52,12 +53,28 @@ Load data for key species using Sam's LTMRdata package and show map with CDFW Ba
 
 BayStudy_allfish<-LTMRdata::fish(sources="Baystudy", species=c("Hypomesus transpacificus","Spirinchus thaleichthys","Dorosoma petenense", "Alosa sapidissima","Engraulis mordax","Clupea pallasii"), size_cutoff=NULL,remove_unknown_lengths=FALSE)
 
-#Load age-0 Striped Bass
-#Remove age-1 Striped Bass and NOTE that we assume that unmeasured Striped Bass are age-0
-BayStudy_Striped_Bass <-LTMRdata::fish(sources="Baystudy", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>% filter(is.na(Length)|Length<150)
+#Load Striped Bass length cutoff file from Christina
+length_cutoff_striped_bass<-read_excel("data/data_in/Bay Study Cut Off Lengths_7Oct21.xlsx", sheet = "CutoffLengths") %>%
+  filter(AlphaCode=="STRBAS") %>% select(Month,Age0Cut)
+
+#Load Striped Bass age-0
+#Load data, join with excel sheet for age cutoff
+BayStudy_Striped_Bass_age0 <-LTMRdata::fish(sources="Baystudy", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>%
+  mutate(Month=month(Date)) %>% left_join(length_cutoff_striped_bass)
+#Change larger Striped Bass count to zero
+BayStudy_Striped_Bass_age0$Count<-ifelse(BayStudy_Striped_Bass_age0$Length<BayStudy_Striped_Bass_age0$Age0Cut,BayStudy_Striped_Bass_age0$Count,0)
+BayStudy_Striped_Bass_age0$Count[is.na(BayStudy_Striped_Bass_age0$Count)] <- 0
+
+#Load Striped Bass age-1 or above
+BayStudy_Striped_Bass_large <-LTMRdata::fish(sources="Baystudy", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>%
+  mutate(Month=month(Date)) %>% left_join(length_cutoff_striped_bass)
+#Change age-0 Striped Bass count to zero; note that there was no 'unmeasured' fish in the dataset
+BayStudy_Striped_Bass_large$Count<-ifelse(BayStudy_Striped_Bass_large$Length>=BayStudy_Striped_Bass_large$Age0Cut,BayStudy_Striped_Bass_large$Count,0)
+BayStudy_Striped_Bass_large$Count[is.na(BayStudy_Striped_Bass_large$Count)] <- 0
+BayStudy_Striped_Bass_large$Taxa<-"Morone saxatilis large"
 
 #Extract coordinates
-BayStudyCoords<-BayStudy_Striped_Bass %>% group_by(Station) %>% summarise(Latitude=mean(Latitude),Longitude=mean(Longitude))
+BayStudyCoords<-BayStudy_allfish %>% group_by(Station) %>% summarise(Latitude=mean(Latitude),Longitude=mean(Longitude))
 BayStudyCoords<-BayStudyCoords[complete.cases(BayStudyCoords), ]
 
 # plot the map
@@ -73,7 +90,7 @@ All station sampling effort. Export stations with full year's worth of data sinc
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 
 ##Sample size
-BayStudy_full <- bind_rows(BayStudy_allfish,BayStudy_Striped_Bass) %>%
+BayStudy_full <- bind_rows(BayStudy_allfish,BayStudy_Striped_Bass_age0,BayStudy_Striped_Bass_large) %>%
   mutate(Month=month(Date)) %>% filter(Month %in% c(4:10) & !is.na(Latitude) & !is.na(Longitude)) %>%
   mutate(Station=as.numeric(Station)) 
 
@@ -102,7 +119,7 @@ Per Denise's suggestion, we will be subsetting data from just April to October. 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 
 #Limit the data to just April to October
-BayStudy_annual <- bind_rows(BayStudy_allfish,BayStudy_Striped_Bass) %>%
+BayStudy_annual <- bind_rows(BayStudy_allfish,BayStudy_Striped_Bass_age0,BayStudy_Striped_Bass_large) %>%
   mutate(Month=month(Date)) %>% filter(Month %in% c(4:10) & !is.na(Latitude) & !is.na(Longitude)) %>%
   region_assigner(analysis="annual",plot=TRUE) %>%
   mutate(Station=as.numeric(Station)) 
@@ -170,7 +187,8 @@ BayStudy_annual_derived <- BayStudy_annual %>%
     Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count,
     Taxa=="Engraulis mordax" ~ (0.0015*(Length^3.37))*Count,
     Taxa=="Clupea pallasii" ~ (0.0015*(Length^3.44))*Count,
-    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count))
+    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count,
+    Taxa=="Morone saxatilis large" ~ (0.0066*(Length^3.12))*Count))
 
 BayStudy_annual_values <- BayStudy_annual_derived %>%
   group_by(Year,Date,Station,Method,Taxa) %>%
@@ -186,7 +204,8 @@ BayStudy_annual_values <- BayStudy_annual_derived %>%
     Taxa=="Alosa sapidissima" ~ "AmericanShad",
     Taxa=="Engraulis mordax" ~ "NorthernAnchovy",
     Taxa=="Clupea pallasii" ~ "PacificHerring",
-    Taxa=="Morone saxatilis" ~ "StripedBass_age0"))
+    Taxa=="Morone saxatilis" ~ "StripedBass_age0",
+    Taxa=="Morone saxatilis large" ~ "StripedBass_age1above"))
 
 #If you check the original dataset, there are no unmeasured fish flag
 #Summarize biomass as you would normally
@@ -198,7 +217,7 @@ Additional processing code to get separate values for each gear and unit(biomass
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 
 #How to subset just estuarine species
-toMatchEstuarine<- c("Smelt","Striped","Shad")
+toMatchEstuarine<- c("Smelt","age0","Shad")
 #How to subset just marine species
 toMatchMarine<- c("Herring","Anchovy")
 
@@ -266,7 +285,8 @@ BayStudy_annual_values_by_region <- BayStudy_annual_derived %>%
     Taxa=="Alosa sapidissima" ~ "AmericanShad",
     Taxa=="Engraulis mordax" ~ "NorthernAnchovy",
     Taxa=="Clupea pallasii" ~ "PacificHerring",
-    Taxa=="Morone saxatilis" ~ "StripedBass_age0"))
+    Taxa=="Morone saxatilis" ~ "StripedBass_age0",
+    Taxa=="Morone saxatilis large" ~ "StripedBass_age1above"))
 
 BayStudy_Midwater_annual_values_CPUE_by_region<- fish_data_compiler(data=BayStudy_annual_values_by_region,metric_filter="Catch_per_tow",gear_filter="Midwater trawl",columns_subset = c("Year","CommonName","Region","Catch_per_tow"),prefix_name = "BayStudy_MidwaterTrawl_fish_catch_per_tow_")
 
@@ -322,7 +342,8 @@ BayStudy_monthly_derived <- BayStudy_full %>% mutate(Month=month(Date)) %>%
     Taxa=="Alosa sapidissima" ~ (0.0074*(Length^3.09))*Count,
     Taxa=="Engraulis mordax" ~ (0.0015*(Length^3.37))*Count,
     Taxa=="Clupea pallasii" ~ (0.0015*(Length^3.44))*Count,
-    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count))
+    Taxa=="Morone saxatilis" ~ (0.0066*(Length^3.12))*Count,
+    Taxa=="Morone saxatilis large" ~ (0.0066*(Length^3.12))*Count))
 
 BayStudy_monthly_values_by_region <- BayStudy_monthly_derived %>%
   group_by(Year,Month,Region,Date,Station,Method,Taxa) %>%
@@ -338,7 +359,8 @@ BayStudy_monthly_values_by_region <- BayStudy_monthly_derived %>%
     Taxa=="Alosa sapidissima" ~ "AmericanShad",
     Taxa=="Engraulis mordax" ~ "NorthernAnchovy",
     Taxa=="Clupea pallasii" ~ "PacificHerring",
-    Taxa=="Morone saxatilis" ~ "StripedBass_age0"))
+    Taxa=="Morone saxatilis" ~ "StripedBass_age0",
+    Taxa=="Morone saxatilis large" ~ "StripedBass_age1above"))
 
 
 BayStudy_Midwater_monthly_values_CPUE_by_region<- fish_data_compiler(data=BayStudy_monthly_values_by_region,metric_filter="Catch_per_tow",gear_filter="Midwater trawl",columns_subset = c("Year","Month","CommonName","Region","Catch_per_tow"),prefix_name = "BayStudy_MidwaterTrawl_fish_catch_per_tow_")
