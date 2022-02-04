@@ -211,7 +211,8 @@ fd = fd %>%
          rep_zoop_e = hcope_e+clad_e+mysid_e,
          all_zoop_c = hcope_c+clad_c+mysid_c+pcope_c+rotif_c,
          all_zoop_m = hcope+clad+mysid+pcope+rotif_m,
-         all_zoop_e = hcope_e+clad_e+mysid_e+pcope_e+rotif_e)
+         all_zoop_e = hcope_e+clad_e+mysid_e+pcope_e+rotif_e,
+         all_fish = estfish_bsmt+estfish_bsot)
   
 fd_dtr = fd_dtr %>% 
   mutate(rep_zoop_c = hcope_c+clad_c+mysid_c,
@@ -219,8 +220,94 @@ fd_dtr = fd_dtr %>%
          rep_zoop_e = hcope_e+clad_e+mysid_e,
          all_zoop_c = hcope_c+clad_c+mysid_c+pcope_c+rotif_c,
          all_zoop_m = hcope+clad+mysid+pcope+rotif_m,
-         all_zoop_e = hcope_e+clad_e+mysid_e+pcope_e+rotif_e)
+         all_zoop_e = hcope_e+clad_e+mysid_e+pcope_e+rotif_e,
+         all_fish = estfish_bsmt+estfish_bsot)
+```
 
+```{r}
+
+
+
+l_models = data.frame(l_model = c("rep_zoop_c",
+                                "rep_zoop_m",
+                                "rep_zoop_e",
+                                "all_zoop_c",
+                                "all_zoop_m",
+                                "all_zoop_e",
+                                "hcope_c+clad_c+mysid_c",
+                                "hcope+clad+mysid",
+                                "hcope_e+clad_e+mysid_e",
+                                "hcope_c+clad_c+mysid_c+pcope_c+rotif_c",
+                                "hcope+clad+mysid+pcope+rotif_m",
+                                "hcope_e+clad_e+mysid_e+pcope_e+rotif_e",
+                                "amphi+hcope_c+clad_c+mysid_c",
+                                "amphi+hcope+clad+mysid",
+                                "amphi+hcope_e+clad_e+mysid_e",
+                                "amphi+hcope_c+clad_c+mysid_c+pcope_c+rotif_c",
+                                "amphi+hcope+clad+mysid+pcope+rotif_m",
+                                "amphi+hcope_e+clad_e+mysid_e+pcope_e+rotif_e"),
+                      model_name = c("model_r_c",
+                                      "model_r_m",
+                                      "model_r_e",
+                                      "model_a_c",
+                                      "model_a_m",
+                                      "model_a_e",
+                                      "model_l_c",
+                                      "model_l_m",
+                                      "model_l_e",
+                                      "model_al_c",
+                                      "model_al_m",
+                                      "model_al_e",
+                                      "model_la_c",
+                                      "model_la_m",
+                                      "model_la_e",
+                                      "model_ala_c",
+                                      "model_ala_m",
+                                      "model_ala_e"))
+
+
+
+model_list = c(model_l_c = model_l_c,
+               model_l_m = model_l_m,
+               model_l_e = model_l_e,
+               model_la_c = model_la_c,
+               model_la_m = model_la_m,
+               model_la_e = model_la_e,
+               model_r_c = model_r_c,
+               model_r_m = model_r_m,
+               model_r_e = model_r_e,
+               model_a_c = model_a_c,
+               model_a_m = model_a_m,
+               model_a_e = model_a_e,
+               model_al_c = model_al_c,
+               model_al_m = model_al_m,
+               model_al_e = model_al_e,
+               model_ala_c = model_ala_c,
+               model_ala_m = model_ala_m,
+               model_ala_e = model_ala_e)
+
+AICs_dtr = map(l_models$l_model, ~AIC(lm(paste0("all_fish ~", .x), data = fd_dtr))) %>% 
+  unlist() %>% 
+  data.frame() %>% 
+  setNames("lm_AIC") %>% 
+  bind_cols(l_models) %>% 
+  mutate(delta_AIC = lm_AIC - min(lm_AIC),
+         type = "result_dt")
+AICs = map(l_models$l_model, ~AIC(lm(paste0("all_fish ~", .x), data = fd))) %>% 
+  unlist() %>% 
+  data.frame() %>% 
+  setNames("lm_AIC") %>% 
+  bind_cols(l_models) %>% 
+  mutate(delta_AIC = lm_AIC - min(lm_AIC),
+         type = "result") %>% 
+  bind_rows(AICs_dtr)
+  
+
+
+```
+
+
+```{r}
 model_l_c='zoop=~hcope_c+clad_c+mysid_c
         fish=~estfish_bsmt+estfish_bsot
         zoop~chla+potam+flow
@@ -347,7 +434,7 @@ model_list = c(model_l_c = model_l_c,
 Plot the IFIs
 ```{r}
 
-metric = "Chi2"
+metric = "AIC"
 models = data.frame(model_name = names(model_list),
                     models = model_list) %>% 
   rowwise() %>% 
@@ -355,13 +442,14 @@ models = data.frame(model_name = names(model_list),
     sem(models, data = fd),
     metrics = c(metric))[[1]],
     result_dt = model_performance(
-    sem(models, data = fd_dtr),
-    metrics = c(metric))[[1]]) %>% 
+      sem(models, data = fd_dtr),
+      metrics = c(metric))[[1]]) %>% 
   pivot_longer(cols = c(result, result_dt), names_to = "type", values_to = "metr") %>% 
-  mutate(model_name = forcats::fct_reorder(model_name, metr))
+  mutate(model_name = forcats::fct_reorder(model_name, metr)) %>% 
+  left_join(AICs, by = c("model_name", "type"))
 
 IFI_compare = ggplot(data = models,
-                     aes(x = model_name,
+                     aes(x = lm_AIC,
                          y = metr,
                          color = type)) +
   theme_classic(base_size = 20) +
@@ -436,13 +524,13 @@ modfit_ala_e_dtr=sem(model_ala_e, data=fd_dtr)
 Plots
 
 ```{r, echo=FALSE}
-myLavaanPlot(model=modfit_r_e, 
+myLavaanPlot(model=modfit_r_c, 
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-myLavaanPlot(model=modfit_r_m, 
+myLavaanPlot(model=modfit_r_e, 
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
