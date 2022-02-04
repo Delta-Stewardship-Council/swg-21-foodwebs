@@ -6,13 +6,13 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 knit: (function(input, ...) {
+    )
+    })
     rmarkdown::render(
       input,
       output_dir = 'docs',
       knit_root_dir = "../",
       envir = globalenv()
-    )
-    })
 ---
 
 ```{r setup, include=FALSE}
@@ -244,11 +244,17 @@ write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv"
 
 ## Calculate Annual CPUE for Amphipods
 
-* 1980s stations, and combine all amphipod species for total amphipod CPUE
+* 1980s stations
+
+* For all amphipod data, only include amphipods routinely found in diets per data from the CDFW Diet Study: Ampelisca, Monocorophium, Sinocorophium, Gammarus, Americorophium, Crangonyx, and Hyalella 
+
+* Other amphipod species found by the EMP Benthic study are either not found in diets regularly, is rare overall, or found in areas not included in our fish monitoring data (e.g. Eogammarus is typically found in marshes and eaten by Salmon) and likely only caught by EMP due to high flow or transport by vegetation.
+
 
 ```{r}
 LT_amph_year_noregions <- ben_LT%>%
-  filter(Order_level == "Amphipoda")%>%
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Grandidierella", "Crangonyx", "Gammarus",
+                      "Hyalella"))%>%
   group_by(Order_level, Year) %>%
   summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
   pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
@@ -258,7 +264,8 @@ write.csv(LT_amph_year_noregions, "data/annual_averages/amphipod_annual_noregion
 					row.names=FALSE)
 
 LT_amph_year_regions <- ben_LT%>%
-  filter(Order_level == "Amphipoda")%>%
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Grandidierella", "Crangonyx", "Gammarus",
+                      "Hyalella"))%>%
   group_by(Region, Order_level, Year) %>%
   summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
   pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
@@ -266,8 +273,6 @@ LT_amph_year_regions <- ben_LT%>%
 
 write.csv(LT_amph_year_regions, "data/annual_averages/amphipod_annual_regions.csv",
 					row.names=FALSE)
-
-#verified both amphipods and clam annual values by comparing it to Betsy's file
 
 ```
 
@@ -307,10 +312,13 @@ write.csv(ST_clams_mon, "data/monthly_averages/clams_monthly_regions.csv",
 
 ## Amphipod monthly CPUE
 
+* Monthly analysis also only includes amphipods routinely found in diets per data from the CDFW Diet Study: Ampelisca, Monocorophium, Sinocorophium, Gammarus, Americorophium, Crangonyx, and Hyalella.
+
 
 ```{r}
 ST_amph_mon <- ben_ST%>%
-  filter(Order_level == "Amphipoda")%>%
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Grandidierella", "Crangonyx", "Gammarus",
+                      "Hyalella"))%>%
   group_by(Region, Order_level, Year, Month) %>%
   summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
   pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
@@ -319,6 +327,6 @@ ST_amph_mon <- ben_ST%>%
 write.csv(ST_amph_mon, "data/monthly_averages/amphipod_monthly_regions.csv",
 					row.names=FALSE)
 
-#verified monthly averages by randomly comparing to CPUE of old EMP benthic file
+
 
 ```
