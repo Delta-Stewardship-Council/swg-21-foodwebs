@@ -197,7 +197,7 @@ STN_annual_values <- STN_combined_derived %>%
 
 
 STN_annual_values_CPUE <- STN_annual_values %>%
-  filter(Method=="STN Net") %>%
+  filter(Method=="STN net") %>%
   subset(select=c(Year,CommonName,Catch_per_tow)) %>%
   pivot_wider(names_from=CommonName,
               values_from=Catch_per_tow,
@@ -214,7 +214,7 @@ STN_annual_values_CPUE <- STN_annual_values %>%
 
 
 STN_annual_values_biomass <- STN_annual_values %>%
-  filter(Method=="STN Net") %>%
+  filter(Method=="STN net") %>%
   subset(select=c(Year,CommonName,Biomass)) %>%
   pivot_wider(names_from=CommonName,
               values_from=Biomass,
@@ -252,7 +252,7 @@ STN_annual_regional_values <- STN_combined_derived %>%
 
 
 STN_annual_regional_values_CPUE <- STN_annual_regional_values %>%
-  filter(Method=="STN Net") %>%
+  filter(Method=="STN net") %>%
   subset(select=c(Year,CommonName,Catch_per_tow, Region)) %>%
   pivot_wider(names_from=CommonName,
               values_from=Catch_per_tow,
@@ -269,7 +269,7 @@ STN_annual_regional_values_CPUE <- STN_annual_regional_values %>%
 
 
 STN_annual_regional_values_biomass <- STN_annual_regional_values %>%
-  filter(Method=="STN Net") %>%
+  filter(Method=="STN net") %>%
   subset(select=c(Year,CommonName,Biomass, Region)) %>%
   pivot_wider(names_from=CommonName,
               values_from=Biomass,

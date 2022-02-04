@@ -41,13 +41,17 @@ regionorder=c("West","North","South")
 years=1975:2021
 
 focaldata$tzoop=focaldata$hcope+focaldata$clad+focaldata$mysid+focaldata$pcope
-fvars=c(fvars,"tzoop")
-cnames=rbind(cnames,data.frame(Longname=NA,Shortname="tzoop",
-                               Diagramname="Total Zooplankton\nBiomass",
-                               Datacolumn=NA,Log="yes"))
+focaldata$hzoop=focaldata$hcope+focaldata$clad
+focaldata$pzoop=focaldata$mysid+focaldata$pcope
+fvars=c(fvars,"tzoop","hzoop","pzoop")
+cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","hzoop","pzoop"),
+                               Diagramname=c("Total Zooplankton\nBiomass",
+                                             "Total Herbivorous\nZooplankton",
+                                             "Total Predatory\nZooplankton"),
+                               Datacolumn=NA,Log=c("yes","yes","yes")))
 
 #focal variables
-varnames=c("temp", "flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop")
+varnames=c("temp", "flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop","hzoop","pzoop")
 
 source("analysis/myLavaanPlot.r")
 ```
@@ -325,8 +329,6 @@ labelssouth <- createLabels(modfitsouth, cnames)
 
 ### Nice plots 
 
-#### Without covariances
-
 Original units
 
 *West*
@@ -393,25 +395,141 @@ myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
 						 color=c("regress","latent"))
 ```
 
-#### With covariances
+### SEM model (h and p zoop split)
+
+With and without detrending.
+
+```{r}
+#west has no ssides, corbic
+
+modwest='chla~potam
+        potam~flow
+        hzoop~chla+potam+flow
+        pzoop~chla+potam+flow+hzoop
+        estfish_bsmt~hzoop+pzoop+flow
+        estfish_bsot~hzoop+pzoop+flow
+'
+
+modfitwest=sem(modwest, data=filter(fdr,region=="West"))
+modfitwest_dtr=sem(modwest, data=filter(fdr_dtr,region=="West"))
+summary(modfitwest, standardized=T, rsq=T)
+summary(modfitwest_dtr, standardized=T, rsq=T)
+
+labelswest <- createLabels(modfitwest, cnames)
+
+# residuals(modfitwest)
+# modificationindices(modfitwest)
+```
+
+```{r}
+
+modnorth='chla~corbic+potam
+        potam~flow
+        corbic~flow
+        hzoop~chla+corbic+potam+flow
+        pzoop~chla+corbic+potam+flow+hzoop
+        estfish_bsmt~hzoop+pzoop+flow
+        estfish_bsot~hzoop+pzoop+flow
+'
+
+modfitnorth=sem(modnorth, data=filter(fdr,region=="North"))
+modfitnorth_dtr=sem(modnorth, data=filter(fdr_dtr,region=="North"))
+summary(modfitnorth, standardized=T, rsq=T)
+summary(modfitnorth_dtr, standardized=T, rsq=T)
+
+labelsnorth <- createLabels(modfitnorth, cnames)
+
+# residuals(modfitnorth)
+# modificationindices(modfitnorth)
+```
+
+```{r}
+#no potam
+
+modsouth='chla~corbic
+        corbic~flow
+        hzoop~chla+corbic+flow
+        pzoop~chla+corbic+flow+hzoop
+        estfish_bsmt~hzoop+pzoop+flow+corbic
+        estfish_bsot~hzoop+pzoop+flow+corbic
+'
+
+modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
+modfitsouth_dtr=sem(modsouth, data=filter(fdr_dtr,region=="South"))
+summary(modfitsouth, standardized=T, rsq=T)
+summary(modfitsouth_dtr, standardized=T, rsq=T)
+
+labelssouth <- createLabels(modfitsouth, cnames)
+
+# residuals(modfitsouth)
+# modificationindices(modfitsouth)
+```
+
+
+### Nice plots 
 
 Original units
 
-```{r, echo=FALSE, eval=FALSE}
-myLavaanPlot(model=modfitnorth, labels=labels1, 
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
-						 width=c("regress","latent","covs"),
-						 color=c("regress","latent","covs"))
+*West*
 
+```{r, echo=FALSE}
+myLavaanPlot(model=modfitwest, labels=labelswest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+
+```
+
+*North*
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfitnorth, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
+
+*South*
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfitsouth, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
 ```
 
 Detrended
 
-```{r, echo=FALSE, eval=FALSE}
-myLavaanPlot(model=modfit4b, labels=labels2, 
+*West*
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfitwest_dtr, labels=labelswest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
-						 width=c("regress","latent","covs"),
-						 color=c("regress","latent","covs"))
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+
+```
+
+*North*
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfitnorth_dtr, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
+
+*South*
+
+```{r, echo=FALSE}
+myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
 ```
