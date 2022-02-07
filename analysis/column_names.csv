@@ -15,17 +15,17 @@ Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes
 Mysids,mysid,mysids,Mysids_BPUE,yes
 Cladocera,clad,cladocera,Cladoceran_BPUE,yes
 Amphipods,amphi,amphipods,Amphipoda_cpue,yes
-Cladocera catch,clad_c,cladocera catch,Cladoceran_CPUE,no
-Cladocera energy,clad_e,cladocera energy,Cladoceran_JPUE,no
-Herbivorous copepods catch,hcope_c,herbivorous copepods catch,Herbivorous_Copepods_CPUE,no
-Herbivorous copepods energy,hcope_e,herbivorous copepods energy,Herbivorous_Copepods_JPUE,no
-Mysids catch,mysid_c,mysids catch,Mysids_CPUE,no
-Mysids energy,mysid_e,mysids energy,Mysids_JPUE,no
-Predatory copepods catch,pcope_c,predatory copepods catch,Predatory_Copepods_CPUE,no
-Predatory copepods energy,pcope_e,predatory copepods energy,Predatory_Copepods_JPUE,no
-Rotifers mass,rotif_m,rotifers mass,Rotifers_BPUE,no
-Rotifers catch,rotif_c,rotifers catch,Rotifers_CPUE,no
-Rotifers energy,rotif_e,rotifers energy,Rotifers_JPUE,no
+Cladocera catch,clad_c,cladocera catch,Cladoceran_CPUE,yes
+Cladocera energy,clad_e,cladocera energy,Cladoceran_JPUE,yes
+Herbivorous copepods catch,hcope_c,herbivorous copepods catch,Herbivorous_Copepods_CPUE,yes
+Herbivorous copepods energy,hcope_e,herbivorous copepods energy,Herbivorous_Copepods_JPUE,yes
+Mysids catch,mysid_c,mysids catch,Mysids_CPUE,yes
+Mysids energy,mysid_e,mysids energy,Mysids_JPUE,yes
+Predatory copepods catch,pcope_c,predatory copepods catch,Predatory_Copepods_CPUE,yes
+Predatory copepods energy,pcope_e,predatory copepods energy,Predatory_Copepods_JPUE,yes
+Rotifers mass,rotif_m,rotifers mass,Rotifers_BPUE,yes
+Rotifers catch,rotif_c,rotifers catch,Rotifers_CPUE,yes
+Rotifers energy,rotif_e,rotifers energy,Rotifers_JPUE,yes
 Estuarine fishes,estfish,FMWT\nestuarine fishes,FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,yes
 Marine fishes,marfish,FMWT\nmarine fishes,FMWT_fish_biomass_Marine_pelagic_forage_fishes,yes
 Delta smelt,smelt,delta\nsmelt,FMWT_fish_biomass_DeltaSmelt,yes
