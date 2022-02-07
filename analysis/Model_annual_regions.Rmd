@@ -40,18 +40,35 @@ regions=unique(focaldata$region)
 regionorder=c("West","North","South")
 years=1975:2021
 
-focaldata$tzoop=focaldata$hcope+focaldata$clad+focaldata$mysid+focaldata$pcope
-focaldata$hzoop=focaldata$hcope+focaldata$clad
-focaldata$pzoop=focaldata$mysid+focaldata$pcope
-fvars=c(fvars,"tzoop","hzoop","pzoop")
-cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","hzoop","pzoop"),
+focaldata = focaldata %>% 
+  mutate(tzoop=hcope+clad+mysid+pcope,
+         tzoop_c=hcope_c+clad_c+mysid_c+pcope_c,
+         tzoop_e=hcope_e+clad_e+mysid_e+pcope_e,
+         hzoop=hcope+clad,
+         hzoop_c=hcope_c+clad_c,
+         hzoop_e=hcope_e+clad_e,
+         pzoop=mysid+pcope,
+         pzoop_c=mysid_c+pcope_c,
+         pzoop_e=mysid_e+pcope_e) 
+fvars=c(fvars,"tzoop","tzoop_c","tzoop_e",
+        "hzoop","hzoop_c","hzoop_e",
+        "pzoop","pzoop_c","pzoop_e")
+cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_c","tzoop_e",
+                                                       "hzoop","hzoop_c","hzoop_e",
+                                                       "pzoop","pzoop_c","pzoop_e"),
                                Diagramname=c("Total Zooplankton\nBiomass",
-                                             "Total Herbivorous\nZooplankton",
-                                             "Total Predatory\nZooplankton"),
-                               Datacolumn=NA,Log=c("yes","yes","yes")))
+                                             "Total Zooplankton\nAbundance",
+                                             "Total Zooplankton\nEnergy",
+                                             "Herbivorous Zooplankton\nBiomass",
+                                             "Herbivorous Zooplankton\nAbundance",
+                                             "Herbivorous Zooplankton\nEnergy",
+                                             "Predatory Zooplankton\nBiomass",
+                                             "Predatory Zooplankton\nAbundance",
+                                             "Predatory Zooplankton\nEnergy"),
+                               Datacolumn=NA,Log="yes"))
 
 #focal variables
-varnames=c("temp", "flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop","hzoop","pzoop")
+varnames=c("temp","flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop","tzoop_c","tzoop_e","hzoop","pzoop")
 
 source("analysis/myLavaanPlot.r")
 ```
@@ -109,7 +126,7 @@ fdr_dtr=fdr0 %>% group_by(region) %>%
 
 ### Time series plots
 
-```{r timeseries, fig.width=8, fig.height=11, echo=FALSE, warning=FALSE}
+```{r timeseries, fig.width=8, fig.height=13, echo=FALSE, warning=FALSE}
 plot1=select(focaldata,region,year,varnames) %>% 
   gather(Var,Value,varnames) %>% 
   mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
@@ -227,13 +244,91 @@ psych::pairs.panels(dplyr::select(fdr, year, flow, temp, secchi, chla, hcope, cl
 
 *Fish indices are not correlated in S and N!*
 
+### Best predictor of fish
+
+```{r}
+l_models = data.frame(l_model = c("tzoop","tzoop_c","tzoop_e",
+                                  "hzoop","hzoop+pzoop","pzoop",
+                                  "tzoop+amphi","tzoop_e+amphi",
+                                  "hcope+clad+mysid",
+                                  "hcope+clad+mysid+pcope",
+                                  "hcope+clad+mysid+pcope+rotif_m",
+                                  "hcope+mysid",
+                                  "hcope+mysid+pcope",
+                                  "hcope+mysid+amphi"))
+
+#Midwater Trawl
+westmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+                                    data = filter(fdr_dtr,region=="West")))
+names(westmods)=l_models$l_model
+bbmle::AICctab(westmods,weights=T,delta=T)
+
+northmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+                                    data = filter(fdr_dtr,region=="North")))
+names(northmods)=l_models$l_model
+bbmle::AICctab(northmods,weights=T,delta=T)
+
+southmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+                                    data = filter(fdr_dtr,region=="South")))
+names(southmods)=l_models$l_model
+bbmle::AICctab(southmods,weights=T,delta=T)
+
+#Otter Trawl
+westmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsot ~", .x), 
+                                    data = filter(fdr_dtr,region=="West")))
+names(westmods)=l_models$l_model
+bbmle::AICctab(westmods,weights=T,delta=T)
+
+northmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsot ~", .x), 
+                                    data = filter(fdr_dtr,region=="North")))
+names(northmods)=l_models$l_model
+bbmle::AICctab(northmods,weights=T,delta=T)
+
+southmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsot ~", .x), 
+                                    data = filter(fdr_dtr,region=="South")))
+names(southmods)=l_models$l_model
+bbmle::AICctab(southmods,weights=T,delta=T)
+```
+
+tzoop and tzoop_e do pretty well in all regions. tzoop_c and hzoop+pzoop does poorly in all regions. amphi seem relevant in North (for midwater trawl), which is also where they are most abundant.
+
+```{r}
+l_modelsw = data.frame(l_model = c("tzoop",
+                                   "tzoop+marfish_bsmt"))
+l_modelsns = data.frame(l_model = c("tzoop",
+                                   "tzoop+amphi",
+                                   "tzoop+amphi+sside",
+                                   "tzoop+sside",
+                                   "tzoop+corbic",
+                                   "tzoop+corbic+sside"))
+
+#Midwater Trawl
+westmods = purrr::map(l_modelsw$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+                                    data = filter(fdr_dtr,region=="West")))
+names(westmods)=l_modelsw$l_model
+bbmle::AICctab(westmods,weights=T,delta=T)
+
+northmods = purrr::map(l_modelsns$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+                                    data = filter(fdr_dtr,region=="North")))
+names(northmods)=l_modelsns$l_model
+bbmle::AICctab(northmods,weights=T,delta=T)
+
+southmods = purrr::map(l_modelsns$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+                                    data = filter(fdr_dtr,region=="South")))
+names(southmods)=l_modelsns$l_model
+bbmle::AICctab(southmods,weights=T,delta=T)
+
+```
+
+
 ### SEM model
 
 With and without detrending.
 
 ```{r}
 #west has no ssides, corbic
-
+ 
+#1
 # modwest='zoop=~hcope+mysid
 #         fish=~estfish_bsmt+estfish_bsot
 #         zoop~chla+potam+flow
@@ -241,10 +336,20 @@ With and without detrending.
 #         fish~zoop+flow
 # '
 
-modwest='chla~potam+flow
-        tzoop~chla+potam+flow
-        estfish_bsmt~tzoop+flow
-        estfish_bsot~tzoop+flow
+#2
+# modwest='chla~potam+flow
+#         tzoop~chla+potam+flow
+#         estfish_bsmt~tzoop+flow
+#         estfish_bsot~tzoop+flow
+# '
+
+#3
+modwest='chla~potam+flow+temp+secchi
+        tzoop~chla+potam+flow+temp+secchi
+        amphi~chla+potam+flow+temp+secchi
+        estfish_bsmt~tzoop+amphi+flow+temp+secchi
+        estfish_bsot~tzoop+amphi+flow+temp+secchi
+        amphi~~tzoop
 '
 
 modfitwest=sem(modwest, data=filter(fdr,region=="West"))
@@ -262,6 +367,7 @@ labelswest <- createLabels(modfitwest, cnames)
 ```
 
 ```{r}
+#1
 # modnorth='zoop=~hcope+mysid
 #         #fish=~estfish_bsmt+estfish_bsot
 #         zoop~chla+potam+flow
@@ -276,10 +382,20 @@ labelswest <- createLabels(modfitwest, cnames)
 #         estfish_bsot~zoop+flow+sside+chla
 # '
 
-modnorth='chla~corbic+potam+flow
-        tzoop~chla+corbic+potam+flow
-        estfish_bsmt~tzoop+flow+chla
-        estfish_bsot~tzoop+flow
+#2
+# modnorth='chla~corbic+potam+flow
+#         tzoop~chla+corbic+potam+flow
+#         estfish_bsmt~tzoop+flow+chla
+#         estfish_bsot~tzoop+flow
+# '
+
+#3
+modnorth='chla~corbic+potam+flow+temp+secchi
+        tzoop~chla+corbic+potam+flow+temp+secchi
+        amphi~chla+corbic+potam+flow+temp+secchi
+        estfish_bsmt~tzoop+amphi+flow+temp+secchi+chla+sside
+        estfish_bsot~tzoop+amphi+flow+temp+secchi+sside
+        amphi~~tzoop
 '
 
 modfitnorth=sem(modnorth, data=filter(fdr,region=="North"))
@@ -298,6 +414,8 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 
 ```{r}
 #no potam
+
+#1
 # modsouth='zoop=~hcope+mysid
 #         #fish=~estfish_bsmt+estfish_bsot
 #         zoop~chla+corbic+flow
@@ -306,10 +424,20 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 #         estfish_bsot~zoop+flow
 # '
 
-modsouth='chla~corbic+flow
-        tzoop~chla+corbic+flow
-        estfish_bsmt~tzoop+flow+corbic
-        estfish_bsot~tzoop+flow+corbic
+#2
+# modsouth='chla~corbic+flow
+#         tzoop~chla+corbic+flow
+#         estfish_bsmt~tzoop+flow+corbic+sside
+#         estfish_bsot~tzoop+flow+corbic+sside
+# '
+
+#3
+modsouth='chla~corbic+flow+temp+secchi
+        tzoop~chla+corbic+flow+temp+secchi
+        amphi~chla+corbic+flow+temp+secchi
+        estfish_bsmt~tzoop+amphi+flow+temp+secchi+corbic+sside
+        estfish_bsot~tzoop+amphi+flow+temp+secchi+corbic+sside
+        amphi~~tzoop
 '
 
 modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
