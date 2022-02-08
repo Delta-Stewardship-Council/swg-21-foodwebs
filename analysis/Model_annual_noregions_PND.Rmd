@@ -37,13 +37,25 @@ cnames=read.csv("analysis/column_names.csv", stringsAsFactors = F)
 dsub=filter(combined, Year>=1975)
 focaldata=dsub[,cnames$Datacolumn]
 fvars=cnames$Shortname
-colnames(focaldata)=fvars
-
+colnames(focaldata)=fvars 
 #focal variables
 varnames=c("temp","flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish","estfish_bsot","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
 ```
+
+#### Make aggerate data columns
+```{r}
+focaldata = focaldata %>% 
+  mutate(rep_zoop_c = hcope_c + clad_c + mysid_c ,
+         rep_zoop_m = hcope+clad+mysid ,
+         rep_zoop_e = hcope_e+clad_e+mysid_e ,
+         all_zoop_c = hcope_c+clad_c+mysid_c+pcope_c+rotif_c ,
+         all_zoop_m = hcope+clad+mysid+pcope+rotif_m ,
+         all_zoop_e = hcope_e+clad_e+mysid_e+pcope_e+rotif_e ,
+         all_fish = estfish_bsmt+estfish_bsot)
+```
+
 
 ### Data prep
 
@@ -205,32 +217,32 @@ psych::pairs.panels(dplyr::select(fd, year, varnames),lm = T)
 With and without detrending.
 
 ```{r}
-add_logs = function(inputs){
-  output = map_dbl(inputs, ~exp(.x)) %>% 
-    sum() %>% 
-    log()
-  return(output)
-}
-
-fd = fd %>% 
-  rowwise() %>% 
-  mutate(rep_zoop_c = add_logs(c(hcope_c,clad_c,mysid_c)),
-         rep_zoop_m =  add_logs(c(hcope,clad,mysid)),
-         rep_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e)),
-         all_zoop_c =  add_logs(c(hcope_c,clad_c,mysid_c,pcope_c,rotif_c)),
-         all_zoop_m =  add_logs(c(hcope,clad,mysid,pcope,rotif_m)),
-         all_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e,pcope_e,rotif_e)),
-         all_fish =  add_logs(c(estfish_bsmt,estfish_bsot)))
-  
-fd_dtr = fd_dtr %>% 
-  rowwise() %>% 
-  mutate(rep_zoop_c = add_logs(c(hcope_c,clad_c,mysid_c)),
-         rep_zoop_m =  add_logs(c(hcope,clad,mysid)),
-         rep_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e)),
-         all_zoop_c =  add_logs(c(hcope_c,clad_c,mysid_c,pcope_c,rotif_c)),
-         all_zoop_m =  add_logs(c(hcope,clad,mysid,pcope,rotif_m)),
-         all_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e,pcope_e,rotif_e)),
-         all_fish =  add_logs(c(estfish_bsmt,estfish_bsot)))
+# add_logs = function(inputs){
+#   output = map_dbl(inputs, ~exp(.x)) %>% 
+#     sum() %>% 
+#     log()
+#   return(output)
+# }
+# 
+# fd = fd %>% 
+#   rowwise() %>% 
+#   mutate(rep_zoop_c = add_logs(c(hcope_c,clad_c,mysid_c)),
+#          rep_zoop_m =  add_logs(c(hcope,clad,mysid)),
+#          rep_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e)),
+#          all_zoop_c =  add_logs(c(hcope_c,clad_c,mysid_c,pcope_c,rotif_c)),
+#          all_zoop_m =  add_logs(c(hcope,clad,mysid,pcope,rotif_m)),
+#          all_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e,pcope_e,rotif_e)),
+#          all_fish =  add_logs(c(estfish_bsmt,estfish_bsot)))
+#   
+# fd_dtr = fd_dtr %>% 
+#   rowwise() %>% 
+#   mutate(rep_zoop_c = add_logs(c(hcope_c,clad_c,mysid_c)),
+#          rep_zoop_m =  add_logs(c(hcope,clad,mysid)),
+#          rep_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e)),
+#          all_zoop_c =  add_logs(c(hcope_c,clad_c,mysid_c,pcope_c,rotif_c)),
+#          all_zoop_m =  add_logs(c(hcope,clad,mysid,pcope,rotif_m)),
+#          all_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e,pcope_e,rotif_e)),
+#          all_fish =  add_logs(c(estfish_bsmt,estfish_bsot)))
 ```
 
 ```{r}
@@ -280,16 +292,16 @@ AICs_dtr = map(l_models$l_model, ~AIC(lm(paste0("all_fish ~", .x), data = fd_dtr
   data.frame() %>% 
   setNames("lm_AIC") %>% 
   bind_cols(l_models) %>% 
-  mutate(delta_AIC = lm_AIC - min(lm_AIC),
-         type = "result_dt")
+  ungroup() %>% 
+  mutate(type = "result_dt")
 AICs = map(l_models$l_model, ~AIC(lm(paste0("all_fish ~", .x), data = fd))) %>% 
   unlist() %>% 
   data.frame() %>% 
   setNames("lm_AIC") %>% 
   bind_cols(l_models) %>% 
-  mutate(delta_AIC = lm_AIC - min(lm_AIC),
-         type = "result") %>% 
-  bind_rows(AICs_dtr)
+  mutate(type = "result") %>% 
+  bind_rows(AICs_dtr) %>% 
+  mutate(delta_AIC = lm_AIC - min(lm_AIC))
   
 
 
@@ -434,10 +446,21 @@ models = data.frame(model_name = names(model_list),
       sem(models, data = fd_dtr),
       metrics = c(metric))[[1]]) %>% 
   pivot_longer(cols = c(result, result_dt), names_to = "type", values_to = "metr") %>% 
-  mutate(model_name = forcats::fct_reorder(model_name, metr)) %>% 
-  left_join(AICs, by = c("model_name", "type"))
+  left_join(AICs, by = c("model_name", "type")) %>% 
+    mutate(model_name = forcats::fct_reorder(model_name, metr))
 
-IFI_compare = ggplot(data = models,
+
+met_compare = ggplot(data = models,
+                     aes(x = model_name,
+                         y = metr,
+                         color = type)) +
+  theme_classic(base_size = 20) +
+  labs(y = metric)+
+  theme(axis.text.x = element_text(angle = 90)) +
+  geom_point()
+print(met_compare)
+
+AIC_compare = ggplot(data = models,
                      aes(x = lm_AIC,
                          y = metr,
                          color = type)) +
@@ -445,7 +468,7 @@ IFI_compare = ggplot(data = models,
   labs(y = metric)+
   theme(axis.text.x = element_text(angle = 90)) +
   geom_point()
-print(IFI_compare)
+print(AIC_compare)
 ```
 
 
