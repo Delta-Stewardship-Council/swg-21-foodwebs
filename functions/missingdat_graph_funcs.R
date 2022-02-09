@@ -48,7 +48,7 @@ plt_diagnos_obs_pred <- function(df, label){
   plt <- ggplot(df, aes(Date, Imputed_values, color = Imputed)) +
     geom_line(aes(Date, Imputed_values), col = 'gray60') +
     geom_point(size=1) +
-    facet_wrap(Station~., ncol=3) +
+    facet_wrap(Station~., ncol=3, scales = 'free_y') +
     scale_color_manual(values = c('gray60', 'red')) +
     labs(title = 'Replacing missing values with ARIMA and Kalman filter', subtitle=label) +
     theme_bw()

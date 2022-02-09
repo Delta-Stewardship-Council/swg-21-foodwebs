@@ -2,9 +2,9 @@
 # create timeseries df w/ imputed vals
 # ~~~~~~~~~~~
 
-create_ts_df <- function(df, model_params) {
+create_ts_df <- function(df, model_params, log_trans = FALSE) {
   # create matrix of timeseries w/ imputed values
-  mat_ts <- create_ts_mat(df, model_params)
+  mat_ts <- create_ts_mat(df, model_params, log_trans)
 
   # convert to wide df
   df_ts <- as_tibble(mat_ts) %>%
@@ -28,14 +28,19 @@ create_ts_df <- function(df, model_params) {
     left_join(df_missing, by = c('Date','Analyte','Station')) %>%
     mutate(Imputed = ifelse(Missing == TRUE & Imputed_values > 0, TRUE, FALSE))
 
-  return(df_ts)
+  return(mat_ts)
 }
 
-create_ts_mat <- function(df, model_params){
+create_ts_mat <- function(df, model_params, log_trans){
   # clean up df
   df_all <- df %>% arrange(Date)
   Year <- lubridate::year(df$Date)
   df_ts <- df_all[,-c(1,2)]
+
+  # log transform
+  if(log_trans){
+    df_ts[colnames(df_ts)] <- log10(df_ts[colnames(df_ts)])
+  }
 
   # create empty matrix to populate
   mat_ts <- matrix(NA, nrow(df_ts),(ncol(df_ts)))
@@ -49,9 +54,15 @@ create_ts_mat <- function(df, model_params){
     # interpolate missing values (if any)
     ts_obj <- interp_missing_dat(ts_obj, model_params)
 
+    # log transform
+    if(log_trans){
+      ts_obj <- 10^(ts_obj)
+    }
+
     # add station data to matrix
     mat_ts[,i] <- ts_obj
   }
+
   return(mat_ts)
 }
 
@@ -79,7 +90,7 @@ interp_missing_dat <- function(ts_obj, model_params, fit_return = FALSE){
       return(fit)
     }
 
-    ts_interp <- na_kalman(ts_obj, model = fit$model)
+    ts_interp <- imputeTS::na_kalman(ts_obj, model = fit$model)
 
     # identify missing values to impute (and replace in the matrix)
     id.na <- which(is.na(ts_obj))
