@@ -272,22 +272,6 @@ southmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x),
                                     data = filter(fdr_dtr,region=="South")))
 names(southmods)=l_models$l_model
 bbmle::AICctab(southmods,weights=T,delta=T)
-
-#Otter Trawl
-westmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsot ~", .x), 
-                                    data = filter(fdr_dtr,region=="West")))
-names(westmods)=l_models$l_model
-bbmle::AICctab(westmods,weights=T,delta=T)
-
-northmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsot ~", .x), 
-                                    data = filter(fdr_dtr,region=="North")))
-names(northmods)=l_models$l_model
-bbmle::AICctab(northmods,weights=T,delta=T)
-
-southmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsot ~", .x), 
-                                    data = filter(fdr_dtr,region=="South")))
-names(southmods)=l_models$l_model
-bbmle::AICctab(southmods,weights=T,delta=T)
 ```
 
 tzoop and tzoop_e do pretty well in all regions. tzoop_c and hzoop+pzoop does poorly in all regions. amphi seem relevant in North (for midwater trawl), which is also where they are most abundant.
@@ -317,9 +301,7 @@ southmods = purrr::map(l_modelsns$l_model, ~lm(paste0("estfish_bsmt ~", .x),
                                     data = filter(fdr_dtr,region=="South")))
 names(southmods)=l_modelsns$l_model
 bbmle::AICctab(southmods,weights=T,delta=T)
-
 ```
-
 
 ### SEM model
 
@@ -347,9 +329,17 @@ With and without detrending.
 modwest='chla~potam+flow+temp+secchi
         tzoop~chla+potam+flow+temp+secchi
         amphi~chla+potam+flow+temp+secchi
-        estfish_bsmt~tzoop+amphi+flow+temp+secchi
-        estfish_bsot~tzoop+amphi+flow+temp+secchi
+        estfish_bsmt~tzoop+amphi+flow
+        #estfish_bsot~tzoop+amphi+flow+temp+secchi
         amphi~~tzoop
+'
+#4
+modwest='chla~potam+flow+temp+secchi
+        hzoop~chla+potam+flow+temp+secchi
+        pzoop~chla+potam+flow+temp+secchi+hzoop
+        amphi~chla+potam+flow+temp+secchi
+        estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi
+        amphi~~hzoop+pzoop
 '
 
 modfitwest=sem(modwest, data=filter(fdr,region=="West"))
@@ -394,8 +384,16 @@ modnorth='chla~corbic+potam+flow+temp+secchi
         tzoop~chla+corbic+potam+flow+temp+secchi
         amphi~chla+corbic+potam+flow+temp+secchi
         estfish_bsmt~tzoop+amphi+flow+temp+secchi+chla+sside
-        estfish_bsot~tzoop+amphi+flow+temp+secchi+sside
+        #estfish_bsot~tzoop+amphi+flow+temp+secchi+sside
         amphi~~tzoop
+'
+#4
+modnorth='chla~corbic+potam+flow+temp+secchi
+        hzoop~chla+corbic+potam+flow+temp+secchi
+        pzoop~chla+corbic+potam+flow+temp+secchi+hzoop
+        amphi~chla+corbic+potam+flow+temp+secchi
+        estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+chla+sside
+        amphi~~hzoop+pzoop
 '
 
 modfitnorth=sem(modnorth, data=filter(fdr,region=="North"))
@@ -436,8 +434,16 @@ modsouth='chla~corbic+flow+temp+secchi
         tzoop~chla+corbic+flow+temp+secchi
         amphi~chla+corbic+flow+temp+secchi
         estfish_bsmt~tzoop+amphi+flow+temp+secchi+corbic+sside
-        estfish_bsot~tzoop+amphi+flow+temp+secchi+corbic+sside
+        #estfish_bsot~tzoop+amphi+flow+temp+secchi+corbic+sside
         amphi~~tzoop
+'
+#4
+modsouth='chla~corbic+flow+temp+secchi
+        hzoop~chla+corbic+flow+temp+secchi
+        pzoop~chla+corbic+flow+temp+secchi+hzoop
+        amphi~chla+corbic+flow+temp+secchi
+        estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+corbic+sside
+        amphi~~hzoop+pzoop
 '
 
 modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))

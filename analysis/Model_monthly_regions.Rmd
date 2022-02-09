@@ -43,8 +43,35 @@ focaldata=focaldata%>%
          sinmon=sin(2*pi/12*month),
          cosmon=cos(2*pi/12*month))
 
+focaldata = focaldata %>% 
+  mutate(tzoop=hcope+clad+mysid+pcope,
+         tzoop_c=hcope_c+clad_c+mysid_c+pcope_c,
+         tzoop_e=hcope_e+clad_e+mysid_e+pcope_e,
+         hzoop=hcope+clad,
+         hzoop_c=hcope_c+clad_c,
+         hzoop_e=hcope_e+clad_e,
+         pzoop=mysid+pcope,
+         pzoop_c=mysid_c+pcope_c,
+         pzoop_e=mysid_e+pcope_e) 
+fvars=c(fvars,"tzoop","tzoop_c","tzoop_e",
+        "hzoop","hzoop_c","hzoop_e",
+        "pzoop","pzoop_c","pzoop_e")
+cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_c","tzoop_e",
+                                                       "hzoop","hzoop_c","hzoop_e",
+                                                       "pzoop","pzoop_c","pzoop_e"),
+                               Diagramname=c("Total Zooplankton\nBiomass",
+                                             "Total Zooplankton\nAbundance",
+                                             "Total Zooplankton\nEnergy",
+                                             "Herbivorous Zooplankton\nBiomass",
+                                             "Herbivorous Zooplankton\nAbundance",
+                                             "Herbivorous Zooplankton\nEnergy",
+                                             "Predatory Zooplankton\nBiomass",
+                                             "Predatory Zooplankton\nAbundance",
+                                             "Predatory Zooplankton\nEnergy"),
+                               Datacolumn=NA,Log="yes"))
+
 #focal variables
-varnames=c("temp", "flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt")
+varnames=c("temp","flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop","tzoop_c","tzoop_e","hzoop","pzoop")
 
 #labels for lagged vars
 cnameslag=cnames
@@ -150,7 +177,7 @@ filter(dataavail,propmissing>0.45 | is.na(propmissing))
 
 ### Time series plots
 
-```{r timeseries, fig.width=8, fig.height=11, echo=FALSE, warning=FALSE}
+```{r timeseries, fig.width=8, fig.height=13, echo=FALSE, warning=FALSE}
 plot1=select(focaldata,region,decyear,varnames) %>% 
   gather(Var,Value,varnames) %>% 
   mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
@@ -327,6 +354,176 @@ ggplot(fdr,aes(x=ammonia, y=dophos, color=chla)) +
   scale_color_viridis_c()
 ```
 
+### Best predictor of fish
+
+```{r}
+l_modelsfw = data.frame(l_model = c("tzoop","tzoop_c",
+                                  "hzoop","hzoop+pzoop","pzoop",
+                                  "hcope","amphi","pcope",
+                                  "tzoop+amphi","hzoop+amphi","pzoop+amphi",
+                                  "hcope+pcope","hcope+amphi","pcope+amphi",
+                                  "hcope+pcope+amphi"))
+
+l_models = data.frame(l_model = c("tzoop","tzoop_c",
+                                  "hzoop","hzoop+pzoop","pzoop",
+                                  "mysid","hcope","clad","amphi","pcope",
+                                  "tzoop+amphi","hzoop+amphi","pzoop+amphi","pzoop+clad",
+                                  "hzoop+mysid","pzoop+clad+hcope",
+                                  "hcope+pcope","hcope+amphi","pcope+amphi","hcope+clad",
+                                  "amphi+clad","pcope+clad","mysid+amphi",
+                                  "hcope+clad+mysid",
+                                  "hcope+clad+mysid+pcope",
+                                  "hcope+mysid",
+                                  "hcope+mysid+pcope",
+                                  "hcope+mysid+amphi"))
+
+l_modelss = data.frame(l_model = c("tzoop","tzoop_c",
+                                  "hzoop","hzoop+pzoop","pzoop",
+                                  "hcope","amphi","pcope","clad",
+                                  "tzoop+amphi","hzoop+amphi","pzoop+amphi","pzoop+clad",
+                                  "pzoop+clad+hcope",
+                                  "hcope+pcope","hcope+amphi","pcope+amphi","hcope+clad",
+                                  "amphi+clad","pcope+clad",
+                                  "hcope+pcope+amphi","hcope+pcope+clad",
+                                  "hcope+pcope+amphi+clad"))
+
+#Midwater Trawl
+fwestmods = purrr::map(l_modelsfw$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="Far West" & !is.na(amphi) & !is.na(tzoop))))
+names(fwestmods)=l_modelsfw$l_model
+bbmle::AICctab(fwestmods,weights=T,delta=T)
+
+westmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="West" & !is.na(amphi) & !is.na(tzoop))))
+names(westmods)=l_models$l_model
+bbmle::AICctab(westmods,weights=T,delta=T)
+
+northmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="North" & !is.na(amphi) & !is.na(tzoop))))
+names(northmods)=l_models$l_model
+bbmle::AICctab(northmods,weights=T,delta=T)
+
+southmods = purrr::map(l_modelss$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="South" & !is.na(amphi) & !is.na(tzoop))))
+names(southmods)=l_modelss$l_model
+bbmle::AICctab(southmods,weights=T,delta=T)
+```
+
+tzoop and tzoop_e do pretty well in all regions. tzoop_c and hzoop+pzoop does poorly in all regions. amphi seem relevant in North (for midwater trawl), which is also where they are most abundant.
+
+```{r}
+l_modelsfw = data.frame(l_model = c("hcope+pcope+amphi",
+                                   "hcope+pcope+amphi+marfish_bsmt"))
+l_modelsw = data.frame(l_model = c("mysid+amphi",
+                                   "mysid+amphi+marfish_bsmt"))
+l_modelsn = data.frame(l_model = c("hcope+mysid",
+                                   "hcope+mysid+sside"))
+l_modelss = data.frame(l_model = c("pzoop+clad+hcope",
+                                   "pzoop+clad+hcope+sside"))
+
+#Midwater Trawl
+fwestmods = purrr::map(l_modelsfw$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="Far West" & !is.na(amphi))))
+names(fwestmods)=l_modelsfw$l_model
+bbmle::AICctab(fwestmods,weights=T,delta=T)
+
+westmods = purrr::map(l_modelsw$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="West" & !is.na(amphi))))
+names(westmods)=l_modelsw$l_model
+bbmle::AICctab(westmods,weights=T,delta=T)
+
+northmods = purrr::map(l_modelsn$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="North" & !is.na(sside))))
+names(northmods)=l_modelsn$l_model
+bbmle::AICctab(northmods,weights=T,delta=T)
+
+southmods = purrr::map(l_modelss$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="South" & !is.na(sside))))
+names(southmods)=l_modelss$l_model
+bbmle::AICctab(southmods,weights=T,delta=T)
+```
+
+Marine fishes important in FW but not W. Silversides not important in N and S. 
+
+### Integrated model
+
+```{r, fig.width=8, fig.height=8}
+modFW='chla~potam+flow+temp+secchi
+        hcope~chla+potam+flow+temp+secchi
+        pcope~chla+potam+flow+temp+secchi
+        amphi~chla+potam+flow+temp+secchi
+        estfish_bsmt~hcope+pcope+amphi+flow+temp+secchi+marfish_bsmt
+        marfish_bsmt~flow
+        amphi~~hcope+pcope
+        hcope~~pcope
+'
+
+modW='chla~potam+flow+temp+secchi
+        mysid~chla+potam+flow+temp+secchi
+        amphi~chla+potam+flow+temp+secchi
+        estfish_bsmt~mysid+amphi+flow+temp+secchi
+        amphi~~mysid
+'
+
+modN='chla~corbic+flow+temp+secchi
+        mysid~chla+corbic+flow+temp+secchi
+        hcope~chla+corbic+flow+temp+secchi
+        estfish_bsmt~mysid+hcope+flow+temp+secchi
+        hcope~~mysid
+'
+
+modS='chla~corbic+flow+temp+secchi
+        clad~chla+corbic+flow+temp+secchi
+        hcope~chla+corbic+flow+temp+secchi
+        pzoop~chla+corbic+flow+temp+secchi
+        estfish_bsmt~pzoop+clad+hcope+flow+temp+secchi
+        hcope~~pzoop+clad
+        pzoop~~clad
+'
+
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+#modificationindices(modfitW)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+myLavaanPlot(model=modfitFW, labels=labelsfarwest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#WEST
+myLavaanPlot(model=modfitW, labels=labelswest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#NORTH
+myLavaanPlot(model=modfitN, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#SOUTH
+myLavaanPlot(model=modfitS, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
+
+
 ### SEM model
 
 Note: You get somewhat different answers if you use a multigroup model vs. fit each region individually. I am not entirely sure why, but I think there is some data pooling going on like in hierarchical models. I would have to look into the math. I know that if you use the multigroup framework you can impose constraints like requiring certain parameters to be the same across groups (see [lavaan manual](https://lavaan.ugent.be/tutorial/groups.html)). Obviously, if data on a variable you want to use are missing from one site, you can't use the multigroup option (you will get an error) and have to fit individually.
@@ -346,8 +543,11 @@ Dropping dophos because strongly correlated with ammonia.
 #       dophos~flow_1
 #       ammonia~~dophos'
 
-mod1='chla~ammonia+chla_1+flow_1
-      ammonia~flow_1+chla_1'
+modfww='chla~ammonia+chla_1+flow_1+secchi_1+temp_1+potam_1
+      ammonia~flow_1+chla_1+secchi_1+temp_1+potam_1'
+
+modns='chla~ammonia+chla_1+flow_1+secchi_1+temp_1+corbic_1
+      ammonia~flow_1+chla_1+secchi_1+temp_1+corbic_1'
 
 #you can either do a multigroup model by region
 # modfit1=sem(mod1, data=fdr_ds, group = "region")
@@ -358,10 +558,10 @@ mod1='chla~ammonia+chla_1+flow_1
 # #residuals(modfit1)
 
 #or fit separately for each region 
-modfitFW=sem(mod1, data=filter(fdr_ds,region=="Far West"))
-modfitW=sem(mod1, data=filter(fdr_ds,region=="West"))
-modfitN=sem(mod1, data=filter(fdr_ds,region=="North"))
-modfitS=sem(mod1, data=filter(fdr_ds,region=="South"))
+modfitFW=sem(modfww, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modfww, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modns, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modns, data=filter(fdr_ds,region=="South"))
 summary(modfitFW, standardized=T, rsq=T)
 summary(modfitW, standardized=T, rsq=T)
 summary(modfitN, standardized=T, rsq=T)
@@ -373,27 +573,27 @@ labelsnorth=createLabels(modfitN, cnameslag)
 labelssouth=createLabels(modfitS, cnameslag)
 
 #FAR WEST
-myLavaanPlot(model=modfitFW, labels=labelsnorth,
+myLavaanPlot(model=modfitFW, labels=labelsfarwest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
 #WEST
-myLavaanPlot(model=modfitW, labels=labelsnorth,
+myLavaanPlot(model=modfitW, labels=labelswest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
 #NORTH
 myLavaanPlot(model=modfitN, labels=labelsnorth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
 #SOUTH
-myLavaanPlot(model=modfitS, labels=labelsnorth,
+myLavaanPlot(model=modfitS, labels=labelssouth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
 
@@ -409,25 +609,29 @@ myLavaanPlot(model=modfitS, labels=labelsnorth,
 #### Chla, zooplankton
 
 ```{r, fig.width=8, fig.height=8}
-modFW='chla~chla_1+hcope_1+amphi_1+flow_1
-       amphi~chla_1+amphi_1+flow_1
-       hcope~chla_1+hcope_1+flow_1+pcope_1
-       pcope~chla_1+pcope_1+hcope_1+amphi_1+flow_1
+modFW='chla~chla_1+hcope_1+amphi_1+flow_1+secchi_1+temp_1+potam_1
+       amphi~chla_1+amphi_1+flow_1+secchi_1+temp_1+potam_1
+       hcope~chla_1+hcope_1+flow_1+pcope_1+secchi_1+temp_1+potam_1
+       pcope~chla_1+pcope_1+hcope_1+amphi_1+flow_1+secchi_1+temp_1+potam_1
 '
-modW='chla~chla_1+hcope_1+flow_1
-       hcope~chla_1+hcope_1+mysid_1+pcope_1+flow_1
-       pcope~chla_1+pcope_1+hcope_1+mysid_1+flow_1
-       mysid~chla_1+mysid_1+hcope_1+pcope_1+flow_1
+modW='chla~chla_1+hcope_1+flow_1+secchi_1+temp_1+potam_1
+       amphi~chla_1+amphi_1+flow_1+secchi_1+temp_1+potam_1
+       hcope~chla_1+hcope_1+mysid_1+pcope_1+flow_1+secchi_1+temp_1+potam_1
+       pcope~chla_1+pcope_1+hcope_1+mysid_1+flow_1+secchi_1+temp_1+potam_1
+       mysid~chla_1+mysid_1+hcope_1+pcope_1+flow_1+secchi_1+temp_1+potam_1
 '
-modN='chla~chla_1+hcope_1+amphi_1+flow_1
-       amphi~chla_1+amphi_1+flow_1
-       hcope~chla_1+hcope_1+flow_1+pcope_1
-       pcope~chla_1+pcope_1+hcope_1+flow_1
+modN='chla~chla_1+hcope_1+amphi_1+flow_1+secchi_1+temp_1+corbic_1
+       amphi~chla_1+amphi_1+flow_1+secchi_1+temp_1+corbic_1
+       hcope~chla_1+hcope_1+flow_1+pcope_1+secchi_1+temp_1+corbic_1
+       pcope~chla_1+pcope_1+hcope_1+flow_1+secchi_1+temp_1+corbic_1
+       mysid~chla_1+mysid_1+hcope_1+pcope_1+flow_1+secchi_1+temp_1+corbic_1
+
 '
-modS='chla~chla_1+hcope_1+clad_1+flow_1
-       clad~chla_1+clad_1+flow_1+pcope_1
-       hcope~chla_1+hcope_1+flow_1+pcope_1
-       pcope~chla_1+pcope_1+hcope_1+clad_1+flow_1
+modS='chla~chla_1+hcope_1+clad_1+flow_1+secchi_1+temp_1+corbic_1
+       clad~chla_1+clad_1+flow_1+pcope_1+secchi_1+temp_1+corbic_1
+       hcope~chla_1+hcope_1+flow_1+pcope_1+secchi_1+temp_1+corbic_1
+       amphi~chla_1+amphi_1+flow_1+secchi_1+temp_1+corbic_1
+       pcope~chla_1+pcope_1+hcope_1+clad_1+flow_1+secchi_1+temp_1+corbic_1
 '
 modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
 modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
@@ -544,7 +748,8 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 #semPaths(modfitS, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("South", line = 1)
 ```
 
-### Integrated model
+
+
 
 South
 
