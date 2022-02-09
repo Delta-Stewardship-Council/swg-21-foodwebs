@@ -356,6 +356,8 @@ ggplot(fdr,aes(x=ammonia, y=dophos, color=chla)) +
 
 ### Best predictor of fish
 
+This doesn't consider time lags.
+
 ```{r}
 l_modelsfw = data.frame(l_model = c("tzoop","tzoop_c",
                                   "hzoop","hzoop+pzoop","pzoop",
@@ -409,7 +411,7 @@ names(southmods)=l_modelss$l_model
 bbmle::AICctab(southmods,weights=T,delta=T)
 ```
 
-tzoop and tzoop_e do pretty well in all regions. tzoop_c and hzoop+pzoop does poorly in all regions. amphi seem relevant in North (for midwater trawl), which is also where they are most abundant.
+Unlike annual model, individual zooplankton groups seems to be better predictors. The sign is not always what you would expect though.
 
 ```{r}
 l_modelsfw = data.frame(l_model = c("hcope+pcope+amphi",
@@ -446,6 +448,8 @@ bbmle::AICctab(southmods,weights=T,delta=T)
 Marine fishes important in FW but not W. Silversides not important in N and S. 
 
 ### Integrated model
+
+This model does not use time lags.
 
 ```{r, fig.width=8, fig.height=8}
 modFW='chla~potam+flow+temp+secchi
@@ -524,13 +528,11 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 ```
 
 
-### SEM model
+### SEM submodels
+
+These models do use time lags.
 
 Note: You get somewhat different answers if you use a multigroup model vs. fit each region individually. I am not entirely sure why, but I think there is some data pooling going on like in hierarchical models. I would have to look into the math. I know that if you use the multigroup framework you can impose constraints like requiring certain parameters to be the same across groups (see [lavaan manual](https://lavaan.ugent.be/tutorial/groups.html)). Obviously, if data on a variable you want to use are missing from one site, you can't use the multigroup option (you will get an error) and have to fit individually.
-
-I haven't looked in to how to modify the new (nicer) plotting code to work with the lags and multiple groups, but that is something that can be done.
-
-I haven't added corbic and sside, but that is something to explore.
 
 #### Chla, nutrients, flow
 
@@ -596,12 +598,6 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
-
-# par(mfrow=c(2,2))
-# semPaths(modfitFW, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("Far West", line = 1)
-# semPaths(modfitW, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("West", line = 1)
-# semPaths(modfitN, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("North", line = 1)
-# semPaths(modfitS, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("South", line = 1)
 
 #residuals(modfitFW)
 ```
@@ -674,33 +670,22 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-# par(mfrow=c(2,2))
-# semPaths(modfitFW, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("Far West", line = 1)
-# semPaths(modfitW, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("West", line = 1)
-# semPaths(modfitN, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("North", line = 1)
-# semPaths(modfitS, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("South", line = 1)
 ```
 
 #### Zooplankton, fish
 
-Also needs work. Note that because fish have more missing data, more rows get dropped (compared 'used' and 'total' number of observations to previous summaries).
+Note that because fish have more missing data, more rows get dropped (compared 'used' and 'total' number of observations to previous summaries).
 
 If you get a warning about variances being negative, that is **definitely** a problem. It seems to happen when you try to create a latent variables, but the variables that go into it don't acutally have a common trend.
 
 ```{r, fig.width=8, fig.height=8}
-modFW='fish=~estfish_bsmt+estfish_bsot
-       fish~hcope_1+amphi_1+pcope_1+flow_1
-       #estfish_bsmt~hcope_1+amphi_1+pcope_1+flow_1
-       #estfish_bsot~hcope_1+amphi_1+pcope_1+flow_1
+modFW='estfish_bsmt~hcope_1+amphi_1+pcope_1+flow_1+secchi_1+temp_1+marfish_bsmt_1
 '
-modW='estfish_bsmt~hcope_1+mysid_1+pcope_1+flow_1
-      estfish_bsot~hcope_1+mysid_1+pcope_1+flow_1
+modW='estfish_bsmt~hcope_1+mysid_1+pcope_1+amphi_1+flow_1+secchi_1+temp_1+marfish_bsmt_1
 '
-modN='estfish_bsmt~hcope_1+amphi_1+pcope_1+flow_1
-      estfish_bsot~hcope_1+amphi_1+pcope_1+flow_1
+modN='estfish_bsmt~hcope_1+mysid_1+pcope_1+amphi_1+flow_1+secchi_1+temp_1+sside_1
 '
-modS='estfish_bsmt~hcope_1+clad_1+pcope_1+flow_1
-      estfish_bsot~hcope_1+clad_1+pcope_1+flow_1
+modS='estfish_bsmt~hcope_1+clad_1+amphi_1+pcope_1+flow_1+secchi_1+temp_1+sside_1
 '
 modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
 modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
@@ -740,97 +725,4 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
-
-#par(mfrow=c(2,2))
-#semPaths(modfitFW, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("Far West", line = 1)
-#semPaths(modfitW, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("West", line = 1)
-#semPaths(modfitN, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("North", line = 1)
-#semPaths(modfitS, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("South", line = 1)
-```
-
-
-
-
-South
-
-```{r, fig.width=8, fig.height=8,eval=FALSE,echo=FALSE}
-modS='ammonia~flow_1+chla_1+clad_1
-      dophos~flow_1+chla_1+clad_1
-      ammonia~~dophos+clad
-      chla~chla_1+hcope_1+clad_1+ammonia+dophos+flow_1+corbic_1
-      hcope~chla_1+hcope_1+flow_1+pcope_1
-      pcope~pcope_1+hcope_1+clad_1
-      clad~chla_1+clad_1+flow_1
-      corbic~corbic_1+flow_1
-'
-modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
-summary(modfitS, standardized=T, rsq=T)
-# semPaths(modfitS, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("South", line = 1)
-
-residuals(modfitS)
-modificationindices(modfitS)
-
-labelssouth=createLabels(modfitS, cnameslag)
-
-myLavaanPlot(model=modfitS, labels=labelssouth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-
-```
-
-North 
-
-```{r,eval=FALSE,echo=FALSE}
-modN='ammonia~flow_1+chla_1+clad_1
-      dophos~flow_1+chla_1+clad_1
-      ammonia~~dophos+clad
-      dophos~~clad
-      chla~chla_1+hcope_1+clad_1+ammonia+dophos+flow_1+corbic_1
-      hcope~chla_1+hcope_1+flow_1
-      clad~chla_1+clad_1+flow_1
-      corbic~corbic_1+flow_1
-'
-modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
-summary(modfitN, standardized=T, rsq=T)
-# semPaths(modfitS, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("South", line = 1)
-
-residuals(modfitN)
-modificationindices(modfitN)
-
-labelsnorth=createLabels(modfitN, cnameslag)
-
-myLavaanPlot(model=modfitN, labels=labelsnorth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-
-
-modFW='chla~chla_1+hcope_1+potam_1+amphi_1
-       hcope~chla_1+hcope_1
-       potam~chla_1+potam_1
-       amphi~chla_1+amphi_1
-'
-modWN='chla~chla_1+hcope_1+potam_1+amphi_1+clad_1
-       hcope~chla_1+hcope_1
-       potam~chla_1+potam_1
-       amphi~chla_1+amphi_1
-       clad~chla_1+clad_1
-'
-
-modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
-modfitW=sem(modWN, data=filter(fdr_ds,region=="West"))
-modfitN=sem(modWN, data=filter(fdr_ds,region=="North"))
-summary(modfitFW, standardized=T, rsq=T)
-summary(modfitW, standardized=T, rsq=T)
-summary(modfitN, standardized=T, rsq=T)
-
-#par(mfrow=c(1,1))
-par(mfrow=c(2,2))
-semPaths(modfitFW, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("Far West", line = 1)
-semPaths(modfitW, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("West", line = 1)
-semPaths(modfitN, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("North", line = 1)
-semPaths(modfitS, "std", edge.label.cex = 1, node.width=2, nCharNodes = 0, residuals = F, intercepts = F); title("South", line = 1)
 ```

@@ -326,13 +326,13 @@ With and without detrending.
 # '
 
 #3
-modwest='chla~potam+flow+temp+secchi
-        tzoop~chla+potam+flow+temp+secchi
-        amphi~chla+potam+flow+temp+secchi
-        estfish_bsmt~tzoop+amphi+flow
-        #estfish_bsot~tzoop+amphi+flow+temp+secchi
-        amphi~~tzoop
-'
+# modwest='chla~potam+flow+temp+secchi
+#         tzoop~chla+potam+flow+temp+secchi
+#         amphi~chla+potam+flow+temp+secchi
+#         estfish_bsmt~tzoop+amphi+flow
+#         #estfish_bsot~tzoop+amphi+flow+temp+secchi
+#         amphi~~tzoop
+# '
 #4
 modwest='chla~potam+flow+temp+secchi
         hzoop~chla+potam+flow+temp+secchi
@@ -380,13 +380,13 @@ labelswest <- createLabels(modfitwest, cnames)
 # '
 
 #3
-modnorth='chla~corbic+potam+flow+temp+secchi
-        tzoop~chla+corbic+potam+flow+temp+secchi
-        amphi~chla+corbic+potam+flow+temp+secchi
-        estfish_bsmt~tzoop+amphi+flow+temp+secchi+chla+sside
-        #estfish_bsot~tzoop+amphi+flow+temp+secchi+sside
-        amphi~~tzoop
-'
+# modnorth='chla~corbic+potam+flow+temp+secchi
+#         tzoop~chla+corbic+potam+flow+temp+secchi
+#         amphi~chla+corbic+potam+flow+temp+secchi
+#         estfish_bsmt~tzoop+amphi+flow+temp+secchi+chla+sside
+#         #estfish_bsot~tzoop+amphi+flow+temp+secchi+sside
+#         amphi~~tzoop
+# '
 #4
 modnorth='chla~corbic+potam+flow+temp+secchi
         hzoop~chla+corbic+potam+flow+temp+secchi
@@ -430,13 +430,13 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 # '
 
 #3
-modsouth='chla~corbic+flow+temp+secchi
-        tzoop~chla+corbic+flow+temp+secchi
-        amphi~chla+corbic+flow+temp+secchi
-        estfish_bsmt~tzoop+amphi+flow+temp+secchi+corbic+sside
-        #estfish_bsot~tzoop+amphi+flow+temp+secchi+corbic+sside
-        amphi~~tzoop
-'
+# modsouth='chla~corbic+flow+temp+secchi
+#         tzoop~chla+corbic+flow+temp+secchi
+#         amphi~chla+corbic+flow+temp+secchi
+#         estfish_bsmt~tzoop+amphi+flow+temp+secchi+corbic+sside
+#         #estfish_bsot~tzoop+amphi+flow+temp+secchi+corbic+sside
+#         amphi~~tzoop
+# '
 #4
 modsouth='chla~corbic+flow+temp+secchi
         hzoop~chla+corbic+flow+temp+secchi
@@ -529,7 +529,7 @@ myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
 						 color=c("regress","latent"))
 ```
 
-### SEM model (h and p zoop split)
+### Older SEM model (h and p zoop split)
 
 With and without detrending.
 
