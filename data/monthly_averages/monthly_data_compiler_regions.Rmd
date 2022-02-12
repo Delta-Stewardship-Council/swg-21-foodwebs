@@ -31,7 +31,7 @@ flow=read.csv("monthly_average_flow_byregion.csv")
 clams=read.csv("clams_monthly_regions.csv")
 fishbs=read.csv("fish_BayStudy_monthly.csv")
 fishdj=read.csv("fish_DJFMP_monthly.csv")
-nutwq=read.csv("nutrient_data_monthly_regions.csv")
+nutwq=read.csv("nutrient_data_monthly_regions_imputed.csv")
 zoop=read.csv("zoop_month.csv")
 
 # Leaving in this but changing bellow to just use zoop
