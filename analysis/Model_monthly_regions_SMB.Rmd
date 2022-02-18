@@ -1,0 +1,736 @@
+---
+title: "Monthly model - Regions"
+author: "Tanya Rogers"
+date: "1/6/2022"
+output: html_document
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = '../docs',
+      knit_root_dir = '..',
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, message=FALSE}
+library(dplyr)
+#library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
+library(lavaan)
+library(semPlot)
+library(DiagrammeR)
+library(ggplot2)
+library(tidyr)
+```
+
+### Import data
+
+```{r import}
+combined=read.csv("data/monthly_averages/monthly_data_compiled_regions.csv",stringsAsFactors = F)
+cnames=read.csv("analysis/column_names_region_monthly.csv", stringsAsFactors = F)
+dsub=filter(combined, Year>=1995) %>% arrange(Region,Year,Month)
+focaldata=dsub[,cnames$Datacolumn]
+fvars=cnames$Shortname
+colnames(focaldata)=fvars
+regions=unique(focaldata$region)
+regionorder=c("Far West","West","North","South")
+focaldata=focaldata%>% 
+  mutate(decyear=year+(month-1)/12,
+         sinmon=sin(2*pi/12*month),
+         cosmon=cos(2*pi/12*month))
+
+focaldata = focaldata %>% 
+  mutate(tzoop=hcope+clad+mysid+pcope,
+         tzoop_c=hcope_c+clad_c+mysid_c+pcope_c,
+         tzoop_e=hcope_e+clad_e+mysid_e+pcope_e,
+         hzoop=hcope+clad,
+         hzoop_c=hcope_c+clad_c,
+         hzoop_e=hcope_e+clad_e,
+         pzoop=mysid+pcope,
+         pzoop_c=mysid_c+pcope_c,
+         pzoop_e=mysid_e+pcope_e) 
+fvars=c(fvars,"tzoop","tzoop_c","tzoop_e",
+        "hzoop","hzoop_c","hzoop_e",
+        "pzoop","pzoop_c","pzoop_e")
+cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_c","tzoop_e",
+                                                       "hzoop","hzoop_c","hzoop_e",
+                                                       "pzoop","pzoop_c","pzoop_e"),
+                               Diagramname=c("Total Zooplankton\nBiomass",
+                                             "Total Zooplankton\nAbundance",
+                                             "Total Zooplankton\nEnergy",
+                                             "Herbivorous Zooplankton\nBiomass",
+                                             "Herbivorous Zooplankton\nAbundance",
+                                             "Herbivorous Zooplankton\nEnergy",
+                                             "Predatory Zooplankton\nBiomass",
+                                             "Predatory Zooplankton\nAbundance",
+                                             "Predatory Zooplankton\nEnergy"),
+                               Datacolumn=NA,Log="yes"))
+
+#focal variables
+varnames=c("temp","flow","nitrate","ammonia","din","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop","tzoop_c","tzoop_e","hzoop","pzoop")
+
+#labels for lagged vars
+cnameslag=cnames
+cnameslag$Shortname=paste0(cnameslag$Shortname,"_1")
+cnameslag$Diagramname=paste(cnameslag$Diagramname,"(t-1)")
+cnameslag=rbind(cnames,cnameslag)
+
+source("analysis/myLavaanPlot.r")
+```
+
+Notes:  
+Determine which vars are appropriate for which regions and at what lags.  
+Write out path diagram for each region.  
+Model with and without fish, probably, because of missing data.  
+
+### Data prep
+
+Log transform, scale.  
+Within and across regions.  
+Create set with regional monthly means removed.  
+
+```{r prep}
+#log transform
+logvars=fvars[cnames$Log=="yes"]
+logtrans=function(x) {
+  x2=x[which(!is.na(x))]
+  if(any(x2==0)) {log(x+min(x2[which(x2>0)],na.rm=T))}
+  else {log(x)}
+}
+focaldatalog = focaldata %>% 
+  mutate_at(logvars,logtrans)
+
+#scale data
+fdr0=focaldatalog
+tvars=fvars[-(1:3)]
+
+#scaled within regions
+fdr=fdr0 %>% 
+  group_by(region) %>% 
+  #scale
+  mutate_at(tvars,scale) %>% 
+  #lag
+  mutate_at(tvars,list("1"=lag,"2"=function(x) {lag(x,2)})) %>% 
+  ungroup() %>% 
+  as.data.frame()
+
+#scaled within regions, remove monthly means
+fdr_ds=fdr %>% 
+  group_by(region,month) %>%
+  mutate_at(tvars,list("mm"=function(x) {mean(x,na.rm = T)})) %>% 
+  mutate_at(tvars,function(x) {x-mean(x,na.rm = T)}) %>% 
+  ungroup() %>% 
+  #lag
+  group_by(region) %>% 
+  mutate_at(tvars,list("1"=lag,"2"=function(x) {lag(x,2)})) %>% 
+  ungroup() %>% 
+  as.data.frame()
+
+#scaled across regions
+fdr1=fdr0 %>% 
+  #scale
+  mutate_at(tvars,scale) %>% 
+  #lag
+  group_by(region) %>% 
+  mutate_at(tvars,list("1"=lag,"2"=function(x) {lag(x,2)})) %>% 
+  ungroup() %>% 
+  as.data.frame()
+
+#scaled across regions, monthly means removed
+fdr1_ds=fdr1 %>% 
+  group_by(region,month) %>%
+  mutate_at(tvars,list("mm"=function(x) {mean(x,na.rm = T)})) %>% 
+  mutate_at(tvars,function(x) {x-mean(x,na.rm = T)}) %>% 
+  ungroup() %>% 
+  #lag
+  group_by(region) %>% 
+  mutate_at(tvars,list("1"=lag,"2"=function(x) {lag(x,2)})) %>% 
+  ungroup() %>% 
+  as.data.frame()
+```
+
+Data availability by series and region (prop zeros and prop missing)    
+
+FW: ignore clad, corbic, sside  
+W: ignore corbic, sside  
+S: ignore potam  
+
+```{r avail}
+dataavail=focaldata %>% 
+  gather(var, value, 4:length(fvars)) %>% 
+  group_by(region, var) %>% 
+  summarize(
+    propmissing=length(which(is.na(value)))/length(value),
+    propzeros=length(which(value==0))/length(which(!is.na(value)))) %>% 
+  as.data.frame()
+
+#these variables should not be used (too many zeros)
+filter(dataavail,propzeros>0.5 | is.na(propzeros))
+
+#these variables have lots of missing data
+filter(dataavail,propmissing>0.45 | is.na(propmissing))
+```
+
+### Time series plots
+
+```{r timeseries, fig.width=8, fig.height=13, echo=FALSE, warning=FALSE}
+plot1=select(focaldata,region,decyear,varnames) %>% 
+  gather(Var,Value,varnames) %>% 
+  mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
+ggplot(plot1,aes(x=decyear,y=Value)) +
+  facet_grid(Var~region, scales="free_y") +
+  geom_line() +
+  theme_bw() +
+  labs(title = "Original Units")
+
+plot2=select(fdr,region,decyear,varnames) %>% 
+  gather(Var,Value,varnames) %>% 
+  mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
+ggplot(plot2,aes(x=decyear,y=Value)) +
+  facet_grid(Var~region, scales="free_y") +
+  geom_line() +
+  theme_bw() +
+  labs(title = "Log scaled within region")
+
+plot3=select(fdr_ds,region,decyear,varnames) %>% 
+  gather(Var,Value,varnames) %>% 
+  mutate(Var=factor(Var,levels = varnames),
+         region=factor(region,levels=regionorder))
+plotmm=select(fdr_ds,region,decyear,paste0(varnames,"_mm")) %>% 
+  gather(Var,Value,paste0(varnames,"_mm")) %>% 
+  mutate(Var=gsub("_mm","",Var)) %>% 
+  mutate(Var=factor(Var,levels = varnames),
+         region=factor(region,levels=regionorder))
+ggplot(plot3,aes(x=decyear,y=Value)) +
+  facet_grid(Var~region, scales="free_y") +
+  geom_line(data=plotmm,color="tomato") +
+  geom_line() +
+  theme_bw() +
+  labs(title = "Seasonal means removed")
+```
+
+### Cross-correlation matrices  
+(only sig correlations shown... no correction for multiple comparisons)
+
+```{r cc, fig.width=7, fig.height=6, echo=FALSE}
+#lag 0
+lags0=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+                  stringsAsFactors = F)
+for(i in 1:nrow(lags0)) {
+  v1=fdr[fdr$region==lags0$region[i],lags0$V1[i]]
+  v2=fdr[fdr$region==lags0$region[i],lags0$V2[i]]
+  if(!all(is.na(v1)) & !all(is.na(v2))) {
+    tccf=cor.test(v1,v2)
+    lags0$Cor[i]=tccf$estimate
+    lags0$P[i]=tccf$p.value
+  }
+}
+lags0$V1=factor(lags0$V1,levels = varnames)
+lags0$V2=factor(lags0$V2,levels = varnames)
+lags0$region=factor(lags0$region,levels = regionorder)
+ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+  facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
+  geom_tile() +
+  geom_abline(slope=1,intercept = 0) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(x="V2 (t)", y="V1 (t)", title = "lag 0 cross-cor") +
+  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
+  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+
+#lag 1
+lags1=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+                  stringsAsFactors = F)
+for(i in 1:nrow(lags1)) {
+  v1=fdr[fdr$region==lags1$region[i],lags1$V1[i]]
+  v2=fdr[fdr$region==lags1$region[i],lags1$V2[i]]
+  if(!all(is.na(v1)) & !all(is.na(v2))) {
+    tccf=cor.test(v1,lag(v2,1))
+    lags1$Cor[i]=tccf$estimate
+    lags1$P[i]=tccf$p.value
+  }
+}
+lags1$V1=factor(lags1$V1,levels = varnames)
+lags1$V2=factor(lags1$V2,levels = varnames)
+lags1$region=factor(lags1$region,levels = regionorder)
+ggplot(filter(lags1,P<0.05), aes(x=V2,y=V1,fill=Cor)) +
+  facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
+  geom_tile() +
+  geom_abline(slope=1,intercept = 0) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(x="V2 (t-1)", y="V1 (t)", title = "lag 1 cross-cor") +
+  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
+  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+
+#lag 1 seasonality removed
+lags1ds=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+                  stringsAsFactors = F)
+for(i in 1:nrow(lags1ds)) {
+  v1=fdr_ds[fdr_ds$region==lags1ds$region[i],lags1ds$V1[i]]
+  v2=fdr_ds[fdr_ds$region==lags1ds$region[i],lags1ds$V2[i]]
+  if(!all(is.na(v1)) & !all(is.na(v2))) {
+    tccf=cor.test(v1,lag(v2,1))
+    lags1ds$Cor[i]=tccf$estimate
+    lags1ds$P[i]=tccf$p.value
+  }
+}
+lags1ds$V1=factor(lags1ds$V1,levels = varnames)
+lags1ds$V2=factor(lags1ds$V2,levels = varnames)
+lags1ds$region=factor(lags1ds$region,levels = regionorder)
+ggplot(filter(lags1ds,P<0.05), aes(x=V2,y=V1,fill=Cor)) +
+  facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
+  geom_tile() +
+  geom_abline(slope=1,intercept = 0) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(x="V2 (t-1)", y="V1 (t)",title = "lag 1 cross-cor, monthly means removed") +
+  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
+  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+```
+
+Other notes:
+
+*Detrended fish indices are NOT correlated in S!*  
+
+Nitrate and ammonia are positively correlated, max at lag 0 all regions.  
+Nitrate and dophos are positively correlated, max at lag 0 all regions.  
+Ammonia and dophos are positively correlated, lag 0 for FW and S, ammonia lags dphos by 3 months in W and N.  
+
+Chla nitrate neg correlated, lag 0.  
+Chla ammonia neg correlated, lag 0.  
+Chla dophos relationship unclear.  
+
+High flow 2-4 month prev = high chla
+
+Hcope lags chla by 1, positive, except FW.  
+Clad seem to precede chla by 2, positive.  
+Amphi relationship unclear, prob bc not eating chla in water column.  
+In N and W, chla lags potam, negative. The opposite in W.  
+
+Mysid and hcope postive, lag 0.  
+In S and W, hcope lags pcope, negative. 
+
+### Exploratory plots
+
+```{r other, echo=FALSE, eval=FALSE}
+#ccf between two variables for all regions
+ccfplot=function(v1,v2) {
+  par(mfrow=c(2,2),mar=c(3,3,1.5,1))
+  for(i in 1:length(regions)) {
+    dtemp=filter(fdr,region==regions[i])
+    ccf(dtemp$chla, dtemp$flow,lag.max = 6, na.action = na.pass)
+    title(paste(regions[i],v1,v2), line=0.5)
+  }
+}
+
+ccfplot("chla","flow")
+ccfplot("hcope","mysid")
+
+#plot multiple variables on top of each other
+ggplot(fdr,aes(x=decyear)) + 
+  facet_grid(region~.) + 
+  geom_line(aes(y=ammonia)) +
+  geom_line(aes(y=chla),color="green") +
+  geom_line(aes(y=hcope),color="blue")
+
+#plot a single variable
+ggplot(fdr,aes(x=decyear, y=flow, color=region)) + geom_line()
+
+#individual bivariate plots
+ggplot(focaldata,aes(x=ammonia, y=chla)) + 
+  facet_grid(region~.) + geom_point()
+ggplot(fdr,aes(x=ammonia_1, y=chla)) + 
+  facet_grid(region~.) + geom_point()
+ggplot(fdr,aes(x=ammonia, y=dophos, color=chla)) + 
+  facet_grid(region~.) + geom_point() + 
+  scale_color_viridis_c()
+```
+
+### Best predictor of fish
+
+This doesn't consider time lags.
+
+```{r}
+l_modelsfw = data.frame(l_model = c("tzoop","tzoop_c",
+                                  "hzoop","hzoop+pzoop","pzoop",
+                                  "hcope","amphi","pcope",
+                                  "tzoop+amphi","hzoop+amphi","pzoop+amphi",
+                                  "hcope+pcope","hcope+amphi","pcope+amphi",
+                                  "hcope+pcope+amphi"))
+
+l_models = data.frame(l_model = c("tzoop","tzoop_c",
+                                  "hzoop","hzoop+pzoop","pzoop",
+                                  "mysid","hcope","clad","amphi","pcope",
+                                  "tzoop+amphi","hzoop+amphi","pzoop+amphi","pzoop+clad",
+                                  "hzoop+mysid","pzoop+clad+hcope",
+                                  "hcope+pcope","hcope+amphi","pcope+amphi","hcope+clad",
+                                  "amphi+clad","pcope+clad","mysid+amphi",
+                                  "hcope+clad+mysid",
+                                  "hcope+clad+mysid+pcope",
+                                  "hcope+mysid",
+                                  "hcope+mysid+pcope",
+                                  "hcope+mysid+amphi"))
+
+l_modelss = data.frame(l_model = c("tzoop","tzoop_c",
+                                  "hzoop","hzoop+pzoop","pzoop",
+                                  "hcope","amphi","pcope","clad",
+                                  "tzoop+amphi","hzoop+amphi","pzoop+amphi","pzoop+clad",
+                                  "pzoop+clad+hcope",
+                                  "hcope+pcope","hcope+amphi","pcope+amphi","hcope+clad",
+                                  "amphi+clad","pcope+clad",
+                                  "hcope+pcope+amphi","hcope+pcope+clad",
+                                  "hcope+pcope+amphi+clad"))
+
+#Midwater Trawl
+fwestmods = purrr::map(l_modelsfw$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="Far West" & !is.na(amphi) & !is.na(tzoop))))
+names(fwestmods)=l_modelsfw$l_model
+bbmle::AICctab(fwestmods,weights=T,delta=T)
+
+westmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="West" & !is.na(amphi) & !is.na(tzoop))))
+names(westmods)=l_models$l_model
+bbmle::AICctab(westmods,weights=T,delta=T)
+
+northmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="North" & !is.na(amphi) & !is.na(tzoop))))
+names(northmods)=l_models$l_model
+bbmle::AICctab(northmods,weights=T,delta=T)
+
+southmods = purrr::map(l_modelss$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="South" & !is.na(amphi) & !is.na(tzoop))))
+names(southmods)=l_modelss$l_model
+bbmle::AICctab(southmods,weights=T,delta=T)
+```
+
+Unlike annual model, individual zooplankton groups seems to be better predictors. The sign is not always what you would expect though.
+
+```{r}
+l_modelsfw = data.frame(l_model = c("hcope+pcope+amphi",
+                                   "hcope+pcope+amphi+marfish_bsmt"))
+l_modelsw = data.frame(l_model = c("mysid+amphi",
+                                   "mysid+amphi+marfish_bsmt"))
+l_modelsn = data.frame(l_model = c("hcope+mysid",
+                                   "hcope+mysid+sside"))
+l_modelss = data.frame(l_model = c("pzoop+clad+hcope",
+                                   "pzoop+clad+hcope+sside"))
+
+#Midwater Trawl
+fwestmods = purrr::map(l_modelsfw$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="Far West" & !is.na(amphi))))
+names(fwestmods)=l_modelsfw$l_model
+bbmle::AICctab(fwestmods,weights=T,delta=T)
+
+westmods = purrr::map(l_modelsw$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="West" & !is.na(amphi))))
+names(westmods)=l_modelsw$l_model
+bbmle::AICctab(westmods,weights=T,delta=T)
+
+northmods = purrr::map(l_modelsn$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="North" & !is.na(sside))))
+names(northmods)=l_modelsn$l_model
+bbmle::AICctab(northmods,weights=T,delta=T)
+
+southmods = purrr::map(l_modelss$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
+            data = filter(fdr_ds,region=="South" & !is.na(sside))))
+names(southmods)=l_modelss$l_model
+bbmle::AICctab(southmods,weights=T,delta=T)
+```
+
+Marine fishes important in FW but not W. Silversides not important in N and S. 
+
+### Integrated model
+
+This model does not use time lags.
+
+```{r, fig.width=8, fig.height=8}
+modFW='chla~potam+flow+temp+secchi
+        hcope~chla+potam+flow+temp+secchi
+        pcope~chla+potam+flow+temp+secchi
+        amphi~chla+potam+flow+temp+secchi
+        estfish_bsmt~hcope+pcope+amphi+flow+temp+secchi+marfish_bsmt
+        marfish_bsmt~flow
+        amphi~~hcope+pcope
+        hcope~~pcope
+'
+
+modW='chla~potam+flow+temp+secchi
+        mysid~chla+potam+flow+temp+secchi
+        amphi~chla+potam+flow+temp+secchi
+        estfish_bsmt~mysid+amphi+flow+temp+secchi
+        amphi~~mysid
+'
+
+modN='chla~corbic+flow+temp+secchi
+        mysid~chla+corbic+flow+temp+secchi
+        hcope~chla+corbic+flow+temp+secchi
+        estfish_bsmt~mysid+hcope+flow+temp+secchi
+        hcope~~mysid
+'
+
+modS='chla~corbic+flow+temp+secchi
+        clad~chla+corbic+flow+temp+secchi
+        hcope~chla+corbic+flow+temp+secchi
+        pzoop~chla+corbic+flow+temp+secchi
+        estfish_bsmt~pzoop+clad+hcope+flow+temp+secchi
+        hcope~~pzoop+clad
+        pzoop~~clad
+'
+
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+#modificationindices(modfitW)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+myLavaanPlot(model=modfitFW, labels=labelsfarwest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#WEST
+myLavaanPlot(model=modfitW, labels=labelswest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#NORTH
+myLavaanPlot(model=modfitN, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#SOUTH
+myLavaanPlot(model=modfitS, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
+
+
+### SEM submodels
+
+These models do use time lags.
+
+Note: You get somewhat different answers if you use a multigroup model vs. fit each region individually. I am not entirely sure why, but I think there is some data pooling going on like in hierarchical models. I would have to look into the math. I know that if you use the multigroup framework you can impose constraints like requiring certain parameters to be the same across groups (see [lavaan manual](https://lavaan.ugent.be/tutorial/groups.html)). Obviously, if data on a variable you want to use are missing from one site, you can't use the multigroup option (you will get an error) and have to fit individually.
+
+#### Chla, nutrients, flow
+
+Clams don't seem to have any impact on chla.
+Dropping dophos because strongly correlated with ammonia.
+
+```{r, fig.width=8, fig.height=8}
+# mod1='chla~ammonia+dophos+chla_1+flow_1
+#       ammonia~flow_1+chla_1
+#       dophos~flow_1
+#       ammonia~~dophos'
+
+modfww='din~din_1+chla_1+flow_1+hzoop_1+pzoop_1+temp_1
+        chla~din_1+chla_1+potam_1+hzoop_1+flow_1+temp_1
+        hzoop~chla_1+potam_1+hzoop_1+pzoop_1+flow_1+temp_1
+        potam~din_1+chla_1+potam_1+hzoop_1+pzoop_1+flow_1+temp_1'
+
+## Difference from `modfww` above:
+### 1) corbicula instead of potamocorbula
+### 2) secchi_1 added as predictor to din and hzoop
+### 3) din_1 removed as predictor of clam (corbic in this case)
+modns= 'din~din_1+chla_1+flow_1+hzoop_1+pzoop_1+secchi_1+temp_1
+        chla~din_1+chla_1+corbic_1+hzoop_1+flow_1+temp_1
+        hzoop~chla_1+corbic_1+hzoop_1+pzoop_1+flow_1+secchi_1+temp_1
+        corbic~chla_1+corbic_1+hzoop_1+pzoop_1+flow_1+temp_1'
+
+#you can either do a multigroup model by region
+# modfit1=sem(mod1, data=fdr_ds, group = "region")
+# summary(modfit1, standardized=T, rsq=T)
+# 
+# par(mfrow=c(2,2))
+# semPaths(modfit1, "std", edge.label.cex = 1, residuals = F,  node.width=3, nCharNodes = 0, intercepts = F, title = T)
+# #residuals(modfit1)
+
+#or fit separately for each region 
+modfitFW=sem(modfww, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modfww, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modns, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modns, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+myLavaanPlot(model=modfitFW, labels=labelsfarwest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
+#WEST
+myLavaanPlot(model=modfitW, labels=labelswest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
+#NORTH
+myLavaanPlot(model=modfitN, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
+#SOUTH
+myLavaanPlot(model=modfitS, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=F, sig=0.05, 
+						 width=c("regress","latent","covs"),
+						 color=c("regress","latent","covs"))
+
+#residuals(modfitFW)
+```
+
+#### Chla, zooplankton
+
+```{r, fig.width=8, fig.height=8}
+modFW='chla~chla_1+hcope_1+amphi_1+flow_1+secchi_1+temp_1+potam_1
+       amphi~chla_1+amphi_1+flow_1+secchi_1+temp_1+potam_1
+       hcope~chla_1+hcope_1+flow_1+pcope_1+secchi_1+temp_1+potam_1
+       pcope~chla_1+pcope_1+hcope_1+amphi_1+flow_1+secchi_1+temp_1+potam_1
+'
+modW='chla~chla_1+hcope_1+flow_1+secchi_1+temp_1+potam_1
+       amphi~chla_1+amphi_1+flow_1+secchi_1+temp_1+potam_1
+       hcope~chla_1+hcope_1+mysid_1+pcope_1+flow_1+secchi_1+temp_1+potam_1
+       pcope~chla_1+pcope_1+hcope_1+mysid_1+flow_1+secchi_1+temp_1+potam_1
+       mysid~chla_1+mysid_1+hcope_1+pcope_1+flow_1+secchi_1+temp_1+potam_1
+'
+modN='chla~chla_1+hcope_1+amphi_1+flow_1+secchi_1+temp_1+corbic_1
+       amphi~chla_1+amphi_1+flow_1+secchi_1+temp_1+corbic_1
+       hcope~chla_1+hcope_1+flow_1+pcope_1+secchi_1+temp_1+corbic_1
+       pcope~chla_1+pcope_1+hcope_1+flow_1+secchi_1+temp_1+corbic_1
+       mysid~chla_1+mysid_1+hcope_1+pcope_1+flow_1+secchi_1+temp_1+corbic_1
+
+'
+modS='chla~chla_1+hcope_1+clad_1+flow_1+secchi_1+temp_1+corbic_1
+       clad~chla_1+clad_1+flow_1+pcope_1+secchi_1+temp_1+corbic_1
+       hcope~chla_1+hcope_1+flow_1+pcope_1+secchi_1+temp_1+corbic_1
+       amphi~chla_1+amphi_1+flow_1+secchi_1+temp_1+corbic_1
+       pcope~chla_1+pcope_1+hcope_1+clad_1+flow_1+secchi_1+temp_1+corbic_1
+'
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+#modificationindices(modfitW)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+myLavaanPlot(model=modfitFW, labels=labelsfarwest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#WEST
+myLavaanPlot(model=modfitW, labels=labelswest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#NORTH
+myLavaanPlot(model=modfitN, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#SOUTH
+myLavaanPlot(model=modfitS, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+
+```
+
+#### Zooplankton, fish
+
+Note that because fish have more missing data, more rows get dropped (compared 'used' and 'total' number of observations to previous summaries).
+
+If you get a warning about variances being negative, that is **definitely** a problem. It seems to happen when you try to create a latent variables, but the variables that go into it don't acutally have a common trend.
+
+```{r, fig.width=8, fig.height=8}
+modFW='estfish_bsmt~hcope_1+amphi_1+pcope_1+flow_1+secchi_1+temp_1+marfish_bsmt_1
+'
+modW='estfish_bsmt~hcope_1+mysid_1+pcope_1+amphi_1+flow_1+secchi_1+temp_1+marfish_bsmt_1
+'
+modN='estfish_bsmt~hcope_1+mysid_1+pcope_1+amphi_1+flow_1+secchi_1+temp_1+sside_1
+'
+modS='estfish_bsmt~hcope_1+clad_1+amphi_1+pcope_1+flow_1+secchi_1+temp_1+sside_1
+'
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+myLavaanPlot(model=modfitFW, labels=labelsfarwest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#WEST
+myLavaanPlot(model=modfitW, labels=labelswest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#NORTH
+myLavaanPlot(model=modfitN, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#SOUTH
+myLavaanPlot(model=modfitS, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```

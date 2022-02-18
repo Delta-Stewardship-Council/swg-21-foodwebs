@@ -3,12 +3,12 @@ Year,year,year,Year,no
 Month,month,month,Month,no
 Region,region,region,Region,no
 Flow,flow,flow,Flow,no
-Salinity,salinity,salinity,Salinity,no
 Secchi,secchi,secchi,Secchi,no
 Ammonia,ammonia,ammonia,DissAmmonia,yes
 Phytoplankton,chla,phytoplankton,Chlorophyll,yes
 Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes
 Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes
+Dissolved Inorganic Nitrogen,din,DIN,DIN,yes
 Temperature,temp,temperature,Temperature,no
 Potamocorbula,potam,Potamocorbula\nclams,Potamocorbula_cpue,no
 Corbicula,corbic,Corbicula\nclams,Corbicula_cpue,no
