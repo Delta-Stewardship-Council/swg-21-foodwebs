@@ -26,13 +26,13 @@ library(ggplot2)
 ```
 
 ```{r}
-amphipod=read.csv("data/monthly_averages/amphipod_monthly_regions.csv")
-flow=read.csv("data/monthly_averages/monthly_average_flow_byregion.csv")
-clams=read.csv("data/monthly_averages/clams_monthly_regions.csv")
-fishbs=read.csv("data/monthly_averages/fish_BayStudy_monthly.csv")
-fishdj=read.csv("data/monthly_averages/fish_DJFMP_monthly.csv")
-nutwq=read.csv("data/monthly_averages/nutrient_data_monthly_regions_imputed.csv")
-zoop=read.csv("data/monthly_averages/zoop_month.csv")
+amphipod=read.csv("amphipod_monthly_regions.csv")
+flow=read.csv("monthly_average_flow_byregion.csv")
+clams=read.csv("clams_monthly_regions.csv")
+fishbs=read.csv("fish_BayStudy_monthly.csv")
+fishdj=read.csv("fish_DJFMP_monthly.csv")
+nutwq=read.csv("nutrient_data_monthly_regions_imputed.csv")
+zoop=read.csv("zoop_month.csv")
 
 # Leaving in this but changing bellow to just use zoop
 zoopbm=dplyr::select(zoop, Year, Month, Region, grep("BPUE", colnames(zoop)))
