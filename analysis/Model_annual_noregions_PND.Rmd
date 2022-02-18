@@ -74,7 +74,13 @@ focaldatalog = focaldata %>%
 
 #scale data
 fd0=focaldatalog
-tvars=fvars[-1]
+tvars=c(fvars[-1], c("rep_zoop_c",
+                     "rep_zoop_m",
+                     "rep_zoop_e",
+                     "all_zoop_c",
+                     "all_zoop_m",
+                     "all_zoop_e",
+                     "all_fish"))
 
 fd=fd0 %>% 
   #lag
@@ -455,17 +461,30 @@ met_compare = ggplot(data = models,
                          y = metr,
                          color = type)) +
   theme_classic(base_size = 20) +
-  labs(y = metric)+
+  labs(title = "SEM", y = metric)+
   theme(axis.text.x = element_text(angle = 90)) +
   geom_point()
 print(met_compare)
+
+lm_data_ranked = models %>% 
+   mutate(model_name = forcats::fct_reorder(model_name, lm_AIC))
+
+lm_compare = ggplot(data = lm_data_ranked ,
+                     aes(x = model_name,
+                         y = lm_AIC,
+                         color = type)) +
+  theme_classic(base_size = 20) +
+  labs(title = "Linear Model", y = metric)+
+  theme(axis.text.x = element_text(angle = 90)) +
+  geom_point()
+print(lm_compare)
 
 AIC_compare = ggplot(data = models,
                      aes(x = lm_AIC,
                          y = metr,
                          color = type)) +
   theme_classic(base_size = 20) +
-  labs(y = metric)+
+  labs(y = paste0("SEM ", metric))+
   theme(axis.text.x = element_text(angle = 90)) +
   geom_point()
 print(AIC_compare)
