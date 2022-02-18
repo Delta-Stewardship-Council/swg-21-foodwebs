@@ -969,6 +969,8 @@ amm_imputed <- read_csv("data/missing_data/imputed_data/diss_ammonia_imputed_dat
   mutate(Analyte="DissAmmonia")
 nitr_imputed <- read_csv("data/missing_data/imputed_data/diss_nitrate_nitrite_imputed_data.csv")%>% 
   mutate(Analyte="DissNitrateNitrite")
+ophos_imputed <- read_csv("data/missing_data/imputed_data/diss_orthophos_imputed_data.csv")%>% 
+  mutate(Analyte="DissOrthophos")
 secchi_imputed <- read_csv("data/missing_data/imputed_data/secchi_imputed_data.csv")%>% 
   mutate(Analyte="Secchi")
 
