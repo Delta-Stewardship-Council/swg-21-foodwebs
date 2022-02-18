@@ -975,7 +975,7 @@ secchi_imputed <- read_csv("data/missing_data/imputed_data/secchi_imputed_data.c
   mutate(Analyte="Secchi")
 
 # combine and pivot
-all_imputed <- bind_rows(temp_imputed, chl_imputed, amm_imputed, nitr_imputed, secchi_imputed)
+all_imputed <- bind_rows(temp_imputed, chl_imputed, amm_imputed, nitr_imputed, ophos_imputed, secchi_imputed)
 View(all_imputed)
 summary(all_imputed) # only 42 remaining NAs instead of 274 NAs
 
@@ -993,7 +993,7 @@ station_region <- read_csv("data/missing_data/sregions.csv")
 all_imputed_wide_region <- all_imputed_wide %>% 
   left_join(station_region, by="Station") %>% 
   filter(!is.na(Region)) %>% 
-  mutate(DIN= DissAmmonia + DissNitrateNitrite) %>%  # new column for dissolved inorganic nitrogen (DIN= NITRATE/NITRATE + AMM)
+  mutate(DIN= DissAmmonia + DissNitrateNitrite) # %>%  # new column for dissolved inorganic nitrogen (DIN= NITRATE/NITRATE + AMM)
   select(Date, Station, Region, Temperature:Secchi, DIN)
 
 # check the rows are correct = 2184 (312 time steps for each station)
