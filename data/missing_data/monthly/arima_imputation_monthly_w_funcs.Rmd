@@ -222,7 +222,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/temperature_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/monthly/imputed_data/temperature_imputed_data.csv")
 ```
 
 
@@ -367,7 +367,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/chlorophyll_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/monthly/imputed_data/chlorophyll_imputed_data.csv")
 ```
 
 
@@ -510,7 +510,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/diss_ammonia_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/monthly/imputed_data/diss_ammonia_imputed_data.csv")
 ```
 
 
@@ -654,7 +654,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/diss_nitrate_nitrite_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/monthly/imputed_data/diss_nitrate_nitrite_imputed_data.csv")
 ```
 
 
@@ -949,7 +949,7 @@ plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
 
 ## export df
 ```{r}
-Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/secchi_imputed_data.csv")
+Time_series_imp2 %>% write_csv("data/missing_data/monthly/imputed_data/secchi_imputed_data.csv")
 ```
 
 
