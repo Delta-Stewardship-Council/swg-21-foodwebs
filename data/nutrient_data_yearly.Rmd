@@ -122,6 +122,7 @@ Calculate annual indices (first pass).
 df_wq <- df_wq %>%
 region_assigner(analysis='annual')
 ```
+
 ```{r calc-annual-indices}
 df_wq$Year <- lubridate::year(df_wq$Date)
 

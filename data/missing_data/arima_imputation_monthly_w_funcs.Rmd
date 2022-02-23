@@ -222,7 +222,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/monthly/imputed_data/temperature_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/monthly/imputed_data/monthly/temperature_imputed_data.csv")
 ```
 
 
@@ -367,7 +367,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/monthly/imputed_data/chlorophyll_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/monthly/imputed_data/monthly/chlorophyll_imputed_data.csv")
 ```
 
 
@@ -510,7 +510,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/monthly/imputed_data/diss_ammonia_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/monthly/imputed_data/monthly/diss_ammonia_imputed_data.csv")
 ```
 
 
@@ -654,7 +654,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/monthly/imputed_data/diss_nitrate_nitrite_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/monthly/imputed_data/monthly/diss_nitrate_nitrite_imputed_data.csv")
 ```
 
 
@@ -949,7 +949,7 @@ plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
 
 ## export df
 ```{r}
-Time_series_imp2 %>% write_csv("data/missing_data/monthly/imputed_data/secchi_imputed_data.csv")
+Time_series_imp2 %>% write_csv("data/missing_data/monthly/imputed_data/monthly/secchi_imputed_data.csv")
 ```
 
 
@@ -961,17 +961,17 @@ Time_series_imp2 %>% write_csv("data/missing_data/monthly/imputed_data/secchi_im
 Combine all analytes into one wide format dataframe, create new column for DIN
 ```{r}
 # re-import all imputed data frames
-temp_imputed <- read_csv("data/missing_data/monthly/imputed_data/temperature_imputed_data.csv") %>% 
+temp_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/temperature_imputed_data.csv") %>% 
   mutate(Analyte="Temperature")
-chl_imputed <- read_csv("data/missing_data/monthly/imputed_data/chlorophyll_imputed_data.csv")%>% 
+chl_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/chlorophyll_imputed_data.csv")%>% 
   mutate(Analyte="Chlorophyll")
-amm_imputed <- read_csv("data/missing_data/monthly/imputed_data/diss_ammonia_imputed_data.csv")%>% 
+amm_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/diss_ammonia_imputed_data.csv")%>% 
   mutate(Analyte="DissAmmonia")
-nitr_imputed <- read_csv("data/missing_data/monthly/imputed_data/diss_nitrate_nitrite_imputed_data.csv")%>% 
+nitr_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/diss_nitrate_nitrite_imputed_data.csv")%>% 
   mutate(Analyte="DissNitrateNitrite")
-ophos_imputed <- read_csv("data/missing_data/monthly/imputed_data/diss_orthophos_imputed_data.csv")%>% 
+ophos_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/diss_orthophos_imputed_data.csv")%>% 
   mutate(Analyte="DissOrthophos")
-secchi_imputed <- read_csv("data/missing_data/monthly/imputed_data/secchi_imputed_data.csv")%>% 
+secchi_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/secchi_imputed_data.csv")%>% 
   mutate(Analyte="Secchi")
 
 # combine and pivot
@@ -987,7 +987,7 @@ all_imputed_wide <- all_imputed %>%
               values_fill = NA)
 
 # import station and region designations
-station_region <- read_csv("data/missing_data/sregions.csv")
+station_region <- read_csv("data/missing_data/regions_monthly.csv")
 
 # join them to region
 all_imputed_wide_region <- all_imputed_wide %>% 

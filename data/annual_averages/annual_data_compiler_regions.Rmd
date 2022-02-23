@@ -33,7 +33,7 @@ fishbs=read.csv("fish_BayStudy_by_region.csv")
 fishdj=read.csv("fish_DJFMP_by_region.csv")
 fishfm=read.csv("fish_FMWT_by_regions.csv")
 fishstn=read.csv("fish_STN_regions.csv")
-nutwq=read.csv("nutrient_data_yearly_regions.csv")
+nutwq=read.csv("nutrient_data_yearly_regions_imputed.csv")
 zoop=read.csv("zoop_annual_regions.csv")
 
 # Leaving in this but changing bellow to just use zoop
