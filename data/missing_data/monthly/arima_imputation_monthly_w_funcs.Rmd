@@ -961,17 +961,17 @@ Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/secchi_imputed_da
 Combine all analytes into one wide format dataframe, create new column for DIN
 ```{r}
 # re-import all imputed data frames
-temp_imputed <- read_csv("data/missing_data/imputed_data/temperature_imputed_data.csv") %>% 
+temp_imputed <- read_csv("data/missing_data/monthly/imputed_data/temperature_imputed_data.csv") %>% 
   mutate(Analyte="Temperature")
-chl_imputed <- read_csv("data/missing_data/imputed_data/chlorophyll_imputed_data.csv")%>% 
+chl_imputed <- read_csv("data/missing_data/monthly/imputed_data/chlorophyll_imputed_data.csv")%>% 
   mutate(Analyte="Chlorophyll")
-amm_imputed <- read_csv("data/missing_data/imputed_data/diss_ammonia_imputed_data.csv")%>% 
+amm_imputed <- read_csv("data/missing_data/monthly/imputed_data/diss_ammonia_imputed_data.csv")%>% 
   mutate(Analyte="DissAmmonia")
-nitr_imputed <- read_csv("data/missing_data/imputed_data/diss_nitrate_nitrite_imputed_data.csv")%>% 
+nitr_imputed <- read_csv("data/missing_data/monthly/imputed_data/diss_nitrate_nitrite_imputed_data.csv")%>% 
   mutate(Analyte="DissNitrateNitrite")
-ophos_imputed <- read_csv("data/missing_data/imputed_data/diss_orthophos_imputed_data.csv")%>% 
+ophos_imputed <- read_csv("data/missing_data/monthly/imputed_data/diss_orthophos_imputed_data.csv")%>% 
   mutate(Analyte="DissOrthophos")
-secchi_imputed <- read_csv("data/missing_data/imputed_data/secchi_imputed_data.csv")%>% 
+secchi_imputed <- read_csv("data/missing_data/monthly/imputed_data/secchi_imputed_data.csv")%>% 
   mutate(Analyte="Secchi")
 
 # combine and pivot
