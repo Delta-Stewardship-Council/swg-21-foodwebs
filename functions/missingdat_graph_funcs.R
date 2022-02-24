@@ -21,8 +21,14 @@ create_station_df <- function(df, station){
   return(df_station)
 }
 
-create_station_ts <- function(df, station){
-  ts <- ts(pull(df, .data[[station]]), frequency = 12, start = c(1995,1), end=c(2020,12))
+create_station_ts <- function(df, station, monthly = FALSE){
+  if(monthly){
+    start_date <- c(1995,1)
+  } else {
+    start_date <- c(1975,1)
+  }
+
+  ts <- ts(pull(df, .data[[station]]), frequency = 12, start = start_date, end=c(2020,12))
 
   return(ts)
 }

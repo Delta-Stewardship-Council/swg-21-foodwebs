@@ -129,7 +129,7 @@ Seasonality: auto.arima has the ability to decide whether or not the models need
 ```{r}
 # time series object using ts - monthly resolution for each year
 temp_D28A <- create_station_df(temp_table, 'D28A')
-temp_ts <- create_station_ts(temp_D28A, 'D28A')
+temp_ts <- create_station_ts(temp_D28A, 'D28A', monthly = FALSE)
 
 # fit arima model
 model_params <- list(
@@ -199,10 +199,11 @@ lines(temp_ts,col="black")
 # run model and fit
 model_params <- list(
   seasonal = TRUE, # default TRUE
-  stationary = FALSE, # default FALSE
+  stationary = TRUE, # default FALSE
   trace = FALSE, # default FALSE
   lambda = NULL # default NULL
   )
+temp_table <- temp_table[1:5]
 
 df_ts <- create_ts_df(temp_table, model_params, log_trans = TRUE, monthly = FALSE)
 model_fits <- eval_fit(temp_table, model_params)
@@ -275,7 +276,7 @@ plt_pilot_model(chl_table, 'D28A')
 ```{r}
 # time series object using ts - monthly resolution for each year
 chl_D28A <- create_station_df(chl_table, 'D28A')
-chl_ts <- create_station_ts(chl_D28A, 'D28A')
+chl_ts <- create_station_ts(chl_D28A, 'D28A', monthly = FALSE)
 
 # fit arima model
 model_params <- list(
@@ -416,7 +417,7 @@ plt_pilot_model(amm_table, 'D28A')
 ```{r}
 # time series object using ts - monthly resolution for each year
 amm_D28A <- create_station_df(amm_table, 'D28A')
-amm_ts <- create_station_ts(amm_D28A, 'D28A')
+amm_ts <- create_station_ts(amm_D28A, 'D28A', monthly = FALSE)
 
 # fit arima model
 model_params <- list(
@@ -560,7 +561,7 @@ plt_pilot_model(nit_table, 'D28A')
 ```{r}
 # time series object using ts - monthly resolution for each year
 nit_D28A <- create_station_df(nit_table, 'D28A')
-nit_ts <- create_station_ts(nit_D28A, 'D28A')
+nit_ts <- create_station_ts(nit_D28A, 'D28A', monthly = FALSE)
 
 # fit arima model
 model_params <- list(

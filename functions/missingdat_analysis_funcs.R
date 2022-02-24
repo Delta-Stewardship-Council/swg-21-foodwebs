@@ -4,7 +4,8 @@
 
 create_ts_df <- function(df, model_params, log_trans = FALSE, monthly) {
   # create matrix of timeseries w/ imputed values
-  mat_ts <- create_ts_mat(df, model_params, log_trans)
+
+  mat_ts <- create_ts_mat(df, model_params, log_trans, monthly = monthly)
 
   # convert to wide df
   df_ts <- as_tibble(mat_ts) %>%
@@ -35,7 +36,7 @@ create_ts_df <- function(df, model_params, log_trans = FALSE, monthly) {
   return(df_ts)
 }
 
-create_ts_mat <- function(df, model_params, log_trans){
+create_ts_mat <- function(df, model_params, log_trans, monthly){
   # clean up df
   df_all <- df %>% arrange(Date)
   Year <- lubridate::year(df$Date)
@@ -53,7 +54,7 @@ create_ts_mat <- function(df, model_params, log_trans){
   for (i in 1:ncol(mat_ts)){
     print(colnames(mat_ts)[i])
     # create ts object
-    ts_obj <- create_ts_obj(Year, df_ts, i)
+    ts_obj <- create_ts_obj(Year, df_ts, i, monthly = monthly)
 
     # interpolate missing values (if any)
     ts_obj <- interp_missing_dat(ts_obj, model_params)
@@ -70,11 +71,17 @@ create_ts_mat <- function(df, model_params, log_trans){
   return(mat_ts)
 }
 
-create_ts_obj <- function(Year, df_ts, i){
+create_ts_obj <- function(Year, df_ts, i, monthly){
   #create time-series object
   df_imp <- data.frame(Year = Year, y = df_ts[,i])
 
-  ts_obj <- ts(df_imp[2], start= c(1995,1), end = c(2020,12), frequency = 12)
+  if(monthly){
+    start_date <- c(1995,1)
+  } else {
+    start_date <- c(1975,1)
+  }
+
+  ts_obj <- ts(df_imp[2], start= start_date, end = c(2020,12), frequency = 12)
 
   return(ts_obj)
 }
