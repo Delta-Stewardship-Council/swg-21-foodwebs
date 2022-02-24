@@ -207,7 +207,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(temp_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(temp_table, model_params)
+model_fits <- eval_fit(temp_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests
@@ -352,7 +352,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(chl_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(chl_table, model_params)
+model_fits <- eval_fit(chl_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests
@@ -495,7 +495,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(amm_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(amm_table, model_params)
+model_fits <- eval_fit(amm_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests
@@ -639,7 +639,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(nit_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(nit_table, model_params)
+model_fits <- eval_fit(nit_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests

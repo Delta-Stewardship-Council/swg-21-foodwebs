@@ -34,8 +34,8 @@ df_wq_fill <- df_wq_fill %>%
   select(select = -c('DissAmmonia_Sign','DissNitrateNitrite_Sign','DissOrthophos_Sign'))
 
 station_list <- c('P8','MD10A','D8','D7','D6','D41','D4','D28A','D26','C3','C3A','C10','C10A')
-df_wq_fill <- df_wq_fill[df_wq_fill$Station %in% station_list,]
 df_wq_fill <- combine_wq_stations(df_wq_fill)
+df_wq_fill <- df_wq_fill[df_wq_fill$Station %in% station_list,]
 
 df_wq_fill <- df_wq_fill %>%
   pivot_longer(Chlorophyll:TKN, names_to = 'Analyte', values_to = 'Value') %>%

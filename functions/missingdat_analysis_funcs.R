@@ -132,7 +132,7 @@ remove_extra_nas <- function(id.na, ts_obj){
 }
 
 
-eval_fit <- function(df, fit_return = TRUE){
+eval_fit <- function(df, fit_return = TRUE, monthly){
   # clean up df
   df_all <- df %>% arrange(Date)
   Year <- lubridate::year(df$Date)
@@ -141,7 +141,7 @@ eval_fit <- function(df, fit_return = TRUE){
   for (i in 1:ncol(df_ts)){
     print(colnames(df_ts)[i])
     # create ts object
-    ts_obj <- create_ts_obj(Year, df_ts, i)
+    ts_obj <- create_ts_obj(Year, df_ts, i, monthly)
 
     # interpolate missing values (if any)
     fit <- interp_missing_dat(ts_obj, model_params, fit_return = TRUE)
