@@ -134,7 +134,7 @@ temp_ts <- create_station_ts(temp_D28A, 'D28A', monthly = FALSE)
 # fit arima model
 model_params <- list(
   seasonal = TRUE,
-  stationary = TRUE,
+  stationary = FALSE,
   trace = TRUE,
   lambda = NULL
   )
@@ -146,7 +146,8 @@ temp_fit <- station_arima_fit(temp_ts, model_params) # stationary=TRUE for forec
 summary(temp_fit)
 ```
 Series: ts 
-ARIMA(4,0,1)(0,0,1)[12] with non-zero mean
+ARIMA(4,0,1)(0,0,1)[12] with non-zero mean (stationary) = bad interpolation (but forecasting allowed so can run all lines)
+ARIMA(1,0,3)(2,1,0)[12] with drift (non-stationary) = good interpolation (but no forecasting allowed so skip lines 155-176)
 
 
 ## predict values using the calibration dataset
