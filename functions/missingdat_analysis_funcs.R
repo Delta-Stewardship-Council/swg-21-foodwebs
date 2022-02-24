@@ -2,7 +2,7 @@
 # create timeseries df w/ imputed vals
 # ~~~~~~~~~~~
 
-create_ts_df <- function(df, model_params, log_trans = FALSE) {
+create_ts_df <- function(df, model_params, log_trans = FALSE, monthly) {
   # create matrix of timeseries w/ imputed values
   mat_ts <- create_ts_mat(df, model_params, log_trans)
 
@@ -10,6 +10,10 @@ create_ts_df <- function(df, model_params, log_trans = FALSE) {
   df_ts <- as_tibble(mat_ts) %>%
     mutate(Date = df$Date, Analyte = df$Analyte) %>%
     select(Date, Analyte, colnames(mat_ts))
+
+  if(monthly){
+    df_ts <- subset(df_ts, Date >= '1995-01-01')
+  }
 
   df_ts <- df_ts %>%
     pivot_longer(cols = colnames(mat_ts),
@@ -28,7 +32,7 @@ create_ts_df <- function(df, model_params, log_trans = FALSE) {
     left_join(df_missing, by = c('Date','Analyte','Station')) %>%
     mutate(Imputed = ifelse(Missing == TRUE & Imputed_values > 0, TRUE, FALSE))
 
-  return(mat_ts)
+  return(df_ts)
 }
 
 create_ts_mat <- function(df, model_params, log_trans){

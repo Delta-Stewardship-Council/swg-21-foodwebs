@@ -204,7 +204,7 @@ model_params <- list(
   lambda = NULL # default NULL
   )
 
-df_ts <- create_ts_df(temp_table, model_params, log_trans = TRUE)
+df_ts <- create_ts_df(temp_table, model_params, log_trans = TRUE, monthly = FALSE)
 model_fits <- eval_fit(temp_table, model_params)
 ```
 
@@ -349,7 +349,7 @@ model_params <- list(
   lambda = NULL # default NULL
   )
 
-df_ts <- create_ts_df(chl_table, model_params, log_trans = TRUE)
+df_ts <- create_ts_df(chl_table, model_params, log_trans = TRUE, monthly = FALSE)
 model_fits <- eval_fit(chl_table, model_params)
 ```
 
@@ -492,7 +492,7 @@ model_params <- list(
   lambda = NULL # default NULL
   )
 
-df_ts <- create_ts_df(amm_table, model_params, log_trans = TRUE)
+df_ts <- create_ts_df(amm_table, model_params, log_trans = TRUE, monthly = FALSE)
 model_fits <- eval_fit(amm_table, model_params)
 ```
 
@@ -636,7 +636,7 @@ model_params <- list(
   lambda = NULL # default NULL
   )
 
-df_ts <- create_ts_df(nit_table, model_params, log_trans = TRUE)
+df_ts <- create_ts_df(nit_table, model_params, log_trans = TRUE, monthly = FALSE)
 model_fits <- eval_fit(nit_table, model_params)
 ```
 
