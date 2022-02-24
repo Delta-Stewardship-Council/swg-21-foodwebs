@@ -16,7 +16,7 @@ knit: (function(input, ...) {
 library(tidyverse)
 library(ggmap)
 library(lubridate)
-require(discretewq)
+library(discretewq)
 # source('../functions/nutrient_funcs.R', local = TRUE)
 # source('../functions/region_assigner.R', local = TRUE)
 source('functions/region_assigner.R')
@@ -28,7 +28,7 @@ if(utils::packageVersion('discretewq') < '2.1.0') {
 ```
 
 ```{r id-missing-data}
-df_wq_fill <- read_wq_data(monthly = TRUE)
+df_wq_fill <- read_wq_data(monthly = FALSE)
 
 df_wq_fill <- df_wq_fill %>%
   select(select = -c('DissAmmonia_Sign','DissNitrateNitrite_Sign','DissOrthophos_Sign'))
