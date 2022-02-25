@@ -71,7 +71,7 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_c","tzoop_
                                Datacolumn=NA,Log="yes"))
 
 #focal variables
-varnames=c("temp","flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop","tzoop_c","tzoop_e","hzoop","pzoop")
+varnames=c("temp","flow","nitrate","ammonia","dophos","din","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","cent","marfish_bsmt","estfish_bsmt","tzoop","tzoop_c","hzoop","pzoop")
 
 #labels for lagged vars
 cnameslag=cnames
@@ -527,6 +527,147 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 color=c("regress","latent"))
 ```
 
+### Integrated model with time lags
+
+
+```{r, fig.width=8, fig.height=8}
+modFW='chla~chla_1+hzoop_1+potam_1+flow+temp+secchi
+        hzoop~chla_1+hzoop_1+pzoop_1+potam_1+estfish_bsmt_1+flow+temp+secchi
+        pzoop~hzoop_1+pzoop_1+potam_1+estfish_bsmt_1+flow+temp+secchi
+        estfish_bsmt~hzoop_1+pzoop_1+estfish_bsmt_1+flow+temp+secchi+marfish_bsmt_1
+'
+
+modW='chla~chla_1+hzoop_1+potam_1+flow+temp+secchi
+        hzoop~chla_1+hzoop_1+pzoop_1+potam_1+estfish_bsmt_1+flow+temp+secchi
+        pzoop~chla_1+hzoop_1+pzoop_1+potam_1+estfish_bsmt_1+flow+temp+secchi
+        estfish_bsmt~hzoop_1+pzoop_1+estfish_bsmt_1+flow+temp+secchi+marfish_bsmt_1
+'
+
+modN='chla~chla_1+hzoop_1+corbic_1+flow+temp+secchi
+        hzoop~chla_1+hzoop_1+pzoop_1+corbic_1+estfish_bsmt_1+flow+temp+secchi
+        pzoop~chla_1+hzoop_1+pzoop_1+corbic_1+estfish_bsmt_1+flow+temp+secchi
+        estfish_bsmt~hzoop_1+pzoop_1+estfish_bsmt_1+flow+temp+secchi+sside_1+cent_1
+'
+
+modS='chla~chla_1+hzoop_1+corbic_1+estfish_bsmt_1+flow+temp+secchi
+        hzoop~chla_1+hzoop_1+pzoop_1+corbic_1+estfish_bsmt_1+flow+temp+secchi
+        pzoop~chla_1+hzoop_1+pzoop_1+corbic_1+estfish_bsmt_1+flow+temp+secchi
+        estfish_bsmt~chla_1+hzoop_1+pzoop_1+estfish_bsmt_1+flow+temp+secchi+sside_1+cent_1
+'
+
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+#modificationindices(modfitW)
+#residuals(modfitS)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+myLavaanPlot(model=modfitFW, labels=labelsfarwest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#WEST
+myLavaanPlot(model=modfitW, labels=labelswest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#NORTH
+myLavaanPlot(model=modfitN, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#SOUTH
+myLavaanPlot(model=modfitS, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
+
+### Integrated model with time lags, minus fish, plus nutrients
+
+
+```{r, fig.width=8, fig.height=8}
+modFW='din~din_1+chla_1+hzoop_1+pzoop_1+potam_1+flow+temp+secchi
+        chla~din_1+chla_1+hzoop_1+potam_1+flow+temp+secchi
+        hzoop~chla_1+hzoop_1+pzoop_1+potam_1+flow+temp+secchi
+        potam~chla_1+hzoop_1+pzoop_1+potam_1+flow+temp+secchi
+'
+
+modW='din~din_1+chla_1+hzoop_1+pzoop_1+potam_1+flow+temp+secchi
+        chla~din_1+chla_1+hzoop_1+potam_1+flow+temp+secchi
+        hzoop~chla_1+hzoop_1+pzoop_1+potam_1+flow+temp+secchi
+        potam~chla_1+hzoop_1+pzoop_1+potam_1+flow+temp+secchi
+'
+
+modN='din~din_1+chla_1+hzoop_1+pzoop_1+corbic_1+flow+temp+secchi
+        chla~din_1+chla_1+hzoop_1+corbic_1+flow+temp+secchi
+        hzoop~chla_1+hzoop_1+pzoop_1+corbic_1+flow+temp+secchi
+        corbic~chla_1+hzoop_1+pzoop_1+corbic_1+flow+temp+secchi
+'
+
+modS='din~din_1+chla_1+hzoop_1+pzoop_1+corbic_1+flow+temp+secchi
+        chla~din_1+chla_1+hzoop_1+corbic_1+flow+temp+secchi
+        hzoop~chla_1+hzoop_1+pzoop_1+corbic_1+flow+temp+secchi
+        corbic~chla_1+hzoop_1+pzoop_1+corbic_1+flow+temp+secchi
+'
+
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+#modificationindices(modfitW)
+#residuals(modfitS)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+myLavaanPlot(model=modfitFW, labels=labelsfarwest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#WEST
+myLavaanPlot(model=modfitW, labels=labelswest,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#NORTH
+myLavaanPlot(model=modfitN, labels=labelsnorth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+#SOUTH
+myLavaanPlot(model=modfitS, labels=labelssouth,
+						 node_options=list(shape="box", fontname="Helvetica"), 
+						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+						 width=c("regress","latent"),
+						 color=c("regress","latent"))
+```
 
 ### SEM submodels
 

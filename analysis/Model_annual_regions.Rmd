@@ -307,7 +307,7 @@ bbmle::AICctab(southmods,weights=T,delta=T)
 
 With and without detrending.
 
-```{r}
+```{r west}
 #west has no ssides, corbic
  
 #1
@@ -338,7 +338,7 @@ modwest='chla~potam+flow+temp+secchi
         hzoop~chla+potam+flow+temp+secchi
         pzoop~chla+potam+flow+temp+secchi+hzoop
         amphi~chla+potam+flow+temp+secchi
-        estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi
+        estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi #+marfish_bsmt
         amphi~~hzoop+pzoop
 '
 
@@ -356,7 +356,9 @@ labelswest <- createLabels(modfitwest, cnames)
 # modificationindices(modfitwest)
 ```
 
-```{r}
+```{r north}
+#no potam
+
 #1
 # modnorth='zoop=~hcope+mysid
 #         #fish=~estfish_bsmt+estfish_bsot
@@ -388,10 +390,10 @@ labelswest <- createLabels(modfitwest, cnames)
 #         amphi~~tzoop
 # '
 #4
-modnorth='chla~corbic+potam+flow+temp+secchi
-        hzoop~chla+corbic+potam+flow+temp+secchi
-        pzoop~chla+corbic+potam+flow+temp+secchi+hzoop
-        amphi~chla+corbic+potam+flow+temp+secchi
+modnorth='chla~corbic+flow+temp+secchi
+        hzoop~chla+corbic+flow+temp+secchi
+        pzoop~chla+corbic+flow+temp+secchi+hzoop
+        amphi~chla+corbic+flow+temp+secchi
         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+chla+sside
         amphi~~hzoop+pzoop
 '
@@ -410,7 +412,7 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 # modificationindices(modfitnorth)
 ```
 
-```{r}
+```{r south}
 #no potam
 
 #1

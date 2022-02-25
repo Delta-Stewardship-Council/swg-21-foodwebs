@@ -39,3 +39,4 @@ Delta smelt,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaS
 Striped bass,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes
 Longfin smelt,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes
 Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes
+Centrarchids,cent,Centrarchids,DJFMP_fish_biomass_Centrarchids,yes
