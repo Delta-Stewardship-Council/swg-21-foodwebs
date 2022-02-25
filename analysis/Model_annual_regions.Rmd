@@ -19,9 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r packages, message=FALSE}
 library(dplyr)
-#library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
 library(lavaan)
-library(semPlot)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
@@ -41,34 +39,28 @@ regionorder=c("West","North","South")
 years=1975:2021
 
 focaldata = focaldata %>% 
-  mutate(tzoop=hcope+clad+mysid+pcope,
-         tzoop_c=hcope_c+clad_c+mysid_c+pcope_c,
-         tzoop_e=hcope_e+clad_e+mysid_e+pcope_e,
-         hzoop=hcope+clad,
-         hzoop_c=hcope_c+clad_c,
-         hzoop_e=hcope_e+clad_e,
+  mutate(tzoop=hcope+clad+mysid+pcope+rotif_m,
+         tzoop_e=hcope_e+clad_e+mysid_e+pcope_e+rotif_e,
+         hzoop=hcope+clad+rotif_m,
+         hzoop_e=hcope_e+clad_e+rotif_e,
          pzoop=mysid+pcope,
-         pzoop_c=mysid_c+pcope_c,
          pzoop_e=mysid_e+pcope_e) 
-fvars=c(fvars,"tzoop","tzoop_c","tzoop_e",
-        "hzoop","hzoop_c","hzoop_e",
-        "pzoop","pzoop_c","pzoop_e")
-cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_c","tzoop_e",
-                                                       "hzoop","hzoop_c","hzoop_e",
-                                                       "pzoop","pzoop_c","pzoop_e"),
+fvars=c(fvars,"tzoop","tzoop_e",
+        "hzoop","hzoop_e",
+        "pzoop","pzoop_e")
+cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
+                                                       "hzoop","hzoop_e",
+                                                       "pzoop","pzoop_e"),
                                Diagramname=c("Total Zooplankton\nBiomass",
-                                             "Total Zooplankton\nAbundance",
                                              "Total Zooplankton\nEnergy",
                                              "Herbivorous Zooplankton\nBiomass",
-                                             "Herbivorous Zooplankton\nAbundance",
                                              "Herbivorous Zooplankton\nEnergy",
                                              "Predatory Zooplankton\nBiomass",
-                                             "Predatory Zooplankton\nAbundance",
                                              "Predatory Zooplankton\nEnergy"),
                                Datacolumn=NA,Log="yes"))
 
 #focal variables
-varnames=c("temp","flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish_bsot","estfish_bsmt","tzoop","tzoop_c","tzoop_e","hzoop","pzoop")
+varnames=c("temp","flow","secchi","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
 ```
@@ -94,7 +86,7 @@ tvars=fvars[-(1:2)]
 
 fdr=fdr0 %>% group_by(region) %>% 
   #lag
-  mutate_at(tvars,list("1"=lag)) %>% 
+  #mutate_at(tvars,list("1"=lag)) %>% 
   #scale
   mutate_at(-(1:2),scale) %>% 
   ungroup() %>% 
@@ -117,7 +109,7 @@ fdr_dtr=fdr0 %>% group_by(region) %>%
     } else {return(x)}
   }) %>%
   #lag
-  mutate_at(tvars,list("1"=lag)) %>% 
+  #mutate_at(tvars,list("1"=lag)) %>% 
   #scale
   mutate_at(-(1:2),scale) %>% 
   ungroup() %>% 
@@ -126,7 +118,7 @@ fdr_dtr=fdr0 %>% group_by(region) %>%
 
 ### Time series plots
 
-```{r timeseries, fig.width=8, fig.height=13, echo=FALSE, warning=FALSE}
+```{r timeseries, fig.width=8, fig.height=10, echo=FALSE, warning=FALSE}
 plot1=select(focaldata,region,year,varnames) %>% 
   gather(Var,Value,varnames) %>% 
   mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
@@ -143,7 +135,7 @@ ggplot(plot2,aes(x=year,y=Value)) +
   facet_grid(Var~region, scales="free_y") +
   geom_line() +
   theme_bw() +
-  labs(title = "Log scaled within region")
+  labs(title = "Log scaled")
 
 plot3=select(fdr_dtr,region,year,varnames) %>% 
   gather(Var,Value,varnames) %>% 
@@ -155,10 +147,59 @@ ggplot(plot3,aes(x=year,y=Value)) +
   labs(title = "Log scaled detrended")
 ```
 
+### Other useful plots
+
+Breakdown of total zooplankton biomass.
+
+```{r zoops, echo=FALSE}
+plot4=select(focaldata,region,year,hcope,pcope,clad,mysid,rotif_m) %>% 
+  gather(Var,Value,hcope:rotif_m) %>% 
+  mutate(region=factor(region,levels=regionorder))
+ggplot(plot4,aes(x=year,y=Value,fill=Var)) +
+  facet_grid(region~., scales="free_y") +
+  geom_area() +
+  theme_bw() + scale_fill_brewer(palette = "Dark2") +
+  labs(title = "Original units")
+```
+
+Similarity of fish indices.
+
+```{r fish, echo=FALSE}
+plot5=select(fdr,region,year,estfish,estfish_bsmt,estfish_stn) %>% 
+  gather(Var,Value,estfish,estfish_bsmt,estfish_stn) %>% 
+  mutate(region=factor(region,levels=regionorder))
+ggplot(plot5,aes(x=year,y=Value,color=Var)) +
+  facet_grid(region~., scales="free_y") +
+  geom_line(size=1) +
+  theme_bw() + scale_color_brewer(palette = "Dark2") +
+  labs(title = "Log scaled")
+
+plot6=select(fdr_dtr,region,year,estfish,estfish_bsmt,estfish_stn) %>% 
+  gather(Var,Value,estfish,estfish_bsmt,estfish_stn) %>% 
+  mutate(region=factor(region,levels=regionorder))
+ggplot(plot6,aes(x=year,y=Value,color=Var)) +
+  facet_grid(region~., scales="free_y") +
+  geom_line(size=1) +
+  theme_bw() + scale_color_brewer(palette = "Dark2") +
+  labs(title = "Log scaled detrended")
+```
+
+Correlation between biomass and energy.
+
+```{r}
+for(i in 1:length(regions)) {
+  dtemp=filter(fdr,region==regions[i])
+  print(regions[i])
+  print(cor(dtemp$tzoop,dtemp$tzoop_e,use = "p"))
+  print(cor(dtemp$hzoop,dtemp$hzoop_e,use = "p"))
+  print(cor(dtemp$pzoop,dtemp$pzoop_e,use = "p"))
+}
+```
+
 ### Cross-correlation matrices  
 (only sig correlations shown... no correction for multiple comparisons)
 
-```{r cc, fig.width=7, fig.height=6, echo=FALSE}
+```{r ccmat, fig.width=7, fig.height=6, echo=FALSE}
 #lag 0
 lags0=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
                   stringsAsFactors = F)
@@ -185,131 +226,42 @@ ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
 
-#lag 1
-lags1=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+#lag 0, detrended
+lags0dtr=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
                   stringsAsFactors = F)
-for(i in 1:nrow(lags1)) {
-  v1=fdr[fdr$region==lags1$region[i],lags1$V1[i]]
-  v2=fdr[fdr$region==lags1$region[i],lags1$V2[i]]
-  if(!all(is.na(v1)) & !all(is.na(v2))) {
-    tccf=cor.test(v1,lag(v2,1))
-    lags1$Cor[i]=tccf$estimate
-    lags1$P[i]=tccf$p.value
-  }
-}
-lags1$V1=factor(lags1$V1,levels = varnames)
-lags1$V2=factor(lags1$V2,levels = varnames)
-lags1$region=factor(lags1$region,levels = regionorder)
-ggplot(filter(lags1,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
-  facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
-  geom_tile() +
-  geom_abline(slope=1,intercept = 0) +
-  scale_fill_gradient2() +
-  theme_bw() +
-  labs(x="V2 (t-1)", y="V1 (t)", title = "lag 1 cross-cor") +
-  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
-  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
-  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
-
-#lag 1 seasonality removed
-lags1dtr=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
-                  stringsAsFactors = F)
-for(i in 1:nrow(lags1dtr)) {
-  v1=fdr_dtr[fdr_dtr$region==lags1dtr$region[i],lags1dtr$V1[i]]
-  v2=fdr_dtr[fdr_dtr$region==lags1dtr$region[i],lags1dtr$V2[i]]
+for(i in 1:nrow(lags0dtr)) {
+  v1=fdr_dtr[fdr_dtr$region==lags0dtr$region[i],lags0dtr$V1[i]]
+  v2=fdr_dtr[fdr_dtr$region==lags0dtr$region[i],lags0dtr$V2[i]]
   if(!all(is.na(v1)) & !all(is.na(v2))) {
     tccf=cor.test(v1,v2)
-    lags1dtr$Cor[i]=tccf$estimate
-    lags1dtr$P[i]=tccf$p.value
+    lags0dtr$Cor[i]=tccf$estimate
+    lags0dtr$P[i]=tccf$p.value
   }
 }
-lags1dtr$V1=factor(lags1dtr$V1,levels = varnames)
-lags1dtr$V2=factor(lags1dtr$V2,levels = varnames)
-lags1dtr$region=factor(lags1dtr$region,levels = regionorder)
-ggplot(filter(lags1dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+lags0dtr$V1=factor(lags0dtr$V1,levels = varnames)
+lags0dtr$V2=factor(lags0dtr$V2,levels = varnames)
+lags0dtr$region=factor(lags0dtr$region,levels = regionorder)
+ggplot(filter(lags0dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
   geom_tile() +
   geom_abline(slope=1,intercept = 0) +
   scale_fill_gradient2() +
   theme_bw() +
-  labs(x="V2 (t-1)", y="V1 (t)",title = "lag 0 cross-cor, detrended") +
+  labs(x="V2 (t)", y="V1 (t)", title = "lag 0 cross-cor, detrended") +
   scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
 ```
 
-```{r bivariate, fig.width=9, fig.height=9, echo=FALSE, eval=FALSE}
-psych::pairs.panels(dplyr::select(fdr, year, flow, temp, secchi, chla, hcope, clad, pcope, mysid, estfish, sside, potam, corbic, dophos),lm = T, bg=c("red","yellow","blue")[factor(fdr$region)],pch=21)
-```
-
-*Fish indices are not correlated in S and N!*
-
-### Best predictor of fish
-
-```{r}
-l_models = data.frame(l_model = c("tzoop","tzoop_c","tzoop_e",
-                                  "hzoop","hzoop+pzoop","pzoop",
-                                  "tzoop+amphi","tzoop_e+amphi",
-                                  "hcope+clad+mysid",
-                                  "hcope+clad+mysid+pcope",
-                                  "hcope+clad+mysid+pcope+rotif_m",
-                                  "hcope+mysid",
-                                  "hcope+mysid+pcope",
-                                  "hcope+mysid+amphi"))
-
-#Midwater Trawl
-westmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
-                                    data = filter(fdr_dtr,region=="West")))
-names(westmods)=l_models$l_model
-bbmle::AICctab(westmods,weights=T,delta=T)
-
-northmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
-                                    data = filter(fdr_dtr,region=="North")))
-names(northmods)=l_models$l_model
-bbmle::AICctab(northmods,weights=T,delta=T)
-
-southmods = purrr::map(l_models$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
-                                    data = filter(fdr_dtr,region=="South")))
-names(southmods)=l_models$l_model
-bbmle::AICctab(southmods,weights=T,delta=T)
-```
-
-tzoop and tzoop_e do pretty well in all regions. tzoop_c and hzoop+pzoop does poorly in all regions. amphi seem relevant in North (for midwater trawl), which is also where they are most abundant.
-
-```{r}
-l_modelsw = data.frame(l_model = c("tzoop",
-                                   "tzoop+marfish_bsmt"))
-l_modelsns = data.frame(l_model = c("tzoop",
-                                   "tzoop+amphi",
-                                   "tzoop+amphi+sside",
-                                   "tzoop+sside",
-                                   "tzoop+corbic",
-                                   "tzoop+corbic+sside"))
-
-#Midwater Trawl
-westmods = purrr::map(l_modelsw$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
-                                    data = filter(fdr_dtr,region=="West")))
-names(westmods)=l_modelsw$l_model
-bbmle::AICctab(westmods,weights=T,delta=T)
-
-northmods = purrr::map(l_modelsns$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
-                                    data = filter(fdr_dtr,region=="North")))
-names(northmods)=l_modelsns$l_model
-bbmle::AICctab(northmods,weights=T,delta=T)
-
-southmods = purrr::map(l_modelsns$l_model, ~lm(paste0("estfish_bsmt ~", .x), 
-                                    data = filter(fdr_dtr,region=="South")))
-names(southmods)=l_modelsns$l_model
-bbmle::AICctab(southmods,weights=T,delta=T)
-```
+*Note correlation of fish indices, or lack thereof.*
 
 ### SEM model
 
 With and without detrending.
 
+*West*
+
 ```{r west}
-#west has no ssides, corbic
- 
 #1
 # modwest='zoop=~hcope+mysid
 #         fish=~estfish_bsmt+estfish_bsot
@@ -317,14 +269,12 @@ With and without detrending.
 #         chla~potam+flow
 #         fish~zoop+flow
 # '
-
 #2
 # modwest='chla~potam+flow
 #         tzoop~chla+potam+flow
 #         estfish_bsmt~tzoop+flow
 #         estfish_bsot~tzoop+flow
 # '
-
 #3
 # modwest='chla~potam+flow+temp+secchi
 #         tzoop~chla+potam+flow+temp+secchi
@@ -334,21 +284,25 @@ With and without detrending.
 #         amphi~~tzoop
 # '
 #4
+# modwest='chla~potam+flow+temp+secchi
+#         hzoop~chla+potam+flow+temp+secchi
+#         pzoop~chla+potam+flow+temp+secchi+hzoop
+#         amphi~chla+potam+flow+temp+secchi
+#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi
+#         amphi~~hzoop+pzoop
+# '
+#5
 modwest='chla~potam+flow+temp+secchi
         hzoop~chla+potam+flow+temp+secchi
         pzoop~chla+potam+flow+temp+secchi+hzoop
-        amphi~chla+potam+flow+temp+secchi
-        estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi #+marfish_bsmt
-        amphi~~hzoop+pzoop
+        fish~hzoop+pzoop+potam+flow+temp+secchi
+        fish=~estfish+estfish_stn+estfish_bsmt
 '
 
 modfitwest=sem(modwest, data=filter(fdr,region=="West"))
 modfitwest_dtr=sem(modwest, data=filter(fdr_dtr,region=="West"))
 summary(modfitwest, standardized=T, rsq=T)
 summary(modfitwest_dtr, standardized=T, rsq=T)
-# par(mfrow=c(1,2))
-# semPaths(modfitwest, "std", edge.label.cex = 1, residuals = F)
-# semPaths(modfitwest, "par", edge.label.cex = 1, residuals = F)
 
 labelswest <- createLabels(modfitwest, cnames)
 
@@ -356,9 +310,9 @@ labelswest <- createLabels(modfitwest, cnames)
 # modificationindices(modfitwest)
 ```
 
-```{r north}
-#no potam
+*North*
 
+```{r north}
 #1
 # modnorth='zoop=~hcope+mysid
 #         #fish=~estfish_bsmt+estfish_bsot
@@ -373,14 +327,12 @@ labelswest <- createLabels(modfitwest, cnames)
 #         estfish_bsmt~zoop+flow+sside+chla
 #         estfish_bsot~zoop+flow+sside+chla
 # '
-
 #2
 # modnorth='chla~corbic+potam+flow
 #         tzoop~chla+corbic+potam+flow
 #         estfish_bsmt~tzoop+flow+chla
 #         estfish_bsot~tzoop+flow
 # '
-
 #3
 # modnorth='chla~corbic+potam+flow+temp+secchi
 #         tzoop~chla+corbic+potam+flow+temp+secchi
@@ -390,21 +342,26 @@ labelswest <- createLabels(modfitwest, cnames)
 #         amphi~~tzoop
 # '
 #4
+# modnorth='chla~corbic+flow+temp+secchi
+#         hzoop~chla+corbic+flow+temp+secchi
+#         pzoop~chla+corbic+flow+temp+secchi+hzoop
+#         amphi~chla+corbic+flow+temp+secchi
+#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+chla+sside
+#         amphi~~hzoop+pzoop
+# '
+#5
 modnorth='chla~corbic+flow+temp+secchi
         hzoop~chla+corbic+flow+temp+secchi
         pzoop~chla+corbic+flow+temp+secchi+hzoop
-        amphi~chla+corbic+flow+temp+secchi
-        estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+chla+sside
-        amphi~~hzoop+pzoop
+        fish~chla+hzoop+pzoop+corbic+flow+temp+secchi
+        fish=~estfish+estfish_stn #+estfish_bsmt
+        estfish_stn~~chla
 '
 
 modfitnorth=sem(modnorth, data=filter(fdr,region=="North"))
 modfitnorth_dtr=sem(modnorth, data=filter(fdr_dtr,region=="North"))
 summary(modfitnorth, standardized=T, rsq=T)
 summary(modfitnorth_dtr, standardized=T, rsq=T)
-# par(mfrow=c(1,2))
-# semPaths(modfitnorth, "std", edge.label.cex = 1, residuals = F)
-# semPaths(modfitnorth, "par", edge.label.cex = 1, residuals = F)
 
 labelsnorth <- createLabels(modfitnorth, cnames)
 
@@ -412,9 +369,9 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 # modificationindices(modfitnorth)
 ```
 
-```{r south}
-#no potam
+*South*
 
+```{r south}
 #1
 # modsouth='zoop=~hcope+mysid
 #         #fish=~estfish_bsmt+estfish_bsot
@@ -423,14 +380,12 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 #         estfish_bsmt~zoop+flow
 #         estfish_bsot~zoop+flow
 # '
-
 #2
 # modsouth='chla~corbic+flow
 #         tzoop~chla+corbic+flow
 #         estfish_bsmt~tzoop+flow+corbic+sside
 #         estfish_bsot~tzoop+flow+corbic+sside
 # '
-
 #3
 # modsouth='chla~corbic+flow+temp+secchi
 #         tzoop~chla+corbic+flow+temp+secchi
@@ -440,21 +395,25 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 #         amphi~~tzoop
 # '
 #4
+# modsouth='chla~corbic+flow+temp+secchi
+#         hzoop~chla+corbic+flow+temp+secchi
+#         pzoop~chla+corbic+flow+temp+secchi+hzoop
+#         amphi~chla+corbic+flow+temp+secchi
+#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+corbic+sside
+#         amphi~~hzoop+pzoop
+# '
+#5
 modsouth='chla~corbic+flow+temp+secchi
         hzoop~chla+corbic+flow+temp+secchi
         pzoop~chla+corbic+flow+temp+secchi+hzoop
-        amphi~chla+corbic+flow+temp+secchi
-        estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+corbic+sside
-        amphi~~hzoop+pzoop
+        fish~hzoop+pzoop+corbic+flow+temp+secchi
+        fish=~estfish+estfish_stn+estfish_bsmt
 '
 
 modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
 modfitsouth_dtr=sem(modsouth, data=filter(fdr_dtr,region=="South"))
 summary(modfitsouth, standardized=T, rsq=T)
 summary(modfitsouth_dtr, standardized=T, rsq=T)
-# par(mfrow=c(1,2))
-# semPaths(modfitsouth, "std", edge.label.cex = 1, residuals = F)
-# semPaths(modfitsouth, "par", edge.label.cex = 1, residuals = F)
 
 labelssouth <- createLabels(modfitsouth, cnames)
 
@@ -465,7 +424,7 @@ labelssouth <- createLabels(modfitsouth, cnames)
 
 ### Nice plots 
 
-Original units
+#### Original units
 
 *West*
 
@@ -498,146 +457,7 @@ myLavaanPlot(model=modfitsouth, labels=labelssouth,
 						 color=c("regress","latent"))
 ```
 
-Detrended
-
-*West*
-
-```{r, echo=FALSE}
-myLavaanPlot(model=modfitwest_dtr, labels=labelswest,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-
-```
-
-*North*
-
-```{r, echo=FALSE}
-myLavaanPlot(model=modfitnorth_dtr, labels=labelsnorth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-```
-
-*South*
-
-```{r, echo=FALSE}
-myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-```
-
-### Older SEM model (h and p zoop split)
-
-With and without detrending.
-
-```{r}
-#west has no ssides, corbic
-
-modwest='chla~potam
-        potam~flow
-        hzoop~chla+potam+flow
-        pzoop~chla+potam+flow+hzoop
-        estfish_bsmt~hzoop+pzoop+flow
-        estfish_bsot~hzoop+pzoop+flow
-'
-
-modfitwest=sem(modwest, data=filter(fdr,region=="West"))
-modfitwest_dtr=sem(modwest, data=filter(fdr_dtr,region=="West"))
-summary(modfitwest, standardized=T, rsq=T)
-summary(modfitwest_dtr, standardized=T, rsq=T)
-
-labelswest <- createLabels(modfitwest, cnames)
-
-# residuals(modfitwest)
-# modificationindices(modfitwest)
-```
-
-```{r}
-
-modnorth='chla~corbic+potam
-        potam~flow
-        corbic~flow
-        hzoop~chla+corbic+potam+flow
-        pzoop~chla+corbic+potam+flow+hzoop
-        estfish_bsmt~hzoop+pzoop+flow
-        estfish_bsot~hzoop+pzoop+flow
-'
-
-modfitnorth=sem(modnorth, data=filter(fdr,region=="North"))
-modfitnorth_dtr=sem(modnorth, data=filter(fdr_dtr,region=="North"))
-summary(modfitnorth, standardized=T, rsq=T)
-summary(modfitnorth_dtr, standardized=T, rsq=T)
-
-labelsnorth <- createLabels(modfitnorth, cnames)
-
-# residuals(modfitnorth)
-# modificationindices(modfitnorth)
-```
-
-```{r}
-#no potam
-
-modsouth='chla~corbic
-        corbic~flow
-        hzoop~chla+corbic+flow
-        pzoop~chla+corbic+flow+hzoop
-        estfish_bsmt~hzoop+pzoop+flow+corbic
-        estfish_bsot~hzoop+pzoop+flow+corbic
-'
-
-modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
-modfitsouth_dtr=sem(modsouth, data=filter(fdr_dtr,region=="South"))
-summary(modfitsouth, standardized=T, rsq=T)
-summary(modfitsouth_dtr, standardized=T, rsq=T)
-
-labelssouth <- createLabels(modfitsouth, cnames)
-
-# residuals(modfitsouth)
-# modificationindices(modfitsouth)
-```
-
-
-### Nice plots 
-
-Original units
-
-*West*
-
-```{r, echo=FALSE}
-myLavaanPlot(model=modfitwest, labels=labelswest,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-
-```
-
-*North*
-
-```{r, echo=FALSE}
-myLavaanPlot(model=modfitnorth, labels=labelsnorth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-```
-
-*South*
-
-```{r, echo=FALSE}
-myLavaanPlot(model=modfitsouth, labels=labelssouth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-```
-
-Detrended
+#### Detrended
 
 *West*
 
