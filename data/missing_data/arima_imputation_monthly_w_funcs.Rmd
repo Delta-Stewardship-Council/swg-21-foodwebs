@@ -1108,25 +1108,25 @@ Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/monthly/secchi_im
 Combine all analytes into one wide format dataframe, create new column for DIN
 ```{r}
 # re-import all imputed data frames
-temp_imputed <- read_csv("data/missing_data/imputed_data/monthly/temperature_imputed_monthly_data.csv") %>% 
+temp_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/temperature_imputed_monthly_data.csv") %>% 
   mutate(Analyte="Temperature")
-chl_imputed <- read_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_monthly_data.csv")%>% 
+chl_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_monthly_data.csv")%>% 
   mutate(Analyte="Chlorophyll")
-amm_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed_monthly_data.csv")%>% 
+amm_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed_monthly_data.csv")%>% 
   mutate(Analyte="DissAmmonia")
-nitr_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_imputed_monthly_data.csv")%>% 
+nitr_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_imputed_monthly_data.csv")%>% 
   mutate(Analyte="DissNitrateNitrite")
-ophos_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_monthly_data.csv")%>% 
+ophos_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_monthly_data.csv")%>% 
   mutate(Analyte="DissOrthophos")
-secchi_imputed <- read_csv("data/missing_data/imputed_data/monthly/secchi_imputed_monthly_data.csv")%>% 
+secchi_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/secchi_imputed_monthly_data.csv")%>% 
   mutate(Analyte="Secchi")
 
 # combine and pivot
-all_imputed <- bind_rows(temp_imputed, chl_imputed, amm_imputed, nitr_imputed, ophos_imputed, secchi_imputed)
-View(all_imputed)
-summary(all_imputed) # only 50 remaining NAs instead of 323 NAs
+monthly_imputed <- bind_rows(temp_imputed, chl_imputed, amm_imputed, nitr_imputed, ophos_imputed, secchi_imputed)
+View(monthly_imputed)
+summary(monthly_imputed) # only 50 remaining NAs instead of 323 NAs
 
-all_imputed_wide <- all_imputed %>% 
+monthly_imputed_wide <- monthly_imputed %>% 
   #filter(!is.na(Analyte)) %>% 
   pivot_wider(id_cols=c(Date:Imputed_values), 
               names_from=Analyte, 
@@ -1137,7 +1137,7 @@ all_imputed_wide <- all_imputed %>%
 station_region <- read_csv("data/missing_data/regions_monthly.csv")
 
 # join them to region
-all_imputed_wide_region <- all_imputed_wide %>% 
+monthly_imputed_wide_region <- monthly_imputed_wide %>% 
   left_join(station_region, by="Station") %>% 
   filter(!is.na(Region)) %>% 
   mutate(DIN= DissAmmonia + DissNitrateNitrite) %>%  # new column for dissolved inorganic nitrogen (DIN= NITRATE/NITRATE + AMM)
@@ -1145,12 +1145,12 @@ all_imputed_wide_region <- all_imputed_wide %>%
 
 # check the rows are correct = 2184 (312 time steps for each station)
 
-all_imputed_wide_region$Month <- lubridate::month(all_imputed_wide_region$Date) 
-all_imputed_wide_region$Year <- lubridate::year(all_imputed_wide_region$Date)
-View(all_imputed_wide_region)
+monthly_imputed_wide_region$Month <- lubridate::month(monthly_imputed_wide_region$Date) 
+monthly_imputed_wide_region$Year <- lubridate::year(monthly_imputed_wide_region$Date)
+View(monthly_imputed_wide_region)
 
 # polish the data to look like original dataframe
-all_imputed_export_region <- all_imputed_wide_region %>% 
+monthly_imputed_export_region <- monthly_imputed_wide_region %>% 
   select(Year, Month, Region, Temperature:DIN) %>% 
   pivot_longer(cols = Temperature:DIN, 
                names_to = "Analyte", 
@@ -1163,7 +1163,7 @@ all_imputed_export_region <- all_imputed_wide_region %>%
               values_fill= NA)
 
 
-all_imputed_export_noregions <- all_imputed_wide_region %>% 
+monthly_imputed_export_noregions <- monthly_imputed_wide_region %>% 
   select(Year, Month, Temperature:DIN) %>% 
   pivot_longer(cols = Temperature:DIN, 
                names_to = "Analyte", 
@@ -1178,12 +1178,12 @@ all_imputed_export_noregions <- all_imputed_wide_region %>%
 # export to folders
 
 # 1 - Missing data folder
-all_imputed_export_region %>% write_csv("data/missing_data/imputed_data/nutrient_data_monthly_regions_imputed.csv")
-all_imputed_export_noregions %>% write_csv("data/missing_data/imputed_data/nutrient_data_monthly_noregions_imputed.csv")
+monthly_imputed_export_region %>% write_csv("data/missing_data/imputed_data/nutrient_data_monthly_regions_imputed.csv")
+monthly_imputed_export_noregions %>% write_csv("data/missing_data/imputed_data/nutrient_data_monthly_noregions_imputed.csv")
 
 # 2 - Tanya's model folder
-all_imputed_export_region %>% write_csv("data/monthly_averages/nutrient_data_monthly_regions_imputed.csv")
-all_imputed_export_noregions %>% write_csv("data/monthly_averages/nutrient_data_monthly_noregions_imputed.csv")
+monthly_imputed_export_region %>% write_csv("data/monthly_averages/nutrient_data_monthly_regions_imputed.csv")
+monthly_imputed_export_noregions %>% write_csv("data/monthly_averages/nutrient_data_monthly_noregions_imputed.csv")
 
 # double check differences in original vs. imputed
 test <- read_csv("data/monthly_averages/nutrient_data_monthly_noregions.csv")

@@ -4,12 +4,13 @@ author: "Lara Mitchell"
 date: "12/9/2021"
 output: html_document
 knit: (function(input, ...) {
+    )
     rmarkdown::render(
       input,
       output_dir = '../../docs',
       envir = globalenv()
-    )
-  })
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
