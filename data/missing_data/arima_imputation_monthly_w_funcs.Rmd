@@ -223,7 +223,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/monthly/imputed_data/monthly/temperature_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/temperature_imputed_data.csv")
 ```
 
 
@@ -368,7 +368,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/monthly/imputed_data/monthly/chlorophyll_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_data.csv")
 ```
 
 
@@ -511,7 +511,7 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/monthly/imputed_data/monthly/diss_ammonia_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed_data.csv")
 ```
 
 
@@ -655,11 +655,157 @@ model_sum(model_fits)
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/monthly/imputed_data/monthly/diss_nitrate_nitrite_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_imputed_data.csv")
 ```
 
 
-# SECCHI
+
+# 5) DISSOLVED ORTHOPHOSPHATE
+
+# data wrangling
+## import data
+This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
+```{r}
+missingdat_phos <- read_csv("data/missing_data/missing_data/missingdat_DissOrthophos.csv") %>%  
+  mutate(Date=lubridate::as_date(MonthYear)) %>% 
+  select(Date, Analyte:P8) %>%  # rearrange df with date, no time
+  arrange(Date)
+str(missingdat_phos)
+head(missingdat_phos)
+dim(missingdat_phos)
+View(missingdat_phos)
+```
+
+## tidy data format
+```{r}
+# check dataframe:
+## check number of rows: 26 years x 12 months = 312 rows
+## there are only 310 rows which means there are two missing rows of month x year that need NAs?
+## add them back in
+
+Date <- tibble(Date=seq(from=lubridate::as_date("1995-01-01"), to=lubridate::as_date("2020-12-01"), by="1 month")) # 312
+
+# create a new table with all combos = 312
+phos_table <- Date %>% 
+  left_join(missingdat_phos, by="Date")
+```
+
+
+
+# pilot model
+Inspect a single station - see how the original time series is misleading,
+needed the full combination of station-month-year with NAs
+
+```{r}
+# visualize missing data points - 7 missing phos data points
+plt_pilot_model(phos_table, 'D28A')
+```
+
+
+## fit ARIMA model
+```{r}
+# time series object using ts - monthly resolution for each year
+phos_D28A <- create_station_df(phos_table, 'D28A')
+phos_ts <- create_station_ts(phos_D28A, 'D28A', monthly = TRUE)
+
+# fit arima model
+model_params <- list(
+  seasonal = TRUE,
+  stationary = FALSE,
+  trace = TRUE,
+  lambda = 'auto'
+  )
+
+phos_fit <- station_arima_fit(phos_ts, model_params) # stationary=TRUE for forecasting
+
+# get the same answer with lambda="auto" and unlog data
+# if we let stationarity=FALSE, there's a different top model, but it doesn't allow forecasting?
+summary(phos_fit)
+```
+Series: phos_ts 
+Best model: ARIMA(5,1,0)
+
+
+## predict values using the calibration dataset
+```{r}
+phos_forecast <- forecast::forecast(phos_ts,model=phos_fit)
+```
+
+## compare predicted versus observed values
+```{r}
+#Plot the observed and predicted phos
+plt_obs_and_pred(phos_D28A, phos_ts, phos_forecast, 'Diss phosrate/phosrite (ug/L)')
+
+#Plot predicted versus observed values
+plt_obs_vs_pred(phos_ts, phos_forecast)
+
+#Check the residuals
+forecast::checkresiduals(phos_fit) 
+#give also the results for the Ljung_Box test with H0 = randomly distributed errors (white noise)
+
+#plot residuals versus fitted values (=check for heterosedasticity)
+#if problems you might want to try to transform the data first
+par(mar=c(4,4,4,4))
+plot(phos_forecast$fitted,phos_forecast$residuals,ylab="Residuals",xlab="Fitted values")
+
+
+#Check several metrics of performance
+forecast::accuracy(object = phos_fit) # can also provide a test dataset for cross-validation using x = testUS 
+#? ME: Mean Error
+#? RMSE: Root Mean Squared Error
+#? MAE: Mean Absolute Error
+#? MPE: Mean Percentage Error
+#? MAPE: Mean Absolute Percentage Error
+#? MASE: Mean Absolute Scaled Error
+#? ACF1: Autocorrelation of errors at lag 1.
+
+
+#Missing data imputation
+#Interpolate missing values using a Kalman filter (=smoother)
+phos_inter <- na_kalman(phos_ts,model=phos_fit$model) #use the fitted model
+
+#Plot the results - Doesn't do a good job with 1980 NAs
+par(mar=c(2,4,1,1))
+plot(phos_inter,xlab="",ylab="phos (C)",col="red",main="Interpolation missing values")
+lines(phos_ts,col="black")
+
+#?auto.arima
+```
+
+# full model
+```{r}
+# run model and fit
+model_params <- list(
+  seasonal = TRUE, # default TRUE
+  stationary = FALSE, # default FALSE
+  trace = FALSE, # default FALSE
+  lambda = NULL # default NULL
+  )
+
+df_ts <- create_ts_df(phos_table, model_params, log_trans = TRUE, monthly = TRUE)
+model_fits <- eval_fit(phos_table, model_params, monthly = TRUE)
+```
+
+## diagnostic tests
+```{r}
+#Plot the observed and predicted phos
+plt_diagnos_obs_pred(df_ts, 'Diss orthophosphate (ug/L)')
+```
+
+```{r}
+# model summary
+model_sum(model_fits)
+```
+
+## export df
+```{r}
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_monthly_data.csv")
+```
+
+
+
+
+# 6) SECCHI
 
 # data wrangling
 ## import data
@@ -950,35 +1096,35 @@ plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
 
 ## export df
 ```{r}
-Time_series_imp2 %>% write_csv("data/missing_data/monthly/imputed_data/monthly/secchi_imputed_data.csv")
+Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/monthly/secchi_imputed_data.csv")
 ```
 
 
 
 ##############################
 
-# Combine and export
+# 7) COMBINE and EXPORT
 
 Combine all analytes into one wide format dataframe, create new column for DIN
 ```{r}
 # re-import all imputed data frames
-temp_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/temperature_imputed_data.csv") %>% 
+temp_imputed <- read_csv("data/missing_data/imputed_data/monthly/temperature_imputed_monthly_data.csv") %>% 
   mutate(Analyte="Temperature")
-chl_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/chlorophyll_imputed_data.csv")%>% 
+chl_imputed <- read_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_monthly_data.csv")%>% 
   mutate(Analyte="Chlorophyll")
-amm_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/diss_ammonia_imputed_data.csv")%>% 
+amm_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed_monthly_data.csv")%>% 
   mutate(Analyte="DissAmmonia")
-nitr_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/diss_nitrate_nitrite_imputed_data.csv")%>% 
+nitr_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_imputed_monthly_data.csv")%>% 
   mutate(Analyte="DissNitrateNitrite")
-ophos_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/diss_orthophos_imputed_data.csv")%>% 
+ophos_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_monthly_data.csv")%>% 
   mutate(Analyte="DissOrthophos")
-secchi_imputed <- read_csv("data/missing_data/monthly/imputed_data/monthly/secchi_imputed_data.csv")%>% 
+secchi_imputed <- read_csv("data/missing_data/imputed_data/monthly/secchi_imputed_monthly_data.csv")%>% 
   mutate(Analyte="Secchi")
 
 # combine and pivot
 all_imputed <- bind_rows(temp_imputed, chl_imputed, amm_imputed, nitr_imputed, ophos_imputed, secchi_imputed)
 View(all_imputed)
-summary(all_imputed) # only 42 remaining NAs instead of 274 NAs
+summary(all_imputed) # only 50 remaining NAs instead of 323 NAs
 
 all_imputed_wide <- all_imputed %>% 
   #filter(!is.na(Analyte)) %>% 
@@ -994,7 +1140,7 @@ station_region <- read_csv("data/missing_data/regions_monthly.csv")
 all_imputed_wide_region <- all_imputed_wide %>% 
   left_join(station_region, by="Station") %>% 
   filter(!is.na(Region)) %>% 
-  mutate(DIN= DissAmmonia + DissNitrateNitrite) # %>%  # new column for dissolved inorganic nitrogen (DIN= NITRATE/NITRATE + AMM)
+  mutate(DIN= DissAmmonia + DissNitrateNitrite) %>%  # new column for dissolved inorganic nitrogen (DIN= NITRATE/NITRATE + AMM)
   select(Date, Station, Region, Temperature:Secchi, DIN)
 
 # check the rows are correct = 2184 (312 time steps for each station)
@@ -1032,8 +1178,8 @@ all_imputed_export_noregions <- all_imputed_wide_region %>%
 # export to folders
 
 # 1 - Missing data folder
-all_imputed_export_region %>% write_csv("data/missing_data/missing_data/nutrient_data_monthly_regions_imputed.csv")
-all_imputed_export_noregions %>% write_csv("data/missing_data/missing_data/nutrient_data_monthly_noregions_imputed.csv")
+all_imputed_export_region %>% write_csv("data/missing_data/imputed_data/nutrient_data_monthly_regions_imputed.csv")
+all_imputed_export_noregions %>% write_csv("data/missing_data/imputed_data/nutrient_data_monthly_noregions_imputed.csv")
 
 # 2 - Tanya's model folder
 all_imputed_export_region %>% write_csv("data/monthly_averages/nutrient_data_monthly_regions_imputed.csv")
@@ -1041,5 +1187,27 @@ all_imputed_export_noregions %>% write_csv("data/monthly_averages/nutrient_data_
 
 # double check differences in original vs. imputed
 test <- read_csv("data/monthly_averages/nutrient_data_monthly_noregions.csv")
+```
+
+# compare monthly vs. yearly imputed values. diff?
+```{r}
+temp_monthly <- read_csv("data/missing_data/imputed_data/monthly/temperature_imputed_monthly_data.csv") %>% 
+  select(Date, Station, Imputed_values, Imputed) %>% 
+  rename(Imputed_monthly = Imputed_values)
+temp_yearly <- read_csv("data/missing_data/imputed_data/yearly/temperature_imputed_yearly_data.csv")%>% 
+  select(Date, Station, Imputed_values, Imputed) %>% 
+  rename(Imputed_yearly = Imputed_values)
+
+temp_all_imputed <- temp_yearly %>% 
+  full_join(temp_monthly) %>% 
+  filter(Imputed==TRUE)
+
+ggplot(temp_all_imputed, aes(Imputed_yearly, Imputed_monthly))+
+  geom_point()+
+  theme_bw()
+# close to 1-1 relationship.
+# we have to use this way because the monthly vs. annual models have different stations
+# if we just run the annual script and then filter from 1995 onward we lose important
+# stations that don't have longer time series and so can't be interpolated before 1995.
 ```
 
