@@ -390,17 +390,17 @@ modFW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+h
         hb:=hb1
         hs:=hs1
         ht:=ht1+ht2+ht3
-        ha:=ha1-ha2-ha3
+        ha:=sqrt(ha1^2+ha2^2-ha3^2)
         
         pb:=pb1
         ps:=ps1
         pt:=pt1+pt2
-        pa:=pa1-pa2-pa3
+        pa:=sqrt(pa1^2+pa2^2+pa3^2)
         
         fb:=fb1+fb2
         fs:=fs1
         ft:=ft1
-        fa:=fa1-fa2-fa3
+        fa:=sqrt(fa1^2+fa2^2+fa3^2)
 '
 
 modW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*secchi
@@ -410,16 +410,16 @@ modW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha
         hb:=hb1
         hs:=hs1
         ht:=ht1+ht2+ht3
-        ha:=ha1-ha2-ha3
+        ha:=sqrt(ha1^2+ha2^2-ha3^2)
         
         pb:=pb1+pb2
         ps:=ps1
         pt:=pt1+pt2
-        pa:=pa1-pa2-pa3
+        pa:=sqrt(pa1^2+pa2^2+pa3^2)
         
         fb:=fb1+fb2
         fs:=fs1
-        fa:=fa1-fa2-fa3
+        fa:=sqrt(fa1^2+fa2^2+fa3^2)
 '
 
 modN='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*secchi
@@ -429,17 +429,17 @@ modN='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+h
         hb:=hb1
         hs:=hs1
         ht:=ht1+ht2+ht3
-        ha:=ha1-ha2-ha3
+        ha:=sqrt(ha1^2+ha2^2-ha3^2)
         
         pb:=pb1+pb2
         ps:=ps1
         pt:=pt1+pt2
-        pa:=pa1-pa2-pa3
+        pa:=sqrt(pa1^2+pa2^2+pa3^2)
         
         fb:=fb1+fb2
         fs:=fs1
         ft:=ft1+ft2
-        fa:=fa1-fa2-fa3
+        fa:=sqrt(fa1^2+fa2^2+fa3^2)
 '
 
 modS='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*secchi
@@ -449,17 +449,17 @@ modS='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+h
         hb:=hb1
         hs:=hs1
         ht:=ht1+ht2+ht3
-        ha:=ha1-ha2-ha3
+        ha:=sqrt(ha1^2+ha2^2-ha3^2)
         
         pb:=pb1+pb2
         ps:=ps1
         pt:=pt1+pt2
-        pa:=pa1-pa2-pa3
+        pa:=sqrt(pa1^2+pa2^2+pa3^2)
         
         fb:=fb1+fb2+fb3
         fs:=fs1
         ft:=ft1+ft2
-        fa:=fa1-fa2-fa3
+        fa:=sqrt(fa1^2+fa2^2+fa3^2)
 '
 
 modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
@@ -507,10 +507,6 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 
 Total effects
 
-Abiotic:  
-positive values = promoted by high flow, low temp, low secchi/high turbidity  
-negative values = promoted by low flow, high temp, high secchi/low turbidity  
-
 ```{r}
 ssFW=standardizedsolution(modfitFW) %>% mutate(region="Far West")
 ssW=standardizedsolution(modfitW) %>% mutate(region="West")
@@ -552,16 +548,16 @@ modFW='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2
         ns:=ns1
         nt:=nt1
         nn:=nn1+nn2+nn3
-        na:=na1-na2-na3
+        na:=sqrt(na1^2+na2^2+na3^2)
         
         cb:=cb1
         cs:=cs1
         ct:=ct1+ct2
-        ca:=ca1-ca2-ca3
+        ca:=sqrt(ca1^2+ca2^2+ca3^2)
         
         lb:=lb1+lb2+lb3
         ls:=ls1
-        la:=la1-la2-la3
+        la:=sqrt(la1^2+la2^2+la3^2)
 '
 
 modW='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*secchi
@@ -571,16 +567,17 @@ modW='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*
         ns:=ns1
         nt:=nt1
         nn:=nn1+nn2+nn3
-        na:=na1-na2-na3
+        na:=sqrt(na1^2+na2^2+na3^2)
         
         cb:=cb1
         cs:=cs1
         ct:=ct1+ct2
-        ca:=ca1-ca2-ca3
+        ca:=sqrt(ca1^2+ca2^2+ca3^2)
         
         lb:=lb1+lb2+lb3+lb4
         ls:=ls1
-        la:=la1-la2-la3'
+        la:=sqrt(la1^2+la2^2+la3^2)
+'
 
 modN='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*secchi
         chla~cb1*din+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*secchi
@@ -589,16 +586,17 @@ modN='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2
         ns:=ns1
         nt:=nt1
         nn:=nn1+nn2+nn3
-        na:=na1-na2-na3
+        na:=sqrt(na1^2+na2^2+na3^2)
         
         cb:=cb1
         cs:=cs1
         ct:=ct1+ct2
-        ca:=ca1-ca2-ca3
+        ca:=sqrt(ca1^2+ca2^2+ca3^2)
         
         lb:=lb1+lb2+lb3
         ls:=ls1
-        la:=la1-la2-la3'
+        la:=sqrt(la1^2+la2^2+la3^2)
+'
 
 modS='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*secchi
         chla~cb1*din+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*secchi
@@ -607,16 +605,17 @@ modS='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2
         ns:=ns1
         nt:=nt1
         nn:=nn1+nn2+nn3
-        na:=na1-na2-na3
+        na:=sqrt(na1^2+na2^2+na3^2)
         
         cb:=cb1
         cs:=cs1
         ct:=ct1+ct2
-        ca:=ca1-ca2-ca3
+        ca:=sqrt(ca1^2+ca2^2+ca3^2)
         
         lb:=lb1+lb2+lb3
         ls:=ls1
-        la:=la1-la2-la3'
+        la:=sqrt(la1^2+la2^2+la3^2)
+'
 
 modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
 modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
@@ -662,10 +661,6 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 ```
 
 Total effects
-
-Abiotic:  
-positive values = promoted by high flow, low temp, low secchi/high turbidity  
-negative values = promoted by low flow, high temp, high secchi/low turbidity  
 
 ```{r}
 ssFW=standardizedsolution(modfitFW) %>% mutate(region="Far West")
