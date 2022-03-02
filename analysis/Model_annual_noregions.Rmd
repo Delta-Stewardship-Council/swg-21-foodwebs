@@ -19,9 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r packages, message=FALSE}
 library(dplyr)
-#library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
 library(lavaan)
-library(semPlot)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
@@ -37,8 +35,29 @@ focaldata=dsub[,cnames$Datacolumn]
 fvars=cnames$Shortname
 colnames(focaldata)=fvars
 
+focaldata = focaldata %>% 
+  mutate(tzoop=hcope+clad+mysid+pcope+rotif_m,
+         tzoop_e=hcope_e+clad_e+mysid_e+pcope_e+rotif_e,
+         hzoop=hcope+clad+rotif_m,
+         hzoop_e=hcope_e+clad_e+rotif_e,
+         pzoop=mysid+pcope,
+         pzoop_e=mysid_e+pcope_e) 
+fvars=c(fvars,"tzoop","tzoop_e",
+        "hzoop","hzoop_e",
+        "pzoop","pzoop_e")
+cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
+                                                       "hzoop","hzoop_e",
+                                                       "pzoop","pzoop_e"),
+                               Diagramname=c("Total Zooplankton\nBiomass",
+                                             "Total Zooplankton\nEnergy",
+                                             "Herbivorous Zooplankton\nBiomass",
+                                             "Herbivorous Zooplankton\nEnergy",
+                                             "Predatory Zooplankton\nBiomass",
+                                             "Predatory Zooplankton\nEnergy"),
+                               Datacolumn=NA,Log="yes"))
+
 #focal variables
-varnames=c("temp","flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish","estfish_bsot","estfish_bsmt","estfish_stn")
+varnames=c("temp","flow","secchi","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
 ```
@@ -117,6 +136,37 @@ ggplot(plot3,aes(x=year,y=Value)) +
   labs(title = "Log scaled detrended")
 ```
 
+### Other useful plots
+
+Breakdown of total zooplankton biomass.
+
+```{r zoops, echo=FALSE}
+plot4=select(focaldata,year,hcope,pcope,clad,mysid,rotif_m) %>% 
+  gather(Var,Value,hcope:rotif_m)
+ggplot(plot4,aes(x=year,y=Value,fill=Var)) +
+  geom_area() +
+  theme_bw() + scale_fill_brewer(palette = "Dark2") +
+  labs(title = "Original units")
+```
+
+Similarity of fish indices.
+
+```{r fish, echo=FALSE}
+plot5=select(fd,year,estfish,estfish_bsmt,estfish_stn) %>% 
+  gather(Var,Value,estfish,estfish_bsmt,estfish_stn) 
+ggplot(plot5,aes(x=year,y=Value,color=Var)) +
+  geom_line(size=1) +
+  theme_bw() + scale_color_brewer(palette = "Dark2") +
+  labs(title = "Log scaled")
+
+plot6=select(fd_dtr,year,estfish,estfish_bsmt,estfish_stn) %>% 
+  gather(Var,Value,estfish,estfish_bsmt,estfish_stn)
+ggplot(plot6,aes(x=year,y=Value,color=Var)) +
+  geom_line(size=1) +
+  theme_bw() + scale_color_brewer(palette = "Dark2") +
+  labs(title = "Log scaled detrended")
+```
+
 ### Cross-correlation matrices  
 (only sig correlations shown... no correction for multiple comparisons)
 
@@ -145,57 +195,29 @@ ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
 
-#lag 1
-lags1=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
+#lag 0, detrended
+lags0dtr=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
                   stringsAsFactors = F)
-for(i in 1:nrow(lags1)) {
-  v1=fd[,lags1$V1[i]]
-  v2=fd[,lags1$V2[i]]
-  if(!all(is.na(v1)) & !all(is.na(v2))) {
-    tccf=cor.test(v1,lag(v2,1))
-    lags1$Cor[i]=tccf$estimate
-    lags1$P[i]=tccf$p.value
-  }
-}
-lags1$V1=factor(lags1$V1,levels = varnames)
-lags1$V2=factor(lags1$V2,levels = varnames)
-ggplot(filter(lags1,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
-  geom_tile() +
-  geom_abline(slope=1,intercept = 0) +
-  scale_fill_gradient2() +
-  theme_bw() +
-  labs(x="V2 (t-1)", y="V1 (t)", title = "lag 1 cross-cor") +
-  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
-  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
-  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
-
-#lag 1 seasonality removed
-lags1dtr=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
-                  stringsAsFactors = F)
-for(i in 1:nrow(lags1dtr)) {
-  v1=fd_dtr[,lags1dtr$V1[i]]
-  v2=fd_dtr[,lags1dtr$V2[i]]
+for(i in 1:nrow(lags0dtr)) {
+  v1=fd_dtr[,lags0dtr$V1[i]]
+  v2=fd_dtr[,lags0dtr$V2[i]]
   if(!all(is.na(v1)) & !all(is.na(v2))) {
     tccf=cor.test(v1,v2)
-    lags1dtr$Cor[i]=tccf$estimate
-    lags1dtr$P[i]=tccf$p.value
+    lags0dtr$Cor[i]=tccf$estimate
+    lags0dtr$P[i]=tccf$p.value
   }
 }
-lags1dtr$V1=factor(lags1dtr$V1,levels = varnames)
-lags1dtr$V2=factor(lags1dtr$V2,levels = varnames)
-ggplot(filter(lags1dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+lags0dtr$V1=factor(lags0dtr$V1,levels = varnames)
+lags0dtr$V2=factor(lags0dtr$V2,levels = varnames)
+ggplot(filter(lags0dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   geom_tile() +
   geom_abline(slope=1,intercept = 0) +
   scale_fill_gradient2() +
   theme_bw() +
-  labs(x="V2 (t-1)", y="V1 (t)",title = "lag 0 cross-cor, detrended") +
+  labs(x="V2 (t)", y="V1 (t)", title = "lag 0 cross-cor, detrended") +
   scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
-```
-
-```{r bivariate, fig.width=9, fig.height=9, echo=FALSE, eval=FALSE}
-psych::pairs.panels(dplyr::select(fd, year, varnames),lm = T)
 ```
 
 ### SEM model
@@ -203,24 +225,30 @@ psych::pairs.panels(dplyr::select(fd, year, varnames),lm = T)
 With and without detrending.
 
 ```{r}
+#1
 model1='zoop=~hcope+clad+mysid
         fish=~estfish_bsmt+estfish_bsot
         zoop~chla+potam+flow
         chla~potam+flow
         fish~zoop+flow
 '
+#2
+model1='chla~potam+flow+temp
+        hzoop~chla+potam+flow+temp
+        pzoop~chla+potam+flow+hzoop+temp
+        fish~hzoop+pzoop+flow+secchi+temp+potam
+        fish=~estfish+estfish_stn+estfish_bsmt
+'
+
 modfit1=sem(model1, data=fd)
 modfit1_dtr=sem(model1, data=fd_dtr)
 summary(modfit1, standardized=T, rsq=T)
 summary(modfit1_dtr, standardized=T, rsq=T)
-# par(mfrow=c(1,2))
-# semPaths(modfit1, "std", edge.label.cex = 1, residuals = F)
-# semPaths(modfit1, "par", edge.label.cex = 1, residuals = F)
 
 labels1 <- createLabels(modfit1, cnames)
 
 # residuals(modfit1)
-# modificationindices(modfit1)
+# modificationindices(modfit1, sort=T, maximum.number=20)
 ```
 
 ### Nice plots

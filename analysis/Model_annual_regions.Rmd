@@ -409,9 +409,14 @@ modsouth='chla~corbic+flow+temp+secchi
         fish~hzoop+pzoop+corbic+flow+temp+secchi
         fish=~estfish+estfish_stn+estfish_bsmt
 '
-
+modsouth_dtr='chla~corbic+flow+temp+secchi
+        hzoop~chla+corbic+flow+temp+secchi
+        pzoop~chla+corbic+flow+temp+secchi+hzoop
+        fish~hzoop+pzoop+corbic+flow+temp+secchi
+        fish=~estfish #+estfish_stn+estfish_bsmt
+'
 modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
-modfitsouth_dtr=sem(modsouth, data=filter(fdr_dtr,region=="South"))
+modfitsouth_dtr=sem(modsouth_dtr, data=filter(fdr_dtr,region=="South"))
 summary(modfitsouth, standardized=T, rsq=T)
 summary(modfitsouth_dtr, standardized=T, rsq=T)
 

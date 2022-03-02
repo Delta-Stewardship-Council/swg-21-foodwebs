@@ -293,8 +293,10 @@ createLabels <- function(model_fit, var_name_df) {
   ## model_fit: a lavaan model object.
   ## name_map_df: a copy of the file column_names.csv as a data frame.
 
-  uniq_vars <- unique(c(lavaan::parameterestimates(model_fit)$lhs,
-                        lavaan::parameterestimates(model_fit)$rhs))
+  ptab <- lavaan::parameterestimates(model_fit)
+  ptab <- subset(ptab, op != ":=") #exclude derived parameters
+
+  uniq_vars <- unique(c(ptab$lhs,ptab$rhs))
 
   lat_name_df <- data.frame("Shortname"=c("zoop","fish"),
                             "Diagramname"=c("zooplankton","fish\nbiomass"),
