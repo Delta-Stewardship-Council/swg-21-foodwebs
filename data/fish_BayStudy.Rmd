@@ -311,7 +311,9 @@ Create a dataframe for the consistent monthly stations since 1994. Do not includ
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 
 # monthly (expanded) station list
-BayStudy_full_monthly <- BayStudy_full %>% 
+BayStudy_full_monthly <-  bind_rows(BayStudy_allfish,BayStudy_Striped_Bass_age0,BayStudy_Striped_Bass_large) %>%
+  mutate(Month=month(Date)) %>% filter(!is.na(Latitude) & !is.na(Longitude)) %>%
+  mutate(Station=as.numeric(Station)) %>% 
   select(Source, Station, Latitude, Longitude) %>% 
   distinct() %>% 
   filter(Station != "326" & Station != "324" & Station != "753") %>% 
@@ -329,7 +331,9 @@ Create dataset for month and region
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 
-BayStudy_monthly_derived <- BayStudy_full %>% mutate(Month=month(Date)) %>%
+BayStudy_monthly_derived <- bind_rows(BayStudy_allfish,BayStudy_Striped_Bass_age0,BayStudy_Striped_Bass_large) %>%
+  mutate(Month=month(Date)) %>% filter(!is.na(Latitude) & !is.na(Longitude)) %>%
+  mutate(Station=as.numeric(Station)) %>% mutate(Month=month(Date)) %>%
   filter(Station != "326" & Station != "324" & Station != "753") %>% 
   filter(!is.na(Latitude) & !is.na(Longitude)) %>%
   region_assigner(analysis="monthly",plot=TRUE) %>%

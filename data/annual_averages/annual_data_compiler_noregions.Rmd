@@ -3,6 +3,8 @@ title: "Data compiler - annual averages, no regions"
 author: "Lara Mitchell"
 date: "12/9/2021"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
