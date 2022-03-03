@@ -1,0 +1,57 @@
+```{r}
+# convert zoop to biomass
+# Sarah Perry
+```
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+```{r}
+df_codes <- read_csv('data/data_in/MysidAmphipodSpeciesLookUp.csv')
+df_data <- read_csv('data/data_in/EMP_MysidAmphipodLengths.csv')
+df_biomass <- read_csv('data/data_in/Biomass conversions.csv')
+
+# filter to species needed
+# Aab = Ampelisca abdita, Gd & UnidG = Gammarus, Asp & Ast = americorophium, Cra = Crangonyx, Hya = Hyalella
+# !! Cor & UnidC = monocorophium/sinocorophium?
+species_list <- c('Aab','Gd','UnidG','Asp','Ast','Cra','Hya','Cor','UnidC')
+df_data <- df_data %>% filter(SpeciesCode %in% species_list)
+
+# filter by date >= 2014
+df_data <- df_data %>% filter(year(as.Date(SampleDate, format = '%m/%d/%Y')) >= 2014)
+
+# add in species code
+df_data <- right_join(df_data, df_codes[1:2], by = 'SpeciesCode')
+
+# equation
+lw_conversion <- function(len, a, b){
+  weight <- a*(len^b)
+  return(weight)
+}
+```
+
+```{r}
+# filter conversions by species, check preservative
+df_biomass <- df_biomass %>% rename(SpeciesName = Taxname)
+df_biomass <- right_join(df_biomass, df_codes[1:2], by = 'SpeciesName')
+df_biomass <- df_biomass %>% filter(SpeciesCode %in% species_list)
+
+# Asp, Ast, and Gd have ethanol and formalin, so remove ethanol
+df_biomass <- df_biomass %>% filter(Preservative %in% c('Formalin',NA))
+
+# filter to just code, a, and b
+# !! some species don't have a and b?
+df_biomass <- df_biomass %>% subset(select = c('SpeciesCode','a','b'))
+
+# join data
+df_data <- right_join(df_data, df_biomass, by = 'SpeciesCode')
+```
+
+```{r}
+# convert 
+df_data <- df_data %>%
+  mutate(Biomass = lw_conversion(Size, a, b))
+```
+

@@ -1,0 +1,23 @@
+SpeciesCode,SpeciesName,MysidOrAmphipod,Phylum,Class,Order,Family,Genus,Species,NativeOrIntro,SalinityPreference
+Aa,Acanthomysis aspera,mysid,Arthropoda,Malacostraca,Mysidacea,Mysidae,Acanthomysis,aspera,I,fresh-high
+Aab,Ampelisca abdita,amphipod,Arthropoda,Malacostraca,Amphipoda,Gammaridae,Ampelisca,abdita,,
+Ab,Hyperacanthomysis longirostris,mysid,Arthropoda,Malacostraca,Mysidacea,Mysidae,Hyperacanthomysis,longirostris,I,fresh-high
+Ah,Acanthomysis hwanhaiensis,mysid,Arthropoda,Malacostraca,Mysidacea,Mysidae,Acanthomysis,hwanhaiensis,I,high
+Am,Alienacanthomysis macropsis,mysid,Arthropoda,Malacostraca,Mysidacea,Mysidae,Alienacanthomysis,macropsis,N,high
+Asp,Americorophium spinicorne,amphipod,Arthropoda,Malacostraca,Amphipoda,Corophiidae,Americorophium,spinicorne,,
+Ast,Americorophium stimpsoni,amphipod,Arthropoda,Malacostraca,Amphipoda,Corophiidae,Americorophium,stimpsoni,,
+BlVi,Blackfordia virginica,jelly,Cnidaria,Hydrozoa,Leptothecata,Blackfordiidae,Blackfordiidae,virginica,I,
+Cor,Corophium alienense,amphipod,Arthropoda,Malacostraca,Amphipoda,Corophiidae,Corophium,alienense,I,high
+Cra,Crangonyx sp.,amphipod,Arthropoda,Malacostraca,Amphipoda,Gammaridae,Crangonyx,sp.,,
+Dh,Deltamysis holmquistae,mysid,Arthropoda,Malacostraca,Mysidacea,Mysidae,Deltamysis,holmquistae,N,fresh-low
+Gd,Gammarus daiberi,amphipod,Arthropoda,Malacostraca,Amphipoda,Gammaridae,Gammarus,daiberi,I,low
+Gja,Grandidierella japonica,amphipod,Arthropoda,Malacostraca,Amphipoda,Aoridae,Grandideierella,japonica,I,
+Hya,Hyalella sp.,amphipod,Arthropoda,Malacostraca,Amphipoda,Gammaridae,Hyalella,sp.,,
+MaMa,Maeotias Marginata,jelly,Cnidaria,Hydrozoa,Limnomedusae,Olindiidae,Maeotias,Marginata,I,
+Moe,Moerisia spp.,jelly,Cnidaria,Hydrozoa,Anthoathecata,Moerisiidae,Moerisia,,I,
+Nk,Neomysis kadiakensis,mysid,Arthropoda,Malacostraca,Mysidacea,Mysidae,Neomysis,kadiakensis,N,fresh-high
+Nm,Neomysis mercedis,mysid,Arthropoda,Malacostraca,Mysidacea,Mysidae,Neomysis,mercedis,N,fresh-high
+Unid,Unidentified,mysid,Arthropoda,Malacostraca,Mysidacea,Mysidae,,,,
+UnidA,Unidentified Amphipod,amphipod,Arthropoda,Malacostraca,Amphipoda,,,,,
+UnidC,Unidentified Corophium,amphipod,Arthropoda,Malacostraca,Amphipoda,Corophiidae,Corophium,sp.,,
+UnidG,Unidentified Gammarus,amphipod,Arthropoda,Malacostraca,Amphipoda,Gammaridae,Gammarus,sp.,,
