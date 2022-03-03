@@ -53,5 +53,8 @@ df_data <- right_join(df_data, df_biomass, by = 'SpeciesCode')
 # convert 
 df_data <- df_data %>%
   mutate(Biomass = lw_conversion(Size, a, b))
+
+# export
+# write_csv(df_data, 'data/zoop_with_biomass.csv')
 ```
 
