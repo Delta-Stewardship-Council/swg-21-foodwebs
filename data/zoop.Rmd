@@ -13,10 +13,6 @@ knit: (function(input, ...) {
     })
 ---
 
-TODO:
-1) Need to get energy density to work with Mysids. 
-Need to remove Mysids from the dry weights, and add it with energy density but just as an overall Mysid category
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```

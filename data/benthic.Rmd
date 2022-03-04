@@ -53,6 +53,13 @@ if(!file.exists(file.path("data_raw", "DWR Benthic raw count data 1975-2020 2021
 
 # Clean and reprocess data
 
+Read in amphipod biomass conversion data
+```{r}
+amphipod_biomass<-read_csv("data/data_in/amphipod_biomass_conversions.csv")%>%
+  select(SpeciesName, Month, Biomass_mean)
+```
+
+
 Read in raw benthic count data
 
 Benthic file does not exist locally so can get it from KMB: https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a
@@ -66,15 +73,19 @@ Benthic file does not exist locally so can get it from KMB: https://knb.ecoinfor
 * Take mean of lat/ long for each site since some sites moved slightly over the years based on the L, R, C
 
 ```{r}
-
 ben <- read.csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
-  filter(Genus %in% c("Potamocorbula", "Corbicula") | Order_level == "Amphipoda")%>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula", "Ampelisca", 
+                      "Monocorophium", "Sinocorophium", "Americorophium", 
+                      "Crangonyx", "Gammarus", "Hyalella"))%>%
   select(SampleDate, Year, Month, StationCode, Grab, OrganismCode, Count, Order_level, Genus, Latitude, Longitude)%>%
   mutate(mon = ym(paste0(Year, Month, sep = "-")), #create a month time step
          CPUE=Count/0.052,
          Month=month(mon))%>%
-  group_by(across(-c(Count, Grab, CPUE)))%>%
-  summarise(CPUE=mean(CPUE), .groups="drop")%>%
+  left_join(amphipod_biomass, by=c("Genus"="SpeciesName", "Month"))%>%
+  mutate(BPUE=CPUE*Biomass_mean)%>%
+  select(-Biomass_mean)%>%
+  group_by(across(-c(Count, Grab, CPUE, BPUE)))%>%
+  summarise(across(c(CPUE, BPUE), mean), .groups="drop")%>%
   mutate(Latitude=if_else(StationCode=="D7-C", 38.1171292, Latitude),
          Longitude=if_else(StationCode=="D7-C", -122.0395539, Longitude))
 ```
@@ -113,8 +124,8 @@ First specify which stations are from the 1980s and which are from the 1990s
 #stations sampled continuously since the 1980s
 
 ben_1980 = c("D7-C", 
-               "D4-L", 
-               "D28A-L")
+             "D4-L", 
+             "D28A-L")
 
 #stations sampled continuously since the 1990s
 
@@ -143,14 +154,14 @@ sites <- ben %>%
 leaflet(sites) %>% 
   addTiles() %>% #adds the default base map
   addCircleMarkers(data= sites, #all benthic sites 
-             lat = ~Latitude,
-             lng = ~Longitude, 
-             label = ~StationCode, 
-             radius = ~n_months/ 50, #arbitrary scaling to show number of months each site was sampled 
-             color = "black",
-             fillColor = "black",
-             weight = 0.25, 
-             fillOpacity = 1) %>% 
+                   lat = ~Latitude,
+                   lng = ~Longitude, 
+                   label = ~StationCode, 
+                   radius = ~n_months/ 50, #arbitrary scaling to show number of months each site was sampled 
+                   color = "black",
+                   fillColor = "black",
+                   weight = 0.25, 
+                   fillOpacity = 1) %>% 
   addCircleMarkers(data = sites %>% filter(StationCode %in% ben_1980), #sites continuously from the 1980s
                    lat = ~Latitude,
                    lng = ~Longitude, 
@@ -161,14 +172,14 @@ leaflet(sites) %>%
                    weight = 0.25, 
                    fillOpacity = 1) %>% 
   addCircleMarkers(data = sites %>% filter(StationCode %in% ben_1990), #sites from the 1990s
-                 lat = ~Latitude,
-                 lng = ~Longitude, 
-                 label = ~StationCode, 
-                 radius = ~n_months/ 50, 
-                 color = "black",
-                 fillColor = "blue",
-                 weight = 0.25, 
-                 fillOpacity = 1) 
+                   lat = ~Latitude,
+                   lng = ~Longitude, 
+                   label = ~StationCode, 
+                   radius = ~n_months/ 50, 
+                   color = "black",
+                   fillColor = "blue",
+                   weight = 0.25, 
+                   fillOpacity = 1) 
 
 ```
 
@@ -226,7 +237,7 @@ LT_clams_year_noregions <- ben_LT%>%
          Potamocorbula_cpue = Potamocorbula)
 
 write.csv(LT_clams_year_noregions, "data/annual_averages/clams_annual_noregions.csv",
-					row.names=FALSE)
+          row.names=FALSE)
 
 LT_clams_year_regions <- ben_LT%>%
   filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
@@ -237,7 +248,7 @@ LT_clams_year_regions <- ben_LT%>%
          Potamocorbula_cpue = Potamocorbula)
 
 write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv",
-					row.names=FALSE)
+          row.names=FALSE)
 
 ```
 
@@ -253,26 +264,26 @@ write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv"
 
 ```{r}
 LT_amph_year_noregions <- ben_LT%>%
-  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Grandidierella", "Crangonyx", "Gammarus",
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Crangonyx", "Gammarus",
                       "Hyalella"))%>%
   group_by(Order_level, Year) %>%
-  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
-  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
-  rename(Amphipoda_cpue = Amphipoda)
+  summarize(across(c(CPUE, BPUE),  mean), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = c(CPUE, BPUE),
+    names_glue = "{Order_level}_{.value}")
 
 write.csv(LT_amph_year_noregions, "data/annual_averages/amphipod_annual_noregions.csv",
-					row.names=FALSE)
+          row.names=FALSE)
 
 LT_amph_year_regions <- ben_LT%>%
-  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Grandidierella", "Crangonyx", "Gammarus",
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Crangonyx", "Gammarus",
                       "Hyalella"))%>%
   group_by(Region, Order_level, Year) %>%
-  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
-  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
-  rename(Amphipoda_cpue = Amphipoda)
+  summarize(across(c(CPUE, BPUE),  mean), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = c(CPUE, BPUE),
+    names_glue = "{Order_level}_{.value}")
 
 write.csv(LT_amph_year_regions, "data/annual_averages/amphipod_annual_regions.csv",
-					row.names=FALSE)
+          row.names=FALSE)
 
 ```
 
@@ -297,15 +308,15 @@ ben_ST <- filter(ben, StationCode %in% c(ben_1990, ben_1980) & Year >1996)%>%
 
 ```{r}
 ST_clams_mon <- ben_ST %>%
-    filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
-    group_by(Region, Genus, Year, Month) %>%
-    summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
-    pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
-    rename(Corbicula_cpue = Corbicula,
-           Potamocorbula_cpue = Potamocorbula)
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
+  group_by(Region, Genus, Year, Month) %>%
+  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
 
 write.csv(ST_clams_mon, "data/monthly_averages/clams_monthly_regions.csv",
-					row.names=FALSE)
+          row.names=FALSE)
 
 ```
 
@@ -317,15 +328,15 @@ write.csv(ST_clams_mon, "data/monthly_averages/clams_monthly_regions.csv",
 
 ```{r}
 ST_amph_mon <- ben_ST%>%
-  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Grandidierella", "Crangonyx", "Gammarus",
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Crangonyx", "Gammarus",
                       "Hyalella"))%>%
-  group_by(Region, Order_level, Year, Month) %>%
-  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
-  pivot_wider(names_from = Order_level, values_from = CPUE_Total) %>% 
-  rename(Amphipoda_cpue = Amphipoda)
+  group_by(Region, Order_level, Year, Month)%>%
+  summarize(across(c(CPUE, BPUE),  mean), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = c(CPUE, BPUE),
+    names_glue = "{Order_level}_{.value}")
 
 write.csv(ST_amph_mon, "data/monthly_averages/amphipod_monthly_regions.csv",
-					row.names=FALSE)
+          row.names=FALSE)
 
 
 

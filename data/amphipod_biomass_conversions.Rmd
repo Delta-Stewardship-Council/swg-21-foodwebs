@@ -1,7 +1,19 @@
-```{r}
-# convert zoop to biomass
-# Sarah Perry
-```
+---
+title: "Amphipod biomass conversions"
+author: "Sarah Perry"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = 'docs',
+      knit_root_dir = "../",
+      envir = globalenv()
+    )
+    })
+---
+
 
 ```{r}
 library(tidyverse)
@@ -17,11 +29,13 @@ df_biomass <- read_csv('data/data_in/Biomass conversions.csv')
 # filter to species needed
 # Aab = Ampelisca abdita, Gd = Gammarus, Asp & Ast = americorophium, Cra = Crangonyx, Hya = Hyalella
 # Cor = sinocorophium, UnidC = monocorophium
-species_list <- c('Aab','Gd','Asp','Ast','Cra','Hya','Cor','UnidC')
+species_list <- c('Aab','Gd','Asp','Ast','Cra','Hya','Cor','UnidC','Gja')
 df_data <- df_data %>% filter(SpeciesCode %in% species_list)
 
 # filter by date >= 2014
-df_data <- df_data %>% filter(year(as.Date(SampleDate, format = '%m/%d/%Y')) >= 2014)
+df_data <- df_data %>% 
+  mutate(SampleDate=as.Date(SampleDate, format = '%m/%d/%Y'))%>%
+  filter(year(SampleDate) >= 2014)
 
 # add in species code
 df_data <- right_join(df_data, df_codes[1:2], by = 'SpeciesCode')
@@ -87,9 +101,34 @@ df_data <- right_join(df_data, df_biomass, by = 'SpeciesCode')
 
 ```{r}
 # convert 
-df_data <- df_data %>%
-  mutate(Biomass = lw_conversion(Size, a, b))
+df_data_sum <- df_data %>%
+  mutate(Biomass = lw_conversion(Size, a, b), 
+         Biomass = Biomass*1000*0.2*0.4, # Convert to micrograms (*1000), then to dry weight (*0.2), then to carbon weight (*0.4)
+         Month=month(SampleDate),
+         SpeciesName=word(SpeciesName, 1))%>% # Just keep the genus names for adding to biomass
+  group_by(SpeciesName, Month)%>%
+  summarise(Biomass_mean=mean(Biomass), Biomass_sd=sd(Biomass), N=n(), .groups="drop")
 
 # export
-write_csv(df_data, 'data/zoop_with_biomass.csv')
+write_csv(df_data_sum, 'data/data_in/amphipod_biomass_conversions.csv')
 ```
+
+Plot biomass conversions
+```{r}
+ggplot(df_data_sum, aes(x=SpeciesName, y=Biomass_mean, ymin=Biomass_mean-Biomass_sd, ymax=Biomass_mean+Biomass_sd))+
+  geom_pointrange()+
+  facet_wrap(~Month)+
+  ylab("Mean monthly biomass (ug)")+
+  theme_bw()+
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+```
+
+Plot sample size
+```{r}
+ggplot(df_data_sum, aes(x=SpeciesName, y=N))+
+    geom_point()+
+    facet_wrap(~Month)+
+    theme_bw()+
+    theme(axis.text.x=element_text(angle=45, hjust=1))
+```
+

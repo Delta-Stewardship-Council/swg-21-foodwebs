@@ -16,7 +16,8 @@ Herbivorous copepods,hcope,herbivorous\ncopepods,Herbivorous_Copepods_BPUE,yes
 Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes
 Mysids,mysid,mysids,Mysids_BPUE,yes
 Cladocera,clad,cladocera,Cladoceran_BPUE,yes
-Amphipods,amphi,amphipods,Amphipoda_cpue,yes
+Amphipods catch,amphi,amphipods catch,Amphipoda_CPUE,yes
+Amphipods mass,amphi_m,amphipods biomass,Amphipoda_BPUE,yes
 Cladocera catch,clad_c,cladocera catch,Cladoceran_CPUE,yes
 Cladocera energy,clad_e,cladocera energy,Cladoceran_JPUE,yes
 Herbivorous copepods catch,hcope_c,herbivorous copepods catch,Herbivorous_Copepods_CPUE,yes
