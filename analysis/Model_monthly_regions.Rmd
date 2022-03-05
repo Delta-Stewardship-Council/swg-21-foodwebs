@@ -45,23 +45,25 @@ focaldata = focaldata %>%
          hzoop=hcope+clad+rotif_m,
          hzoop_e=hcope_e+clad_e+rotif_e,
          pzoop=mysid+pcope,
-         pzoop_e=mysid_e+pcope_e) 
+         pzoop_e=mysid_e+pcope_e,
+         turbid=-secchi) 
 fvars=c(fvars,"tzoop","tzoop_e",
         "hzoop","hzoop_e",
-        "pzoop","pzoop_e")
+        "pzoop","pzoop_e","turbid")
 cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                                        "hzoop","hzoop_e",
-                                                       "pzoop","pzoop_e"),
+                                                       "pzoop","pzoop_e","turbid"),
                                Diagramname=c("Total Zooplankton\nBiomass",
                                              "Total Zooplankton\nEnergy",
                                              "Herbivorous Zooplankton\nBiomass",
                                              "Herbivorous Zooplankton\nEnergy",
                                              "Predatory Zooplankton\nBiomass",
-                                             "Predatory Zooplankton\nEnergy"),
-                               Datacolumn=NA,Log="yes"))
+                                             "Predatory Zooplankton\nEnergy",
+                                             "Turbidity"),
+                               Datacolumn=NA,Log=c(rep("yes",6),"no")))
 
 #focal variables
-varnames=c("temp","flow","secchi","dophos","din","chla","hcope","clad","amphi","pcope","mysid","rotif_m","potam","corbic","sside","cent","marfish_bsmt","estfish_bsmt","tzoop","hzoop","pzoop")
+varnames=c("temp","flow","turbid","dophos","din","chla","hcope","clad","amphi","pcope","mysid","rotif_m","potam","corbic","sside","cent","marfish_bsmt","estfish_bsmt","tzoop","hzoop","pzoop")
 
 #labels for lagged vars
 cnameslag=cnames
@@ -111,6 +113,7 @@ fdr_ds=fdr %>%
   ungroup() %>% 
   #lag
   group_by(region) %>% 
+  mutate_at(tvars,scale) %>% 
   mutate_at(tvars,list("1"=lag,"2"=function(x) {lag(x,2)})) %>% 
   ungroup() %>% 
   as.data.frame()
@@ -357,7 +360,7 @@ ccfplot("hzoop","pzoop")
 ccfplot("chla","potam")
 ccfplot("hzoop","estfish_bsmt")
 ccfplot("pzoop","estfish_bsmt")
-ccfplot("estfish_bsmt","secchi")
+ccfplot("estfish_bsmt","turbid")
 
 
 #plot multiple variables on top of each other
@@ -383,82 +386,82 @@ ggplot(fdr,aes(x=ammonia, y=dophos, color=chla)) +
 ### Fish-centered model (upper trophic level aggregates)
 
 ```{r, fig.width=8, fig.height=8}
-modFW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*secchi
-        pzoop~pb1*hzoop_1+ps1*pzoop_1+pt1*potam_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*secchi
-        estfish_bsmt~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*secchi+ft1*marfish_bsmt_1
+modFW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*turbid
+        pzoop~pb1*hzoop_1+ps1*pzoop_1+pt1*potam_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*turbid
+        estfish_bsmt~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*turbid+ft1*marfish_bsmt_1
         
-        hb:=hb1
-        hs:=hs1
-        ht:=ht1+ht2+ht3
+        hb:=sqrt(hb1^2)
+        hs:=sqrt(hs1^2)
+        ht:=sqrt(ht1^2+ht2^2+ht3^2)
         ha:=sqrt(ha1^2+ha2^2-ha3^2)
         
-        pb:=pb1
-        ps:=ps1
-        pt:=pt1+pt2
+        pb:=sqrt(pb1^2)
+        ps:=sqrt(ps1^2)
+        pt:=sqrt(pt1^2+pt2^2)
         pa:=sqrt(pa1^2+pa2^2+pa3^2)
         
-        fb:=fb1+fb2
-        fs:=fs1
-        ft:=ft1
+        fb:=sqrt(fb1^2+fb2^2)
+        fs:=sqrt(fs1^2)
+        ft:=sqrt(ft1^2)
         fa:=sqrt(fa1^2+fa2^2+fa3^2)
 '
 
-modW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*secchi
-        pzoop~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*potam_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*secchi
-        estfish_bsmt~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*secchi
+modW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*turbid
+        pzoop~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*potam_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*turbid
+        estfish_bsmt~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*turbid
         
-        hb:=hb1
-        hs:=hs1
-        ht:=ht1+ht2+ht3
+        hb:=sqrt(hb1^2)
+        hs:=sqrt(hs1^2)
+        ht:=sqrt(ht1^2+ht2^2+ht3^2)
         ha:=sqrt(ha1^2+ha2^2-ha3^2)
         
-        pb:=pb1+pb2
-        ps:=ps1
-        pt:=pt1+pt2
+        pb:=sqrt(pb1^2+pb2^2)
+        ps:=sqrt(ps1^2)
+        pt:=sqrt(pt1^2+pt2^2)
         pa:=sqrt(pa1^2+pa2^2+pa3^2)
         
-        fb:=fb1+fb2
-        fs:=fs1
+        fb:=sqrt(fb1^2+fb2^2)
+        fs:=sqrt(fs1^2)
         fa:=sqrt(fa1^2+fa2^2+fa3^2)
 '
 
-modN='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*secchi
-        pzoop~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*corbic_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*secchi
-        estfish_bsmt~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*secchi+ft1*sside_1+ft2*cent_1
+modN='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*turbid
+        pzoop~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*corbic_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*turbid
+        estfish_bsmt~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*turbid+ft1*sside_1+ft2*cent_1
         
-        hb:=hb1
-        hs:=hs1
-        ht:=ht1+ht2+ht3
+        hb:=sqrt(hb1^2)
+        hs:=sqrt(hs1^2)
+        ht:=sqrt(ht1^2+ht2^2+ht3^2)
         ha:=sqrt(ha1^2+ha2^2-ha3^2)
         
-        pb:=pb1+pb2
-        ps:=ps1
-        pt:=pt1+pt2
+        pb:=sqrt(pb1^2+pb2^2)
+        ps:=sqrt(ps1^2)
+        pt:=sqrt(pt1^2+pt2^2)
         pa:=sqrt(pa1^2+pa2^2+pa3^2)
         
-        fb:=fb1+fb2
-        fs:=fs1
-        ft:=ft1+ft2
+        fb:=sqrt(fb1^2+fb2^2)
+        fs:=sqrt(fs1^2)
+        ft:=sqrt(ft1^2+ft2^2)
         fa:=sqrt(fa1^2+fa2^2+fa3^2)
 '
 
-modS='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*secchi
-        pzoop~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*corbic_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*secchi
-        estfish_bsmt~fb1*chla_1+fb2*hzoop_1+fb3*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*secchi+ft1*sside_1+ft2*cent_1
+modS='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*turbid
+        pzoop~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*corbic_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*turbid
+        estfish_bsmt~fb1*chla_1+fb2*hzoop_1+fb3*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*turbid+ft1*sside_1+ft2*cent_1
         
-        hb:=hb1
-        hs:=hs1
-        ht:=ht1+ht2+ht3
+        hb:=sqrt(hb1^2)
+        hs:=sqrt(hs1^2)
+        ht:=sqrt(ht1^2+ht2^2+ht3^2)
         ha:=sqrt(ha1^2+ha2^2-ha3^2)
         
-        pb:=pb1+pb2
-        ps:=ps1
-        pt:=pt1+pt2
+        pb:=sqrt(pb1^2+pb2^2)
+        ps:=sqrt(ps1^2)
+        pt:=sqrt(pt1^2+pt2^2)
         pa:=sqrt(pa1^2+pa2^2+pa3^2)
         
-        fb:=fb1+fb2+fb3
-        fs:=fs1
-        ft:=ft1+ft2
+        fb:=sqrt(fb1^2+fb2^2+fb3^2)
+        fs:=sqrt(fs1^2)
+        ft:=sqrt(ft1^2+ft2^2)
         fa:=sqrt(fa1^2+fa2^2+fa3^2)
 '
 
@@ -541,79 +544,79 @@ ggplot(ssut,aes(x=influence,y=est.std)) +
 ### Phytoplankton-centered model (lower trophic level aggregates)
 
 ```{r, fig.width=8, fig.height=8}
-modFW='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*secchi
-        chla~cb1*din+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*secchi
-        potam~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*secchi
+modFW='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
+        chla~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
+        potam~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
         
-        ns:=ns1
-        nt:=nt1
-        nn:=nn1+nn2+nn3
+        ns:=sqrt(ns1^2)
+        nt:=sqrt(nt1^2)
+        nn:=sqrt(nn1^2+nn2^2+nn3^2)
         na:=sqrt(na1^2+na2^2+na3^2)
         
-        cb:=cb1
-        cs:=cs1
-        ct:=ct1+ct2
+        cb:=sqrt(cb1^2)
+        cs:=sqrt(cs1^2)
+        ct:=sqrt(ct1^2+ct2^2)
         ca:=sqrt(ca1^2+ca2^2+ca3^2)
         
-        lb:=lb1+lb2+lb3
-        ls:=ls1
+        lb:=sqrt(lb1^2+lb2^2+lb3^2)
+        ls:=sqrt(ls1^2)
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modW='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*secchi
-        chla~cb1*din+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*secchi
-        potam~lb1*din_1+lb2*chla_1+lb3*hzoop_1+lb4*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*secchi
+modW='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
+        chla~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
+        potam~lb1*din_1+lb2*chla_1+lb3*hzoop_1+lb4*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
         
-        ns:=ns1
-        nt:=nt1
-        nn:=nn1+nn2+nn3
+        ns:=sqrt(ns1^2)
+        nt:=sqrt(nt1^2)
+        nn:=sqrt(nn1^2+nn2^2+nn3^2)
         na:=sqrt(na1^2+na2^2+na3^2)
         
-        cb:=cb1
-        cs:=cs1
-        ct:=ct1+ct2
+        cb:=sqrt(cb1^2)
+        cs:=sqrt(cs1^2)
+        ct:=sqrt(ct1^2+ct2^2)
         ca:=sqrt(ca1^2+ca2^2+ca3^2)
         
-        lb:=lb1+lb2+lb3+lb4
-        ls:=ls1
+        lb:=sqrt(lb1^2+lb2^2+lb3^2+lb4^2)
+        ls:=sqrt(ls1^2)
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modN='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*secchi
-        chla~cb1*din+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*secchi
-        corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*secchi
+modN='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
+        chla~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ct3*pzoop_1+ca1*flow+ca2*temp+ca3*turbid
+        corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*turbid
         
-        ns:=ns1
-        nt:=nt1
-        nn:=nn1+nn2+nn3
+        ns:=sqrt(ns1^2)
+        nt:=sqrt(nt1^2)
+        nn:=sqrt(nn1^2+nn2^2+nn3^2)
         na:=sqrt(na1^2+na2^2+na3^2)
         
-        cb:=cb1
-        cs:=cs1
-        ct:=ct1+ct2
+        cb:=sqrt(cb1^2)
+        cs:=sqrt(cs1^2)
+        ct:=sqrt(ct1^2+ct2^2+ct3^2)
         ca:=sqrt(ca1^2+ca2^2+ca3^2)
         
-        lb:=lb1+lb2+lb3
-        ls:=ls1
+        lb:=sqrt(lb1^2+lb2^2+lb3^2)
+        ls:=sqrt(ls1^2)
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modS='din~ns1*din_1+nt1*chla_1+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*secchi
-        chla~cb1*din+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*secchi
-        corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*secchi
+modS='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
+        chla~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*turbid
+        corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*turbid
         
-        ns:=ns1
-        nt:=nt1
-        nn:=nn1+nn2+nn3
+        ns:=sqrt(ns1^2)
+        nt:=sqrt(nt1^2)
+        nn:=sqrt(nn1^2+nn2^2+nn3^2)
         na:=sqrt(na1^2+na2^2+na3^2)
         
-        cb:=cb1
-        cs:=cs1
-        ct:=ct1+ct2
+        cb:=sqrt(cb1^2)
+        cs:=sqrt(cs1^2)
+        ct:=sqrt(ct1^2+ct2^2)
         ca:=sqrt(ca1^2+ca2^2+ca3^2)
         
-        lb:=lb1+lb2+lb3
-        ls:=ls1
+        lb:=sqrt(lb1^2+lb2^2+lb3^2)
+        ls:=sqrt(ls1^2)
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
@@ -697,28 +700,28 @@ ggplot(sslt,aes(x=influence,y=est.std)) +
 ### Zooplankton-centered model (individual groups)
 
 ```{r, fig.width=8, fig.height=8}
-modFW='chla~chla_1+hcope_1+amphi_1+potam_1+flow+secchi+temp
-       hcope~chla_1+hcope_1+pcope_1+potam_1+flow+secchi+temp+estfish_bsmt_1
-       amphi~chla_1+amphi_1+flow+secchi+temp+estfish_bsmt_1
-       pcope~hcope_1+pcope_1+potam_1+flow+secchi+temp+estfish_bsmt_1
+modFW='chla~chla_1+hcope_1+amphi_1+potam_1+flow+turbid+temp
+       hcope~chla_1+hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+       amphi~chla_1+amphi_1+flow+turbid+temp+estfish_bsmt_1
+       pcope~hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
 '
-modW='chla~chla_1+hcope_1+amphi_1+potam_1+flow+secchi+temp+mysid_1
-       hcope~chla_1+hcope_1+pcope_1+mysid_1+potam_1+flow+secchi+temp+estfish_bsmt_1
-       amphi~chla_1+amphi_1+mysid_1+flow+secchi+temp+estfish_bsmt_1
-       pcope~hcope_1+pcope_1+mysid_1+potam_1+flow+secchi+temp+estfish_bsmt_1
-       mysid~chla_1+hcope_1+pcope_1+amphi_1+mysid_1+flow+secchi+temp+estfish_bsmt_1
+modW='chla~chla_1+hcope_1+amphi_1+potam_1+flow+turbid+temp+mysid_1
+       hcope~chla_1+hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+       amphi~chla_1+amphi_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
+       pcope~hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+       mysid~chla_1+hcope_1+pcope_1+amphi_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
 '
-modN='chla~chla_1+hcope_1+amphi_1+corbic_1+flow+secchi+temp
-       hcope~chla_1+hcope_1+pcope_1+mysid_1+corbic_1+flow+secchi+temp+estfish_bsmt_1
-       amphi~chla_1+amphi_1+flow+secchi+temp+estfish_bsmt_1
-       pcope~hcope_1+pcope_1+mysid_1+corbic_1+flow+secchi+temp+estfish_bsmt_1
-       mysid~hcope_1+pcope_1+mysid_1+amphi_1+flow+secchi+temp+estfish_bsmt_1
+modN='chla~chla_1+hcope_1+amphi_1+corbic_1+flow+turbid+temp
+       hcope~chla_1+hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       amphi~chla_1+amphi_1+flow+turbid+temp+estfish_bsmt_1
+       pcope~hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       mysid~hcope_1+pcope_1+mysid_1+amphi_1+flow+turbid+temp+estfish_bsmt_1
 '
-modS='chla~chla_1+hcope_1+clad_1+corbic_1+flow+secchi+temp
-       hcope~chla_1+hcope_1+pcope_1+corbic_1+flow+secchi+temp+estfish_bsmt_1
-       clad~chla_1+clad_1+pcope_1+flow+secchi+temp+estfish_bsmt_1
-       amphi~chla_1+amphi_1+flow+secchi+temp+estfish_bsmt_1
-       pcope~chla_1+hcope_1+clad_1+pcope_1+corbic_1+flow+secchi+temp+estfish_bsmt_1
+modS='chla~chla_1+hcope_1+clad_1+corbic_1+flow+turbid+temp
+       hcope~chla_1+hcope_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       clad~chla_1+clad_1+pcope_1+flow+turbid+temp+estfish_bsmt_1
+       amphi~chla_1+amphi_1+flow+turbid+temp+estfish_bsmt_1
+       pcope~chla_1+hcope_1+clad_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
 '
 modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
 modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
