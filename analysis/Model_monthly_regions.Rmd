@@ -512,29 +512,74 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 
 
 #FAR WEST
-generateInputDf(fit=modfitFW, reference_df=cnameslag) %>%
+plot_far_west = generateInputDf(fit=modfitFW, reference_df=cnameslag) %>%
   getUpperTrophicCoord() %>%
   createGraph(fit=modfitFW) %>%
   DiagrammeR::render_graph(title="Far West")
 
 #WEST
-generateInputDf(fit=modfitW, reference_df=cnameslag) %>%
+plot_west = generateInputDf(fit=modfitW, reference_df=cnameslag) %>%
   getUpperTrophicCoord() %>%
   createGraph(fit=modfitW) %>%
   DiagrammeR::render_graph(title="West")
 
 #NORTH
-generateInputDf(fit=modfitN, reference_df=cnameslag) %>%
+plot_north = generateInputDf(fit=modfitN, reference_df=cnameslag) %>%
   getUpperTrophicCoord() %>%
   createGraph(fit=modfitN) %>%
   DiagrammeR::render_graph(title="North")
 
 #SOUTH
-generateInputDf(fit=modfitS, reference_df=cnameslag) %>%
+plot_south = generateInputDf(fit=modfitS, reference_df=cnameslag) %>%
   getUpperTrophicCoord() %>%
   createGraph(fit=modfitS) %>%
   DiagrammeR::render_graph(title="South")
 
+
+```
+Save the plots to one figure
+
+```{r}
+
+# Libraries needed for this
+# Move to top once finalized
+library(purrr)
+library(DiagrammeRsvg)
+library(rsvg)
+library(png)
+library(grid)
+library(ggpubr)
+
+convert_html_to_grob = function(html_input, resolution){
+  
+  temp_name = "temp.png"
+  
+  html_input %>% 
+    export_svg %>% 
+    charToRaw %>%
+    rsvg_png("temp.png", height = resolution)
+  
+  out_grob = rasterGrob(readPNG("temp.png", native = FALSE))
+    
+  file.remove("temp.png")
+  return(out_grob)
+}
+
+plot_list = list(plot_far_west,
+                 plot_west,
+                 plot_north,
+                 plot_south)
+
+plots <-  map(plot_list, ~convert_html_to_grob(.x, 2000))
+figure_1 = ggarrange(plotlist=plots, labels = "auto") %>% 
+  annotate_figure(top = text_grob("Monthly Regional Models", 
+                                  color = "black",
+                                  face = "bold",
+                                  size = 14))
+
+ggsave('./analysis/test_figure.png',figure_1,width=6,height=3, dpi = 300)
+
+figure_1
 
 ```
 
