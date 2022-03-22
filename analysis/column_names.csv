@@ -1,49 +1,49 @@
-Longname,Shortname,Diagramname,Datacolumn,Log
-Year,year,year,Year,no
-Flow,flow,flow,Mean_outflow_WY,yes
-Secchi,secchi,secchi,Secchi,no
-Ammonia,ammonia,ammonia,DissAmmonia,yes
-Phytoplankton,chla,phytoplankton,Chlorophyll,yes
-Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes
-Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes
-Temperature,temp,temperature,Temperature,no
-Potamocorbula,potam,Potamocorbula\nclams,Potamocorbula_cpue,no
-Corbicula,corbic,Corbicula\nclams,Corbicula_cpue,no
-Herbivorous copepods,hcope,herbivorous\ncopepods,Herbivorous_Copepods_BPUE,yes
-Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes
-Mysids,mysid,mysids,Mysids_BPUE,yes
-Cladocera,clad,cladocera,Cladoceran_BPUE,yes
-Amphipods catch,amphi,amphipods catch,Amphipoda_CPUE,yes
-Amphipods mass,amphi_m,amphipods biomass,Amphipoda_BPUE,yes
-Cladocera catch,clad_c,cladocera catch,Cladoceran_CPUE,yes
-Cladocera energy,clad_e,cladocera energy,Cladoceran_JPUE,yes
-Herbivorous copepods catch,hcope_c,herbivorous copepods catch,Herbivorous_Copepods_CPUE,yes
-Herbivorous copepods energy,hcope_e,herbivorous copepods energy,Herbivorous_Copepods_JPUE,yes
-Mysids catch,mysid_c,mysids catch,Mysids_CPUE,yes
-Mysids energy,mysid_e,mysids energy,Mysids_JPUE,yes
-Predatory copepods catch,pcope_c,predatory copepods catch,Predatory_Copepods_CPUE,yes
-Predatory copepods energy,pcope_e,predatory copepods energy,Predatory_Copepods_JPUE,yes
-Rotifers mass,rotif_m,rotifers mass,Rotifers_BPUE,yes
-Rotifers catch,rotif_c,rotifers catch,Rotifers_CPUE,yes
-Rotifers energy,rotif_e,rotifers energy,Rotifers_JPUE,yes
-Estuarine fishes,estfish,FMWT\nestuarine fishes,FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,yes
-Marine fishes,marfish,FMWT\nmarine fishes,FMWT_fish_biomass_Marine_pelagic_forage_fishes,yes
-Delta smelt,smelt,delta\nsmelt,FMWT_fish_biomass_DeltaSmelt,yes
-Striped bass,sbass,striped\nbass,FMWT_fish_biomass_StripedBass_age0,yes
-Longfin smelt,lfin,longfin\nsmelt,FMWT_fish_biomass_LongfinSmelt,yes
-Estuarine fishes,estfish_bsmt,BSMT\nestuarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes
-Marine fishes,marfish_bsmt,BSMT\nmarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes
-Delta smelt,smelt_bsmt,BSMT\ndelta smelt,BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,yes
-Striped bass,sbass_bsmt,BSMT\nstriped bass,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0,yes
-Longfin smelt,lfin_bsmt,BSMT\nlongfin smelt,BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,yes
-Estuarine fishes,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes
-Marine fishes,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes
-Delta smelt,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes
-Striped bass,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes
-Longfin smelt,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes
-Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes
-Estuarine fishes,estfish_stn,STN\nestuarine fishes,STN_fish_biomass_Estuarine_pelagic_forage_fishes,yes
-Marine fishes,marfish_stn,STN\nmarine fishes,STN_fish_biomass_Marine_pelagic_forage_fishes,yes
-Delta smelt,smelt_stn,STN\ndelta smelt,STN_fish_biomass_DeltaSmelt,yes
-Striped bass,sbass_stn,STN\nstriped bass,STN_fish_biomass_StripedBass_age0,yes
-Longfin smelt,lfin_stn,STN\nlongfin smelt,STN_fish_biomass_LongfinSmelt,yes
+Longname,Shortname,Diagramname,Datacolumn,Log,Color
+Year,year,year,Year,no,
+Flow,flow,flow,Mean_outflow_WY,yes,#4472C4
+Secchi,secchi,secchi,Secchi,no,#4472C4
+Ammonia,ammonia,ammonia,DissAmmonia,yes,#4472C4
+Phytoplankton,chla,phytoplankton,Chlorophyll,yes,#70AD47
+Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4
+Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes,#4472C4
+Temperature,temp,temperature,Temperature,no,#4472C4
+Potamocorbula,potam,Potamocorbula\nclams,Potamocorbula_cpue,no,#A5A5A5
+Corbicula,corbic,Corbicula\nclams,Corbicula_cpue,no,#A5A5A5
+Herbivorous copepods,hcope,herbivorous\ncopepods,Herbivorous_Copepods_BPUE,yes,#ED7D31
+Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes,#7030A0
+Mysids,mysid,mysids,Mysids_BPUE,yes,#7030A0
+Cladocera,clad,cladocera,Cladoceran_BPUE,yes,#ED7D31
+Amphipods catch,amphi,amphipods catch,Amphipoda_CPUE,yes,#ED7D31
+Amphipods mass,amphi_m,amphipods biomass,Amphipoda_BPUE,yes,#ED7D31
+Cladocera catch,clad_c,cladocera catch,Cladoceran_CPUE,yes,#ED7D31
+Cladocera energy,clad_e,cladocera energy,Cladoceran_JPUE,yes,#ED7D31
+Herbivorous copepods catch,hcope_c,herbivorous copepods catch,Herbivorous_Copepods_CPUE,yes,#ED7D31
+Herbivorous copepods energy,hcope_e,herbivorous copepods energy,Herbivorous_Copepods_JPUE,yes,#ED7D31
+Mysids catch,mysid_c,mysids catch,Mysids_CPUE,yes,#7030A0
+Mysids energy,mysid_e,mysids energy,Mysids_JPUE,yes,#7030A0
+Predatory copepods catch,pcope_c,predatory copepods catch,Predatory_Copepods_CPUE,yes,#7030A0
+Predatory copepods energy,pcope_e,predatory copepods energy,Predatory_Copepods_JPUE,yes,#7030A0
+Rotifers mass,rotif_m,rotifers mass,Rotifers_BPUE,yes,#F446A1
+Rotifers catch,rotif_c,rotifers catch,Rotifers_CPUE,yes,#F446A1
+Rotifers energy,rotif_e,rotifers energy,Rotifers_JPUE,yes,#F446A1
+Estuarine fishes,estfish,FMWT\nestuarine fishes,FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000
+Marine fishes,marfish,FMWT\nmarine fishes,FMWT_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50
+Delta smelt,smelt,delta\nsmelt,FMWT_fish_biomass_DeltaSmelt,yes,#333F50
+Striped bass,sbass,striped\nbass,FMWT_fish_biomass_StripedBass_age0,yes,#333F50
+Longfin smelt,lfin,longfin\nsmelt,FMWT_fish_biomass_LongfinSmelt,yes,#333F50
+Estuarine fishes,estfish_bsmt,BSMT\nestuarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000
+Marine fishes,marfish_bsmt,BSMT\nmarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50
+Delta smelt,smelt_bsmt,BSMT\ndelta smelt,BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,yes,#333F50
+Striped bass,sbass_bsmt,BSMT\nstriped bass,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0,yes,#333F50
+Longfin smelt,lfin_bsmt,BSMT\nlongfin smelt,BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,yes,#333F50
+Estuarine fishes,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000
+Marine fishes,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50
+Delta smelt,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes,#333F50
+Striped bass,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes,#333F50
+Longfin smelt,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes,#333F50
+Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes,#333F50
+Estuarine fishes,estfish_stn,STN\nestuarine fishes,STN_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000
+Marine fishes,marfish_stn,STN\nmarine fishes,STN_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50
+Delta smelt,smelt_stn,STN\ndelta smelt,STN_fish_biomass_DeltaSmelt,yes,#333F50
+Striped bass,sbass_stn,STN\nstriped bass,STN_fish_biomass_StripedBass_age0,yes,#333F50
+Longfin smelt,lfin_stn,STN\nlongfin smelt,STN_fish_biomass_LongfinSmelt,yes,#333F50

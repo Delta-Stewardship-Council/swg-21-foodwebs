@@ -60,7 +60,9 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                              "Predatory Zooplankton\nBiomass",
                                              "Predatory Zooplankton\nEnergy",
                                              "Turbidity"),
-                               Datacolumn=NA,Log=c(rep("yes",6),"no")))
+                               Datacolumn=NA,Log=c(rep("yes",6),"no"),
+                               Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
+                                       "#7030A0","#4472C4")))
 
 #focal variables
 varnames=c("temp","flow","turbid","dophos","din","chla","hcope","clad","amphi","pcope","mysid","rotif_m","potam","corbic","sside","cent","marfish_bsmt","estfish_bsmt","tzoop","hzoop","pzoop")
@@ -72,6 +74,7 @@ cnameslag$Diagramname=paste(cnameslag$Diagramname,"(t-1)")
 cnameslag=rbind(cnames,cnameslag)
 
 source("analysis/myLavaanPlot.r")
+source("analysis/semDiagramFunctions.r")
 ```
 
 ### Data prep
@@ -506,6 +509,33 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+
+#FAR WEST
+generateInputDf(fit=modfitFW, reference_df=cnameslag) %>%
+  getUpperTrophicCoord() %>%
+  createGraph(fit=modfitFW) %>%
+  DiagrammeR::render_graph(title="Far West")
+
+#WEST
+generateInputDf(fit=modfitW, reference_df=cnameslag) %>%
+  getUpperTrophicCoord() %>%
+  createGraph(fit=modfitW) %>%
+  DiagrammeR::render_graph(title="West")
+
+#NORTH
+generateInputDf(fit=modfitN, reference_df=cnameslag) %>%
+  getUpperTrophicCoord() %>%
+  createGraph(fit=modfitN) %>%
+  DiagrammeR::render_graph(title="North")
+
+#SOUTH
+generateInputDf(fit=modfitS, reference_df=cnameslag) %>%
+  getUpperTrophicCoord() %>%
+  createGraph(fit=modfitS) %>%
+  DiagrammeR::render_graph(title="South")
+
+
 ```
 
 Total effects
@@ -661,6 +691,35 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+
+
+#FAR WEST
+generateInputDf(fit=modfitFW, reference_df=cnameslag) %>%
+  getLowerTrophicCoord() %>%
+  createGraph(fit=modfitFW) %>%
+  DiagrammeR::render_graph(title="Far West")
+
+#WEST
+generateInputDf(fit=modfitW, reference_df=cnameslag) %>%
+  getLowerTrophicCoord() %>%
+  createGraph(fit=modfitW) %>%
+  DiagrammeR::render_graph(title="West")
+
+#NORTH
+generateInputDf(fit=modfitN, reference_df=cnameslag) %>%
+  getLowerTrophicCoord() %>%
+  createGraph(fit=modfitN) %>%
+  DiagrammeR::render_graph(title="North")
+
+#SOUTH
+generateInputDf(fit=modfitS, reference_df=cnameslag) %>%
+  getLowerTrophicCoord() %>%
+  createGraph(fit=modfitS) %>%
+  DiagrammeR::render_graph(title="South")
+
+
+
 ```
 
 Total effects
@@ -764,6 +823,34 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+
+
+#FAR WEST
+generateInputDf(fit=modfitFW, reference_df=cnameslag) %>%
+  getZoopCoord(region="Far West") %>%
+  createGraph(fit=modfitFW) %>%
+  DiagrammeR::render_graph(title="Far West")
+
+#WEST
+generateInputDf(fit=modfitW, reference_df=cnameslag) %>%
+  getZoopCoord(region="West") %>%
+  createGraph(fit=modfitW) %>%
+  DiagrammeR::render_graph(title="West")
+
+#NORTH
+generateInputDf(fit=modfitN, reference_df=cnameslag) %>%
+  getZoopCoord(region="North") %>%
+  createGraph(fit=modfitN) %>%
+  DiagrammeR::render_graph(title="North")
+
+#SOUTH
+generateInputDf(fit=modfitS, reference_df=cnameslag) %>%
+  getZoopCoord(region="South") %>%
+  createGraph(fit=modfitS) %>%
+  DiagrammeR::render_graph(title="South")
+
+
 ```
 
 Total effects
