@@ -23,6 +23,14 @@ library(lavaan)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
+
+# For saving SEM diagrams:
+library(purrr)
+library(DiagrammeRsvg)
+library(rsvg)
+library(png)
+library(grid)
+library(ggpubr)
 ```
 
 ### Import data
@@ -54,12 +62,15 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                              "Herbivorous Zooplankton\nEnergy",
                                              "Predatory Zooplankton\nBiomass",
                                              "Predatory Zooplankton\nEnergy"),
-                               Datacolumn=NA,Log="yes"))
+                               Datacolumn=NA,Log="yes",
+                               Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
+                                       "#7030A0")))
 
 #focal variables
 varnames=c("temp","flow","secchi","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
+source("analysis/semDiagramFunctions.r")
 ```
 
 ### Data prep
@@ -245,8 +256,6 @@ modfit1_dtr=sem(model1, data=fd_dtr)
 summary(modfit1, standardized=T, rsq=T)
 summary(modfit1_dtr, standardized=T, rsq=T)
 
-labels1 <- createLabels(modfit1, cnames)
-
 # residuals(modfit1)
 # modificationindices(modfit1, sort=T, maximum.number=20)
 ```
@@ -258,11 +267,26 @@ labels1 <- createLabels(modfit1, cnames)
 Original units
 
 ```{r, echo=FALSE}
+labels1 <- createLabels(modfit1, cnames)
+
 myLavaanPlot(model=modfit1, labels=labels1,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+## Updated SEM diagram:
+cnames_with_latent <- rbind(cnames,
+                            data.frame(Longname="fish", Shortname="fish",
+                                       Diagramname="Fish", Datacolumn=NA, Log=NA,
+                                       Color="#FF0000"))
+
+plot_modfit1 <- createGraph(fit=modfit1, 
+                            reference_df=cnames_with_latent, 
+                            model_type="annual",
+                            title="Annual no region",
+                            manual_edge_options=TRUE)
+plot_modfit1
 ```
 
 Detrended
@@ -273,6 +297,12 @@ myLavaanPlot(model=modfit1_dtr, labels=labels1,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+createGraph(fit=modfit1_dtr, 
+            reference_df=cnames_with_latent, 
+            model_type="annual",
+            title="Annual no region, detrended",
+            manual_edge_options=TRUE)
 ```
 
 #### With covariances
@@ -286,6 +316,12 @@ myLavaanPlot(model=modfit1, labels=labels1,
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
 
+createGraph(fit=modfit1, 
+            reference_df=cnames_with_latent, 
+            cov=TRUE,
+            model_type="annual",
+            title="Annual no region",
+            manual_edge_options=TRUE)
 ```
 
 Detrended
@@ -296,4 +332,24 @@ myLavaanPlot(model=modfit1_dtr, labels=labels1,
 						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
+
+createGraph(fit=modfit1_dtr, 
+            reference_df=cnames_with_latent, 
+            cov=TRUE,
+            model_type="annual",
+            title="Annual no region, detrended",
+            manual_edge_options=TRUE)
+```
+
+*Save updated SEM diagrams*
+
+```{r}
+modfit1_grobs <-  map(list(plot_modfit1), ~convert_html_to_grob(.x, 2000))
+modfit1_figure <- ggarrange(plotlist=modfit1_grobs) %>%
+  annotate_figure(top = text_grob("Monthly Regional Models (upper trophic level)",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 14))
+
+ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure,width=6,height=3, dpi = 300)
 ```

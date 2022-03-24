@@ -23,6 +23,14 @@ library(lavaan)
 library(DiagrammeR)
 library(ggplot2)
 library(tidyr)
+
+# For saving SEM diagrams:
+library(purrr)
+library(DiagrammeRsvg)
+library(rsvg)
+library(png)
+library(grid)
+library(ggpubr)
 ```
 
 ### Import data
@@ -485,24 +493,51 @@ labelswest=createLabels(modfitW, cnameslag)
 labelsnorth=createLabels(modfitN, cnameslag)
 labelssouth=createLabels(modfitS, cnameslag)
 
+
+
+
 #FAR WEST
 myLavaanPlot(model=modfitFW, labels=labelsfarwest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+upper_plot_far_west <- createGraph(fit=modfitFW, 
+                                   reference_df=cnameslag, 
+                                   model_type="monthly_upper_trophic",
+                                   title="Far West",
+                                   manual_edge_options=TRUE)
+upper_plot_far_west
+
 #WEST
 myLavaanPlot(model=modfitW, labels=labelswest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+upper_plot_west <- createGraph(fit=modfitW, 
+                               reference_df=cnameslag, 
+                               model_type="monthly_upper_trophic",
+                               title="West",
+                               manual_edge_options=TRUE)
+upper_plot_west
+
 #NORTH
 myLavaanPlot(model=modfitN, labels=labelsnorth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+upper_plot_north <- createGraph(fit=modfitN, 
+                                reference_df=cnameslag, 
+                                model_type="monthly_upper_trophic",
+                                title="North",
+                                manual_edge_options=TRUE)
+upper_plot_north
+
 #SOUTH
 myLavaanPlot(model=modfitS, labels=labelssouth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
@@ -510,78 +545,30 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-
-#FAR WEST
-plot_far_west = generateInputDf(fit=modfitFW, reference_df=cnameslag) %>%
-  getUpperTrophicCoord() %>%
-  createGraph(fit=modfitFW) %>%
-  DiagrammeR::render_graph(title="Far West")
-
-#WEST
-plot_west = generateInputDf(fit=modfitW, reference_df=cnameslag) %>%
-  getUpperTrophicCoord() %>%
-  createGraph(fit=modfitW) %>%
-  DiagrammeR::render_graph(title="West")
-
-#NORTH
-plot_north = generateInputDf(fit=modfitN, reference_df=cnameslag) %>%
-  getUpperTrophicCoord() %>%
-  createGraph(fit=modfitN) %>%
-  DiagrammeR::render_graph(title="North")
-
-#SOUTH
-plot_south = generateInputDf(fit=modfitS, reference_df=cnameslag) %>%
-  getUpperTrophicCoord() %>%
-  createGraph(fit=modfitS) %>%
-  DiagrammeR::render_graph(title="South")
-
-
+upper_plot_south <- createGraph(fit=modfitS, 
+                                reference_df=cnameslag, 
+                                model_type="monthly_upper_trophic",
+                                title="South",
+                                manual_edge_options=TRUE)
+upper_plot_south
 ```
-Save the plots to one figure
 
-```{r}
+*Save updated SEM diagrams*
 
-# Libraries needed for this
-# Move to top once finalized
-library(purrr)
-library(DiagrammeRsvg)
-library(rsvg)
-library(png)
-library(grid)
-library(ggpubr)
-
-convert_html_to_grob = function(html_input, resolution){
-  
-  temp_name = "temp.png"
-  
-  html_input %>% 
-    export_svg %>% 
-    charToRaw %>%
-    rsvg_png("temp.png", height = resolution)
-  
-  out_grob = rasterGrob(readPNG("temp.png", native = FALSE))
-    
-  file.remove("temp.png")
-  return(out_grob)
-}
-
-plot_list = list(plot_far_west,
-                 plot_west,
-                 plot_north,
-                 plot_south)
-
-plots <-  map(plot_list, ~convert_html_to_grob(.x, 2000))
-figure_1 = ggarrange(plotlist=plots, labels = "auto") %>% 
-  annotate_figure(top = text_grob("Monthly Regional Models", 
+```{r, echo=FALSE}
+upper_grobs <-  map(list(upper_plot_far_west,
+                         upper_plot_west,
+                         upper_plot_north,
+                         upper_plot_south), ~convert_html_to_grob(.x, 2000))
+upper_figure <- ggarrange(plotlist=upper_grobs, labels = "auto") %>%
+  annotate_figure(top = text_grob("Monthly Regional Models (upper trophic level)",
                                   color = "black",
                                   face = "bold",
                                   size = 14))
 
-ggsave('./analysis/test_figure.png',figure_1,width=6,height=3, dpi = 300)
-
-figure_1
-
+ggsave('./fig_output/sem_upper_trophic.png',upper_figure,width=6,height=3, dpi = 300)
 ```
+
 
 Total effects
 
@@ -718,18 +705,42 @@ myLavaanPlot(model=modfitFW, labels=labelsfarwest,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+lower_plot_far_west <- createGraph(fit=modfitFW, 
+                                   reference_df=cnameslag, 
+                                   model_type="monthly_lower_trophic",
+                                   title="Far West",
+                                   manual_edge_options=TRUE)
+lower_plot_far_west
+
 #WEST
 myLavaanPlot(model=modfitW, labels=labelswest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+lower_plot_west <- createGraph(fit=modfitW, 
+                               reference_df=cnameslag, 
+                               model_type="monthly_lower_trophic",
+                               title="West",
+                               manual_edge_options=TRUE)
+lower_plot_west
+
 #NORTH
 myLavaanPlot(model=modfitN, labels=labelsnorth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+lower_plot_north <- createGraph(fit=modfitN, 
+                                reference_df=cnameslag, 
+                                model_type="monthly_lower_trophic",
+                                title="North",
+                                manual_edge_options=TRUE)
+lower_plot_north
+
 #SOUTH
 myLavaanPlot(model=modfitS, labels=labelssouth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
@@ -737,34 +748,28 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
+lower_plot_south <- createGraph(fit=modfitS, 
+                                reference_df=cnameslag, 
+                                model_type="monthly_lower_trophic",
+                                title="South",
+                                manual_edge_options=TRUE)
+lower_plot_south
+```
 
+*Save updated SEM diagrams*
 
-#FAR WEST
-generateInputDf(fit=modfitFW, reference_df=cnameslag) %>%
-  getLowerTrophicCoord() %>%
-  createGraph(fit=modfitFW) %>%
-  DiagrammeR::render_graph(title="Far West")
+```{r, echo=FALSE}
+lower_grobs <-  map(list(lower_plot_far_west,
+                         lower_plot_west,
+                         lower_plot_north,
+                         lower_plot_south), ~convert_html_to_grob(.x, 2000))
+lower_figure <- ggarrange(plotlist=lower_grobs, labels = "auto") %>%
+  annotate_figure(top = text_grob("Monthly Regional Models (lower trophic level)",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 14))
 
-#WEST
-generateInputDf(fit=modfitW, reference_df=cnameslag) %>%
-  getLowerTrophicCoord() %>%
-  createGraph(fit=modfitW) %>%
-  DiagrammeR::render_graph(title="West")
-
-#NORTH
-generateInputDf(fit=modfitN, reference_df=cnameslag) %>%
-  getLowerTrophicCoord() %>%
-  createGraph(fit=modfitN) %>%
-  DiagrammeR::render_graph(title="North")
-
-#SOUTH
-generateInputDf(fit=modfitS, reference_df=cnameslag) %>%
-  getLowerTrophicCoord() %>%
-  createGraph(fit=modfitS) %>%
-  DiagrammeR::render_graph(title="South")
-
-
-
+ggsave('./fig_output/sem_lower_trophic.png',lower_figure,width=6,height=3, dpi = 300)
 ```
 
 Total effects
@@ -850,18 +855,45 @@ myLavaanPlot(model=modfitFW, labels=labelsfarwest,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+zoop_plot_far_west <- createGraph(fit=modfitFW, 
+                                  reference_df=cnameslag, 
+                                  model_type="monthly_zoop",
+                                  region="Far West",
+                                  title="Far West",
+                                  manual_edge_options=TRUE)
+zoop_plot_far_west
+
 #WEST
 myLavaanPlot(model=modfitW, labels=labelswest,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+zoop_plot_west <- createGraph(fit=modfitW, 
+                              reference_df=cnameslag, 
+                              model_type="monthly_zoop",
+                              region="West",
+                              title="West",
+                              manual_edge_options=TRUE)
+zoop_plot_west
+
 #NORTH
 myLavaanPlot(model=modfitN, labels=labelsnorth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+zoop_plot_north <- createGraph(fit=modfitN, 
+                               reference_df=cnameslag, 
+                               model_type="monthly_zoop",
+                               region="North",
+                               title="North",
+                               manual_edge_options=TRUE)
+zoop_plot_north
+
 #SOUTH
 myLavaanPlot(model=modfitS, labels=labelssouth,
 						 node_options=list(shape="box", fontname="Helvetica"), 
@@ -869,33 +901,29 @@ myLavaanPlot(model=modfitS, labels=labelssouth,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
+zoop_plot_south <- createGraph(fit=modfitS, 
+                               reference_df=cnameslag, 
+                               model_type="monthly_zoop",
+                               region="South",
+                               title="South",
+                               manual_edge_options=TRUE)
+zoop_plot_south
+```
 
+*Save updated SEM diagrams*
 
-#FAR WEST
-generateInputDf(fit=modfitFW, reference_df=cnameslag) %>%
-  getZoopCoord(region="Far West") %>%
-  createGraph(fit=modfitFW) %>%
-  DiagrammeR::render_graph(title="Far West")
+```{r}
+zoop_grobs <-  map(list(zoop_plot_far_west,
+                        zoop_plot_west,
+                        zoop_plot_north,
+                        zoop_plot_south), ~convert_html_to_grob(.x, 2000))
+zoop_figure.png <- ggarrange(plotlist=zoop_grobs, labels = "auto") %>%
+  annotate_figure(top = text_grob("Monthly Regional Models (zooplankton groups)",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 14))
 
-#WEST
-generateInputDf(fit=modfitW, reference_df=cnameslag) %>%
-  getZoopCoord(region="West") %>%
-  createGraph(fit=modfitW) %>%
-  DiagrammeR::render_graph(title="West")
-
-#NORTH
-generateInputDf(fit=modfitN, reference_df=cnameslag) %>%
-  getZoopCoord(region="North") %>%
-  createGraph(fit=modfitN) %>%
-  DiagrammeR::render_graph(title="North")
-
-#SOUTH
-generateInputDf(fit=modfitS, reference_df=cnameslag) %>%
-  getZoopCoord(region="South") %>%
-  createGraph(fit=modfitS) %>%
-  DiagrammeR::render_graph(title="South")
-
-
+ggsave('./fig_output/sem_zoop.png',zoop_figure.png,width=6,height=3, dpi = 300)
 ```
 
 Total effects

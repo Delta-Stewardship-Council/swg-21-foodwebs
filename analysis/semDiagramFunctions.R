@@ -1,300 +1,515 @@
 
+######################################################################################
+## Coordinates:
 
-generateInputDf <- function(fit, reference_df) {
+getAnnualCoordinates <- function() {
+  x1 <- 1
+  x2 <- 3.5
 
-  ParTable <- fit@ParTable
-  ind <- ParTable$op != ":="
-  focus_vars <- unique(c(ParTable$lhs[ind], ParTable$rhs[ind]))
+  coordinate_map <- list(
+    c("estfish_bsmt",x1 - 1.5,5),
+    c("estfish",x1,5),
+    c("estfish_stn",x1 + 1.5,5),
 
-  stopifnot(all(c("Shortname","Diagramname") %in% names(reference_df)))
-  stopifnot(all(focus_vars %in% reference_df$Shortname))
+    c("fish",x1,4),
+    c("pzoop",x1,3),
+    c("hzoop",x1,2),
+    c("chla",x1,1),
 
-  ret <- subset(reference_df, Shortname %in% focus_vars)
+    c("flow",x2,4),
+    c("temp",x2,3),
+    c("secchi",x2,2),
+    c("potam",x2,1),
+    c("corbic",x2,1)
+  )
 
-  if(any(is.na(ret$Diagramname))) {
-    print(ret)
-    stop("At least one Diagramname missing.")
-  }
+  df <- as.data.frame(do.call("rbind", coordinate_map))
+  names(df) <- c("Shortname","x","y")
+  df$x <- as.numeric(df$x)
+  df$y <- as.numeric(df$y)
 
-  return(ret)
+  return(df)
 }
 
-
-getUpperTrophicCoord <- function(df) {
+getUpperTrophicCoordinates <- function(df) {
   x1 <- 1
   x2 <- 3.5
   x3 <- 6
 
-  df[df$Shortname == "estfish_bsmt_1",c("x","y")] <- list(x1,5)
-  df[df$Shortname == "potam_1",c("x","y")] <- list(x1,4)
-  df[df$Shortname == "pzoop_1",c("x","y")] <- list(x1,3)
-  df[df$Shortname == "hzoop_1",c("x","y")] <- list(x1,2)
-  df[df$Shortname == "chla_1",c("x","y")] <- list(x1,1)
+  coordinate_map <- list(
+    c("estfish_bsmt_1",x1,5),
+    c("potam_1",x1,4),
+    c("pzoop_1",x1,3),
+    c("hzoop_1",x1,2),
+    c("chla_1",x1,1),
 
-  df[df$Shortname == "estfish_bsmt",c("x","y")] <- list(x2,5)
-  df[df$Shortname == "pzoop",c("x","y")] <- list(x2,3)
-  df[df$Shortname == "hzoop",c("x","y")] <- list(x2,2)
+    c("estfish_bsmt",x2,5),
+    c("pzoop",x2,3),
+    c("hzoop",x2,2),
 
-  df[df$Shortname == "marfish_bsmt_1",c("x","y")] <- list(x3,5)
-  df[df$Shortname == "flow",c("x","y")] <- list(x3,3)
-  df[df$Shortname == "temp",c("x","y")] <- list(x3,2)
-  df[df$Shortname == "turbid",c("x","y")] <- list(x3,1)
+    c("marfish_bsmt_1",x3,5),
+    c("flow",x3,3),
+    c("temp",x3,2),
+    c("turbid",x3,1),
 
+    c("corbic_1",x1,4),
 
-  df[df$Shortname == "corbic_1",c("x","y")] <- list(x1,4)
+    c("sside_1",x3,5),
+    c("cent_1",x3,4)
+  )
 
+  df <- as.data.frame(do.call("rbind", coordinate_map))
+  names(df) <- c("Shortname","x","y")
+  df$x <- as.numeric(df$x)
+  df$y <- as.numeric(df$y)
 
-  df[df$Shortname == "sside_1",c("x","y")] <- list(x3,5)
-  df[df$Shortname == "cent_1",c("x","y")] <- list(x3,4)
+  return(df)
+}
 
-  if(any(duplicated(df[ ,c("x","y")]))) {
-    print(df)
-    stop("Duplicated coordinates.")
-  }
+getLowerTrophicCoordinates <- function(df) {
+  x1 <- 1
+  x2 <- 3.5
+  x3 <- 6
+
+  coordinate_map <- list(
+    c("potam_1",x1,5),
+    c("pzoop_1",x1,4),
+    c("hzoop_1",x1,3),
+    c("chla_1",x1,2),
+    c("din_1",x1,1),
+
+    c("potam",x2,5),
+    c("chla",x2,2),
+    c("din",x2,1),
+
+    c("flow",x3,4),
+    c("temp",x3,3),
+    c("turbid",x3,2),
+
+    c("corbic_1",x1,5),
+
+    c("corbic",x2,5)
+  )
+
+  df <- as.data.frame(do.call("rbind", coordinate_map))
+  names(df) <- c("Shortname","x","y")
+  df$x <- as.numeric(df$x)
+  df$y <- as.numeric(df$y)
 
   return(df)
 }
 
 
-getLowerTrophicCoord <- function(df) {
-  x1 <- 1
-  x2 <- 3.5
-  x3 <- 6
-
-  df[df$Shortname == "potam_1",c("x","y")] <- list(x1,5)
-  df[df$Shortname == "pzoop_1",c("x","y")] <- list(x1,4)
-  df[df$Shortname == "hzoop_1",c("x","y")] <- list(x1,3)
-  df[df$Shortname == "chla_1",c("x","y")] <- list(x1,2)
-  df[df$Shortname == "din_1",c("x","y")] <- list(x1,1)
-
-  df[df$Shortname == "potam",c("x","y")] <- list(x2,5)
-  df[df$Shortname == "chla",c("x","y")] <- list(x2,2)
-  df[df$Shortname == "din",c("x","y")] <- list(x2,1)
-
-  df[df$Shortname == "flow",c("x","y")] <- list(x3,4)
-  df[df$Shortname == "temp",c("x","y")] <- list(x3,3)
-  df[df$Shortname == "turbid",c("x","y")] <- list(x3,2)
-
-
-  df[df$Shortname == "corbic_1",c("x","y")] <- list(x1,5)
-
-  df[df$Shortname == "corbic",c("x","y")] <- list(x2,5)
-
-  if(any(duplicated(df[ ,c("x","y")]))) {
-    print(df)
-    stop("Duplicated coordinates.")
-  }
-
-  return(df)
-}
-
-
-getZoopCoord <- function(df, region) {
+getZoopCoordinates <- function(region) {
   x1 <- 1
   x2 <- 3.5
   x3 <- 6
 
   if(region == "Far West") {
-    df[df$Shortname == "potam_1",c("x","y")] <- list(x1,5)
-    df[df$Shortname == "pcope_1",c("x","y")] <- list(x1,4)
-    df[df$Shortname == "hcope_1",c("x","y")] <- list(x1,3)
-    df[df$Shortname == "amphi_1",c("x","y")] <- list(x1,2)
-    df[df$Shortname == "chla_1",c("x","y")] <- list(x1,1)
+    coordinate_map <- list(
+      c("potam_1",x1,5),
+      c("pcope_1",x1,4),
+      c("hcope_1",x1,3),
+      c("amphi_1",x1,2),
+      c("chla_1",x1,1),
 
-    df[df$Shortname == "pcope",c("x","y")] <- list(x2,4)
-    df[df$Shortname == "hcope",c("x","y")] <- list(x2,3)
-    df[df$Shortname == "amphi",c("x","y")] <- list(x2,2)
-    df[df$Shortname == "chla",c("x","y")] <- list(x2,1)
+      c("pcope",x2,4),
+      c("hcope",x2,3),
+      c("amphi",x2,2),
+      c("chla",x2,1),
+
+      c("flow",x3,5),
+      c("temp",x3,4),
+      c("turbid",x3,3),
+      c("estfish_bsmt_1",x3,2))
 
   } else if(region == "West") {
-    df[df$Shortname == "potam_1",c("x","y")] <- list(x1,6)
-    df[df$Shortname == "mysid_1",c("x","y")] <- list(x1,5)
-    df[df$Shortname == "pcope_1",c("x","y")] <- list(x1,4)
-    df[df$Shortname == "hcope_1",c("x","y")] <- list(x1,3)
-    df[df$Shortname == "amphi_1",c("x","y")] <- list(x1,2)
-    df[df$Shortname == "chla_1",c("x","y")] <- list(x1,1)
+    coordinate_map <- list(
+      c("potam_1",x1,6),
+      c("mysid_1",x1,5),
+      c("pcope_1",x1,4),
+      c("hcope_1",x1,3),
+      c("amphi_1",x1,2),
+      c("chla_1",x1,1),
 
-    df[df$Shortname == "mysid",c("x","y")] <- list(x2,5)
-    df[df$Shortname == "pcope",c("x","y")] <- list(x2,4)
-    df[df$Shortname == "hcope",c("x","y")] <- list(x2,3)
-    df[df$Shortname == "amphi",c("x","y")] <- list(x2,2)
-    df[df$Shortname == "chla",c("x","y")] <- list(x2,1)
+      c("mysid",x2,5),
+      c("pcope",x2,4),
+      c("hcope",x2,3),
+      c("amphi",x2,2),
+      c("chla",x2,1),
+
+      c("flow",x3,5),
+      c("temp",x3,4),
+      c("turbid",x3,3),
+      c("estfish_bsmt_1",x3,2))
 
   } else if(region == "North") {
-    df[df$Shortname == "corbic_1",c("x","y")] <- list(x1,6)
-    df[df$Shortname == "mysid_1",c("x","y")] <- list(x1,5)
-    df[df$Shortname == "pcope_1",c("x","y")] <- list(x1,4)
-    df[df$Shortname == "hcope_1",c("x","y")] <- list(x1,3)
-    df[df$Shortname == "amphi_1",c("x","y")] <- list(x1,2)
-    df[df$Shortname == "chla_1",c("x","y")] <- list(x1,1)
+    coordinate_map <- list(
+      c("corbic_1",x1,6),
+      c("mysid_1",x1,5),
+      c("pcope_1",x1,4),
+      c("hcope_1",x1,3),
+      c("amphi_1",x1,2),
+      c("chla_1",x1,1),
 
-    df[df$Shortname == "mysid",c("x","y")] <- list(x2,5)
-    df[df$Shortname == "pcope",c("x","y")] <- list(x2,4)
-    df[df$Shortname == "hcope",c("x","y")] <- list(x2,3)
-    df[df$Shortname == "amphi",c("x","y")] <- list(x2,2)
-    df[df$Shortname == "chla",c("x","y")] <- list(x2,1)
+      c("mysid",x2,5),
+      c("pcope",x2,4),
+      c("hcope",x2,3),
+      c("amphi",x2,2),
+      c("chla",x2,1),
+
+      c("flow",x3,5),
+      c("temp",x3,4),
+      c("turbid",x3,3),
+      c("estfish_bsmt_1",x3,2))
 
   } else if(region == "South") {
-    df[df$Shortname == "corbic_1",c("x","y")] <- list(x1,6)
-    df[df$Shortname == "pcope_1",c("x","y")] <- list(x1,5)
-    df[df$Shortname == "hcope_1",c("x","y")] <- list(x1,4)
-    df[df$Shortname == "clad_1",c("x","y")] <- list(x1,3)
-    df[df$Shortname == "amphi_1",c("x","y")] <- list(x1,2)
-    df[df$Shortname == "chla_1",c("x","y")] <- list(x1,1)
+    coordinate_map <- list(
+      c("corbic_1",x1,6),
+      c("pcope_1",x1,5),
+      c("hcope_1",x1,4),
+      c("clad_1",x1,3),
+      c("amphi_1",x1,2),
+      c("chla_1",x1,1),
 
-    df[df$Shortname == "pcope",c("x","y")] <- list(x2,5)
-    df[df$Shortname == "hcope",c("x","y")] <- list(x2,4)
-    df[df$Shortname == "clad",c("x","y")] <- list(x2,3)
-    df[df$Shortname == "amphi",c("x","y")] <- list(x2,2)
-    df[df$Shortname == "chla",c("x","y")] <- list(x2,1)
+      c("pcope",x2,5),
+      c("hcope",x2,4),
+      c("clad",x2,3),
+      c("amphi",x2,2),
+      c("chla",x2,1),
+
+      c("flow",x3,5),
+      c("temp",x3,4),
+      c("turbid",x3,3),
+      c("estfish_bsmt_1",x3,2))
   }
 
-  df[df$Shortname == "flow",c("x","y")] <- list(x3,5)
-  df[df$Shortname == "temp",c("x","y")] <- list(x3,4)
-  df[df$Shortname == "turbid",c("x","y")] <- list(x3,3)
-  df[df$Shortname == "estfish_bsmt_1",c("x","y")] <- list(x3,2)
-
-  if(any(duplicated(df[ ,c("x","y")]))) {
-    print(df)
-    stop("Duplicated coordinates.")
-  }
+  df <- as.data.frame(do.call("rbind", coordinate_map))
+  names(df) <- c("Shortname","x","y")
+  df$x <- as.numeric(df$x)
+  df$y <- as.numeric(df$y)
 
   return(df)
 }
 
+######################################################################################
+## Edge options:
 
-createGraph <- function(input_df, fit, sig=0.05, digits=2, line_col_positive="#00B0F0",
-                        line_col_negative="red", line_col_notsig="gray50") {
+getAnnualEdgeOptions <- function() {
+  tmp1 <- expand.grid(from_name=c("flow","temp","secchi","potam","corbic"),
+                      to_name=c("fish","pzoop","hzoop","chla"),
+                      headport="e",
+                      tailport="w")
 
-  required_fields <- c("Shortname","Diagramname","x","y")
-  stopifnot(all(required_fields %in% names(input_df)))
+  tmp2 <- data.frame(from_name=c("chla","hzoop","pzoop"),
+                     to_name=c("hzoop","pzoop","fish"),
+                     headport="s",
+                     tailport="n")
 
-  if(any(is.na(input_df$x)) || any(is.na(input_df$y))) {
-    stop("Missing value(s) of x and/or y.")
+  tmp3 <- data.frame(from_name=c("chla","hzoop"),
+                     to_name=c("pzoop","fish"),
+                     headport="w",
+                     tailport="w")
+
+  tmp4<- data.frame(from_name=c("fish"),
+                    to_name=c("estfish","estfish_stn","estfish_bsmt"),
+                    headport="s",
+                    tailport="n")
+
+  ret <- do.call("rbind", list(tmp1, tmp2, tmp3, tmp4))
+  for(colname in names(ret)) {
+    if(is.factor(ret[ ,colname])) {
+      ret[ ,colname] <- as.character(ret[ ,colname])
+    }
   }
+  stopifnot(sum(duplicated(ret[ ,1:2])) == 0)
 
-  if("Color" %in% names(input_df)) {
-    input_df$Color <- ifelse(is.na(input_df$Color), "black", input_df$Color)
+  return(ret)
+}
+
+getUpperTrophicEdgeOptions <- function() {
+  tmp1 <- expand.grid(from_name=c("estfish_bsmt_1","potam_1","pzoop_1","hzoop_1",
+                                  "chla_1","corbic_1"),
+                      to_name=c("estfish_bsmt","pzoop","hzoop"),
+                      headport="w",
+                      tailport="e")
+
+  tmp2 <- expand.grid(from_name=c("marfish_bsmt_1","flow","temp","turbid",
+                                  "sside_1","cent_1"),
+                      to_name=c("estfish_bsmt","pzoop","hzoop"),
+                      headport="e",
+                      tailport="w")
+
+  ret <- do.call("rbind", list(tmp1, tmp2))
+  for(colname in names(ret)) {
+    if(is.factor(ret[ ,colname])) {
+      ret[ ,colname] <- as.character(ret[ ,colname])
+    }
   }
+  stopifnot(sum(duplicated(ret[ ,1:2])) == 0)
 
-  ## Needs to stay in order according to the id column that gets created.
-  ## Edge matching apparently occurs by ordering despite the id column.
-  node_df <- DiagrammeR::create_node_df(n=nrow(input_df),
-                                        label=input_df$Diagramname,
-                                        Shortname=input_df$Shortname,
-                                        x=input_df$x,
-                                        y=input_df$y,
-                                        color=input_df$Color,
-                                        fillcolor=input_df$Color,
-                                        shape="polygon",
-                                        width=1,
-                                        fixedsize=FALSE)
+  return(ret)
+}
 
-  # Create graph:
-  graph <- DiagrammeR::create_graph() %>%
-    DiagrammeR::add_node_df(node_df=node_df)
+getLowerTrophicEdgeOptions <- function() {
+  tmp1 <- expand.grid(from_name=c("potam_1","pzoop_1","hzoop_1","chla_1","din_1",
+                                  "corbic_1"),
+                      to_name=c("potam","chla","din","corbic"),
+                      headport="w",
+                      tailport="e")
 
+  tmp2 <- expand.grid(from_name=c("flow","temp","turbid"),
+                      to_name=c("potam","chla","din","corbic"),
+                      headport="e",
+                      tailport="w")
+
+  ret <- do.call("rbind", list(tmp1, tmp2))
+  for(colname in names(ret)) {
+    if(is.factor(ret[ ,colname])) {
+      ret[ ,colname] <- as.character(ret[ ,colname])
+    }
+  }
+  stopifnot(sum(duplicated(ret[ ,1:2])) == 0)
+
+  return(ret)
+}
+
+getZoopEdgeOptions <- function() {
+  tmp1 <- expand.grid(from_name=c("potam_1","pcope_1","hcope_1","amphi_1","chla_1",
+                                  "mysid_1","corbic_1","clad_1"),
+                      to_name=c("pcope","hcope","amphi","chla","mysid","clad"),
+                      headport="w",
+                      tailport="e")
+
+  tmp2 <- expand.grid(from_name=c("flow","temp","turbid","estfish_bsmt_1"),
+                      to_name=c("pcope","hcope","amphi","chla","mysid","clad"),
+                      headport="e",
+                      tailport="w")
+
+  ret <- do.call("rbind", list(tmp1, tmp2))
+  for(colname in names(ret)) {
+    if(is.factor(ret[ ,colname])) {
+      ret[ ,colname] <- as.character(ret[ ,colname])
+    }
+  }
+  stopifnot(sum(duplicated(ret[ ,1:2])) == 0)
+
+  return(ret)
+}
+
+
+######################################################################################
+## Nodes and edges:
+
+## For coloring lines according to significance and pos/neg:
+colorFcn <- function(pval, coef, sig, col_pos, col_neg, col_ns) {
+  stopifnot(length(pval) == length(coef))
+  ret <- rep("black", length(pval))
+
+  ## Significant:
+  ret[(pval < sig) & (coef > 0)] <- col_pos
+  ret[(pval < sig) & (coef < 0)] <- col_neg
+
+  ## Not significant:
+  ret[(pval >= sig)] <- col_ns
+
+  return(ret)
+}
+
+## For setting line width according to coefficients:
+widthFcn <- function(coef, digits) {
+  5*(round(abs(coef), digits) + 1/15)
+}
+
+getNodes <- function(fit) {
+  ## Adapted from the lavaanPlot package:
+
+  regress <- fit@ParTable$op == "~"
+  latent <- fit@ParTable$op == "=~"
+
+  observed_nodes <- c()
+  latent_nodes <- c()
+
+  if(any(regress)){
+    observed_nodes <- c(observed_nodes, unique(fit@ParTable$rhs[regress]))
+    observed_nodes <- c(observed_nodes, unique(fit@ParTable$lhs[regress]))
+  }
+  if(any(latent)) {
+    observed_nodes <- c(observed_nodes, unique(fit@ParTable$rhs[latent]))
+    latent_nodes <- c(latent_nodes, unique(fit@ParTable$lhs[latent]))
+  }
+  # make sure latent variables don't show up in both
+  observed_nodes <- setdiff(observed_nodes, latent_nodes)
+
+  ret <- data.frame(Shortname=c(observed_nodes, latent_nodes),
+                    var_type=c(rep("observed",length(observed_nodes)),
+                               rep("latent",length(latent_nodes)))
+  )
+
+  return(ret)
+}
+
+getEdges <- function(fit, node_df, sig, digits, col_pos, col_neg, col_ns) {
   ## For mapping from short variable name to node id for creating edges:
   map_node_name_to_id <- node_df$id
   names(map_node_name_to_id) <- node_df$Shortname
 
-  ## And for determining headport:
-  map_node_name_to_x <- node_df$x
-  names(map_node_name_to_x) <- node_df$Shortname
-
-  colorFcn <- function(pval, coef, sig) {
-    stopifnot(length(pval) == length(coef))
-    ret <- rep("black", length(pval))
-
-    ## Significant:
-    ret[(pval < sig) & (coef > 0)] <- line_col_positive
-    ret[(pval < sig) & (coef < 0)] <- line_col_negative
-
-    ## Not significant:
-    ret[(pval >= sig)] <- line_col_notsig
-
-    return(ret)
-  }
-
-  # Set line width according to coefficients:
-  widthFcn <- function(coef, digits) {
-    5*(round(abs(coef), digits) + 1/15)
-  }
-
   ## Create input for edges data frame:
-  fit_df <- as.data.frame(fit@ParTable) %>%
-    dplyr::filter(op %in% c("~","=~")) %>%
+  ret <- as.data.frame(fit@ParTable) %>%
     dplyr::mutate(lhs_id=map_node_name_to_id[lhs],
                   rhs_id=map_node_name_to_id[rhs],
                   zval=est/se,
                   pval=(1 - stats::pnorm(abs(zval))) * 2,
-                  type=dplyr::case_when(op == "~" ~ "regress",
-                                        op == "=~" ~ "latent"),
-                  from_name=dplyr::case_when(type == "regress" ~ rhs,
-                                             type == "latent" ~ lhs),
-                  from_id=dplyr::case_when(type == "regress" ~ rhs_id,
-                                           type == "latent" ~ lhs_id),
-                  to_name=dplyr::case_when(type == "regress" ~ lhs,
-                                           type == "latent" ~ rhs),
-                  to_id=dplyr::case_when(type == "regress" ~ lhs_id,
-                                         type == "latent" ~ rhs_id),
+                  var_type=dplyr::case_when(op == "~" ~ "regress",
+                                            op == "=~" ~ "latent",
+                                            op == "~~" & lhs != rhs ~ "cov"),
+                  from_name=dplyr::case_when(var_type == "regress" ~ rhs,
+                                             var_type == "latent" ~ lhs,
+                                             var_type == "cov" ~ lhs),
+                  from_id=dplyr::case_when(var_type == "regress" ~ rhs_id,
+                                           var_type == "latent" ~ lhs_id,
+                                           var_type == "cov" ~ lhs_id),
+                  to_name=dplyr::case_when(var_type == "regress" ~ lhs,
+                                           var_type == "latent" ~ rhs,
+                                           var_type == "cov" ~ rhs),
+                  to_id=dplyr::case_when(var_type == "regress" ~ lhs_id,
+                                         var_type == "latent" ~ rhs_id,
+                                         var_type == "cov" ~ rhs_id),
+                  dir=dplyr::case_when(var_type == "cov" ~ "both"),
                   penwidth=widthFcn(est, digits=digits),
-                  color=colorFcn(pval=pval, coef=est, sig=sig),
-                  from_node_x=map_node_name_to_x[from_name],
-                  lhs_ok=(lhs %in% input_df$Shortname),
-                  rhs_ok=(rhs %in% input_df$Shortname))
+                  color=colorFcn(pval=pval, coef=est, sig=sig, col_pos, col_neg,
+                                 col_ns)) %>%
+    dplyr::filter(var_type %in% c("regress","latent","cov")) %>%
 
-  ## Stop if any nodes are missing from input_df:
-  stopifnot(all(fit_df$lhs_ok) && all(fit_df$rhs_ok))
+  return(ret)
+}
 
-  # Create edges:
-  if(any(fit_df$type == "regress")) {
-    regress_df <- subset(fit_df, type == "regress")
 
-    edges_regress <- DiagrammeR::create_edge_df(
-      from=regress_df$from_id,
-      to=regress_df$to_id,
-      from_name=regress_df$from_name,
-      to_name=regress_df$to_name,
-      penwidth=regress_df$penwidth,
-      color=regress_df$color,
-      from_node_x=regress_df$from_node_x) %>%
-      dplyr::mutate(headport=dplyr::case_when(
-                      from_node_x == min(map_node_name_to_x) ~ "w",
-                      from_node_x == max(map_node_name_to_x) ~ "e"),
-                    tailport=dplyr::case_when(
-                      from_node_x == min(map_node_name_to_x) ~ "e",
-                      from_node_x == max(map_node_name_to_x) ~ "w"))
+######################################################################################
+## Graph:
 
-    graph <- graph %>%
-      DiagrammeR::add_edge_df(edge_df=edges_regress)
+createGraph <- function(fit, reference_df, model_type, region=NULL,
+                        title="", cov=FALSE, manual_edge_options=FALSE,
+                        sig=0.05, digits=2,
+                        line_col_positive="#00B0F0",
+                        line_col_negative="red",
+                        line_col_notsig="gray50") {
+  ## model_type must be one of the following:
+  ##  "annual","monthly_upper_trophic","monthly_lower_trophic","monthly_zoop"
+
+  ## Names come from reference_df.
+  ## Coordinates come from coord_input.
+  ## Edge options come from edge_opt_df.
+
+  ## Check reference_df:
+  stopifnot(all(c("Shortname","Diagramname") %in% names(reference_df)))
+  if(any(is.na(reference_df$Shortname))) {
+    stop("At least one Shortname missing in reference_df.")
+  }
+  reference_df$Diagramname <- ifelse(is.na(reference_df$Diagramname),
+                                     reference_df$Shortname,
+                                     reference_df$Diagramname)
+
+  ## Get node coordinates and edge preferences:
+  if(model_type == "annual") {
+    coord_input <- getAnnualCoordinates()
+    edge_opt_df <- getAnnualEdgeOptions()
+  } else if(model_type == "monthly_upper_trophic") {
+    coord_input <- getUpperTrophicCoordinates()
+    edge_opt_df <- getUpperTrophicEdgeOptions()
+  } else if(model_type == "monthly_lower_trophic") {
+    coord_input <- getLowerTrophicCoordinates()
+    edge_opt_df <- getLowerTrophicEdgeOptions()
+  } else if(model_type == "monthly_zoop") {
+    if(is.null(region)) {
+      stop("region must be defined for monthly_zoop model")
+    }
+    coord_input <- getZoopCoordinates(region)
+    edge_opt_df <- getZoopEdgeOptions()
   }
 
-  if(any(fit_df$type == "latent")) {
-    latent_df <- subset(fit_df, type == "latent")
+  ## Create nodes. Needs to stay in order according to the id column that gets created.
+  ## Edge matching apparently occurs by ordering despite the id column.
+  node_input_df <- getNodes(fit) %>%
+    dplyr::left_join(reference_df, by="Shortname") %>%
+    dplyr::left_join(coord_input, by="Shortname")
 
-    edges_latent <- DiagrammeR::create_edge_df(
-      from=latent_df$from_id,
-      to=latent_df$to_id,
-      from_name=latent_df$from_name,
-      to_name=latent_df$to_name,
-      penwidth=latent_df$penwidth,
-      color=latent_df$color,
-      from_node_x=latent_df$from_node_x) %>%
-      dplyr::mutate(headport=dplyr::case_when(
-                      from_node_x == min(map_node_name_to_x) ~ "w",
-                      from_node_x == max(map_node_name_to_x) ~ "e"),
-                    tailport=dplyr::case_when(
-                      from_node_x == min(map_node_name_to_x) ~ "e",
-                      from_node_x == max(map_node_name_to_x) ~ "w"))
-
-    graph <- graph %>%
-      DiagrammeR::add_edge_df(edge_df=edges_latent)
+  stopifnot(all(node_input_df$node %in% reference_df$Shortname))
+  if(any(is.na(node_input_df[ ,c("x","y")]))) {
+    print(node_input_df)
+    stop("Missing value(s) of x and/or y.")
   }
+  if(any(duplicated(node_input_df[ ,c("x","y")]))) {
+    print(node_input_df)
+    stop("Duplicated coordinates.")
+  }
+
+  node_df <- DiagrammeR::create_node_df(
+    n=nrow(node_input_df),
+    label=node_input_df$Diagramname,
+    Shortname=node_input_df$Shortname,
+    x=node_input_df$x,
+    y=node_input_df$y,
+    color=node_input_df$Color,
+    fillcolor=node_input_df$Color,
+    shape=dplyr::case_when(node_input_df$var_type == "observed" ~ "polygon",
+                           node_input_df$var_type == "latent" ~ "ellipse"),
+    width=1,
+    fixedsize=FALSE)
+
+  ## Create edges:
+  edge_input_df <- getEdges(fit, node_df, sig=sig, digits=digits,
+                            col_pos=line_col_positive, col_neg=line_col_negative,
+                            col_n=line_col_notsig)
+  if(!cov) {
+    edge_input_df <- subset(edge_input_df, var_type != "cov")
+  }
+
+  if(manual_edge_options) {
+    edge_input_df <- edge_input_df %>%
+      dplyr::left_join(edge_opt_df, by=c("from_name","to_name"))
+  } else {
+    edge_input_df <- edge_input_df %>%
+      dplyr::mutate(headport=NA, tailport=NA)
+  }
+  stopifnot(all(edge_input_df$lhs_ok) && all(edge_input_df$rhs_ok))
+
+  edges_df <- DiagrammeR::create_edge_df(
+    from=edge_input_df$from_id,
+    to=edge_input_df$to_id,
+    from_name=edge_input_df$from_name,
+    to_name=edge_input_df$to_name,
+    penwidth=edge_input_df$penwidth,
+    color=edge_input_df$color,
+    dir=edge_input_df$dir,
+    headport=edge_input_df$headport,
+    tailport=edge_input_df$tailport)
+
+  ## Create graph:
+  graph <- DiagrammeR::create_graph() %>%
+    DiagrammeR::add_node_df(node_df=node_df) %>%
+    DiagrammeR::add_edge_df(edge_df=edges_df) %>%
+    DiagrammeR::add_global_graph_attrs(attr="splines",
+                                       value="spline",
+                                       attr_type="graph") %>%
+    DiagrammeR::render_graph(title=title)
 
   return(graph)
 }
 
 
+convert_html_to_grob = function(html_input, resolution){
 
+  temp_name = "temp.png"
+
+  html_input %>%
+    export_svg %>%
+    charToRaw %>%
+    rsvg_png("temp.png", height = resolution)
+
+  out_grob = rasterGrob(readPNG("temp.png", native = FALSE))
+
+  file.remove("temp.png")
+  return(out_grob)
+}
 

@@ -23,6 +23,14 @@ library(lavaan)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
+
+# For saving SEM diagrams:
+library(purrr)
+library(DiagrammeRsvg)
+library(rsvg)
+library(png)
+library(grid)
+library(ggpubr)
 ```
 
 ### Import data
@@ -57,12 +65,15 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                              "Herbivorous Zooplankton\nEnergy",
                                              "Predatory Zooplankton\nBiomass",
                                              "Predatory Zooplankton\nEnergy"),
-                               Datacolumn=NA,Log="yes"))
+                               Datacolumn=NA,Log="yes",
+                               Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
+                                       "#7030A0")))
 
 #focal variables
 varnames=c("temp","flow","secchi","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
+source("analysis/semDiagramFunctions.r")
 ```
 
 ### Data prep
@@ -440,6 +451,17 @@ myLavaanPlot(model=modfitwest, labels=labelswest,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
+## Updated SEM diagram:
+cnames_with_latent <- rbind(cnames,
+                            data.frame(Longname="fish", Shortname="fish",
+                                       Diagramname="Fish", Datacolumn=NA, Log=NA,
+                                       Color="#FF0000"))
+figW <- createGraph(fit=modfitwest, 
+                    reference_df=cnames_with_latent, 
+                    model_type="annual",
+                    title="West",
+                    manual_edge_options=TRUE)
+figW
 ```
 
 *North*
@@ -450,6 +472,13 @@ myLavaanPlot(model=modfitnorth, labels=labelsnorth,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+figN <- createGraph(fit=modfitnorth, 
+                    reference_df=cnames_with_latent, 
+                    model_type="annual",
+                    title="North",
+                    manual_edge_options=TRUE)
+figN
 ```
 
 *South*
@@ -460,6 +489,13 @@ myLavaanPlot(model=modfitsouth, labels=labelssouth,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+figS <- createGraph(fit=modfitsouth, 
+                    reference_df=cnames_with_latent, 
+                    model_type="annual",
+                    title="South",
+                    manual_edge_options=TRUE)
+figS
 ```
 
 #### Detrended
@@ -473,6 +509,11 @@ myLavaanPlot(model=modfitwest_dtr, labels=labelswest,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
+createGraph(fit=modfitwest_dtr, 
+            reference_df=cnames_with_latent, 
+            model_type="annual",
+            title="West",
+            manual_edge_options=TRUE)
 ```
 
 *North*
@@ -483,6 +524,12 @@ myLavaanPlot(model=modfitnorth_dtr, labels=labelsnorth,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+createGraph(fit=modfitnorth_dtr, 
+            reference_df=cnames_with_latent, 
+            model_type="annual",
+            title="North",
+            manual_edge_options=TRUE)
 ```
 
 *South*
@@ -493,4 +540,24 @@ myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+createGraph(fit=modfitsouth_dtr, 
+            reference_df=cnames_with_latent, 
+            model_type="annual",
+            title="South",
+            manual_edge_options=TRUE)
+```
+
+*Save updated SEM diagrams*
+
+```{r}
+plot_grobs <- map(list(figW, figN, figS), ~convert_html_to_grob(.x, 2000))
+combined_figure <- ggarrange(plotlist=plot_grobs, labels = "auto") %>%
+  annotate_figure(top = text_grob("Monthly Regional Models (upper trophic level)",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 14))
+
+ggsave('./fig_output/sem_annual_regions.png',combined_figure,width=6,height=3, dpi = 300)
+
 ```
