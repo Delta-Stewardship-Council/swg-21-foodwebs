@@ -507,7 +507,7 @@ upper_plot_far_west <- createGraph(fit=modfitFW,
                                    reference_df=cnameslag, 
                                    model_type="monthly_upper_trophic",
                                    title="Far West",
-                                   manual_edge_options=TRUE)
+                                   manual_port_settings=TRUE)
 upper_plot_far_west
 
 #WEST
@@ -521,7 +521,7 @@ upper_plot_west <- createGraph(fit=modfitW,
                                reference_df=cnameslag, 
                                model_type="monthly_upper_trophic",
                                title="West",
-                               manual_edge_options=TRUE)
+                               manual_port_settings=TRUE)
 upper_plot_west
 
 #NORTH
@@ -535,7 +535,7 @@ upper_plot_north <- createGraph(fit=modfitN,
                                 reference_df=cnameslag, 
                                 model_type="monthly_upper_trophic",
                                 title="North",
-                                manual_edge_options=TRUE)
+                                manual_port_settings=TRUE)
 upper_plot_north
 
 #SOUTH
@@ -549,7 +549,7 @@ upper_plot_south <- createGraph(fit=modfitS,
                                 reference_df=cnameslag, 
                                 model_type="monthly_upper_trophic",
                                 title="South",
-                                manual_edge_options=TRUE)
+                                manual_port_settings=TRUE)
 upper_plot_south
 ```
 
@@ -711,7 +711,7 @@ lower_plot_far_west <- createGraph(fit=modfitFW,
                                    reference_df=cnameslag, 
                                    model_type="monthly_lower_trophic",
                                    title="Far West",
-                                   manual_edge_options=TRUE)
+                                   manual_port_settings=TRUE)
 lower_plot_far_west
 
 #WEST
@@ -725,7 +725,7 @@ lower_plot_west <- createGraph(fit=modfitW,
                                reference_df=cnameslag, 
                                model_type="monthly_lower_trophic",
                                title="West",
-                               manual_edge_options=TRUE)
+                               manual_port_settings=TRUE)
 lower_plot_west
 
 #NORTH
@@ -739,7 +739,7 @@ lower_plot_north <- createGraph(fit=modfitN,
                                 reference_df=cnameslag, 
                                 model_type="monthly_lower_trophic",
                                 title="North",
-                                manual_edge_options=TRUE)
+                                manual_port_settings=TRUE)
 lower_plot_north
 
 #SOUTH
@@ -753,7 +753,7 @@ lower_plot_south <- createGraph(fit=modfitS,
                                 reference_df=cnameslag, 
                                 model_type="monthly_lower_trophic",
                                 title="South",
-                                manual_edge_options=TRUE)
+                                manual_port_settings=TRUE)
 lower_plot_south
 ```
 
@@ -863,7 +863,7 @@ zoop_plot_far_west <- createGraph(fit=modfitFW,
                                   model_type="monthly_zoop",
                                   region="Far West",
                                   title="Far West",
-                                  manual_edge_options=TRUE)
+                                  manual_port_settings=TRUE)
 zoop_plot_far_west
 
 #WEST
@@ -878,7 +878,7 @@ zoop_plot_west <- createGraph(fit=modfitW,
                               model_type="monthly_zoop",
                               region="West",
                               title="West",
-                              manual_edge_options=TRUE)
+                              manual_port_settings=TRUE)
 zoop_plot_west
 
 #NORTH
@@ -893,7 +893,7 @@ zoop_plot_north <- createGraph(fit=modfitN,
                                model_type="monthly_zoop",
                                region="North",
                                title="North",
-                               manual_edge_options=TRUE)
+                               manual_port_settings=TRUE)
 zoop_plot_north
 
 #SOUTH
@@ -908,7 +908,7 @@ zoop_plot_south <- createGraph(fit=modfitS,
                                model_type="monthly_zoop",
                                region="South",
                                title="South",
-                               manual_edge_options=TRUE)
+                               manual_port_settings=TRUE)
 zoop_plot_south
 ```
 
@@ -919,14 +919,14 @@ zoop_grobs <-  map(list(zoop_plot_far_west,
                         zoop_plot_west,
                         zoop_plot_north,
                         zoop_plot_south), ~convert_html_to_grob(.x, 2000))
-zoop_figure.png <- ggarrange(plotlist=zoop_grobs, labels="auto",
-                             font.label=list(size=11)) %>%
+zoop_figure <- ggarrange(plotlist=zoop_grobs, labels="auto",
+                         font.label=list(size=11)) %>%
   annotate_figure(top = text_grob("Monthly Regional Models (zooplankton groups)",
                                   color = "black",
                                   face = "bold",
                                   size = 11))
 
-ggsave('./fig_output/sem_zoop.png',zoop_figure.png, width=8, height=7, dpi=300)
+ggsave('./fig_output/sem_zoop.png',zoop_figure, width=8, height=7, dpi=300)
 ```
 
 Total effects

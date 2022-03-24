@@ -460,7 +460,7 @@ figW <- createGraph(fit=modfitwest,
                     reference_df=cnames_with_latent, 
                     model_type="annual",
                     title="West",
-                    manual_edge_options=TRUE)
+                    manual_port_settings=TRUE)
 figW
 ```
 
@@ -477,7 +477,7 @@ figN <- createGraph(fit=modfitnorth,
                     reference_df=cnames_with_latent, 
                     model_type="annual",
                     title="North",
-                    manual_edge_options=TRUE)
+                    manual_port_settings=TRUE)
 figN
 ```
 
@@ -494,7 +494,7 @@ figS <- createGraph(fit=modfitsouth,
                     reference_df=cnames_with_latent, 
                     model_type="annual",
                     title="South",
-                    manual_edge_options=TRUE)
+                    manual_port_settings=TRUE)
 figS
 ```
 
@@ -513,7 +513,7 @@ createGraph(fit=modfitwest_dtr,
             reference_df=cnames_with_latent, 
             model_type="annual",
             title="West",
-            manual_edge_options=TRUE)
+            manual_port_settings=TRUE)
 ```
 
 *North*
@@ -529,7 +529,7 @@ createGraph(fit=modfitnorth_dtr,
             reference_df=cnames_with_latent, 
             model_type="annual",
             title="North",
-            manual_edge_options=TRUE)
+            manual_port_settings=TRUE)
 ```
 
 *South*
@@ -545,7 +545,7 @@ createGraph(fit=modfitsouth_dtr,
             reference_df=cnames_with_latent, 
             model_type="annual",
             title="South",
-            manual_edge_options=TRUE)
+            manual_port_settings=TRUE)
 ```
 
 *Save updated SEM diagrams*

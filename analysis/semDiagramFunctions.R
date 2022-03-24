@@ -195,7 +195,7 @@ getZoopCoordinates <- function(region) {
 ######################################################################################
 ## Edge options:
 
-getAnnualEdgeOptions <- function() {
+getAnnualPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("flow","temp","secchi","potam","corbic"),
                       to_name=c("fish","pzoop","hzoop","chla"),
                       headport="e",
@@ -227,7 +227,7 @@ getAnnualEdgeOptions <- function() {
   return(ret)
 }
 
-getUpperTrophicEdgeOptions <- function() {
+getUpperTrophicPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("estfish_bsmt_1","potam_1","pzoop_1","hzoop_1",
                                   "chla_1","corbic_1"),
                       to_name=c("estfish_bsmt","pzoop","hzoop"),
@@ -251,7 +251,7 @@ getUpperTrophicEdgeOptions <- function() {
   return(ret)
 }
 
-getLowerTrophicEdgeOptions <- function() {
+getLowerTrophicPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("potam_1","pzoop_1","hzoop_1","chla_1","din_1",
                                   "corbic_1"),
                       to_name=c("potam","chla","din","corbic"),
@@ -274,7 +274,7 @@ getLowerTrophicEdgeOptions <- function() {
   return(ret)
 }
 
-getZoopEdgeOptions <- function() {
+getZoopPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("potam_1","pcope_1","hcope_1","amphi_1","chla_1",
                                   "mysid_1","corbic_1","clad_1"),
                       to_name=c("pcope","hcope","amphi","chla","mysid","clad"),
@@ -389,7 +389,7 @@ getEdges <- function(fit, node_df, sig, digits, col_pos, col_neg, col_ns) {
 ## Graph:
 
 createGraph <- function(fit, reference_df, model_type, region=NULL,
-                        title="", cov=FALSE, manual_edge_options=FALSE,
+                        title="", cov=FALSE, manual_port_settings=FALSE,
                         sig=0.05, digits=2,
                         line_col_positive="#00B0F0",
                         line_col_negative="red",
@@ -399,7 +399,7 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
 
   ## Names come from reference_df.
   ## Coordinates come from coord_input.
-  ## Edge options come from edge_opt_df.
+  ## Port options come from port_opt_df.
 
   ## Check reference_df:
   stopifnot(all(c("Shortname","Diagramname") %in% names(reference_df)))
@@ -413,19 +413,19 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
   ## Get node coordinates and edge preferences:
   if(model_type == "annual") {
     coord_input <- getAnnualCoordinates()
-    edge_opt_df <- getAnnualEdgeOptions()
+    port_opt_df <- getAnnualPortOptions()
   } else if(model_type == "monthly_upper_trophic") {
     coord_input <- getUpperTrophicCoordinates()
-    edge_opt_df <- getUpperTrophicEdgeOptions()
+    port_opt_df <- getUpperTrophicPortOptions()
   } else if(model_type == "monthly_lower_trophic") {
     coord_input <- getLowerTrophicCoordinates()
-    edge_opt_df <- getLowerTrophicEdgeOptions()
+    port_opt_df <- getLowerTrophicPortOptions()
   } else if(model_type == "monthly_zoop") {
     if(is.null(region)) {
       stop("region must be defined for monthly_zoop model")
     }
     coord_input <- getZoopCoordinates(region)
-    edge_opt_df <- getZoopEdgeOptions()
+    port_opt_df <- getZoopPortOptions()
   }
 
   ## Create nodes. Needs to stay in order according to the id column that gets created.
@@ -465,9 +465,9 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
     edge_input_df <- subset(edge_input_df, var_type != "cov")
   }
 
-  if(manual_edge_options) {
+  if(manual_port_settings) {
     edge_input_df <- edge_input_df %>%
-      dplyr::left_join(edge_opt_df, by=c("from_name","to_name"))
+      dplyr::left_join(port_opt_df, by=c("from_name","to_name"))
   } else {
     edge_input_df <- edge_input_df %>%
       dplyr::mutate(headport=NA, tailport=NA)

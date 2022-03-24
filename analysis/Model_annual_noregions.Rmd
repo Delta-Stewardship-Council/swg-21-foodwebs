@@ -285,7 +285,7 @@ plot_modfit1 <- createGraph(fit=modfit1,
                             reference_df=cnames_with_latent, 
                             model_type="annual",
                             title="Annual no region",
-                            manual_edge_options=TRUE)
+                            manual_port_settings=TRUE)
 plot_modfit1
 ```
 
@@ -302,7 +302,7 @@ createGraph(fit=modfit1_dtr,
             reference_df=cnames_with_latent, 
             model_type="annual",
             title="Annual no region, detrended",
-            manual_edge_options=TRUE)
+            manual_port_settings=TRUE)
 ```
 
 #### With covariances
@@ -321,7 +321,7 @@ createGraph(fit=modfit1,
             cov=TRUE,
             model_type="annual",
             title="Annual no region",
-            manual_edge_options=TRUE)
+            manual_port_settings=TRUE)
 ```
 
 Detrended
@@ -338,7 +338,7 @@ createGraph(fit=modfit1_dtr,
             cov=TRUE,
             model_type="annual",
             title="Annual no region, detrended",
-            manual_edge_options=TRUE)
+            manual_port_settings=TRUE)
 ```
 
 *Save updated SEM diagrams*
