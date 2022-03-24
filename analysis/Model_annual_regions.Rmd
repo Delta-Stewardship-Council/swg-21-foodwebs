@@ -552,12 +552,14 @@ createGraph(fit=modfitsouth_dtr,
 
 ```{r}
 plot_grobs <- map(list(figW, figN, figS), ~convert_html_to_grob(.x, 2000))
-combined_figure <- ggarrange(plotlist=plot_grobs, labels = "auto") %>%
-  annotate_figure(top = text_grob("Monthly Regional Models (upper trophic level)",
+combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto", 
+                             font.label=list(size=9)) %>%
+  annotate_figure(top = text_grob("Annual SEM (regional)",
                                   color = "black",
                                   face = "bold",
-                                  size = 14))
+                                  size = 9))# + 
+  #theme(plot.margin = unit(c(1,0,0,0), "lines"))
 
-ggsave('./fig_output/sem_annual_regions.png',combined_figure,width=6,height=3, dpi = 300)
-
+ggsave('./fig_output/sem_annual_regions.png', combined_figure, width=6, height=6,
+       dpi=300)
 ```

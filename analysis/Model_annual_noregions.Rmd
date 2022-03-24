@@ -346,10 +346,10 @@ createGraph(fit=modfit1_dtr,
 ```{r}
 modfit1_grobs <-  map(list(plot_modfit1), ~convert_html_to_grob(.x, 2000))
 modfit1_figure <- ggarrange(plotlist=modfit1_grobs) %>%
-  annotate_figure(top = text_grob("Monthly Regional Models (upper trophic level)",
+  annotate_figure(top = text_grob("Annual SEM (whole estuary)",
                                   color = "black",
                                   face = "bold",
-                                  size = 14))
+                                  size = 8))
 
-ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure,width=6,height=3, dpi = 300)
+ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure, width=3, height=3, dpi=300)
 ```

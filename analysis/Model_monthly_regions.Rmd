@@ -560,13 +560,14 @@ upper_grobs <-  map(list(upper_plot_far_west,
                          upper_plot_west,
                          upper_plot_north,
                          upper_plot_south), ~convert_html_to_grob(.x, 2000))
-upper_figure <- ggarrange(plotlist=upper_grobs, labels = "auto") %>%
+upper_figure <- ggarrange(plotlist=upper_grobs, labels="auto",
+                          font.label=list(size=11)) %>%
   annotate_figure(top = text_grob("Monthly Regional Models (upper trophic level)",
                                   color = "black",
                                   face = "bold",
-                                  size = 14))
+                                  size = 11))
 
-ggsave('./fig_output/sem_upper_trophic.png',upper_figure,width=6,height=3, dpi = 300)
+ggsave('./fig_output/sem_upper_trophic.png',upper_figure, width=8, height=7, dpi=300)
 ```
 
 
@@ -763,13 +764,14 @@ lower_grobs <-  map(list(lower_plot_far_west,
                          lower_plot_west,
                          lower_plot_north,
                          lower_plot_south), ~convert_html_to_grob(.x, 2000))
-lower_figure <- ggarrange(plotlist=lower_grobs, labels = "auto") %>%
+lower_figure <- ggarrange(plotlist=lower_grobs, labels="auto",
+                          font.label=list(size=11)) %>%
   annotate_figure(top = text_grob("Monthly Regional Models (lower trophic level)",
                                   color = "black",
                                   face = "bold",
-                                  size = 14))
+                                  size = 11))
 
-ggsave('./fig_output/sem_lower_trophic.png',lower_figure,width=6,height=3, dpi = 300)
+ggsave('./fig_output/sem_lower_trophic.png',lower_figure, width=8, height=7, dpi=300)
 ```
 
 Total effects
@@ -917,13 +919,14 @@ zoop_grobs <-  map(list(zoop_plot_far_west,
                         zoop_plot_west,
                         zoop_plot_north,
                         zoop_plot_south), ~convert_html_to_grob(.x, 2000))
-zoop_figure.png <- ggarrange(plotlist=zoop_grobs, labels = "auto") %>%
+zoop_figure.png <- ggarrange(plotlist=zoop_grobs, labels="auto",
+                             font.label=list(size=11)) %>%
   annotate_figure(top = text_grob("Monthly Regional Models (zooplankton groups)",
                                   color = "black",
                                   face = "bold",
-                                  size = 14))
+                                  size = 11))
 
-ggsave('./fig_output/sem_zoop.png',zoop_figure.png,width=6,height=3, dpi = 300)
+ggsave('./fig_output/sem_zoop.png',zoop_figure.png, width=8, height=7, dpi=300)
 ```
 
 Total effects
