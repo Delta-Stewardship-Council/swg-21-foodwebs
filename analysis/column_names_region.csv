@@ -1,7 +1,7 @@
 Longname,Shortname,Diagramname,Datacolumn,Log,Color
 Year,year,year,Year,no,
 Region,region,region,Region,no,
-Flow,flow,flow,Flow,no,#4472C4
+Flow,flow,flow,Flow,yes,#4472C4
 Secchi,secchi,secchi,Secchi,no,#4472C4
 Ammonia,ammonia,ammonia,DissAmmonia,yes,#4472C4
 Phytoplankton,chla,phytoplankton,Chlorophyll,yes,#70AD47

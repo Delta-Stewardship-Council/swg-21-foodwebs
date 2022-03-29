@@ -18,7 +18,7 @@ getAnnualCoordinates <- function() {
 
     c("flow",x2,4),
     c("temp",x2,3),
-    c("secchi",x2,2),
+    c("turbid",x2,2),
     c("potam",x2,1),
     c("corbic",x2,1)
   )
@@ -47,15 +47,16 @@ getUpperTrophicCoordinates <- function(df) {
     c("pzoop",x2,3),
     c("hzoop",x2,2),
 
-    c("marfish_bsmt_1",x3,5),
+    c("marfish_bsmt_1",x3,4),
     c("flow",x3,3),
     c("temp",x3,2),
     c("turbid",x3,1),
 
     c("corbic_1",x1,4),
 
-    c("sside_1",x3,5),
-    c("cent_1",x3,4)
+    c("sside_1",x3,6),
+    c("cent_1",x3,4),
+    c("sbass1_bsmt_1",x3,5)
   )
 
   df <- as.data.frame(do.call("rbind", coordinate_map))
@@ -196,7 +197,7 @@ getZoopCoordinates <- function(region) {
 ## Edge options:
 
 getAnnualPortOptions <- function() {
-  tmp1 <- expand.grid(from_name=c("flow","temp","secchi","potam","corbic"),
+  tmp1 <- expand.grid(from_name=c("flow","temp","turbid","potam","corbic"),
                       to_name=c("fish","pzoop","hzoop","chla"),
                       headport="e",
                       tailport="w")

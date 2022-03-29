@@ -52,25 +52,27 @@ focaldata = focaldata %>%
          hzoop=hcope+clad+rotif_m,
          hzoop_e=hcope_e+clad_e+rotif_e,
          pzoop=mysid+pcope,
-         pzoop_e=mysid_e+pcope_e) 
+         pzoop_e=mysid_e+pcope_e,
+         turbid=-secchi) 
 fvars=c(fvars,"tzoop","tzoop_e",
         "hzoop","hzoop_e",
-        "pzoop","pzoop_e")
+        "pzoop","pzoop_e","turbid")
 cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                                        "hzoop","hzoop_e",
-                                                       "pzoop","pzoop_e"),
-                               Diagramname=c("Total Zooplankton\nBiomass",
-                                             "Total Zooplankton\nEnergy",
-                                             "Herbivorous Zooplankton\nBiomass",
-                                             "Herbivorous Zooplankton\nEnergy",
-                                             "Predatory Zooplankton\nBiomass",
-                                             "Predatory Zooplankton\nEnergy"),
-                               Datacolumn=NA,Log="yes",
+                                                       "pzoop","pzoop_e","turbid"),
+                               Diagramname=c("total zooplankton",
+                                             "total zooplankton\nenergy",
+                                             "herbivorous\nzooplankton",
+                                             "herbivorous\nzooplankton\nenergy",
+                                             "predatory\nzooplankton",
+                                             "predatory\nzooplankton\nenergy",
+                                             "turbidity"),
+                               Datacolumn=NA,Log=c(rep("yes",6),"no"),
                                Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
-                                       "#7030A0")))
+                                       "#7030A0","#4472C4")))
 
 #focal variables
-varnames=c("temp","flow","secchi","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
+varnames=c("temp","flow","turbid","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
 source("analysis/semDiagramFunctions.r")
@@ -89,6 +91,7 @@ logtrans=function(x) {
   else {log(x)}
 }
 focaldatalog = focaldata %>% 
+  mutate(flow=flow-min(flow,na.rm=T)) %>%  #get rid of negative flow values
   mutate_at(logvars,logtrans)
 
 #scale data
@@ -287,26 +290,26 @@ With and without detrending.
 #         estfish_bsot~tzoop+flow
 # '
 #3
-# modwest='chla~potam+flow+temp+secchi
-#         tzoop~chla+potam+flow+temp+secchi
-#         amphi~chla+potam+flow+temp+secchi
+# modwest='chla~potam+flow+temp+turbid
+#         tzoop~chla+potam+flow+temp+turbid
+#         amphi~chla+potam+flow+temp+turbid
 #         estfish_bsmt~tzoop+amphi+flow
-#         #estfish_bsot~tzoop+amphi+flow+temp+secchi
+#         #estfish_bsot~tzoop+amphi+flow+temp+turbid
 #         amphi~~tzoop
 # '
 #4
-# modwest='chla~potam+flow+temp+secchi
-#         hzoop~chla+potam+flow+temp+secchi
-#         pzoop~chla+potam+flow+temp+secchi+hzoop
-#         amphi~chla+potam+flow+temp+secchi
-#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi
+# modwest='chla~potam+flow+temp+turbid
+#         hzoop~chla+potam+flow+temp+turbid
+#         pzoop~chla+potam+flow+temp+turbid+hzoop
+#         amphi~chla+potam+flow+temp+turbid
+#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+turbid
 #         amphi~~hzoop+pzoop
 # '
 #5
-modwest='chla~potam+flow+temp+secchi
-        hzoop~chla+potam+flow+temp+secchi
-        pzoop~chla+potam+flow+temp+secchi+hzoop
-        fish~hzoop+pzoop+potam+flow+temp+secchi
+modwest='chla~potam+flow+temp+turbid
+        hzoop~chla+potam+flow+temp+turbid
+        pzoop~chla+potam+flow+temp+turbid+hzoop
+        fish~hzoop+pzoop+potam+flow+temp+turbid
         fish=~estfish+estfish_stn+estfish_bsmt
 '
 
@@ -345,26 +348,26 @@ labelswest <- createLabels(modfitwest, cnames)
 #         estfish_bsot~tzoop+flow
 # '
 #3
-# modnorth='chla~corbic+potam+flow+temp+secchi
-#         tzoop~chla+corbic+potam+flow+temp+secchi
-#         amphi~chla+corbic+potam+flow+temp+secchi
-#         estfish_bsmt~tzoop+amphi+flow+temp+secchi+chla+sside
-#         #estfish_bsot~tzoop+amphi+flow+temp+secchi+sside
+# modnorth='chla~corbic+potam+flow+temp+turbid
+#         tzoop~chla+corbic+potam+flow+temp+turbid
+#         amphi~chla+corbic+potam+flow+temp+turbid
+#         estfish_bsmt~tzoop+amphi+flow+temp+turbid+chla+sside
+#         #estfish_bsot~tzoop+amphi+flow+temp+turbid+sside
 #         amphi~~tzoop
 # '
 #4
-# modnorth='chla~corbic+flow+temp+secchi
-#         hzoop~chla+corbic+flow+temp+secchi
-#         pzoop~chla+corbic+flow+temp+secchi+hzoop
-#         amphi~chla+corbic+flow+temp+secchi
-#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+chla+sside
+# modnorth='chla~corbic+flow+temp+turbid
+#         hzoop~chla+corbic+flow+temp+turbid
+#         pzoop~chla+corbic+flow+temp+turbid+hzoop
+#         amphi~chla+corbic+flow+temp+turbid
+#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+turbid+chla+sside
 #         amphi~~hzoop+pzoop
 # '
 #5
-modnorth='chla~corbic+flow+temp+secchi
-        hzoop~chla+corbic+flow+temp+secchi
-        pzoop~chla+corbic+flow+temp+secchi+hzoop
-        fish~chla+hzoop+pzoop+corbic+flow+temp+secchi
+modnorth='chla~corbic+flow+temp+turbid
+        hzoop~chla+corbic+flow+temp+turbid
+        pzoop~chla+corbic+flow+temp+turbid+hzoop
+        fish~chla+hzoop+pzoop+corbic+flow+temp+turbid
         fish=~estfish+estfish_stn #+estfish_bsmt
         estfish_stn~~chla
 '
@@ -398,32 +401,32 @@ labelsnorth <- createLabels(modfitnorth, cnames)
 #         estfish_bsot~tzoop+flow+corbic+sside
 # '
 #3
-# modsouth='chla~corbic+flow+temp+secchi
-#         tzoop~chla+corbic+flow+temp+secchi
-#         amphi~chla+corbic+flow+temp+secchi
-#         estfish_bsmt~tzoop+amphi+flow+temp+secchi+corbic+sside
-#         #estfish_bsot~tzoop+amphi+flow+temp+secchi+corbic+sside
+# modsouth='chla~corbic+flow+temp+turbid
+#         tzoop~chla+corbic+flow+temp+turbid
+#         amphi~chla+corbic+flow+temp+turbid
+#         estfish_bsmt~tzoop+amphi+flow+temp+turbid+corbic+sside
+#         #estfish_bsot~tzoop+amphi+flow+temp+turbid+corbic+sside
 #         amphi~~tzoop
 # '
 #4
-# modsouth='chla~corbic+flow+temp+secchi
-#         hzoop~chla+corbic+flow+temp+secchi
-#         pzoop~chla+corbic+flow+temp+secchi+hzoop
-#         amphi~chla+corbic+flow+temp+secchi
-#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+secchi+corbic+sside
+# modsouth='chla~corbic+flow+temp+turbid
+#         hzoop~chla+corbic+flow+temp+turbid
+#         pzoop~chla+corbic+flow+temp+turbid+hzoop
+#         amphi~chla+corbic+flow+temp+turbid
+#         estfish_bsmt~hzoop+pzoop+amphi+flow+temp+turbid+corbic+sside
 #         amphi~~hzoop+pzoop
 # '
 #5
-modsouth='chla~corbic+flow+temp+secchi
-        hzoop~chla+corbic+flow+temp+secchi
-        pzoop~chla+corbic+flow+temp+secchi+hzoop
-        fish~hzoop+pzoop+corbic+flow+temp+secchi
+modsouth='chla~corbic+flow+temp+turbid
+        hzoop~chla+corbic+flow+temp+turbid
+        pzoop~chla+corbic+flow+temp+turbid+hzoop
+        fish~hzoop+pzoop+corbic+flow+temp+turbid
         fish=~estfish+estfish_stn+estfish_bsmt
 '
-modsouth_dtr='chla~corbic+flow+temp+secchi
-        hzoop~chla+corbic+flow+temp+secchi
-        pzoop~chla+corbic+flow+temp+secchi+hzoop
-        fish~hzoop+pzoop+corbic+flow+temp+secchi
+modsouth_dtr='chla~corbic+flow+temp+turbid
+        hzoop~chla+corbic+flow+temp+turbid
+        pzoop~chla+corbic+flow+temp+turbid+hzoop
+        fish~hzoop+pzoop+corbic+flow+temp+turbid
         fish=~estfish #+estfish_stn+estfish_bsmt
 '
 modfitsouth=sem(modsouth, data=filter(fdr,region=="South"))
@@ -454,7 +457,7 @@ myLavaanPlot(model=modfitwest, labels=labelswest,
 ## Updated SEM diagram:
 cnames_with_latent <- rbind(cnames,
                             data.frame(Longname="fish", Shortname="fish",
-                                       Diagramname="Fish", Datacolumn=NA, Log=NA,
+                                       Diagramname="estuarine\nfishes", Datacolumn=NA, Log=NA,
                                        Color="#FF0000"))
 figW <- createGraph(fit=modfitwest, 
                     reference_df=cnames_with_latent, 

@@ -17,7 +17,7 @@ knit: (function(input, ...) {
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r packages, message=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(dplyr)
 library(lavaan)
 library(DiagrammeR)
@@ -49,25 +49,27 @@ focaldata = focaldata %>%
          hzoop=hcope+clad+rotif_m,
          hzoop_e=hcope_e+clad_e+rotif_e,
          pzoop=mysid+pcope,
-         pzoop_e=mysid_e+pcope_e) 
+         pzoop_e=mysid_e+pcope_e,
+         turbid=-secchi) 
 fvars=c(fvars,"tzoop","tzoop_e",
         "hzoop","hzoop_e",
-        "pzoop","pzoop_e")
+        "pzoop","pzoop_e","turbid")
 cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                                        "hzoop","hzoop_e",
-                                                       "pzoop","pzoop_e"),
-                               Diagramname=c("Total Zooplankton\nBiomass",
-                                             "Total Zooplankton\nEnergy",
-                                             "Herbivorous Zooplankton\nBiomass",
-                                             "Herbivorous Zooplankton\nEnergy",
-                                             "Predatory Zooplankton\nBiomass",
-                                             "Predatory Zooplankton\nEnergy"),
-                               Datacolumn=NA,Log="yes",
+                                                       "pzoop","pzoop_e","turbid"),
+                               Diagramname=c("total zooplankton",
+                                             "total zooplankton\nenergy",
+                                             "herbivorous\nzooplankton",
+                                             "herbivorous\nzooplankton\nenergy",
+                                             "predatory\nzooplankton",
+                                             "predatory\nzooplankton\nenergy",
+                                             "turbidity"),
+                               Datacolumn=NA,Log=c(rep("yes",6),"no"),
                                Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
-                                       "#7030A0")))
+                                       "#7030A0","#4472C4")))
 
 #focal variables
-varnames=c("temp","flow","secchi","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
+varnames=c("temp","flow","turbid","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
 source("analysis/semDiagramFunctions.r")
@@ -154,6 +156,9 @@ Breakdown of total zooplankton biomass.
 ```{r zoops, echo=FALSE}
 plot4=select(focaldata,year,hcope,pcope,clad,mysid,rotif_m) %>% 
   gather(Var,Value,hcope:rotif_m)
+#proportion of biomass, on average
+plot4 %>% group_by(Var) %>% summarise(Val=mean(Value, na.rm=T)) %>% 
+  ungroup %>% mutate(prop=Val/sum(Val))
 ggplot(plot4,aes(x=year,y=Value,fill=Var)) +
   geom_area() +
   theme_bw() + scale_fill_brewer(palette = "Dark2") +
@@ -237,17 +242,17 @@ With and without detrending.
 
 ```{r}
 #1
-model1='zoop=~hcope+clad+mysid
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow
-'
+# model1='zoop=~hcope+clad+mysid
+#         fish=~estfish_bsmt+estfish_bsot
+#         zoop~chla+potam+flow
+#         chla~potam+flow
+#         fish~zoop+flow
+# '
 #2
 model1='chla~potam+flow+temp
         hzoop~chla+potam+flow+temp
         pzoop~chla+potam+flow+hzoop+temp
-        fish~hzoop+pzoop+flow+secchi+temp+potam
+        fish~hzoop+pzoop+flow+turbid+temp+potam
         fish=~estfish+estfish_stn+estfish_bsmt
 '
 
@@ -278,7 +283,7 @@ myLavaanPlot(model=modfit1, labels=labels1,
 ## Updated SEM diagram:
 cnames_with_latent <- rbind(cnames,
                             data.frame(Longname="fish", Shortname="fish",
-                                       Diagramname="Fish", Datacolumn=NA, Log=NA,
+                                       Diagramname="estuarine\nfishes", Datacolumn=NA, Log=NA,
                                        Color="#FF0000"))
 
 plot_modfit1 <- createGraph(fit=modfit1, 
