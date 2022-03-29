@@ -26,7 +26,7 @@ Mysids catch,mysid_c,mysids catch,Mysids_CPUE,yes,#7030A0
 Mysids energy,mysid_e,mysids energy,Mysids_JPUE,yes,#7030A0
 Predatory copepods catch,pcope_c,predatory copepods catch,Predatory_Copepods_CPUE,yes,#7030A0
 Predatory copepods energy,pcope_e,predatory copepods energy,Predatory_Copepods_JPUE,yes,#7030A0
-Rotifers mass,rotif_m,rotifers mass,Rotifers_BPUE,yes,#F446A1
+Rotifers mass,rotif_m,rotifers,Rotifers_BPUE,yes,#F446A1
 Rotifers catch,rotif_c,rotifers catch,Rotifers_CPUE,yes,#F446A1
 Rotifers energy,rotif_e,rotifers energy,Rotifers_JPUE,yes,#F446A1
 Estuarine fishes BSMT,estfish_bsmt,BSMT\nestuarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000

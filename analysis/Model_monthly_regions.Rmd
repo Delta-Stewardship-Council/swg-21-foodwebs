@@ -1,7 +1,7 @@
 ---
 title: "Monthly model - Regions"
 author: "Tanya Rogers"
-date: "1/6/2022"
+date: "3/29/2022"
 output: html_document
 knit: (function(input, ...) {
     rmarkdown::render(
@@ -17,7 +17,7 @@ knit: (function(input, ...) {
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r packages, message=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(dplyr)
 library(lavaan)
 library(DiagrammeR)
@@ -81,6 +81,12 @@ cnameslag$Shortname=paste0(cnameslag$Shortname,"_1")
 cnameslag$Diagramname=paste(cnameslag$Diagramname,"(t-1)")
 cnameslag=rbind(cnames,cnameslag)
 
+#labeld for growth rate
+cnamesgr=cnames
+cnamesgr$Shortname=paste0(cnamesgr$Shortname,"_gr")
+cnamesgr$Diagramname=paste(cnamesgr$Diagramname,"(gr)")
+cnameslag=rbind(cnameslag,cnamesgr)
+
 source("analysis/myLavaanPlot.r")
 source("analysis/semDiagramFunctions.r")
 ```
@@ -101,7 +107,10 @@ logtrans=function(x) {
 }
 focaldatalog = focaldata %>% 
   mutate(flow=flow-min(flow,na.rm=T)) %>%  #get rid of negative flow values
-  mutate_at(logvars,logtrans)
+  mutate_at(logvars,logtrans) %>% 
+  group_by(region) %>%
+  mutate_at(logvars,list("gr"=function(x) {c(NA,diff(x))})) %>% 
+  ungroup()
 
 #scale data
 fdr0=focaldatalog
@@ -393,6 +402,9 @@ ggplot(fdr,aes(x=ammonia_1, y=chla)) +
 ggplot(fdr,aes(x=ammonia, y=dophos, color=chla)) + 
   facet_grid(region~.) + geom_point() + 
   scale_color_viridis_c()
+ggplot(fdr_ds,aes(x=flow, y=estfish_bsmt, color=month)) + 
+  facet_grid(region~.) + geom_point() + 
+  scale_color_viridis_c()
 ```
 
 ### Fish-centered model (upper trophic level aggregates)
@@ -405,7 +417,7 @@ modFW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+h
         hb:=sqrt(hb1^2)
         hs:=sqrt(hs1^2)
         ht:=sqrt(ht1^2+ht2^2+ht3^2)
-        ha:=sqrt(ha1^2+ha2^2-ha3^2)
+        ha:=sqrt(ha1^2+ha2^2+ha3^2)
         
         pb:=sqrt(pb1^2)
         ps:=sqrt(ps1^2)
@@ -425,7 +437,7 @@ modW='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha
         hb:=sqrt(hb1^2)
         hs:=sqrt(hs1^2)
         ht:=sqrt(ht1^2+ht2^2+ht3^2)
-        ha:=sqrt(ha1^2+ha2^2-ha3^2)
+        ha:=sqrt(ha1^2+ha2^2+ha3^2)
         
         pb:=sqrt(pb1^2+pb2^2)
         ps:=sqrt(ps1^2)
@@ -445,7 +457,7 @@ modN='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+h
         hb:=sqrt(hb1^2)
         hs:=sqrt(hs1^2)
         ht:=sqrt(ht1^2+ht2^2+ht3^2)
-        ha:=sqrt(ha1^2+ha2^2-ha3^2)
+        ha:=sqrt(ha1^2+ha2^2+ha3^2)
         
         pb:=sqrt(pb1^2+pb2^2)
         ps:=sqrt(ps1^2)
@@ -465,7 +477,7 @@ modS='hzoop~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+h
         hb:=sqrt(hb1^2)
         hs:=sqrt(hs1^2)
         ht:=sqrt(ht1^2+ht2^2+ht3^2)
-        ha:=sqrt(ha1^2+ha2^2-ha3^2)
+        ha:=sqrt(ha1^2+ha2^2+ha3^2)
         
         pb:=sqrt(pb1^2+pb2^2)
         ps:=sqrt(ps1^2)
@@ -494,8 +506,6 @@ labelsfarwest=createLabels(modfitFW, cnameslag)
 labelswest=createLabels(modfitW, cnameslag)
 labelsnorth=createLabels(modfitN, cnameslag)
 labelssouth=createLabels(modfitS, cnameslag)
-
-
 
 
 #FAR WEST
@@ -603,7 +613,7 @@ ggplot(ssut,aes(x=influence,y=est.std)) +
   geom_hline(yintercept = 0) +
   theme_bw() + theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1)) +
   labs(y="total effect (standardized)")
-#ggsave("../uteffects.png",width = 6,height=5)
+ggsave("./fig_output/uteffects.png",width = 6,height=5)
 ```
 
 ### Phytoplankton-centered model (lower trophic level aggregates)
@@ -807,34 +817,67 @@ ggplot(sslt,aes(x=influence,y=est.std)) +
   geom_hline(yintercept = 0) +
   theme_bw() + theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1)) +
   labs(y="total effect (standardized)")
-#ggsave("../lteffects.png",width = 6,height=5)
+ggsave("./fig_output/lteffects.png",width = 6,height=5)
 ```
 
 ### Zooplankton-centered model (individual groups)
 
 ```{r, fig.width=8, fig.height=8}
-modFW='chla~chla_1+hcope_1+amphi_m_1+potam_1+flow+turbid+temp
+#1
+# modFW='chla~chla_1+hcope_1+amphi_m_1+potam_1+flow+turbid+temp
+#        hcope~chla_1+hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+#        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+#        pcope~hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+# '
+# modW='chla~chla_1+hcope_1+amphi_m_1+potam_1+flow+turbid+temp+mysid_1
+#        hcope~chla_1+hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+#        amphi_m~chla_1+amphi_m_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
+#        pcope~hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+#        mysid~chla_1+hcope_1+pcope_1+amphi_m_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
+# '
+# modN='chla~chla_1+hcope_1+amphi_m_1+corbic_1+flow+turbid+temp
+#        hcope~chla_1+hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+#        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+#        pcope~hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+#        mysid~hcope_1+pcope_1+mysid_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+# '
+# modS='chla~chla_1+hcope_1+clad_1+corbic_1+flow+turbid+temp
+#        hcope~chla_1+hcope_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+#        clad~chla_1+clad_1+pcope_1+flow+turbid+temp+estfish_bsmt_1
+#        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+#        pcope~chla_1+hcope_1+clad_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+# '
+#2
+modFW='chla~chla_1+hcope_1+amphi_m_1+rotif_m_1+potam_1+flow+turbid+temp
        hcope~chla_1+hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+       rotif_m~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
        pcope~hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+       estfish_bsmt~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+flow+turbid+temp
 '
-modW='chla~chla_1+hcope_1+amphi_m_1+potam_1+flow+turbid+temp+mysid_1
-       hcope~chla_1+hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+modW='chla~chla_1+hcope_1+amphi_m_1+rotif_m_1+potam_1+flow+turbid+temp+mysid_1
+       hcope~chla_1+hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1+rotif_m_1
        amphi_m~chla_1+amphi_m_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
-       pcope~hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+       rotif_m~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
+       pcope~hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1+rotif_m_1
        mysid~chla_1+hcope_1+pcope_1+amphi_m_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
+       estfish_bsmt~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+mysid_1+flow+turbid+temp
 '
-modN='chla~chla_1+hcope_1+amphi_m_1+corbic_1+flow+turbid+temp
+modN='chla~chla_1+hcope_1+amphi_m_1+rotif_m_1+corbic_1+flow+turbid+temp
        hcope~chla_1+hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
-       pcope~hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       rotif_m~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
+       pcope~hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1+chla_1
        mysid~hcope_1+pcope_1+mysid_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+       estfish_bsmt~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+mysid_1+flow+turbid+temp
 '
-modS='chla~chla_1+hcope_1+clad_1+corbic_1+flow+turbid+temp
+modS='chla~chla_1+hcope_1+clad_1+rotif_m_1+corbic_1+flow+turbid+temp
        hcope~chla_1+hcope_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
        clad~chla_1+clad_1+pcope_1+flow+turbid+temp+estfish_bsmt_1
        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+       rotif_m~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
        pcope~chla_1+hcope_1+clad_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       estfish_bsmt~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+clad_1+flow+turbid+temp
 '
 modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
 modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
@@ -845,7 +888,7 @@ summary(modfitW, standardized=T, rsq=T)
 summary(modfitN, standardized=T, rsq=T)
 summary(modfitS, standardized=T, rsq=T)
 
-#modificationindices(modfitS, sort=T, maximum.number=20)
+#modificationindices(modfitW, sort=T, maximum.number=20)
 #residuals(modfitW)
 
 labelsfarwest=createLabels(modfitFW, cnameslag)
@@ -854,11 +897,11 @@ labelsnorth=createLabels(modfitN, cnameslag)
 labelssouth=createLabels(modfitS, cnameslag)
 
 #FAR WEST
-myLavaanPlot(model=modfitFW, labels=labelsfarwest,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+# myLavaanPlot(model=modfitFW, labels=labelsfarwest,
+# 						 node_options=list(shape="box", fontname="Helvetica"), 
+# 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+# 						 width=c("regress","latent"),
+# 						 color=c("regress","latent"))
 
 zoop_plot_far_west <- createGraph(fit=modfitFW, 
                                   reference_df=cnameslag, 
@@ -869,11 +912,11 @@ zoop_plot_far_west <- createGraph(fit=modfitFW,
 zoop_plot_far_west
 
 #WEST
-myLavaanPlot(model=modfitW, labels=labelswest,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+# myLavaanPlot(model=modfitW, labels=labelswest,
+# 						 node_options=list(shape="box", fontname="Helvetica"), 
+# 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+# 						 width=c("regress","latent"),
+# 						 color=c("regress","latent"))
 
 zoop_plot_west <- createGraph(fit=modfitW, 
                               reference_df=cnameslag, 
@@ -884,11 +927,11 @@ zoop_plot_west <- createGraph(fit=modfitW,
 zoop_plot_west
 
 #NORTH
-myLavaanPlot(model=modfitN, labels=labelsnorth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+# myLavaanPlot(model=modfitN, labels=labelsnorth,
+# 						 node_options=list(shape="box", fontname="Helvetica"), 
+# 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+# 						 width=c("regress","latent"),
+# 						 color=c("regress","latent"))
 
 zoop_plot_north <- createGraph(fit=modfitN, 
                                reference_df=cnameslag, 
@@ -899,11 +942,11 @@ zoop_plot_north <- createGraph(fit=modfitN,
 zoop_plot_north
 
 #SOUTH
-myLavaanPlot(model=modfitS, labels=labelssouth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+# myLavaanPlot(model=modfitS, labels=labelssouth,
+# 						 node_options=list(shape="box", fontname="Helvetica"), 
+# 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+# 						 width=c("regress","latent"),
+# 						 color=c("regress","latent"))
 
 zoop_plot_south <- createGraph(fit=modfitS, 
                                reference_df=cnameslag, 
@@ -934,3 +977,356 @@ ggsave('./fig_output/sem_zoop.png',zoop_figure, width=8, height=7, dpi=300)
 Total effects
 
 Haven't done yet.
+
+## Growth rates
+
+### Upper trophic
+
+```{r, fig.width=8, fig.height=8}
+modFW='hzoop_gr~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*turbid
+        pzoop_gr~pb1*hzoop_1+ps1*pzoop_1+pt1*potam_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*turbid
+        estfish_bsmt_gr~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*turbid+ft1*marfish_bsmt_1+ft2*sbass1_bsmt_1
+        
+        hb:=sqrt(hb1^2)
+        hs:=sqrt(hs1^2)
+        ht:=sqrt(ht1^2+ht2^2+ht3^2)
+        ha:=sqrt(ha1^2+ha2^2+ha3^2)
+        
+        pb:=sqrt(pb1^2)
+        ps:=sqrt(ps1^2)
+        pt:=sqrt(pt1^2+pt2^2)
+        pa:=sqrt(pa1^2+pa2^2+pa3^2)
+        
+        fb:=sqrt(fb1^2+fb2^2)
+        fs:=sqrt(fs1^2)
+        ft:=sqrt(ft1^2+ft2^2)
+        fa:=sqrt(fa1^2+fa2^2+fa3^2)
+'
+
+modW='hzoop_gr~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*potam_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*turbid
+        pzoop_gr~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*potam_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*turbid
+        estfish_bsmt_gr~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*turbid+ft1*sbass1_bsmt_1
+        
+        hb:=sqrt(hb1^2)
+        hs:=sqrt(hs1^2)
+        ht:=sqrt(ht1^2+ht2^2+ht3^2)
+        ha:=sqrt(ha1^2+ha2^2+ha3^2)
+        
+        pb:=sqrt(pb1^2+pb2^2)
+        ps:=sqrt(ps1^2)
+        pt:=sqrt(pt1^2+pt2^2)
+        pa:=sqrt(pa1^2+pa2^2+pa3^2)
+        
+        fb:=sqrt(fb1^2+fb2^2)
+        fs:=sqrt(fs1^2)
+        ft:=sqrt(ft1^2)
+        fa:=sqrt(fa1^2+fa2^2+fa3^2)
+'
+
+modN='hzoop_gr~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*turbid
+        pzoop_gr~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*corbic_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*turbid
+        estfish_bsmt_gr~fb1*hzoop_1+fb2*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*turbid+ft1*sside_1+ft2*cent_1+ft3*sbass1_bsmt_1
+        
+        hb:=sqrt(hb1^2)
+        hs:=sqrt(hs1^2)
+        ht:=sqrt(ht1^2+ht2^2+ht3^2)
+        ha:=sqrt(ha1^2+ha2^2+ha3^2)
+        
+        pb:=sqrt(pb1^2+pb2^2)
+        ps:=sqrt(ps1^2)
+        pt:=sqrt(pt1^2+pt2^2)
+        pa:=sqrt(pa1^2+pa2^2+pa3^2)
+        
+        fb:=sqrt(fb1^2+fb2^2)
+        fs:=sqrt(fs1^2)
+        ft:=sqrt(ft1^2+ft2^2+ft3^2)
+        fa:=sqrt(fa1^2+fa2^2+fa3^2)
+'
+
+modS='hzoop_gr~hb1*chla_1+hs1*hzoop_1+ht1*pzoop_1+ht2*corbic_1+ht3*estfish_bsmt_1+ha1*flow+ha2*temp+ha3*turbid
+        pzoop_gr~pb1*chla_1+pb2*hzoop_1+ps1*pzoop_1+pt1*corbic_1+pt2*estfish_bsmt_1+pa1*flow+pa2*temp+pa3*turbid
+        estfish_bsmt_gr~fb1*chla_1+fb2*hzoop_1+fb3*pzoop_1+fs1*estfish_bsmt_1+fa1*flow+fa2*temp+fa3*turbid+ft1*sside_1+ft2*cent_1+ft3*sbass1_bsmt_1
+        
+        hb:=sqrt(hb1^2)
+        hs:=sqrt(hs1^2)
+        ht:=sqrt(ht1^2+ht2^2+ht3^2)
+        ha:=sqrt(ha1^2+ha2^2+ha3^2)
+        
+        pb:=sqrt(pb1^2+pb2^2)
+        ps:=sqrt(ps1^2)
+        pt:=sqrt(pt1^2+pt2^2)
+        pa:=sqrt(pa1^2+pa2^2+pa3^2)
+        
+        fb:=sqrt(fb1^2+fb2^2+fb3^2)
+        fs:=sqrt(fs1^2)
+        ft:=sqrt(ft1^2+ft2^2+ft3^2)
+        fa:=sqrt(fa1^2+fa2^2+fa3^2)
+'
+
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+#modificationindices(modfitW, sort=T, maximum.number=20)
+#residuals(modfitS)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+
+#FAR WEST
+upper_plot_far_west <- createGraph(fit=modfitFW, 
+                                   reference_df=cnameslag, 
+                                   model_type="monthly_upper_trophic",
+                                   title="Far West",
+                                   manual_port_settings=TRUE)
+upper_plot_far_west
+
+#WEST
+upper_plot_west <- createGraph(fit=modfitW, 
+                               reference_df=cnameslag, 
+                               model_type="monthly_upper_trophic",
+                               title="West",
+                               manual_port_settings=TRUE)
+upper_plot_west
+
+#NORTH
+upper_plot_north <- createGraph(fit=modfitN, 
+                                reference_df=cnameslag, 
+                                model_type="monthly_upper_trophic",
+                                title="North",
+                                manual_port_settings=TRUE)
+upper_plot_north
+
+#SOUTH
+upper_plot_south <- createGraph(fit=modfitS, 
+                                reference_df=cnameslag, 
+                                model_type="monthly_upper_trophic",
+                                title="South",
+                                manual_port_settings=TRUE)
+upper_plot_south
+```
+
+### Lower trophic
+
+```{r, fig.width=8, fig.height=8}
+modFW='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
+        chla_gr~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
+        potam~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
+        
+        ns:=sqrt(ns1^2)
+        nt:=sqrt(nt1^2)
+        nn:=sqrt(nn1^2+nn2^2+nn3^2)
+        na:=sqrt(na1^2+na2^2+na3^2)
+        
+        cb:=sqrt(cb1^2)
+        cs:=sqrt(cs1^2)
+        ct:=sqrt(ct1^2+ct2^2)
+        ca:=sqrt(ca1^2+ca2^2+ca3^2)
+        
+        lb:=sqrt(lb1^2+lb2^2+lb3^2)
+        ls:=sqrt(ls1^2)
+        la:=sqrt(la1^2+la2^2+la3^2)
+'
+
+modW='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
+        chla_gr~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
+        potam~lb1*din_1+lb2*chla_1+lb3*hzoop_1+lb4*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
+        
+        ns:=sqrt(ns1^2)
+        nt:=sqrt(nt1^2)
+        nn:=sqrt(nn1^2+nn2^2+nn3^2)
+        na:=sqrt(na1^2+na2^2+na3^2)
+        
+        cb:=sqrt(cb1^2)
+        cs:=sqrt(cs1^2)
+        ct:=sqrt(ct1^2+ct2^2)
+        ca:=sqrt(ca1^2+ca2^2+ca3^2)
+        
+        lb:=sqrt(lb1^2+lb2^2+lb3^2+lb4^2)
+        ls:=sqrt(ls1^2)
+        la:=sqrt(la1^2+la2^2+la3^2)
+'
+
+modN='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
+        chla_gr~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ct3*pzoop_1+ca1*flow+ca2*temp+ca3*turbid
+        corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*turbid
+        
+        ns:=sqrt(ns1^2)
+        nt:=sqrt(nt1^2)
+        nn:=sqrt(nn1^2+nn2^2+nn3^2)
+        na:=sqrt(na1^2+na2^2+na3^2)
+        
+        cb:=sqrt(cb1^2)
+        cs:=sqrt(cs1^2)
+        ct:=sqrt(ct1^2+ct2^2+ct3^2)
+        ca:=sqrt(ca1^2+ca2^2+ca3^2)
+        
+        lb:=sqrt(lb1^2+lb2^2+lb3^2)
+        ls:=sqrt(ls1^2)
+        la:=sqrt(la1^2+la2^2+la3^2)
+'
+
+modS='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
+        chla_gr~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*turbid
+        corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*turbid
+        
+        ns:=sqrt(ns1^2)
+        nt:=sqrt(nt1^2)
+        nn:=sqrt(nn1^2+nn2^2+nn3^2)
+        na:=sqrt(na1^2+na2^2+na3^2)
+        
+        cb:=sqrt(cb1^2)
+        cs:=sqrt(cs1^2)
+        ct:=sqrt(ct1^2+ct2^2)
+        ca:=sqrt(ca1^2+ca2^2+ca3^2)
+        
+        lb:=sqrt(lb1^2+lb2^2+lb3^2)
+        ls:=sqrt(ls1^2)
+        la:=sqrt(la1^2+la2^2+la3^2)
+'
+
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+#modificationindices(modfitW, sort=T, maximum.number=20)
+#residuals(modfitW)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+lower_plot_far_west <- createGraph(fit=modfitFW, 
+                                   reference_df=cnameslag, 
+                                   model_type="monthly_lower_trophic",
+                                   title="Far West",
+                                   manual_port_settings=TRUE)
+lower_plot_far_west
+
+#WEST
+lower_plot_west <- createGraph(fit=modfitW, 
+                               reference_df=cnameslag, 
+                               model_type="monthly_lower_trophic",
+                               title="West",
+                               manual_port_settings=TRUE)
+lower_plot_west
+
+#NORTH
+lower_plot_north <- createGraph(fit=modfitN, 
+                                reference_df=cnameslag, 
+                                model_type="monthly_lower_trophic",
+                                title="North",
+                                manual_port_settings=TRUE)
+lower_plot_north
+
+#SOUTH
+lower_plot_south <- createGraph(fit=modfitS, 
+                                reference_df=cnameslag, 
+                                model_type="monthly_lower_trophic",
+                                title="South",
+                                manual_port_settings=TRUE)
+lower_plot_south
+```
+
+### Zooplankton
+
+```{r, fig.width=8, fig.height=8}
+modFW='chla_gr~chla_1+hcope_1+amphi_m_1+rotif_m_1+potam_1+flow+turbid+temp
+       hcope_gr~chla_1+hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+       amphi_m_gr~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+       rotif_m_gr~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
+       pcope_gr~hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
+       estfish_bsmt_gr~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+flow+turbid+temp
+'
+modW='chla_gr~chla_1+hcope_1+amphi_m_1+rotif_m_1+potam_1+flow+turbid+temp+mysid_1
+       hcope_gr~chla_1+hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1+rotif_m_1
+       amphi_m_gr~chla_1+amphi_m_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
+       rotif_m_gr~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
+       pcope_gr~hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1+rotif_m_1
+       mysid_gr~chla_1+hcope_1+pcope_1+amphi_m_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
+       estfish_bsmt_gr~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+mysid_1+flow+turbid+temp
+'
+modN='chla_gr~chla_1+hcope_1+amphi_m_1+rotif_m_1+corbic_1+flow+turbid+temp
+       hcope_gr~chla_1+hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       amphi_m_gr~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+       rotif_m_gr~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
+       pcope_gr~hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1+chla_1
+       mysid_gr~hcope_1+pcope_1+mysid_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+       estfish_bsmt_gr~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+mysid_1+flow+turbid+temp
+'
+modS='chla_gr~chla_1+hcope_1+clad_1+rotif_m_1+corbic_1+flow+turbid+temp
+       hcope_gr~chla_1+hcope_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       clad_gr~chla_1+clad_1+pcope_1+flow+turbid+temp+estfish_bsmt_1
+       amphi_m_gr~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
+       rotif_m_gr~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
+       pcope_gr~chla_1+hcope_1+clad_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       estfish_bsmt_gr~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+clad_1+flow+turbid+temp
+'
+modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
+modfitW=sem(modW, data=filter(fdr_ds,region=="West"))
+modfitN=sem(modN, data=filter(fdr_ds,region=="North"))
+modfitS=sem(modS, data=filter(fdr_ds,region=="South"))
+summary(modfitFW, standardized=T, rsq=T)
+summary(modfitW, standardized=T, rsq=T)
+summary(modfitN, standardized=T, rsq=T)
+summary(modfitS, standardized=T, rsq=T)
+
+#modificationindices(modfitW, sort=T, maximum.number=20)
+#residuals(modfitW)
+
+labelsfarwest=createLabels(modfitFW, cnameslag)
+labelswest=createLabels(modfitW, cnameslag)
+labelsnorth=createLabels(modfitN, cnameslag)
+labelssouth=createLabels(modfitS, cnameslag)
+
+#FAR WEST
+zoop_plot_far_west <- createGraph(fit=modfitFW, 
+                                  reference_df=cnameslag, 
+                                  model_type="monthly_zoop",
+                                  region="Far West",
+                                  title="Far West",
+                                  manual_port_settings=TRUE)
+zoop_plot_far_west
+
+#WEST
+zoop_plot_west <- createGraph(fit=modfitW, 
+                              reference_df=cnameslag, 
+                              model_type="monthly_zoop",
+                              region="West",
+                              title="West",
+                              manual_port_settings=TRUE)
+zoop_plot_west
+
+#NORTH
+zoop_plot_north <- createGraph(fit=modfitN, 
+                               reference_df=cnameslag, 
+                               model_type="monthly_zoop",
+                               region="North",
+                               title="North",
+                               manual_port_settings=TRUE)
+zoop_plot_north
+
+#SOUTH
+zoop_plot_south <- createGraph(fit=modfitS, 
+                               reference_df=cnameslag, 
+                               model_type="monthly_zoop",
+                               region="South",
+                               title="South",
+                               manual_port_settings=TRUE)
+zoop_plot_south
+```

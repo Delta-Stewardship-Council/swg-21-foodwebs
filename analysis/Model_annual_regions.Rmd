@@ -1,7 +1,7 @@
 ---
 title: "Annual model - Regions"
 author: "Tanya Rogers"
-date: "12/15/2021"
+date: "3/29/2022"
 output: html_document
 knit: (function(input, ...) {
     rmarkdown::render(
@@ -17,7 +17,7 @@ knit: (function(input, ...) {
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r packages, message=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(dplyr)
 library(lavaan)
 library(DiagrammeR)

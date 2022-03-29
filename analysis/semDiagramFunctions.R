@@ -47,6 +47,10 @@ getUpperTrophicCoordinates <- function(df) {
     c("pzoop",x2,3),
     c("hzoop",x2,2),
 
+    c("estfish_bsmt_gr",x2,5),
+    c("pzoop_gr",x2,3),
+    c("hzoop_gr",x2,2),
+
     c("marfish_bsmt_1",x3,4),
     c("flow",x3,3),
     c("temp",x3,2),
@@ -74,22 +78,25 @@ getLowerTrophicCoordinates <- function(df) {
 
   coordinate_map <- list(
     c("potam_1",x1,5),
+    c("corbic_1",x1,5),
     c("pzoop_1",x1,4),
     c("hzoop_1",x1,3),
     c("chla_1",x1,2),
     c("din_1",x1,1),
 
     c("potam",x2,5),
+    c("corbic",x2,5),
     c("chla",x2,2),
     c("din",x2,1),
 
+    c("potam_gr",x2,5),
+    c("corbic_gr",x2,5),
+    c("chla_gr",x2,2),
+    c("din_gr",x2,1),
+
     c("flow",x3,4),
     c("temp",x3,3),
-    c("turbid",x3,2),
-
-    c("corbic_1",x1,5),
-
-    c("corbic",x2,5)
+    c("turbid",x3,2)
   )
 
   df <- as.data.frame(do.call("rbind", coordinate_map))
@@ -108,81 +115,124 @@ getZoopCoordinates <- function(region) {
 
   if(region == "Far West") {
     coordinate_map <- list(
-      c("potam_1",x1,5),
-      c("pcope_1",x1,4),
-      c("hcope_1",x1,3),
-      c("amphi_1",x1,2),
+      c("estfish_bsmt_1",x1,6),
+      c("pcope_1",x1,5),
+      c("hcope_1",x1,4),
+      c("amphi_m_1",x1,3),
+      c("rotif_m_1",x1,2),
       c("chla_1",x1,1),
 
-      c("pcope",x2,4),
-      c("hcope",x2,3),
-      c("amphi",x2,2),
+      c("estfish_bsmt",x2,6),
+      c("pcope",x2,5),
+      c("hcope",x2,4),
+      c("amphi_m",x2,3),
+      c("rotif_m",x2,2),
       c("chla",x2,1),
 
-      c("flow",x3,5),
-      c("temp",x3,4),
-      c("turbid",x3,3),
-      c("estfish_bsmt_1",x3,2))
+      c("estfish_bsmt_gr",x2,6),
+      c("pcope_gr",x2,5),
+      c("hcope_gr",x2,4),
+      c("amphi_m_gr",x2,3),
+      c("rotif_m_gr",x2,2),
+      c("chla_gr",x2,1),
+
+      c("potam_1",x3,5),
+      c("flow",x3,4),
+      c("temp",x3,3),
+      c("turbid",x3,2))
 
   } else if(region == "West") {
     coordinate_map <- list(
-      c("potam_1",x1,6),
-      c("mysid_1",x1,5),
-      c("pcope_1",x1,4),
-      c("hcope_1",x1,3),
-      c("amphi_1",x1,2),
+      c("estfish_bsmt_1",x1,7),
+      c("mysid_1",x1,6),
+      c("pcope_1",x1,5),
+      c("hcope_1",x1,4),
+      c("amphi_m_1",x1,3),
+      c("rotif_m_1",x1,2),
       c("chla_1",x1,1),
 
-      c("mysid",x2,5),
-      c("pcope",x2,4),
-      c("hcope",x2,3),
-      c("amphi",x2,2),
+      c("estfish_bsmt",x2,7),
+      c("mysid",x2,6),
+      c("pcope",x2,5),
+      c("hcope",x2,4),
+      c("amphi_m",x2,3),
+      c("rotif_m",x2,2),
       c("chla",x2,1),
 
-      c("flow",x3,5),
-      c("temp",x3,4),
-      c("turbid",x3,3),
-      c("estfish_bsmt_1",x3,2))
+      c("estfish_bsmt_gr",x2,7),
+      c("mysid_gr",x2,6),
+      c("pcope_gr",x2,5),
+      c("hcope_gr",x2,4),
+      c("amphi_m_gr",x2,3),
+      c("rotif_m_gr",x2,2),
+      c("chla_gr",x2,1),
+
+      c("potam_1",x3,5),
+      c("flow",x3,4),
+      c("temp",x3,3),
+      c("turbid",x3,2))
 
   } else if(region == "North") {
     coordinate_map <- list(
-      c("corbic_1",x1,6),
-      c("mysid_1",x1,5),
-      c("pcope_1",x1,4),
-      c("hcope_1",x1,3),
-      c("amphi_1",x1,2),
+      c("estfish_bsmt_1",x1,7),
+      c("mysid_1",x1,6),
+      c("pcope_1",x1,5),
+      c("hcope_1",x1,4),
+      c("amphi_m_1",x1,3),
+      c("rotif_m_1",x1,2),
       c("chla_1",x1,1),
 
-      c("mysid",x2,5),
-      c("pcope",x2,4),
-      c("hcope",x2,3),
-      c("amphi",x2,2),
+      c("estfish_bsmt",x2,7),
+      c("mysid",x2,6),
+      c("pcope",x2,5),
+      c("hcope",x2,4),
+      c("amphi_m",x2,3),
+      c("rotif_m",x2,2),
       c("chla",x2,1),
 
-      c("flow",x3,5),
-      c("temp",x3,4),
-      c("turbid",x3,3),
-      c("estfish_bsmt_1",x3,2))
+      c("estfish_bsmt_gr",x2,7),
+      c("mysid_gr",x2,6),
+      c("pcope_gr",x2,5),
+      c("hcope_gr",x2,4),
+      c("amphi_m_gr",x2,3),
+      c("rotif_m_gr",x2,2),
+      c("chla_gr",x2,1),
+
+      c("corbic_1",x3,5),
+      c("flow",x3,4),
+      c("temp",x3,3),
+      c("turbid",x3,2))
 
   } else if(region == "South") {
     coordinate_map <- list(
-      c("corbic_1",x1,6),
-      c("pcope_1",x1,5),
-      c("hcope_1",x1,4),
-      c("clad_1",x1,3),
-      c("amphi_1",x1,2),
+      c("estfish_bsmt_1",x1,7),
+      c("pcope_1",x1,6),
+      c("hcope_1",x1,5),
+      c("clad_1",x1,4),
+      c("amphi_m_1",x1,3),
+      c("rotif_m_1",x1,2),
       c("chla_1",x1,1),
 
-      c("pcope",x2,5),
-      c("hcope",x2,4),
-      c("clad",x2,3),
-      c("amphi",x2,2),
+      c("estfish_bsmt",x2,7),
+      c("pcope",x2,6),
+      c("hcope",x2,5),
+      c("clad",x2,4),
+      c("amphi_m",x2,3),
+      c("rotif_m",x2,2),
       c("chla",x2,1),
 
-      c("flow",x3,5),
-      c("temp",x3,4),
-      c("turbid",x3,3),
-      c("estfish_bsmt_1",x3,2))
+      c("estfish_bsmt_gr",x2,7),
+      c("pcope_gr",x2,6),
+      c("hcope_gr",x2,5),
+      c("clad_gr",x2,4),
+      c("amphi_m_gr",x2,3),
+      c("rotif_m_gr",x2,2),
+      c("chla_gr",x2,1),
+
+      c("corbic_1",x3,5),
+      c("flow",x3,4),
+      c("temp",x3,3),
+      c("turbid",x3,2))
   }
 
   df <- as.data.frame(do.call("rbind", coordinate_map))
@@ -207,8 +257,8 @@ getAnnualPortOptions <- function() {
                      headport="s",
                      tailport="n")
 
-  tmp3 <- data.frame(from_name=c("chla","hzoop"),
-                     to_name=c("pzoop","fish"),
+  tmp3 <- data.frame(from_name=c("chla","hzoop","chla"),
+                     to_name=c("pzoop","fish","fish"),
                      headport="w",
                      tailport="w")
 
@@ -231,13 +281,13 @@ getAnnualPortOptions <- function() {
 getUpperTrophicPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("estfish_bsmt_1","potam_1","pzoop_1","hzoop_1",
                                   "chla_1","corbic_1"),
-                      to_name=c("estfish_bsmt","pzoop","hzoop"),
+                      to_name=c("estfish_bsmt","pzoop","hzoop","estfish_bsmt_gr","pzoop_gr","hzoop_gr"),
                       headport="w",
                       tailport="e")
 
   tmp2 <- expand.grid(from_name=c("marfish_bsmt_1","flow","temp","turbid",
                                   "sside_1","cent_1"),
-                      to_name=c("estfish_bsmt","pzoop","hzoop"),
+                      to_name=c("estfish_bsmt","pzoop","hzoop","estfish_bsmt_gr","pzoop_gr","hzoop_gr"),
                       headport="e",
                       tailport="w")
 
@@ -255,12 +305,12 @@ getUpperTrophicPortOptions <- function() {
 getLowerTrophicPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("potam_1","pzoop_1","hzoop_1","chla_1","din_1",
                                   "corbic_1"),
-                      to_name=c("potam","chla","din","corbic"),
+                      to_name=c("potam","chla","din","corbic","potam_gr","chla_gr","din_gr","corbic_gr"),
                       headport="w",
                       tailport="e")
 
   tmp2 <- expand.grid(from_name=c("flow","temp","turbid"),
-                      to_name=c("potam","chla","din","corbic"),
+                      to_name=c("potam","chla","din","corbic","potam_gr","chla_gr","din_gr","corbic_gr"),
                       headport="e",
                       tailport="w")
 
@@ -276,14 +326,16 @@ getLowerTrophicPortOptions <- function() {
 }
 
 getZoopPortOptions <- function() {
-  tmp1 <- expand.grid(from_name=c("potam_1","pcope_1","hcope_1","amphi_1","chla_1",
-                                  "mysid_1","corbic_1","clad_1"),
-                      to_name=c("pcope","hcope","amphi","chla","mysid","clad"),
+  tmp1 <- expand.grid(from_name=c("pcope_1","hcope_1","amphi_m_1","chla_1","rotif_m_1",
+                                  "mysid_1","estfish_bsmt_1","clad_1"),
+                      to_name=c("pcope","hcope","amphi_m","chla","mysid","clad","rotif_m","estfish_bsmt",
+                                "pcope_gr","hcope_gr","amphi_m_gr","chla_gr","mysid_gr","clad_gr","rotif_m_gr","estfish_bsmt_gr"),
                       headport="w",
                       tailport="e")
 
-  tmp2 <- expand.grid(from_name=c("flow","temp","turbid","estfish_bsmt_1"),
-                      to_name=c("pcope","hcope","amphi","chla","mysid","clad"),
+  tmp2 <- expand.grid(from_name=c("flow","temp","turbid","corbic_1","potam_1"),
+                      to_name=c("pcope","hcope","amphi_m","chla","mysid","clad","rotif_m","estfish_bsmt",
+                                "pcope_gr","hcope_gr","amphi_m_gr","chla_gr","mysid_gr","clad_gr","rotif_m_gr","estfish_bsmt_gr"),
                       headport="e",
                       tailport="w")
 
