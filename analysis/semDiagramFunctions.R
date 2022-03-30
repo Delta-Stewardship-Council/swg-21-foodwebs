@@ -257,17 +257,17 @@ getAnnualPortOptions <- function() {
                      headport="s",
                      tailport="n")
 
-  tmp3 <- data.frame(from_name=c("chla","hzoop","chla"),
-                     to_name=c("pzoop","fish","fish"),
-                     headport="w",
-                     tailport="w")
+  # tmp3 <- data.frame(from_name=c("chla","hzoop","chla"),
+  #                    to_name=c("pzoop","fish","fish"),
+  #                    headport="w",
+  #                    tailport="w")
 
   tmp4<- data.frame(from_name=c("fish"),
                     to_name=c("estfish","estfish_stn","estfish_bsmt"),
                     headport="s",
                     tailport="n")
 
-  ret <- do.call("rbind", list(tmp1, tmp2, tmp3, tmp4))
+  ret <- do.call("rbind", list(tmp1, tmp2, tmp4))
   for(colname in names(ret)) {
     if(is.factor(ret[ ,colname])) {
       ret[ ,colname] <- as.character(ret[ ,colname])
