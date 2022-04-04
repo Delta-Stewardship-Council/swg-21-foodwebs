@@ -283,13 +283,14 @@ myLavaanPlot(model=modfit1, labels=labels1,
 ## Updated SEM diagram:
 cnames_with_latent <- rbind(cnames,
                             data.frame(Longname="fish", Shortname="fish",
-                                       Diagramname="estuarine\nfishes", Datacolumn=NA, Log=NA,
+                                       Diagramname="estuarine\nfishes", 
+                                       Datacolumn=NA, Log=NA,
                                        Color="#FF0000"))
 
 plot_modfit1 <- createGraph(fit=modfit1, 
                             reference_df=cnames_with_latent, 
                             model_type="annual",
-                            title="Annual no region",
+                            title="Whole Estuary",
                             manual_port_settings=TRUE)
 plot_modfit1
 ```
@@ -357,4 +358,13 @@ modfit1_figure <- ggarrange(plotlist=modfit1_grobs) %>%
                                   size = 8))
 
 ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure, width=3, height=3, dpi=300)
+```
+
+*Save figure object for combining with annual regional figure*
+
+```{r}
+# Give the object an informative name for when it is loaded into the annual regional file:
+sem_annual_noregions <- plot_modfit1
+
+save(sem_annual_noregions, file='./fig_output/sem_annual_noregions.RData')
 ```

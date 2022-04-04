@@ -566,3 +566,21 @@ combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto",
 ggsave('./fig_output/sem_annual_regions.png', combined_figure, width=6, height=6,
        dpi=300)
 ```
+
+*Combine and save annual no region model and annual regional models*
+
+```{r}
+load('./fig_output/sem_annual_noregions.RData')
+
+plot_grobs <- map(list(sem_annual_noregions, figW, figN, figS),
+                  ~convert_html_to_grob(.x, 2000))
+combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto", 
+                             font.label=list(size=9)) %>%
+  annotate_figure(top = text_grob("Annual SEMs",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 11))
+combined_figure
+
+ggsave('./fig_output/sem_annual.png', combined_figure, width=8, height=7, dpi=300)
+```
