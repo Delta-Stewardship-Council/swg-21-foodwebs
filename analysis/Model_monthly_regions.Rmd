@@ -579,7 +579,7 @@ upper_figure <- ggarrange(plotlist=upper_grobs, labels="auto",
                                   face = "bold",
                                   size = 11))
 
-ggsave('./fig_output/sem_upper_trophic.png',upper_figure, width=8, height=7, dpi=300)
+ggsave('./fig_output/sem_upper_trophic.png',upper_figure, width=8, height=7, dpi=300, bg = "white")
 ```
 
 
@@ -783,7 +783,7 @@ lower_figure <- ggarrange(plotlist=lower_grobs, labels="auto",
                                   face = "bold",
                                   size = 11))
 
-ggsave('./fig_output/sem_lower_trophic.png',lower_figure, width=8, height=7, dpi=300)
+ggsave('./fig_output/sem_lower_trophic.png',lower_figure, width=8, height=7, dpi=300, bg = "white")
 ```
 
 Total effects
@@ -971,7 +971,7 @@ zoop_figure <- ggarrange(plotlist=zoop_grobs, labels="auto",
                                   face = "bold",
                                   size = 11))
 
-ggsave('./fig_output/sem_zoop.png',zoop_figure, width=8, height=7, dpi=300)
+ggsave('./fig_output/sem_zoop.png',zoop_figure, width=8, height=7, dpi=300, bg = "white")
 ```
 
 Total effects

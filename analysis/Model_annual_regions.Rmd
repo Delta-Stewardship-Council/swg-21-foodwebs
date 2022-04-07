@@ -512,11 +512,12 @@ myLavaanPlot(model=modfitwest_dtr, labels=labelswest,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-createGraph(fit=modfitwest_dtr, 
-            reference_df=cnames_with_latent, 
-            model_type="annual",
-            title="West",
-            manual_port_settings=TRUE)
+figWdt <- createGraph(fit=modfitwest_dtr, 
+                      reference_df=cnames_with_latent, 
+                      model_type="annual",
+                      title="West",
+                      manual_port_settings=TRUE)
+figWdt
 ```
 
 *North*
@@ -528,11 +529,12 @@ myLavaanPlot(model=modfitnorth_dtr, labels=labelsnorth,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-createGraph(fit=modfitnorth_dtr, 
-            reference_df=cnames_with_latent, 
-            model_type="annual",
-            title="North",
-            manual_port_settings=TRUE)
+figNdt <- createGraph(fit=modfitnorth_dtr, 
+                      reference_df=cnames_with_latent, 
+                      model_type="annual",
+                      title="North",
+                      manual_port_settings=TRUE)
+figNdt
 ```
 
 *South*
@@ -544,11 +546,12 @@ myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-createGraph(fit=modfitsouth_dtr, 
-            reference_df=cnames_with_latent, 
-            model_type="annual",
-            title="South",
-            manual_port_settings=TRUE)
+figSdt <- createGraph(fit=modfitsouth_dtr, 
+                      reference_df=cnames_with_latent, 
+                      model_type="annual",
+                      title="South",
+                      manual_port_settings=TRUE)
+figSdt
 ```
 
 *Save updated SEM diagrams*
@@ -564,7 +567,7 @@ combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto",
   #theme(plot.margin = unit(c(1,0,0,0), "lines"))
 
 ggsave('./fig_output/sem_annual_regions.png', combined_figure, width=6, height=6,
-       dpi=300)
+       dpi=300, bg = "white")
 ```
 
 *Combine and save annual no region model and annual regional models*
@@ -580,7 +583,20 @@ combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto",
                                   color = "black",
                                   face = "bold",
                                   size = 11))
-combined_figure
 
-ggsave('./fig_output/sem_annual.png', combined_figure, width=8, height=7, dpi=300)
+ggsave('./fig_output/sem_annual.png', combined_figure, width=8, height=7, dpi=300, 
+       bg = "white")
+
+#detrended
+plot_grobs <- map(list(sem_annual_noregions_dtr, figWdt, figNdt, figSdt),
+                  ~convert_html_to_grob(.x, 2000))
+combined_figure_dtr <- ggarrange(plotlist=plot_grobs, labels="auto", 
+                             font.label=list(size=9)) %>%
+  annotate_figure(top = text_grob("Annual SEMs, Detrended",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 11))
+
+ggsave('./fig_output/sem_annual_detrend.png', combined_figure_dtr, width=8, height=7,
+       dpi=300, bg = "white")
 ```

@@ -57,7 +57,8 @@ blankTheme <- function() {
 				axis.title=element_blank(),
 				axis.text=element_blank(),
 				axis.ticks=element_blank(),
-				panel.background=element_rect(fill="white"))
+				panel.background=element_rect(fill="white"),
+				plot.background = element_rect(fill="transparent", color=NA))
 }
 
 minTheme <- function() {
@@ -221,7 +222,8 @@ ggsave(
   width=7,
   height=7.5,
   units=c("in"),
-  dpi = 300
+  dpi = 300,
+  bg = "white"
 )
 
 

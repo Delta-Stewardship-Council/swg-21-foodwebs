@@ -304,11 +304,12 @@ myLavaanPlot(model=modfit1_dtr, labels=labels1,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-createGraph(fit=modfit1_dtr, 
-            reference_df=cnames_with_latent, 
-            model_type="annual",
-            title="Annual no region, detrended",
-            manual_port_settings=TRUE)
+plot_modfit2 <- createGraph(fit=modfit1_dtr, 
+                            reference_df=cnames_with_latent, 
+                            model_type="annual",
+                            title="Whole Estuary",
+                            manual_port_settings=TRUE)
+plot_modfit2
 ```
 
 #### With covariances
@@ -357,7 +358,7 @@ modfit1_figure <- ggarrange(plotlist=modfit1_grobs) %>%
                                   face = "bold",
                                   size = 8))
 
-ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure, width=3, height=3, dpi=300)
+ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure, width=3, height=3, dpi=300, bg = "white")
 ```
 
 *Save figure object for combining with annual regional figure*
@@ -365,6 +366,8 @@ ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure, width=3, height=3
 ```{r}
 # Give the object an informative name for when it is loaded into the annual regional file:
 sem_annual_noregions <- plot_modfit1
+sem_annual_noregions_dtr <- plot_modfit2
 
-save(sem_annual_noregions, file='./fig_output/sem_annual_noregions.RData')
+save(sem_annual_noregions, sem_annual_noregions_dtr,
+     file='./fig_output/sem_annual_noregions.RData')
 ```

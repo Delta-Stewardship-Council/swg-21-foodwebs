@@ -446,7 +446,7 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
                         sig=0.05, digits=2,
                         line_col_positive="#00B0F0",
                         line_col_negative="red",
-                        line_col_notsig="gray50") {
+                        line_col_notsig="gray60") {
   ## model_type must be one of the following:
   ##  "annual","monthly_upper_trophic","monthly_lower_trophic","monthly_zoop"
 
@@ -544,6 +544,9 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
     DiagrammeR::add_edge_df(edge_df=edges_df) %>%
     DiagrammeR::add_global_graph_attrs(attr="splines",
                                        value="spline",
+                                       attr_type="graph") %>%
+    DiagrammeR::add_global_graph_attrs(attr="bgcolor",
+                                       value="transparent",
                                        attr_type="graph") %>%
     DiagrammeR::render_graph(title=title)
 
