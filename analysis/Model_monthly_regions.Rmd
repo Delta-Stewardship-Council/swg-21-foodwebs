@@ -23,7 +23,7 @@ library(lavaan)
 library(DiagrammeR)
 library(ggplot2)
 library(tidyr)
-
+source("functions/table_funcs.R")
 # For saving SEM diagrams:
 library(purrr)
 library(DiagrammeRsvg)
@@ -507,6 +507,8 @@ labelswest=createLabels(modfitW, cnameslag)
 labelsnorth=createLabels(modfitN, cnameslag)
 labelssouth=createLabels(modfitS, cnameslag)
 
+#Extract model coefficients for table
+coef_table<-coef_tabler(modfitFW, modfitW, modfitN, modfitS, name="Upper trophic level aggregates")
 
 #FAR WEST
 # myLavaanPlot(model=modfitFW, labels=labelsfarwest,
@@ -712,6 +714,9 @@ labelswest=createLabels(modfitW, cnameslag)
 labelsnorth=createLabels(modfitN, cnameslag)
 labelssouth=createLabels(modfitS, cnameslag)
 
+#Extract model coefficients for table
+coef_table<-bind_rows(coef_table, coef_tabler(modfitFW, modfitW, modfitN, modfitS, name="Lower trophic level aggregates"))
+
 #FAR WEST
 # myLavaanPlot(model=modfitFW, labels=labelsfarwest,
 # 						 node_options=list(shape="box", fontname="Helvetica"), 
@@ -896,6 +901,10 @@ labelswest=createLabels(modfitW, cnameslag)
 labelsnorth=createLabels(modfitN, cnameslag)
 labelssouth=createLabels(modfitS, cnameslag)
 
+#Extract model coefficients for table
+coef_table<-bind_rows(coef_table, coef_tabler(modfitFW, modfitW, modfitN, modfitS, name="Individual zooplankton groups"))
+
+write.csv(coef_table, "fig_output/monthly coefficients.csv", row.names = FALSE)
 #FAR WEST
 # myLavaanPlot(model=modfitFW, labels=labelsfarwest,
 # 						 node_options=list(shape="box", fontname="Helvetica"), 

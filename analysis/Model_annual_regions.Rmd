@@ -23,6 +23,7 @@ library(lavaan)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
+source("functions/table_funcs.R")
 
 # For saving SEM diagrams:
 library(purrr)
@@ -600,3 +601,12 @@ combined_figure_dtr <- ggarrange(plotlist=plot_grobs, labels="auto",
 ggsave('./fig_output/sem_annual_detrend.png', combined_figure_dtr, width=8, height=7,
        dpi=300, bg = "white")
 ```
+
+*Save model coefficients for manuscript table*
+```{r}
+bind_rows(
+  coef_tabler(modfitwest, modfitnorth, modfitsouth, name="Original"),
+  coef_tabler(modfitwest_dtr, modfitnorth_dtr, modfitsouth_dtr, name="Detrended"))%>%
+  write.csv("fig_output/annual region coefficients.csv", row.names = FALSE)
+```
+

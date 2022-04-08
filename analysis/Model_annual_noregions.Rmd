@@ -23,6 +23,7 @@ library(lavaan)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
+source("functions/table_funcs.R")
 
 # For saving SEM diagrams:
 library(purrr)
@@ -371,3 +372,10 @@ sem_annual_noregions_dtr <- plot_modfit2
 save(sem_annual_noregions, sem_annual_noregions_dtr,
      file='./fig_output/sem_annual_noregions.RData')
 ```
+
+*Save model coefficients for manuscript table*
+```{r}
+coef_tabler(modfit1, modfit1_dtr, name="")%>%
+  write.csv("fig_output/annual noregion coefficients.csv", row.names = FALSE)
+```
+
