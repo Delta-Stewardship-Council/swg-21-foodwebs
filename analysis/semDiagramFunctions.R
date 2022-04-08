@@ -394,10 +394,17 @@ getNodes <- function(fit) {
   # make sure latent variables don't show up in both
   observed_nodes <- setdiff(observed_nodes, latent_nodes)
 
+  ## Add R2 values:
+  R2_df <- data.frame("R2"=round(lavaan::lavInspect(fit, what="rsquare"),3))
+  R2_df$Shortname <- row.names(R2_df)
+  ## Remove class "lavaan.vector" from the rsquare values after getting names:
+  R2_df$R2 <- as.numeric(R2_df$R2)
+
   ret <- data.frame(Shortname=c(observed_nodes, latent_nodes),
                     var_type=c(rep("observed",length(observed_nodes)),
                                rep("latent",length(latent_nodes)))
-  )
+  ) %>%
+    dplyr::left_join(R2_df, by="Shortname")
 
   return(ret)
 }
@@ -442,7 +449,7 @@ getEdges <- function(fit, node_df, sig, digits, col_pos, col_neg, col_ns) {
 ## Graph:
 
 createGraph <- function(fit, reference_df, model_type, region=NULL,
-                        title="", cov=FALSE, manual_port_settings=FALSE,
+                        title="", cov=FALSE, manual_port_settings=FALSE, addR2=TRUE,
                         sig=0.05, digits=2,
                         line_col_positive="#00B0F0",
                         line_col_negative="red",
@@ -497,9 +504,18 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
     stop("Duplicated coordinates.")
   }
 
+  if(addR2) {
+    node_input_df <- node_input_df %>%
+      dplyr::mutate(label=ifelse(is.na(R2), Diagramname,
+                                  sprintf("%s\n(%s)",Diagramname,R2)))
+  } else {
+    node_input_df <- node_input_df %>%
+      dplyr::mutate(label=Diagramname)
+  }
+
   node_df <- DiagrammeR::create_node_df(
     n=nrow(node_input_df),
-    label=node_input_df$Diagramname,
+    label=node_input_df$label,
     Shortname=node_input_df$Shortname,
     x=node_input_df$x,
     y=node_input_df$y,
