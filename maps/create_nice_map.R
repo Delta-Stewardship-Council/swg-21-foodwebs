@@ -142,10 +142,10 @@ annualRegionalMap <- baseMap +
 	scale_color_manual(name="Survey",
 										 values=c("Bay Study"="darkorange","EMP Zoop"="#6A00A8FF",
 										          "EMP Benthic"="#B12A90FF","EMP Nutrients"="#0D0887FF",
-										          "DJFMP"="green3","FMWT"="red")) +
+										          "DJFMP"="green3","FMWT"="red","STN"="black")) +
 	scale_shape_manual(name="Survey",
 										 values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
-										          "EMP Nutrients"=7,"DJFMP"=8,"FMWT"=3)) +
+										          "EMP Nutrients"=7,"DJFMP"=8,"FMWT"=3,"STN"=5)) +
 	# geom_sf(data=regions_NAD83, fill=NA, color="gray40") +
 	geom_sf(data=subset(regions_NAD83, Region == "Far West"), fill=NA, color="blue") +
 	geom_sf(data=subset(regions_NAD83, Region == "West"), fill=NA, color="green4") +

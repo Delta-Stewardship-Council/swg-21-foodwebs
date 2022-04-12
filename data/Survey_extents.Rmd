@@ -105,6 +105,12 @@ seine_month <- read_csv("data/stations/stations_fish_DJFMP_monthly.csv")%>%
          Station=as.character(Station))
 ```
 
+## Summer Townet
+```{r}
+STN_annual <- read_csv("data/stations/stations_fish_STN_annual.csv")%>% 
+  mutate(Category="Fish", Survey="STN",
+         Station=as.character(Station))
+```
 
 # Zoop surveys
 
@@ -174,7 +180,9 @@ station_list_month %>%
 
 Annual
 ```{r}
-station_list_annual <- bind_rows(bay_annual, FMWT_annual, seine_annual, zoop_annual, benthic_annual, nutrients_annual)%>%
+station_list_annual <- bind_rows(bay_annual, FMWT_annual, STN_annual, 
+                                 seine_annual, zoop_annual, benthic_annual,
+                                 nutrients_annual)%>%
   mutate(Survey=factor(Survey),
          Station=factor(Station))
 
@@ -594,7 +602,7 @@ plot1b <- ggplot()+
   geom_sf(data=station_annual_points_filtered, aes(color=Survey, shape=Survey))+
   scale_fill_grey(name="Region", start = 0.4)+
   scale_color_viridis_d(name="Survey")+
-  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4))+
+  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4,0))+
   labs(title="Scenario 1: Annual", subtitle="1980s to present")
 
 # scenario 2 with stations
@@ -603,7 +611,7 @@ plot2b <- ggplot()+
   geom_sf(data=station_annual_points_filtered, aes(color=Survey, shape=Survey))+
   scale_fill_grey(name="Region", start = 0.4)+
   scale_color_viridis_d(name="Survey")+
-  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4))+
+  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4,0))+
   labs(title="Scenario 2: Annual", subtitle="1980s to present")
 
 # scenario 3 with stations
@@ -612,7 +620,7 @@ plot3b <- ggplot()+
   geom_sf(data=station_annual_points_filtered, aes(color=Survey, shape=Survey))+
   scale_fill_grey(name="Region", start = 0.4)+
   scale_color_viridis_d(name="Survey")+
-  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4))+
+  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4,0))+
   labs(title="Scenario 3: Annual", subtitle="1980s to present")
 
 # scenario 4 with stations
@@ -621,7 +629,7 @@ plot4b <- ggplot()+
   geom_sf(data=station_annual_points_filtered, aes(color=Survey, shape=Survey))+
   scale_fill_grey(name="Region", start = 0.4)+
   scale_color_viridis_d(name="Survey")+
-  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4))+
+  scale_shape_manual(name="Survey", values=c(20,1,2,15,18,4,0))+
   labs(title="Scenario 4: Annual", subtitle="1980s to present")
 
 plot1b + plot2b + plot3b + plot4b + plot_layout(nrow=2, guides="collect")
