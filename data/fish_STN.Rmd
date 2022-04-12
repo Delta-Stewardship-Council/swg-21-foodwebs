@@ -296,6 +296,9 @@ write.csv(STN_annual_regional_values_final, row.names=FALSE,
 Lastly, export out station list to data/stations folder
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
-write.csv(STNCoords_studyregion, row.names=FALSE,
-          file=file.path("data/stations/stations_fish_STN_annual.csv"))
+STNCoords_studyregion %>%
+  dplyr::select(-Region) %>%
+  dplyr::mutate(Survey="Summer Townet") %>%
+  write.csv(row.names=FALSE,
+            file=file.path("data/stations/stations_fish_STN_annual.csv"))
 ```
