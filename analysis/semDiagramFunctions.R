@@ -28,6 +28,12 @@ getAnnualCoordinates <- function() {
   df$x <- as.numeric(df$x)
   df$y <- as.numeric(df$y)
 
+  ## R2 coordinates outside of the node:
+  df$x_R2 <- df$x + 0.4
+  df$y_R2 <- df$y - 0.45
+  df$y_R2[df$y == max(df$y)] <- df$y[df$y == max(df$y)] + 0.43
+  df$x_R2[df$y == max(df$y)] <- df$x[df$y == max(df$y)]
+
   return(df)
 }
 
@@ -68,6 +74,10 @@ getUpperTrophicCoordinates <- function(df) {
   df$x <- as.numeric(df$x)
   df$y <- as.numeric(df$y)
 
+  ## R2 coordinates outside of the node:
+  df$x_R2 <- df$x - 0.4
+  df$y_R2 <- df$y - 0.4
+
   return(df)
 }
 
@@ -103,6 +113,10 @@ getLowerTrophicCoordinates <- function(df) {
   names(df) <- c("Shortname","x","y")
   df$x <- as.numeric(df$x)
   df$y <- as.numeric(df$y)
+
+  ## R2 coordinates outside of the node:
+  df$x_R2 <- df$x - 0.4
+  df$y_R2 <- df$y - 0.4
 
   return(df)
 }
@@ -239,6 +253,10 @@ getZoopCoordinates <- function(region) {
   names(df) <- c("Shortname","x","y")
   df$x <- as.numeric(df$x)
   df$y <- as.numeric(df$y)
+
+  ## R2 coordinates outside of the node:
+  df$x_R2 <- df$x - 0.4
+  df$y_R2 <- df$y - 0.4
 
   return(df)
 }
@@ -449,7 +467,8 @@ getEdges <- function(fit, node_df, sig, digits, col_pos, col_neg, col_ns) {
 ## Graph:
 
 createGraph <- function(fit, reference_df, model_type, region=NULL,
-                        title="", cov=FALSE, manual_port_settings=FALSE, addR2=TRUE,
+                        title="", cov=FALSE, manual_port_settings=FALSE,
+                        addR2Outside=TRUE, addR2Inside=FALSE,
                         sig=0.05, digits=2,
                         line_col_positive="#00B0F0",
                         line_col_negative="red",
@@ -504,7 +523,7 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
     stop("Duplicated coordinates.")
   }
 
-  if(addR2) {
+  if(addR2Inside) {
     node_input_df <- node_input_df %>%
       dplyr::mutate(label=ifelse(is.na(R2), Diagramname,
                                   sprintf("%s\n(%s)",Diagramname,R2)))
@@ -519,12 +538,33 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
     Shortname=node_input_df$Shortname,
     x=node_input_df$x,
     y=node_input_df$y,
+    fontcolor="white",
     color=node_input_df$Color,
     fillcolor=node_input_df$Color,
     shape=dplyr::case_when(node_input_df$var_type == "observed" ~ "polygon",
                            node_input_df$var_type == "latent" ~ "ellipse"),
     width=1,
     fixedsize=FALSE)
+
+  ## For R2 outside the nodes:
+  R2_input_df <- node_input_df %>%
+    dplyr::filter(!is.na(R2))
+  R2_node_df <- DiagrammeR::create_node_df(
+    n=nrow(R2_input_df),
+    label=R2_input_df$R2,
+    Shortname=R2_input_df$Shortname,
+    x=R2_input_df$x_R2,
+    y=R2_input_df$y_R2,
+    fontcolor="black",
+    color="#FFFFFF00",  # use transparency to prevent a shadow
+    fillcolor="#FFFFFF00",  # use transparency to prevent a shadow
+    style="filled",
+    shape="ellipse",
+    penwidth=0,
+    width=0.4,
+    height=0.2,
+    fixedsize=TRUE)
+  R2_node_df$id <- R2_node_df$id + nrow(node_df)
 
   ## Create edges:
   edge_input_df <- getEdges(fit, node_df, sig=sig, digits=digits,
@@ -563,7 +603,13 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
                                        attr_type="graph") %>%
     DiagrammeR::add_global_graph_attrs(attr="bgcolor",
                                        value="transparent",
-                                       attr_type="graph") %>%
+                                       attr_type="graph")
+  if(addR2Outside) {
+    graph <- graph %>%
+      DiagrammeR::add_node_df(R2_node_df)
+  }
+
+  graph <- graph %>%
     DiagrammeR::render_graph(title=title)
 
   return(graph)
