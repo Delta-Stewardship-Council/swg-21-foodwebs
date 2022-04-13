@@ -18,9 +18,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
-#devtools::install_github("sbashevkin/LTMRdata")
+#devtools::install_github("Delta-Stewardship-Council/deltafish")
 
-library(LTMRdata)
 library(tidyverse)
 library(lubridate)
 library(ggmap)
@@ -29,6 +28,7 @@ library(readxl)
 
 source('functions/nutrient_funcs.R', local = TRUE)
 source('functions/region_assigner.R', local = TRUE)
+source('functions/fish_funcs.R', local = TRUE)
 ```
 
 ## San Francisco Bay Study
@@ -45,13 +45,15 @@ Fish, caridean shrimp, and brachyuran crabs are identified, measured, and counte
 
 ## Load data and show spatial extent
 
-Load data for key species using Sam's LTMRdata package and show map with CDFW Bay Study stations. Yellow indicates stations we will be using for the study per Denise's suggestion and the CDFW station "regions". 
+Load data for key species using `deltafish` package and show map with CDFW Bay Study stations. Yellow indicates stations we will be using for the study per Denise's suggestion and the CDFW station "regions". 
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 
 #Load all species except for Striped Bass (Delta Smelt, Longfin Smelt, Threadfin Shad, American Shad, Northern Anchovy, and Pacific Herring)
 
-BayStudy_allfish<-LTMRdata::fish(sources="Baystudy", species=c("Hypomesus transpacificus","Spirinchus thaleichthys","Dorosoma petenense", "Alosa sapidissima","Engraulis mordax","Clupea pallasii"), size_cutoff=NULL,remove_unknown_lengths=FALSE)
+BayStudy_allfish<-get_fish(source="Bay Study", 
+                           taxa=c("Hypomesus transpacificus","Spirinchus thaleichthys","Dorosoma petenense", "Alosa sapidissima","Engraulis mordax","Clupea pallasii"),
+                           remove_cols=c("Sal_bot", "Secchi_estimated", "Cable_length", "Notes_flowmeter", "Notes_catch"))
 
 #Load Striped Bass length cutoff file from Christina
 length_cutoff_striped_bass<-read_excel("data/data_in/Bay Study Cut Off Lengths_7Oct21.xlsx", sheet = "CutoffLengths") %>%
@@ -59,14 +61,19 @@ length_cutoff_striped_bass<-read_excel("data/data_in/Bay Study Cut Off Lengths_7
 
 #Load Striped Bass age-0
 #Load data, join with excel sheet for age cutoff
-BayStudy_Striped_Bass_age0 <-LTMRdata::fish(sources="Baystudy", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>%
-  mutate(Month=month(Date)) %>% left_join(length_cutoff_striped_bass)
+BayStudy_Striped_Bass_age0 <-get_fish(source="Bay Study", 
+                                      taxa="Morone saxatilis",
+                           remove_cols=c("Sal_bot", "Secchi_estimated", "Cable_length", "Notes_flowmeter", "Notes_catch")) %>%
+  mutate(Month=month(Date)) %>% 
+  left_join(length_cutoff_striped_bass)
 #Change larger Striped Bass count to zero
 BayStudy_Striped_Bass_age0$Count<-ifelse(BayStudy_Striped_Bass_age0$Length<BayStudy_Striped_Bass_age0$Age0Cut,BayStudy_Striped_Bass_age0$Count,0)
 BayStudy_Striped_Bass_age0$Count[is.na(BayStudy_Striped_Bass_age0$Count)] <- 0
 
 #Load Striped Bass age-1 or above
-BayStudy_Striped_Bass_large <-LTMRdata::fish(sources="Baystudy", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>%
+BayStudy_Striped_Bass_large <-get_fish(source="Bay Study", 
+                                       taxa="Morone saxatilis",
+                           remove_cols=c("Sal_bot", "Secchi_estimated", "Cable_length", "Notes_flowmeter", "Notes_catch")) %>%
   mutate(Month=month(Date)) %>% left_join(length_cutoff_striped_bass)
 #Change age-0 Striped Bass count to zero; note that there was no 'unmeasured' fish in the dataset
 BayStudy_Striped_Bass_large$Count<-ifelse(BayStudy_Striped_Bass_large$Length>=BayStudy_Striped_Bass_large$Age0Cut,BayStudy_Striped_Bass_large$Count,0)
@@ -224,27 +231,27 @@ toMatchMarine<- c("Herring","Anchovy")
 #Add function to process each data set type
 fish_data_compiler<-function(data, gear_filter, metric_filter, columns_subset, prefix_name, plot=TRUE){
   if(!gear_filter%in%c("Midwater trawl", "Otter trawl")){
-  stop("Gear must be in Bay Study")
+    stop("Gear must be in Bay Study")
   }
-    if(!metric_filter%in%c("Catch_per_tow", "Biomass")){
-  stop("Must be either Catch_per_tow OR Biomass")
-}
-
+  if(!metric_filter%in%c("Catch_per_tow", "Biomass")){
+    stop("Must be either Catch_per_tow OR Biomass")
+  }
   
-out <- data %>% filter(Method==gear_filter) %>% subset(select=columns_subset) %>%
-  {if(metric_filter=="Catch_per_tow"){
-    pivot_wider(.,names_from =CommonName,values_from = Catch_per_tow,names_prefix= prefix_name)
-  }else{
-    pivot_wider(.,names_from =CommonName,values_from = Biomass,names_prefix= prefix_name)
-  }}
-
-out$EstuarineFishes<-rowSums(out[,grep(paste(toMatchEstuarine,collapse="|"), names(out))])
-out$MarineFishes<-rowSums(out[,grep(paste(toMatchMarine,collapse="|"), names(out))])
-
-names(out)[names(out) == 'EstuarineFishes'] <- paste(prefix_name,"Estuarine_pelagic_forage_fishes",sep = "")
-names(out)[names(out) == 'MarineFishes'] <- paste(prefix_name,"Marine_pelagic_forage_fishes",sep = "")
-
-return(out)
+  
+  out <- data %>% filter(Method==gear_filter) %>% subset(select=columns_subset) %>%
+    {if(metric_filter=="Catch_per_tow"){
+      pivot_wider(.,names_from =CommonName,values_from = Catch_per_tow,names_prefix= prefix_name)
+    }else{
+      pivot_wider(.,names_from =CommonName,values_from = Biomass,names_prefix= prefix_name)
+    }}
+  
+  out$EstuarineFishes<-rowSums(out[,grep(paste(toMatchEstuarine,collapse="|"), names(out))])
+  out$MarineFishes<-rowSums(out[,grep(paste(toMatchMarine,collapse="|"), names(out))])
+  
+  names(out)[names(out) == 'EstuarineFishes'] <- paste(prefix_name,"Estuarine_pelagic_forage_fishes",sep = "")
+  names(out)[names(out) == 'MarineFishes'] <- paste(prefix_name,"Marine_pelagic_forage_fishes",sep = "")
+  
+  return(out)
 }
 
 BayStudy_Midwater_annual_values_CPUE<- fish_data_compiler(data=BayStudy_annual_values,metric_filter="Catch_per_tow",gear_filter="Midwater trawl",columns_subset = c("Year","CommonName","Catch_per_tow"),prefix_name = "BayStudy_MidwaterTrawl_fish_catch_per_tow_")
@@ -257,7 +264,7 @@ BayStudy_Midwater_annual_values_biomass <- fish_data_compiler(data=BayStudy_annu
 BayStudy_Otter_annual_values_biomass <- fish_data_compiler(data=BayStudy_annual_values,metric_filter="Biomass",gear_filter="Otter trawl",columns_subset = c("Year","CommonName","Biomass"),prefix_name = "BayStudy_OtterTrawl_fish_biomass_")
 
 BayStudy_annual_values_final<-full_join(BayStudy_Midwater_annual_values_CPUE,
-                                              BayStudy_Midwater_annual_values_biomass) %>%
+                                        BayStudy_Midwater_annual_values_biomass) %>%
   full_join(BayStudy_Otter_annual_values_CPUE, by="Year") %>% full_join(BayStudy_Otter_annual_values_biomass, by="Year")
 
 write.csv(BayStudy_annual_values_final,row.names=FALSE,file=file.path("data/annual_averages/fish_BayStudy.csv"))
@@ -297,7 +304,7 @@ BayStudy_Midwater_annual_values_biomass_by_region <- fish_data_compiler(data=Bay
 BayStudy_Otter_annual_values_biomass_by_region <- fish_data_compiler(data=BayStudy_annual_values_by_region,metric_filter="Biomass",gear_filter="Otter trawl",columns_subset = c("Year","CommonName","Region","Biomass"),prefix_name = "BayStudy_OtterTrawl_fish_biomass_")
 
 BayStudy_annual_values_final_by_region<-full_join(BayStudy_Midwater_annual_values_CPUE_by_region,
-                                              BayStudy_Otter_annual_values_CPUE_by_region) %>%
+                                                  BayStudy_Otter_annual_values_CPUE_by_region) %>%
   full_join(BayStudy_Midwater_annual_values_biomass_by_region) %>% full_join(BayStudy_Otter_annual_values_biomass_by_region)
 
 write.csv(BayStudy_annual_values_final_by_region,row.names=FALSE,file=file.path("data/annual_averages/fish_BayStudy_by_region.csv"))
@@ -377,7 +384,7 @@ BayStudy_Midwater_monthly_values_biomass_by_region <- fish_data_compiler(data=Ba
 BayStudy_Otter_monthly_values_biomass_by_region <- fish_data_compiler(data=BayStudy_monthly_values_by_region,metric_filter="Biomass",gear_filter="Otter trawl",columns_subset = c("Year","Month","CommonName","Region","Biomass"),prefix_name = "BayStudy_OtterTrawl_fish_biomass_")
 
 BayStudy_monthly_values_final_by_region<-full_join(BayStudy_Midwater_monthly_values_CPUE_by_region,
-                                              BayStudy_Otter_monthly_values_CPUE_by_region) %>%
+                                                   BayStudy_Otter_monthly_values_CPUE_by_region) %>%
   full_join(BayStudy_Midwater_monthly_values_biomass_by_region) %>% full_join(BayStudy_Otter_monthly_values_biomass_by_region)
 
 write.csv(BayStudy_monthly_values_final_by_region,row.names=FALSE,file=file.path("data/monthly_averages/fish_BayStudy_monthly.csv"))

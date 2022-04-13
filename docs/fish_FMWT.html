@@ -62,6 +62,7 @@ if (window.hljs) {
 
 
 
+
 <style type="text/css">
 .main-container {
   max-width: 940px;
@@ -82,6 +83,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -203,37 +207,42 @@ pre code {
 </ul></li>
 </ul>
 <pre class="r"><code>#Load species
-FMWT_Delta_Smelt &lt;-LTMRdata::fish(sources=&quot;FMWT&quot;,
-                                  species=&quot;Hypomesus transpacificus&quot;,
-                                  size_cutoff=NULL,
-                                  remove_unknown_lengths=FALSE)
-FMWT_Longfin_Smelt &lt;-LTMRdata::fish(sources=&quot;FMWT&quot;,
-                                    species=&quot;Spirinchus thaleichthys&quot;,
-                                    size_cutoff=NULL,
-                                    remove_unknown_lengths=FALSE)
-FMWT_Threadfin_Shad &lt;-LTMRdata::fish(sources=&quot;FMWT&quot;,
-                                     species=&quot;Dorosoma petenense&quot;,
-                                     size_cutoff=NULL,
-                                     remove_unknown_lengths=FALSE)
-FMWT_American_Shad &lt;-LTMRdata::fish(sources=&quot;FMWT&quot;,
-                                    species=&quot;Alosa sapidissima&quot;,
-                                    size_cutoff=NULL,
-                                    remove_unknown_lengths=FALSE)
-FMWT_Northern_Anchovy &lt;-LTMRdata::fish(sources=&quot;FMWT&quot;,
-                                       species=&quot;Engraulis mordax&quot;,
-                                       size_cutoff=NULL,
-                                       remove_unknown_lengths=FALSE)
-FMWT_Pacific_Herring &lt;-LTMRdata::fish(sources=&quot;FMWT&quot;,
-                                      species=&quot;Clupea pallasii&quot;,
-                                      size_cutoff=NULL,
-                                      remove_unknown_lengths=FALSE)
+FMWT_Delta_Smelt &lt;-get_fish(source=&quot;FMWT&quot;,
+                             taxa=&quot;Hypomesus transpacificus&quot;,
+                             remove_cols=c(&quot;Sal_bot&quot;, &quot;Tow_duration&quot;, &quot;Tow_area&quot;, 
+                                           &quot;Notes_tow&quot;, &quot;Notes_flowmeter&quot;, &quot;Notes_catch&quot;))
+  
+FMWT_Longfin_Smelt &lt;-get_fish(source=&quot;FMWT&quot;,
+                             taxa=&quot;Spirinchus thaleichthys&quot;,
+                             remove_cols=c(&quot;Sal_bot&quot;, &quot;Tow_duration&quot;, &quot;Tow_area&quot;, 
+                                           &quot;Notes_tow&quot;, &quot;Notes_flowmeter&quot;, &quot;Notes_catch&quot;))
+
+FMWT_Threadfin_Shad &lt;-get_fish(source=&quot;FMWT&quot;,
+                             taxa=&quot;Dorosoma petenense&quot;,
+                             remove_cols=c(&quot;Sal_bot&quot;, &quot;Tow_duration&quot;, &quot;Tow_area&quot;, 
+                                           &quot;Notes_tow&quot;, &quot;Notes_flowmeter&quot;, &quot;Notes_catch&quot;))
+
+FMWT_American_Shad &lt;-get_fish(source=&quot;FMWT&quot;,
+                             taxa=&quot;Alosa sapidissima&quot;,
+                             remove_cols=c(&quot;Sal_bot&quot;, &quot;Tow_duration&quot;, &quot;Tow_area&quot;, 
+                                           &quot;Notes_tow&quot;, &quot;Notes_flowmeter&quot;, &quot;Notes_catch&quot;))
+  
+FMWT_Northern_Anchovy &lt;-get_fish(source=&quot;FMWT&quot;,
+                             taxa=&quot;Engraulis mordax&quot;,
+                             remove_cols=c(&quot;Sal_bot&quot;, &quot;Tow_duration&quot;, &quot;Tow_area&quot;, 
+                                           &quot;Notes_tow&quot;, &quot;Notes_flowmeter&quot;, &quot;Notes_catch&quot;))
+  
+FMWT_Pacific_Herring &lt;-get_fish(source=&quot;FMWT&quot;,
+                             taxa=&quot;Clupea pallasii&quot;,
+                             remove_cols=c(&quot;Sal_bot&quot;, &quot;Tow_duration&quot;, &quot;Tow_area&quot;, 
+                                           &quot;Notes_tow&quot;, &quot;Notes_flowmeter&quot;, &quot;Notes_catch&quot;))
 
 #Load age-0 Striped Bass
 #Remove age-1 Striped Bass and NOTE that we assume that unmeasured Striped Bass are age-0
-FMWT_Striped_Bass &lt;-LTMRdata::fish(sources=&quot;FMWT&quot;,
-                                   species=&quot;Morone saxatilis&quot;,
-                                   size_cutoff=NULL,
-                                   remove_unknown_lengths=FALSE) %&gt;%
+FMWT_Striped_Bass &lt;-get_fish(source=&quot;FMWT&quot;,
+                             taxa=&quot;Morone saxatilis&quot;,
+                             remove_cols=c(&quot;Sal_bot&quot;, &quot;Tow_duration&quot;, &quot;Tow_area&quot;, 
+                                           &quot;Notes_tow&quot;, &quot;Notes_flowmeter&quot;, &quot;Notes_catch&quot;))%&gt;%
   filter(is.na(Length)|Length&lt;150)
 
 
@@ -337,7 +346,7 @@ FMWT_regional_values_wide = FMWT_regional_values %&gt;%
 
 #Check when FMWT started measuring fish length for each species
 FMWT_no_length&lt;-FMWT_combined %&gt;%
-  filter(Length_NA_flag==&quot;Unknown length&quot;) %&gt;%
+  filter(is.na(Length)) %&gt;%
   mutate(Year=year(Date)) %&gt;%
   group_by(Year,Taxa) %&gt;%
   summarise(NoLengthCount=sum(Count))
