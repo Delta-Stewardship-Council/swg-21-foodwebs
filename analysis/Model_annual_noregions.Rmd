@@ -70,7 +70,7 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                        "#7030A0","#4472C4")))
 
 #focal variables
-varnames=c("temp","flow","turbid","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
+varnames=c("temp","flow","turbid","chla","hzoop","pzoop","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
 source("analysis/semDiagramFunctions.r")
@@ -371,6 +371,9 @@ sem_annual_noregions_dtr <- plot_modfit2
 
 save(sem_annual_noregions, sem_annual_noregions_dtr,
      file='./fig_output/sem_annual_noregions.RData')
+
+focaldata_we <- focaldata
+save(focaldata_we, file = "./fig_output/focaldata_we.Rdata")
 ```
 
 *Save model coefficients for manuscript table*

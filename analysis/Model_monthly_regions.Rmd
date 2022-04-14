@@ -73,7 +73,7 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                        "#7030A0","#4472C4")))
 
 #focal variables
-varnames=c("temp","flow","turbid","dophos","din","chla","hcope","clad","amphi_m","pcope","mysid","rotif_m","potam","corbic","sside","cent","sbass1_bsmt","marfish_bsmt","estfish_bsmt","tzoop","hzoop","pzoop")
+varnames=c("temp","flow","turbid","din","chla","hzoop","pzoop","potam","corbic","estfish_bsmt","sside","cent","sbass1_bsmt","marfish_bsmt","hcope","clad","amphi_m","pcope","mysid","rotif_m")
 
 #labels for lagged vars
 cnameslag=cnames
@@ -194,16 +194,26 @@ filter(dataavail,exclude) %>% filter(var %in% c("marfish_bsmt","potam","corbic")
 
 ### Time series plots
 
-```{r timeseries, fig.width=8, fig.height=13, echo=FALSE, warning=FALSE}
-plot1=select(focaldata,region,decyear,varnames) %>% 
-  gather(Var,Value,varnames) %>% 
-  mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
-ggplot(plot1,aes(x=decyear,y=Value)) +
-  facet_grid(Var~region, scales="free_y") +
+```{r timeseries, fig.width=10, fig.height=7, echo=FALSE, warning=FALSE}
+plot1=select(focaldata,region,decyear,varnames) %>%
+  gather(Var,Value,varnames) %>% left_join(cnames, by=c("Var"="Shortname")) %>% 
+  mutate(Diagramname=gsub("[\r\\\\\\\n]"," ",.data$Diagramname),
+         Diagramname=gsub(" n"," ",.data$Diagramname),
+         Diagramname=factor(Diagramname, levels=unique(Diagramname)),
+         Var=factor(Var,levels = varnames),
+         region=factor(region,levels=regionorder))
+ggplot(plot1,aes(x=decyear,y=Value,color=region)) +
+  facet_wrap(Diagramname~., scales="free_y",ncol = 4) +
   geom_line() +
   theme_bw() +
-  labs(title = "Original Units")
+  scale_color_manual(values=c("blue","green4","violetred1","purple")) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(color="Region", x="Year") + theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1), 
+        legend.position = "top",legend.direction = "horizontal")
+ggsave("./fig_output/monthly_timeseries.png", height = 7, width = 8.5)
+```
 
+```{r timeseries, fig.width=8, fig.height=13, echo=FALSE, warning=FALSE}
 plot2=select(fdr,region,decyear,varnames) %>% 
   gather(Var,Value,varnames) %>% 
   mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
