@@ -213,33 +213,6 @@ ggplot(plot1,aes(x=decyear,y=Value,color=region)) +
 ggsave("./fig_output/monthly_timeseries.png", height = 7, width = 8.5)
 ```
 
-```{r timeseries, fig.width=8, fig.height=13, echo=FALSE, warning=FALSE}
-plot2=select(fdr,region,decyear,varnames) %>% 
-  gather(Var,Value,varnames) %>% 
-  mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
-ggplot(plot2,aes(x=decyear,y=Value)) +
-  facet_grid(Var~region, scales="free_y") +
-  geom_line() +
-  theme_bw() +
-  labs(title = "Log scaled")
-
-plot3=select(fdr_ds,region,decyear,varnames) %>% 
-  gather(Var,Value,varnames) %>% 
-  mutate(Var=factor(Var,levels = varnames),
-         region=factor(region,levels=regionorder))
-plotmm=select(fdr_ds,region,decyear,paste0(varnames,"_mm")) %>% 
-  gather(Var,Value,paste0(varnames,"_mm")) %>% 
-  mutate(Var=gsub("_mm","",Var)) %>% 
-  mutate(Var=factor(Var,levels = varnames),
-         region=factor(region,levels=regionorder))
-ggplot(plot3,aes(x=decyear,y=Value)) +
-  facet_grid(Var~region, scales="free_y") +
-  geom_line(data=plotmm,color="tomato") +
-  geom_line() +
-  theme_bw() +
-  labs(title = "Seasonal means removed")
-```
-
 ### Other useful plots
 
 Breakdown of total zooplankton biomass.

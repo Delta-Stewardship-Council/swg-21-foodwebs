@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Load packages
 ```{r, message=FALSE}
 require(dplyr)
-require(zooper)
+require(zooper) # devtools::install_github("InteragencyEcologicalProgram/zooper", ref="v2.4.1")
 require(lubridate)
 require(readr)
 require(tidyr)

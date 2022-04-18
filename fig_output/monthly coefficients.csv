@@ -1,35 +1,35 @@
 "Model","Region","Response","op","Predictor","Effect","se","pvalue"
-"Upper trophic level aggregates","Far West","hzoop","~","chla_1",0.0261,0.0637,0.6825
-"Upper trophic level aggregates","Far West","hzoop","~","hzoop_1",0.3265,0.0627,0
-"Upper trophic level aggregates","Far West","hzoop","~","pzoop_1",0.0601,0.066,0.3619
-"Upper trophic level aggregates","Far West","hzoop","~","potam_1",-0.2099,0.0634,9e-04
-"Upper trophic level aggregates","Far West","hzoop","~","estfish_bsmt_1",-0.1682,0.0677,0.013
-"Upper trophic level aggregates","Far West","hzoop","~","flow",-0.0304,0.0725,0.6748
-"Upper trophic level aggregates","Far West","hzoop","~","temp",-0.0858,0.068,0.2067
-"Upper trophic level aggregates","Far West","hzoop","~","turbid",0.0444,0.072,0.5377
-"Upper trophic level aggregates","Far West","pzoop","~","hzoop_1",0.0498,0.0663,0.4523
-"Upper trophic level aggregates","Far West","pzoop","~","pzoop_1",0.3481,0.0607,0
-"Upper trophic level aggregates","Far West","pzoop","~","potam_1",-0.1102,0.064,0.0854
-"Upper trophic level aggregates","Far West","pzoop","~","estfish_bsmt_1",-0.0296,0.0685,0.6656
-"Upper trophic level aggregates","Far West","pzoop","~","flow",0.0761,0.0718,0.2889
-"Upper trophic level aggregates","Far West","pzoop","~","temp",-0.0166,0.068,0.8068
-"Upper trophic level aggregates","Far West","pzoop","~","turbid",0.2147,0.0699,0.0021
-"Upper trophic level aggregates","Far West","estfish_bsmt","~","hzoop_1",-0.1977,0.0592,8e-04
-"Upper trophic level aggregates","Far West","estfish_bsmt","~","pzoop_1",0.1286,0.0609,0.0349
-"Upper trophic level aggregates","Far West","estfish_bsmt","~","estfish_bsmt_1",0.3529,0.0617,0
-"Upper trophic level aggregates","Far West","estfish_bsmt","~","flow",0.0901,0.0678,0.1841
-"Upper trophic level aggregates","Far West","estfish_bsmt","~","temp",-0.0339,0.0638,0.5951
-"Upper trophic level aggregates","Far West","estfish_bsmt","~","turbid",0.2327,0.0659,4e-04
-"Upper trophic level aggregates","Far West","estfish_bsmt","~","marfish_bsmt_1",0.001,0.061,0.9875
-"Upper trophic level aggregates","Far West","estfish_bsmt","~","sbass1_bsmt_1",-0.0191,0.065,0.7691
-"Upper trophic level aggregates","Far West","hzoop","~~","hzoop",0.755,0.0506,0
-"Upper trophic level aggregates","Far West","pzoop","~~","pzoop",0.7502,0.0507,0
-"Upper trophic level aggregates","Far West","estfish_bsmt","~~","estfish_bsmt",0.639,0.0503,0
-"Upper trophic level aggregates","Far West","hzoop","~~","pzoop",-0.0367,0.0723,0.6115
-"Upper trophic level aggregates","Far West","hzoop","~~","estfish_bsmt",-0.0704,0.072,0.3285
-"Upper trophic level aggregates","Far West","pzoop","~~","estfish_bsmt",-0.1234,0.0713,0.0832
+"Upper trophic level aggregates","Far West","hzoop","~","chla_1",0.0156,0.0636,0.8058
+"Upper trophic level aggregates","Far West","hzoop","~","hzoop_1",0.324,0.0628,0
+"Upper trophic level aggregates","Far West","hzoop","~","pzoop_1",0.0658,0.0659,0.3176
+"Upper trophic level aggregates","Far West","hzoop","~","potam_1",-0.2128,0.0633,8e-04
+"Upper trophic level aggregates","Far West","hzoop","~","estfish_bsmt_1",-0.1743,0.0675,0.0098
+"Upper trophic level aggregates","Far West","hzoop","~","flow",-0.0216,0.0725,0.766
+"Upper trophic level aggregates","Far West","hzoop","~","temp",-0.0755,0.0682,0.268
+"Upper trophic level aggregates","Far West","hzoop","~","turbid",0.0376,0.0719,0.6013
+"Upper trophic level aggregates","Far West","pzoop","~","hzoop_1",0.0539,0.0664,0.4168
+"Upper trophic level aggregates","Far West","pzoop","~","pzoop_1",0.3477,0.0607,0
+"Upper trophic level aggregates","Far West","pzoop","~","potam_1",-0.1095,0.064,0.0872
+"Upper trophic level aggregates","Far West","pzoop","~","estfish_bsmt_1",-0.0293,0.0684,0.6686
+"Upper trophic level aggregates","Far West","pzoop","~","flow",0.0756,0.0717,0.2921
+"Upper trophic level aggregates","Far West","pzoop","~","temp",-0.0183,0.0682,0.7888
+"Upper trophic level aggregates","Far West","pzoop","~","turbid",0.2151,0.0698,0.0021
+"Upper trophic level aggregates","Far West","estfish_bsmt","~","hzoop_1",-0.1918,0.0595,0.0013
+"Upper trophic level aggregates","Far West","estfish_bsmt","~","pzoop_1",0.128,0.0611,0.0361
+"Upper trophic level aggregates","Far West","estfish_bsmt","~","estfish_bsmt_1",0.3549,0.0617,0
+"Upper trophic level aggregates","Far West","estfish_bsmt","~","flow",0.092,0.0679,0.1756
+"Upper trophic level aggregates","Far West","estfish_bsmt","~","temp",-0.0318,0.0642,0.6198
+"Upper trophic level aggregates","Far West","estfish_bsmt","~","turbid",0.2297,0.066,5e-04
+"Upper trophic level aggregates","Far West","estfish_bsmt","~","marfish_bsmt_1",0.0011,0.0611,0.9859
+"Upper trophic level aggregates","Far West","estfish_bsmt","~","sbass1_bsmt_1",-0.0183,0.0651,0.7783
+"Upper trophic level aggregates","Far West","hzoop","~~","hzoop",0.7538,0.0507,0
+"Upper trophic level aggregates","Far West","pzoop","~~","pzoop",0.7499,0.0508,0
+"Upper trophic level aggregates","Far West","estfish_bsmt","~~","estfish_bsmt",0.6413,0.0504,0
+"Upper trophic level aggregates","Far West","hzoop","~~","pzoop",-0.0431,0.0722,0.551
+"Upper trophic level aggregates","Far West","hzoop","~~","estfish_bsmt",-0.0666,0.072,0.3554
+"Upper trophic level aggregates","Far West","pzoop","~~","estfish_bsmt",-0.1228,0.0713,0.0849
 "Upper trophic level aggregates","Far West","chla_1","~~","chla_1",1,0,NA
-"Upper trophic level aggregates","Far West","chla_1","~~","hzoop_1",0.1272,0,NA
+"Upper trophic level aggregates","Far West","chla_1","~~","hzoop_1",0.1215,0,NA
 "Upper trophic level aggregates","Far West","chla_1","~~","pzoop_1",-0.005,0,NA
 "Upper trophic level aggregates","Far West","chla_1","~~","potam_1",0.0309,0,NA
 "Upper trophic level aggregates","Far West","chla_1","~~","estfish_bsmt_1",-0.0664,0,NA
@@ -39,14 +39,14 @@
 "Upper trophic level aggregates","Far West","chla_1","~~","marfish_bsmt_1",-0.036,0,NA
 "Upper trophic level aggregates","Far West","chla_1","~~","sbass1_bsmt_1",-0.2082,0,NA
 "Upper trophic level aggregates","Far West","hzoop_1","~~","hzoop_1",1,0,NA
-"Upper trophic level aggregates","Far West","hzoop_1","~~","pzoop_1",0.0805,0,NA
-"Upper trophic level aggregates","Far West","hzoop_1","~~","potam_1",-0.2002,0,NA
-"Upper trophic level aggregates","Far West","hzoop_1","~~","estfish_bsmt_1",-0.2128,0,NA
-"Upper trophic level aggregates","Far West","hzoop_1","~~","flow",-0.0229,0,NA
-"Upper trophic level aggregates","Far West","hzoop_1","~~","temp",0.1972,0,NA
-"Upper trophic level aggregates","Far West","hzoop_1","~~","turbid",0.0123,0,NA
-"Upper trophic level aggregates","Far West","hzoop_1","~~","marfish_bsmt_1",-0.0607,0,NA
-"Upper trophic level aggregates","Far West","hzoop_1","~~","sbass1_bsmt_1",-0.1192,0,NA
+"Upper trophic level aggregates","Far West","hzoop_1","~~","pzoop_1",0.0782,0,NA
+"Upper trophic level aggregates","Far West","hzoop_1","~~","potam_1",-0.2007,0,NA
+"Upper trophic level aggregates","Far West","hzoop_1","~~","estfish_bsmt_1",-0.211,0,NA
+"Upper trophic level aggregates","Far West","hzoop_1","~~","flow",-0.02,0,NA
+"Upper trophic level aggregates","Far West","hzoop_1","~~","temp",0.2135,0,NA
+"Upper trophic level aggregates","Far West","hzoop_1","~~","turbid",0.001,0,NA
+"Upper trophic level aggregates","Far West","hzoop_1","~~","marfish_bsmt_1",-0.0599,0,NA
+"Upper trophic level aggregates","Far West","hzoop_1","~~","sbass1_bsmt_1",-0.1239,0,NA
 "Upper trophic level aggregates","Far West","pzoop_1","~~","pzoop_1",1,0,NA
 "Upper trophic level aggregates","Far West","pzoop_1","~~","potam_1",-0.0352,0,NA
 "Upper trophic level aggregates","Far West","pzoop_1","~~","estfish_bsmt_1",0.0251,0,NA
@@ -83,49 +83,49 @@
 "Upper trophic level aggregates","Far West","marfish_bsmt_1","~~","marfish_bsmt_1",1,0,NA
 "Upper trophic level aggregates","Far West","marfish_bsmt_1","~~","sbass1_bsmt_1",-0.074,0,NA
 "Upper trophic level aggregates","Far West","sbass1_bsmt_1","~~","sbass1_bsmt_1",1,0,NA
-"Upper trophic level aggregates","Far West","hb",":=","sqrt(hb1^2)",0.0261,0.0637,0.6825
-"Upper trophic level aggregates","Far West","hs",":=","sqrt(hs1^2)",0.3265,0.0627,0
-"Upper trophic level aggregates","Far West","ht",":=","sqrt(ht1^2+ht2^2+ht3^2)",0.2756,0.0571,0
-"Upper trophic level aggregates","Far West","ha",":=","sqrt(ha1^2+ha2^2+ha3^2)",0.1013,0.0681,0.137
-"Upper trophic level aggregates","Far West","pb",":=","sqrt(pb1^2)",0.0498,0.0663,0.4523
-"Upper trophic level aggregates","Far West","ps",":=","sqrt(ps1^2)",0.3481,0.0607,0
-"Upper trophic level aggregates","Far West","pt",":=","sqrt(pt1^2+pt2^2)",0.1141,0.0615,0.0637
-"Upper trophic level aggregates","Far West","pa",":=","sqrt(pa1^2+pa2^2+pa3^2)",0.2284,0.0597,1e-04
-"Upper trophic level aggregates","Far West","fb",":=","sqrt(fb1^2+fb2^2)",0.2359,0.0616,1e-04
-"Upper trophic level aggregates","Far West","fs",":=","sqrt(fs1^2)",0.3529,0.0617,0
-"Upper trophic level aggregates","Far West","ft",":=","sqrt(ft1^2+ft2^2)",0.0191,0.0647,0.7681
-"Upper trophic level aggregates","Far West","fa",":=","sqrt(fa1^2+fa2^2+fa3^2)",0.2518,0.055,0
-"Upper trophic level aggregates","West","hzoop","~","chla_1",0.0471,0.0609,0.4391
-"Upper trophic level aggregates","West","hzoop","~","hzoop_1",0.4001,0.0626,0
-"Upper trophic level aggregates","West","hzoop","~","pzoop_1",0.0203,0.0616,0.7414
-"Upper trophic level aggregates","West","hzoop","~","potam_1",-0.1684,0.0626,0.0071
-"Upper trophic level aggregates","West","hzoop","~","estfish_bsmt_1",0.019,0.0601,0.7516
-"Upper trophic level aggregates","West","hzoop","~","flow",0.1835,0.064,0.0041
-"Upper trophic level aggregates","West","hzoop","~","temp",0.0053,0.0602,0.9293
-"Upper trophic level aggregates","West","hzoop","~","turbid",-0.1635,0.0623,0.0087
-"Upper trophic level aggregates","West","pzoop","~","chla_1",0.1812,0.0589,0.0021
-"Upper trophic level aggregates","West","pzoop","~","hzoop_1",0.1128,0.067,0.0925
-"Upper trophic level aggregates","West","pzoop","~","pzoop_1",0.4139,0.055,0
-"Upper trophic level aggregates","West","pzoop","~","potam_1",-0.0872,0.0623,0.1614
-"Upper trophic level aggregates","West","pzoop","~","estfish_bsmt_1",0.0371,0.0597,0.5349
-"Upper trophic level aggregates","West","pzoop","~","flow",-0.0982,0.0645,0.1278
-"Upper trophic level aggregates","West","pzoop","~","temp",0.191,0.0586,0.0011
-"Upper trophic level aggregates","West","pzoop","~","turbid",0.0291,0.0628,0.6426
-"Upper trophic level aggregates","West","estfish_bsmt","~","hzoop_1",0.1383,0.0683,0.043
-"Upper trophic level aggregates","West","estfish_bsmt","~","pzoop_1",-0.076,0.0661,0.25
-"Upper trophic level aggregates","West","estfish_bsmt","~","estfish_bsmt_1",0.1687,0.0683,0.0135
-"Upper trophic level aggregates","West","estfish_bsmt","~","flow",-0.2072,0.0678,0.0022
-"Upper trophic level aggregates","West","estfish_bsmt","~","temp",0.0204,0.0643,0.7512
-"Upper trophic level aggregates","West","estfish_bsmt","~","turbid",0.2277,0.0641,4e-04
-"Upper trophic level aggregates","West","estfish_bsmt","~","sbass1_bsmt_1",0.2304,0.064,3e-04
-"Upper trophic level aggregates","West","hzoop","~~","hzoop",0.6754,0.0486,0
-"Upper trophic level aggregates","West","pzoop","~~","pzoop",0.6687,0.0485,0
-"Upper trophic level aggregates","West","estfish_bsmt","~~","estfish_bsmt",0.7853,0.0472,0
-"Upper trophic level aggregates","West","hzoop","~~","pzoop",0.2556,0.0645,1e-04
-"Upper trophic level aggregates","West","hzoop","~~","estfish_bsmt",-0.1155,0.0681,0.0899
-"Upper trophic level aggregates","West","pzoop","~~","estfish_bsmt",0.1864,0.0666,0.0051
+"Upper trophic level aggregates","Far West","hb",":=","sqrt(hb1^2)",0.0156,0.0636,0.8058
+"Upper trophic level aggregates","Far West","hs",":=","sqrt(hs1^2)",0.324,0.0628,0
+"Upper trophic level aggregates","Far West","ht",":=","sqrt(ht1^2+ht2^2+ht3^2)",0.2828,0.0568,0
+"Upper trophic level aggregates","Far West","ha",":=","sqrt(ha1^2+ha2^2+ha3^2)",0.0871,0.0674,0.1964
+"Upper trophic level aggregates","Far West","pb",":=","sqrt(pb1^2)",0.0539,0.0664,0.4168
+"Upper trophic level aggregates","Far West","ps",":=","sqrt(ps1^2)",0.3477,0.0607,0
+"Upper trophic level aggregates","Far West","pt",":=","sqrt(pt1^2+pt2^2)",0.1134,0.0615,0.0653
+"Upper trophic level aggregates","Far West","pa",":=","sqrt(pa1^2+pa2^2+pa3^2)",0.2287,0.0596,1e-04
+"Upper trophic level aggregates","Far West","fb",":=","sqrt(fb1^2+fb2^2)",0.2306,0.0619,2e-04
+"Upper trophic level aggregates","Far West","fs",":=","sqrt(fs1^2)",0.3549,0.0617,0
+"Upper trophic level aggregates","Far West","ft",":=","sqrt(ft1^2+ft2^2)",0.0184,0.0648,0.7771
+"Upper trophic level aggregates","Far West","fa",":=","sqrt(fa1^2+fa2^2+fa3^2)",0.2494,0.0549,0
+"Upper trophic level aggregates","West","hzoop","~","chla_1",0.0801,0.0608,0.1875
+"Upper trophic level aggregates","West","hzoop","~","hzoop_1",0.3479,0.0653,0
+"Upper trophic level aggregates","West","hzoop","~","pzoop_1",0.0325,0.0615,0.5973
+"Upper trophic level aggregates","West","hzoop","~","potam_1",-0.2159,0.0625,5e-04
+"Upper trophic level aggregates","West","hzoop","~","estfish_bsmt_1",-0.016,0.0597,0.7889
+"Upper trophic level aggregates","West","hzoop","~","flow",0.1844,0.064,0.004
+"Upper trophic level aggregates","West","hzoop","~","temp",0.0259,0.0597,0.6646
+"Upper trophic level aggregates","West","hzoop","~","turbid",-0.1876,0.0617,0.0024
+"Upper trophic level aggregates","West","pzoop","~","chla_1",0.1787,0.0592,0.0025
+"Upper trophic level aggregates","West","pzoop","~","hzoop_1",0.1173,0.0686,0.0875
+"Upper trophic level aggregates","West","pzoop","~","pzoop_1",0.4114,0.0554,0
+"Upper trophic level aggregates","West","pzoop","~","potam_1",-0.0823,0.063,0.1917
+"Upper trophic level aggregates","West","pzoop","~","estfish_bsmt_1",0.036,0.0596,0.546
+"Upper trophic level aggregates","West","pzoop","~","flow",-0.1014,0.0648,0.1178
+"Upper trophic level aggregates","West","pzoop","~","temp",0.1887,0.0585,0.0012
+"Upper trophic level aggregates","West","pzoop","~","turbid",0.0334,0.0629,0.5957
+"Upper trophic level aggregates","West","estfish_bsmt","~","hzoop_1",0.1323,0.0691,0.0557
+"Upper trophic level aggregates","West","estfish_bsmt","~","pzoop_1",-0.0766,0.0666,0.2499
+"Upper trophic level aggregates","West","estfish_bsmt","~","estfish_bsmt_1",0.1687,0.0684,0.0136
+"Upper trophic level aggregates","West","estfish_bsmt","~","flow",-0.2099,0.0687,0.0022
+"Upper trophic level aggregates","West","estfish_bsmt","~","temp",0.017,0.0642,0.7908
+"Upper trophic level aggregates","West","estfish_bsmt","~","turbid",0.2321,0.0641,3e-04
+"Upper trophic level aggregates","West","estfish_bsmt","~","sbass1_bsmt_1",0.2246,0.0644,5e-04
+"Upper trophic level aggregates","West","hzoop","~~","hzoop",0.6676,0.0485,0
+"Upper trophic level aggregates","West","pzoop","~~","pzoop",0.6683,0.0485,0
+"Upper trophic level aggregates","West","estfish_bsmt","~~","estfish_bsmt",0.7872,0.0471,0
+"Upper trophic level aggregates","West","hzoop","~~","pzoop",0.2595,0.0644,1e-04
+"Upper trophic level aggregates","West","hzoop","~~","estfish_bsmt",-0.1022,0.0683,0.1344
+"Upper trophic level aggregates","West","pzoop","~~","estfish_bsmt",0.1868,0.0666,0.005
 "Upper trophic level aggregates","West","chla_1","~~","chla_1",1,0,NA
-"Upper trophic level aggregates","West","chla_1","~~","hzoop_1",0.3337,0,NA
+"Upper trophic level aggregates","West","chla_1","~~","hzoop_1",0.346,0,NA
 "Upper trophic level aggregates","West","chla_1","~~","pzoop_1",0.0946,0,NA
 "Upper trophic level aggregates","West","chla_1","~~","potam_1",-0.0282,0,NA
 "Upper trophic level aggregates","West","chla_1","~~","estfish_bsmt_1",-0.0561,0,NA
@@ -134,13 +134,13 @@
 "Upper trophic level aggregates","West","chla_1","~~","turbid",0.0141,0,NA
 "Upper trophic level aggregates","West","chla_1","~~","sbass1_bsmt_1",-0.0775,0,NA
 "Upper trophic level aggregates","West","hzoop_1","~~","hzoop_1",1,0,NA
-"Upper trophic level aggregates","West","hzoop_1","~~","pzoop_1",0.2567,0,NA
-"Upper trophic level aggregates","West","hzoop_1","~~","potam_1",-0.3022,0,NA
-"Upper trophic level aggregates","West","hzoop_1","~~","estfish_bsmt_1",-0.0388,0,NA
-"Upper trophic level aggregates","West","hzoop_1","~~","flow",0.3432,0,NA
-"Upper trophic level aggregates","West","hzoop_1","~~","temp",-0.171,0,NA
-"Upper trophic level aggregates","West","hzoop_1","~~","turbid",0.1454,0,NA
-"Upper trophic level aggregates","West","hzoop_1","~~","sbass1_bsmt_1",-0.0808,0,NA
+"Upper trophic level aggregates","West","hzoop_1","~~","pzoop_1",0.275,0,NA
+"Upper trophic level aggregates","West","hzoop_1","~~","potam_1",-0.3374,0,NA
+"Upper trophic level aggregates","West","hzoop_1","~~","estfish_bsmt_1",-0.0294,0,NA
+"Upper trophic level aggregates","West","hzoop_1","~~","flow",0.3579,0,NA
+"Upper trophic level aggregates","West","hzoop_1","~~","temp",-0.1468,0,NA
+"Upper trophic level aggregates","West","hzoop_1","~~","turbid",0.1242,0,NA
+"Upper trophic level aggregates","West","hzoop_1","~~","sbass1_bsmt_1",-0.0531,0,NA
 "Upper trophic level aggregates","West","pzoop_1","~~","pzoop_1",1,0,NA
 "Upper trophic level aggregates","West","pzoop_1","~~","potam_1",-0.1338,0,NA
 "Upper trophic level aggregates","West","pzoop_1","~~","estfish_bsmt_1",0.2113,0,NA
@@ -169,51 +169,51 @@
 "Upper trophic level aggregates","West","turbid","~~","turbid",1,0,NA
 "Upper trophic level aggregates","West","turbid","~~","sbass1_bsmt_1",0.0758,0,NA
 "Upper trophic level aggregates","West","sbass1_bsmt_1","~~","sbass1_bsmt_1",1,0,NA
-"Upper trophic level aggregates","West","hb",":=","sqrt(hb1^2)",0.0471,0.0609,0.4391
-"Upper trophic level aggregates","West","hs",":=","sqrt(hs1^2)",0.4001,0.0626,0
-"Upper trophic level aggregates","West","ht",":=","sqrt(ht1^2+ht2^2+ht3^2)",0.1706,0.0612,0.0053
-"Upper trophic level aggregates","West","ha",":=","sqrt(ha1^2+ha2^2+ha3^2)",0.2459,0.0689,4e-04
-"Upper trophic level aggregates","West","pb",":=","sqrt(pb1^2+pb2^2)",0.2134,0.0522,0
-"Upper trophic level aggregates","West","ps",":=","sqrt(ps1^2)",0.4139,0.055,0
-"Upper trophic level aggregates","West","pt",":=","sqrt(pt1^2+pt2^2)",0.0947,0.0592,0.1095
-"Upper trophic level aggregates","West","pa",":=","sqrt(pa1^2+pa2^2+pa3^2)",0.2167,0.0603,3e-04
-"Upper trophic level aggregates","West","fb",":=","sqrt(fb1^2+fb2^2)",0.1578,0.0759,0.0375
-"Upper trophic level aggregates","West","fs",":=","sqrt(fs1^2)",0.1687,0.0683,0.0135
-"Upper trophic level aggregates","West","ft",":=","sqrt(ft1^2)",0.2304,0.064,3e-04
-"Upper trophic level aggregates","West","fa",":=","sqrt(fa1^2+fa2^2+fa3^2)",0.3086,0.0733,0
-"Upper trophic level aggregates","North","hzoop","~","chla_1",0.0375,0.0665,0.5728
-"Upper trophic level aggregates","North","hzoop","~","hzoop_1",0.2083,0.0673,0.002
-"Upper trophic level aggregates","North","hzoop","~","pzoop_1",0.0321,0.072,0.6557
-"Upper trophic level aggregates","North","hzoop","~","corbic_1",0.0033,0.0664,0.9609
-"Upper trophic level aggregates","North","hzoop","~","estfish_bsmt_1",-0.0832,0.0726,0.2514
-"Upper trophic level aggregates","North","hzoop","~","flow",0.2358,0.0733,0.0013
-"Upper trophic level aggregates","North","hzoop","~","temp",0.1112,0.0678,0.1006
-"Upper trophic level aggregates","North","hzoop","~","turbid",0.1902,0.0664,0.0042
-"Upper trophic level aggregates","North","pzoop","~","chla_1",0.2462,0.0568,0
-"Upper trophic level aggregates","North","pzoop","~","hzoop_1",0.1734,0.0602,0.0039
-"Upper trophic level aggregates","North","pzoop","~","pzoop_1",0.2293,0.062,2e-04
-"Upper trophic level aggregates","North","pzoop","~","corbic_1",0.0294,0.0589,0.6172
-"Upper trophic level aggregates","North","pzoop","~","estfish_bsmt_1",-0.0643,0.0644,0.3181
+"Upper trophic level aggregates","West","hb",":=","sqrt(hb1^2)",0.0801,0.0608,0.1875
+"Upper trophic level aggregates","West","hs",":=","sqrt(hs1^2)",0.3479,0.0653,0
+"Upper trophic level aggregates","West","ht",":=","sqrt(ht1^2+ht2^2+ht3^2)",0.2189,0.0627,5e-04
+"Upper trophic level aggregates","West","ha",":=","sqrt(ha1^2+ha2^2+ha3^2)",0.2644,0.0682,1e-04
+"Upper trophic level aggregates","West","pb",":=","sqrt(pb1^2+pb2^2)",0.2137,0.0522,0
+"Upper trophic level aggregates","West","ps",":=","sqrt(ps1^2)",0.4114,0.0554,0
+"Upper trophic level aggregates","West","pt",":=","sqrt(pt1^2+pt2^2)",0.0898,0.0598,0.1329
+"Upper trophic level aggregates","West","pa",":=","sqrt(pa1^2+pa2^2+pa3^2)",0.2168,0.0606,3e-04
+"Upper trophic level aggregates","West","fb",":=","sqrt(fb1^2+fb2^2)",0.1529,0.0773,0.048
+"Upper trophic level aggregates","West","fs",":=","sqrt(fs1^2)",0.1687,0.0684,0.0136
+"Upper trophic level aggregates","West","ft",":=","sqrt(ft1^2)",0.2246,0.0644,5e-04
+"Upper trophic level aggregates","West","fa",":=","sqrt(fa1^2+fa2^2+fa3^2)",0.3134,0.0739,0
+"Upper trophic level aggregates","North","hzoop","~","chla_1",0.0333,0.0664,0.6164
+"Upper trophic level aggregates","North","hzoop","~","hzoop_1",0.2123,0.0671,0.0016
+"Upper trophic level aggregates","North","hzoop","~","pzoop_1",0.0395,0.0719,0.5829
+"Upper trophic level aggregates","North","hzoop","~","corbic_1",0.0043,0.0662,0.9482
+"Upper trophic level aggregates","North","hzoop","~","estfish_bsmt_1",-0.0842,0.0724,0.2451
+"Upper trophic level aggregates","North","hzoop","~","flow",0.2419,0.0731,9e-04
+"Upper trophic level aggregates","North","hzoop","~","temp",0.1108,0.0676,0.1013
+"Upper trophic level aggregates","North","hzoop","~","turbid",0.1851,0.0664,0.0053
+"Upper trophic level aggregates","North","pzoop","~","chla_1",0.2446,0.0569,0
+"Upper trophic level aggregates","North","pzoop","~","hzoop_1",0.1731,0.0603,0.0041
+"Upper trophic level aggregates","North","pzoop","~","pzoop_1",0.2292,0.062,2e-04
+"Upper trophic level aggregates","North","pzoop","~","corbic_1",0.0296,0.0589,0.615
+"Upper trophic level aggregates","North","pzoop","~","estfish_bsmt_1",-0.0631,0.0644,0.3275
 "Upper trophic level aggregates","North","pzoop","~","flow",-0.4342,0.0604,0
-"Upper trophic level aggregates","North","pzoop","~","temp",0.0833,0.0602,0.1668
-"Upper trophic level aggregates","North","pzoop","~","turbid",0.0029,0.0602,0.9616
-"Upper trophic level aggregates","North","estfish_bsmt","~","hzoop_1",0.1406,0.0667,0.0352
-"Upper trophic level aggregates","North","estfish_bsmt","~","pzoop_1",0.0108,0.0683,0.8746
-"Upper trophic level aggregates","North","estfish_bsmt","~","estfish_bsmt_1",0.1285,0.0702,0.0671
-"Upper trophic level aggregates","North","estfish_bsmt","~","flow",-0.4356,0.0653,0
-"Upper trophic level aggregates","North","estfish_bsmt","~","temp",-0.0147,0.0646,0.8198
-"Upper trophic level aggregates","North","estfish_bsmt","~","turbid",0.0594,0.0658,0.3664
-"Upper trophic level aggregates","North","estfish_bsmt","~","sside_1",-0.0155,0.065,0.8119
-"Upper trophic level aggregates","North","estfish_bsmt","~","cent_1",-0.1262,0.0649,0.0518
-"Upper trophic level aggregates","North","estfish_bsmt","~","sbass1_bsmt_1",0.0892,0.0676,0.1875
-"Upper trophic level aggregates","North","hzoop","~~","hzoop",0.8196,0.0478,0
-"Upper trophic level aggregates","North","pzoop","~~","pzoop",0.6429,0.0501,0
-"Upper trophic level aggregates","North","estfish_bsmt","~~","estfish_bsmt",0.7307,0.0508,0
-"Upper trophic level aggregates","North","hzoop","~~","pzoop",0.2476,0.0676,2e-04
-"Upper trophic level aggregates","North","hzoop","~~","estfish_bsmt",-0.0688,0.0716,0.3367
-"Upper trophic level aggregates","North","pzoop","~~","estfish_bsmt",-0.0025,0.072,0.972
+"Upper trophic level aggregates","North","pzoop","~","temp",0.0826,0.0602,0.1701
+"Upper trophic level aggregates","North","pzoop","~","turbid",0.0041,0.0603,0.9463
+"Upper trophic level aggregates","North","estfish_bsmt","~","hzoop_1",0.1386,0.0667,0.0376
+"Upper trophic level aggregates","North","estfish_bsmt","~","pzoop_1",0.0111,0.0683,0.8714
+"Upper trophic level aggregates","North","estfish_bsmt","~","estfish_bsmt_1",0.1292,0.0702,0.0657
+"Upper trophic level aggregates","North","estfish_bsmt","~","flow",-0.4352,0.0654,0
+"Upper trophic level aggregates","North","estfish_bsmt","~","temp",-0.0153,0.0647,0.8127
+"Upper trophic level aggregates","North","estfish_bsmt","~","turbid",0.0601,0.0658,0.3612
+"Upper trophic level aggregates","North","estfish_bsmt","~","sside_1",-0.017,0.0648,0.793
+"Upper trophic level aggregates","North","estfish_bsmt","~","cent_1",-0.1254,0.0649,0.0534
+"Upper trophic level aggregates","North","estfish_bsmt","~","sbass1_bsmt_1",0.0904,0.0676,0.1812
+"Upper trophic level aggregates","North","hzoop","~~","hzoop",0.8162,0.048,0
+"Upper trophic level aggregates","North","pzoop","~~","pzoop",0.643,0.0501,0
+"Upper trophic level aggregates","North","estfish_bsmt","~~","estfish_bsmt",0.7311,0.0508,0
+"Upper trophic level aggregates","North","hzoop","~~","pzoop",0.2491,0.0675,2e-04
+"Upper trophic level aggregates","North","hzoop","~~","estfish_bsmt",-0.0718,0.0716,0.3161
+"Upper trophic level aggregates","North","pzoop","~~","estfish_bsmt",-0.002,0.072,0.9779
 "Upper trophic level aggregates","North","chla_1","~~","chla_1",1,0,NA
-"Upper trophic level aggregates","North","chla_1","~~","hzoop_1",0.0897,0,NA
+"Upper trophic level aggregates","North","chla_1","~~","hzoop_1",0.0975,0,NA
 "Upper trophic level aggregates","North","chla_1","~~","pzoop_1",0.0698,0,NA
 "Upper trophic level aggregates","North","chla_1","~~","corbic_1",-0.0817,0,NA
 "Upper trophic level aggregates","North","chla_1","~~","estfish_bsmt_1",0.0085,0,NA
@@ -224,15 +224,15 @@
 "Upper trophic level aggregates","North","chla_1","~~","cent_1",-3e-04,0,NA
 "Upper trophic level aggregates","North","chla_1","~~","sbass1_bsmt_1",-0.1075,0,NA
 "Upper trophic level aggregates","North","hzoop_1","~~","hzoop_1",1,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","pzoop_1",0.1567,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","corbic_1",-1e-04,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","estfish_bsmt_1",-0.0454,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","flow",0.2345,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","temp",-0.0631,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","turbid",-0.0104,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","sside_1",-0.2573,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","cent_1",-0.0429,0,NA
-"Upper trophic level aggregates","North","hzoop_1","~~","sbass1_bsmt_1",-0.0548,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","pzoop_1",0.1557,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","corbic_1",-0.0029,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","estfish_bsmt_1",-0.0533,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","flow",0.2366,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","temp",-0.0607,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","turbid",-0.0169,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","sside_1",-0.2478,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","cent_1",-0.0408,0,NA
+"Upper trophic level aggregates","North","hzoop_1","~~","sbass1_bsmt_1",-0.0608,0,NA
 "Upper trophic level aggregates","North","pzoop_1","~~","pzoop_1",1,0,NA
 "Upper trophic level aggregates","North","pzoop_1","~~","corbic_1",-0.0675,0,NA
 "Upper trophic level aggregates","North","pzoop_1","~~","estfish_bsmt_1",0.2987,0,NA
@@ -278,52 +278,52 @@
 "Upper trophic level aggregates","North","cent_1","~~","cent_1",1,0,NA
 "Upper trophic level aggregates","North","cent_1","~~","sbass1_bsmt_1",-0.2034,0,NA
 "Upper trophic level aggregates","North","sbass1_bsmt_1","~~","sbass1_bsmt_1",1,0,NA
-"Upper trophic level aggregates","North","hb",":=","sqrt(hb1^2)",0.0375,0.0665,0.5728
-"Upper trophic level aggregates","North","hs",":=","sqrt(hs1^2)",0.2083,0.0673,0.002
-"Upper trophic level aggregates","North","ht",":=","sqrt(ht1^2+ht2^2+ht3^2)",0.0893,0.0778,0.251
-"Upper trophic level aggregates","North","ha",":=","sqrt(ha1^2+ha2^2+ha3^2)",0.3227,0.066,0
-"Upper trophic level aggregates","North","pb",":=","sqrt(pb1^2+pb2^2)",0.3011,0.0547,0
-"Upper trophic level aggregates","North","ps",":=","sqrt(ps1^2)",0.2293,0.062,2e-04
-"Upper trophic level aggregates","North","pt",":=","sqrt(pt1^2+pt2^2)",0.0707,0.0655,0.2808
-"Upper trophic level aggregates","North","pa",":=","sqrt(pa1^2+pa2^2+pa3^2)",0.4421,0.0575,0
-"Upper trophic level aggregates","North","fb",":=","sqrt(fb1^2+fb2^2)",0.141,0.0654,0.031
-"Upper trophic level aggregates","North","fs",":=","sqrt(fs1^2)",0.1285,0.0702,0.0671
-"Upper trophic level aggregates","North","ft",":=","sqrt(ft1^2+ft2^2+ft3^2)",0.1553,0.0592,0.0086
-"Upper trophic level aggregates","North","fa",":=","sqrt(fa1^2+fa2^2+fa3^2)",0.4399,0.0668,0
-"Upper trophic level aggregates","South","hzoop","~","chla_1",0.2321,0.0652,4e-04
-"Upper trophic level aggregates","South","hzoop","~","hzoop_1",0.1981,0.0646,0.0022
-"Upper trophic level aggregates","South","hzoop","~","pzoop_1",-0.0214,0.0702,0.7608
-"Upper trophic level aggregates","South","hzoop","~","corbic_1",0.0777,0.0655,0.2351
-"Upper trophic level aggregates","South","hzoop","~","estfish_bsmt_1",0.0028,0.0683,0.9668
-"Upper trophic level aggregates","South","hzoop","~","flow",0.1859,0.0643,0.0038
-"Upper trophic level aggregates","South","hzoop","~","temp",0.167,0.0647,0.0098
-"Upper trophic level aggregates","South","hzoop","~","turbid",-0.0415,0.0662,0.5305
-"Upper trophic level aggregates","South","pzoop","~","chla_1",0.2976,0.0573,0
-"Upper trophic level aggregates","South","pzoop","~","hzoop_1",0.1424,0.0588,0.0154
-"Upper trophic level aggregates","South","pzoop","~","pzoop_1",0.3245,0.0592,0
-"Upper trophic level aggregates","South","pzoop","~","corbic_1",-0.0601,0.0579,0.299
-"Upper trophic level aggregates","South","pzoop","~","estfish_bsmt_1",0.0206,0.0613,0.7367
-"Upper trophic level aggregates","South","pzoop","~","flow",-0.1262,0.0585,0.0309
-"Upper trophic level aggregates","South","pzoop","~","temp",-0.0364,0.0591,0.5388
-"Upper trophic level aggregates","South","pzoop","~","turbid",0.0983,0.0591,0.0966
-"Upper trophic level aggregates","South","estfish_bsmt","~","chla_1",0.1381,0.0667,0.0384
-"Upper trophic level aggregates","South","estfish_bsmt","~","hzoop_1",0.1364,0.0664,0.04
-"Upper trophic level aggregates","South","estfish_bsmt","~","pzoop_1",-0.0443,0.07,0.5266
-"Upper trophic level aggregates","South","estfish_bsmt","~","estfish_bsmt_1",0.1951,0.068,0.0041
-"Upper trophic level aggregates","South","estfish_bsmt","~","flow",-0.0876,0.0663,0.1867
-"Upper trophic level aggregates","South","estfish_bsmt","~","temp",-0.0277,0.0658,0.6743
-"Upper trophic level aggregates","South","estfish_bsmt","~","turbid",0.2093,0.07,0.0028
-"Upper trophic level aggregates","South","estfish_bsmt","~","sside_1",0.0555,0.0645,0.39
-"Upper trophic level aggregates","South","estfish_bsmt","~","cent_1",-0.0784,0.0695,0.2593
-"Upper trophic level aggregates","South","estfish_bsmt","~","sbass1_bsmt_1",0.0674,0.069,0.3286
-"Upper trophic level aggregates","South","hzoop","~~","hzoop",0.8236,0.0468,0
-"Upper trophic level aggregates","South","pzoop","~~","pzoop",0.6636,0.0498,0
-"Upper trophic level aggregates","South","estfish_bsmt","~~","estfish_bsmt",0.8119,0.0475,0
-"Upper trophic level aggregates","South","hzoop","~~","pzoop",0.1529,0.0692,0.0272
-"Upper trophic level aggregates","South","hzoop","~~","estfish_bsmt",0.0508,0.0707,0.4729
-"Upper trophic level aggregates","South","pzoop","~~","estfish_bsmt",0.1934,0.0682,0.0046
+"Upper trophic level aggregates","North","hb",":=","sqrt(hb1^2)",0.0333,0.0664,0.6164
+"Upper trophic level aggregates","North","hs",":=","sqrt(hs1^2)",0.2123,0.0671,0.0016
+"Upper trophic level aggregates","North","ht",":=","sqrt(ht1^2+ht2^2+ht3^2)",0.0931,0.0784,0.235
+"Upper trophic level aggregates","North","ha",":=","sqrt(ha1^2+ha2^2+ha3^2)",0.3241,0.0661,0
+"Upper trophic level aggregates","North","pb",":=","sqrt(pb1^2+pb2^2)",0.2997,0.0545,0
+"Upper trophic level aggregates","North","ps",":=","sqrt(ps1^2)",0.2292,0.062,2e-04
+"Upper trophic level aggregates","North","pt",":=","sqrt(pt1^2+pt2^2)",0.0697,0.0656,0.288
+"Upper trophic level aggregates","North","pa",":=","sqrt(pa1^2+pa2^2+pa3^2)",0.442,0.0575,0
+"Upper trophic level aggregates","North","fb",":=","sqrt(fb1^2+fb2^2)",0.1391,0.0652,0.033
+"Upper trophic level aggregates","North","fs",":=","sqrt(fs1^2)",0.1292,0.0702,0.0657
+"Upper trophic level aggregates","North","ft",":=","sqrt(ft1^2+ft2^2+ft3^2)",0.1556,0.0591,0.0085
+"Upper trophic level aggregates","North","fa",":=","sqrt(fa1^2+fa2^2+fa3^2)",0.4396,0.067,0
+"Upper trophic level aggregates","South","hzoop","~","chla_1",0.2367,0.0647,3e-04
+"Upper trophic level aggregates","South","hzoop","~","hzoop_1",0.2065,0.0644,0.0013
+"Upper trophic level aggregates","South","hzoop","~","pzoop_1",-0.0225,0.0698,0.7472
+"Upper trophic level aggregates","South","hzoop","~","corbic_1",0.068,0.0651,0.2962
+"Upper trophic level aggregates","South","hzoop","~","estfish_bsmt_1",0.0067,0.0678,0.9214
+"Upper trophic level aggregates","South","hzoop","~","flow",0.1959,0.0637,0.0021
+"Upper trophic level aggregates","South","hzoop","~","temp",0.1692,0.0642,0.0084
+"Upper trophic level aggregates","South","hzoop","~","turbid",-0.0396,0.0658,0.5474
+"Upper trophic level aggregates","South","pzoop","~","chla_1",0.2941,0.0574,0
+"Upper trophic level aggregates","South","pzoop","~","hzoop_1",0.153,0.059,0.0094
+"Upper trophic level aggregates","South","pzoop","~","pzoop_1",0.3209,0.0593,0
+"Upper trophic level aggregates","South","pzoop","~","corbic_1",-0.0618,0.0578,0.2853
+"Upper trophic level aggregates","South","pzoop","~","estfish_bsmt_1",0.0211,0.0612,0.7305
+"Upper trophic level aggregates","South","pzoop","~","flow",-0.129,0.0584,0.0271
+"Upper trophic level aggregates","South","pzoop","~","temp",-0.0371,0.059,0.5301
+"Upper trophic level aggregates","South","pzoop","~","turbid",0.1007,0.0591,0.0883
+"Upper trophic level aggregates","South","estfish_bsmt","~","chla_1",0.1354,0.0668,0.0428
+"Upper trophic level aggregates","South","estfish_bsmt","~","hzoop_1",0.142,0.0668,0.0337
+"Upper trophic level aggregates","South","estfish_bsmt","~","pzoop_1",-0.0471,0.0701,0.5019
+"Upper trophic level aggregates","South","estfish_bsmt","~","estfish_bsmt_1",0.1957,0.0679,0.004
+"Upper trophic level aggregates","South","estfish_bsmt","~","flow",-0.0902,0.0664,0.1745
+"Upper trophic level aggregates","South","estfish_bsmt","~","temp",-0.0283,0.0657,0.6669
+"Upper trophic level aggregates","South","estfish_bsmt","~","turbid",0.2116,0.0701,0.0025
+"Upper trophic level aggregates","South","estfish_bsmt","~","sside_1",0.0565,0.0645,0.3817
+"Upper trophic level aggregates","South","estfish_bsmt","~","cent_1",-0.0777,0.0695,0.2634
+"Upper trophic level aggregates","South","estfish_bsmt","~","sbass1_bsmt_1",0.0663,0.0691,0.3372
+"Upper trophic level aggregates","South","hzoop","~~","hzoop",0.8112,0.0476,0
+"Upper trophic level aggregates","South","pzoop","~~","pzoop",0.6609,0.0497,0
+"Upper trophic level aggregates","South","estfish_bsmt","~~","estfish_bsmt",0.8107,0.0475,0
+"Upper trophic level aggregates","South","hzoop","~~","pzoop",0.165,0.069,0.0167
+"Upper trophic level aggregates","South","hzoop","~~","estfish_bsmt",0.053,0.0707,0.4533
+"Upper trophic level aggregates","South","pzoop","~~","estfish_bsmt",0.1911,0.0683,0.0051
 "Upper trophic level aggregates","South","chla_1","~~","chla_1",1,0,NA
-"Upper trophic level aggregates","South","chla_1","~~","hzoop_1",0.1416,0,NA
+"Upper trophic level aggregates","South","chla_1","~~","hzoop_1",0.1587,0,NA
 "Upper trophic level aggregates","South","chla_1","~~","pzoop_1",0.2723,0,NA
 "Upper trophic level aggregates","South","chla_1","~~","corbic_1",-0.0519,0,NA
 "Upper trophic level aggregates","South","chla_1","~~","estfish_bsmt_1",0.0576,0,NA
@@ -334,15 +334,15 @@
 "Upper trophic level aggregates","South","chla_1","~~","cent_1",-0.1289,0,NA
 "Upper trophic level aggregates","South","chla_1","~~","sbass1_bsmt_1",-0.0605,0,NA
 "Upper trophic level aggregates","South","hzoop_1","~~","hzoop_1",1,0,NA
-"Upper trophic level aggregates","South","hzoop_1","~~","pzoop_1",0.1758,0,NA
-"Upper trophic level aggregates","South","hzoop_1","~~","corbic_1",0.0883,0,NA
+"Upper trophic level aggregates","South","hzoop_1","~~","pzoop_1",0.1908,0,NA
+"Upper trophic level aggregates","South","hzoop_1","~~","corbic_1",0.0909,0,NA
 "Upper trophic level aggregates","South","hzoop_1","~~","estfish_bsmt_1",0.0051,0,NA
-"Upper trophic level aggregates","South","hzoop_1","~~","flow",0.0622,0,NA
-"Upper trophic level aggregates","South","hzoop_1","~~","temp",0.0408,0,NA
-"Upper trophic level aggregates","South","hzoop_1","~~","turbid",-0.0349,0,NA
-"Upper trophic level aggregates","South","hzoop_1","~~","sside_1",-0.0198,0,NA
-"Upper trophic level aggregates","South","hzoop_1","~~","cent_1",-0.0542,0,NA
-"Upper trophic level aggregates","South","hzoop_1","~~","sbass1_bsmt_1",0.1586,0,NA
+"Upper trophic level aggregates","South","hzoop_1","~~","flow",0.0721,0,NA
+"Upper trophic level aggregates","South","hzoop_1","~~","temp",0.0456,0,NA
+"Upper trophic level aggregates","South","hzoop_1","~~","turbid",-0.0432,0,NA
+"Upper trophic level aggregates","South","hzoop_1","~~","sside_1",-0.0206,0,NA
+"Upper trophic level aggregates","South","hzoop_1","~~","cent_1",-0.0556,0,NA
+"Upper trophic level aggregates","South","hzoop_1","~~","sbass1_bsmt_1",0.1572,0,NA
 "Upper trophic level aggregates","South","pzoop_1","~~","pzoop_1",1,0,NA
 "Upper trophic level aggregates","South","pzoop_1","~~","corbic_1",0.0264,0,NA
 "Upper trophic level aggregates","South","pzoop_1","~~","estfish_bsmt_1",0.2523,0,NA
@@ -388,46 +388,46 @@
 "Upper trophic level aggregates","South","cent_1","~~","cent_1",1,0,NA
 "Upper trophic level aggregates","South","cent_1","~~","sbass1_bsmt_1",-0.0534,0,NA
 "Upper trophic level aggregates","South","sbass1_bsmt_1","~~","sbass1_bsmt_1",1,0,NA
-"Upper trophic level aggregates","South","hb",":=","sqrt(hb1^2)",0.2321,0.0652,4e-04
-"Upper trophic level aggregates","South","hs",":=","sqrt(hs1^2)",0.1981,0.0646,0.0022
-"Upper trophic level aggregates","South","ht",":=","sqrt(ht1^2+ht2^2+ht3^2)",0.0807,0.0668,0.2268
-"Upper trophic level aggregates","South","ha",":=","sqrt(ha1^2+ha2^2+ha3^2)",0.2533,0.0641,1e-04
-"Upper trophic level aggregates","South","pb",":=","sqrt(pb1^2+pb2^2)",0.3299,0.0535,0
-"Upper trophic level aggregates","South","ps",":=","sqrt(ps1^2)",0.3245,0.0592,0
-"Upper trophic level aggregates","South","pt",":=","sqrt(pt1^2+pt2^2)",0.0636,0.0575,0.2687
-"Upper trophic level aggregates","South","pa",":=","sqrt(pa1^2+pa2^2+pa3^2)",0.1641,0.0611,0.0073
-"Upper trophic level aggregates","South","fb",":=","sqrt(fb1^2+fb2^2+fb3^2)",0.1991,0.0661,0.0026
-"Upper trophic level aggregates","South","fs",":=","sqrt(fs1^2)",0.1951,0.068,0.0041
-"Upper trophic level aggregates","South","ft",":=","sqrt(ft1^2+ft2^2+ft3^2)",0.1173,0.066,0.0753
-"Upper trophic level aggregates","South","fa",":=","sqrt(fa1^2+fa2^2+fa3^2)",0.2286,0.0734,0.0018
-"Lower trophic level aggregates","Far West","din","~","din_1",0.4256,0.0501,0
-"Lower trophic level aggregates","Far West","din","~","chla",-0.1305,0.057,0.0221
-"Lower trophic level aggregates","Far West","din","~","hzoop_1",0.0328,0.0593,0.5799
-"Lower trophic level aggregates","Far West","din","~","pzoop_1",-0.0228,0.0595,0.7018
-"Lower trophic level aggregates","Far West","din","~","potam_1",-0.0053,0.0584,0.9282
-"Lower trophic level aggregates","Far West","din","~","flow",-0.0115,0.0634,0.8559
-"Lower trophic level aggregates","Far West","din","~","temp",-0.1493,0.0604,0.0135
-"Lower trophic level aggregates","Far West","din","~","turbid",-0.1304,0.0632,0.0391
-"Lower trophic level aggregates","Far West","chla","~","din_1",0.02,0.0641,0.755
-"Lower trophic level aggregates","Far West","chla","~","chla_1",0.2627,0.0609,0
-"Lower trophic level aggregates","Far West","chla","~","hzoop_1",-0.0147,0.0653,0.822
-"Lower trophic level aggregates","Far West","chla","~","potam_1",-0.0228,0.0641,0.7218
-"Lower trophic level aggregates","Far West","chla","~","flow",0.0734,0.0679,0.2796
-"Lower trophic level aggregates","Far West","chla","~","temp",0.1528,0.0661,0.0208
-"Lower trophic level aggregates","Far West","chla","~","turbid",-0.0552,0.0698,0.4285
-"Lower trophic level aggregates","Far West","potam","~","chla_1",0.0524,0.0475,0.2697
-"Lower trophic level aggregates","Far West","potam","~","hzoop_1",-0.0772,0.0493,0.1173
-"Lower trophic level aggregates","Far West","potam","~","pzoop_1",-0.1599,0.0486,0.001
-"Lower trophic level aggregates","Far West","potam","~","potam_1",0.6284,0.0352,0
-"Lower trophic level aggregates","Far West","potam","~","flow",0.1022,0.0519,0.0489
-"Lower trophic level aggregates","Far West","potam","~","temp",-0.0397,0.0504,0.4311
-"Lower trophic level aggregates","Far West","potam","~","turbid",0.0347,0.0528,0.5113
-"Lower trophic level aggregates","Far West","din","~~","din",0.7528,0.0461,0
-"Lower trophic level aggregates","Far West","chla","~~","chla",0.9083,0.0351,0
-"Lower trophic level aggregates","Far West","potam","~~","potam",0.5168,0.0409,0
-"Lower trophic level aggregates","Far West","din","~~","potam",-0.0665,0.0651,0.3066
+"Upper trophic level aggregates","South","hb",":=","sqrt(hb1^2)",0.2367,0.0647,3e-04
+"Upper trophic level aggregates","South","hs",":=","sqrt(hs1^2)",0.2065,0.0644,0.0013
+"Upper trophic level aggregates","South","ht",":=","sqrt(ht1^2+ht2^2+ht3^2)",0.0719,0.067,0.2833
+"Upper trophic level aggregates","South","ha",":=","sqrt(ha1^2+ha2^2+ha3^2)",0.2618,0.0634,0
+"Upper trophic level aggregates","South","pb",":=","sqrt(pb1^2+pb2^2)",0.3316,0.0529,0
+"Upper trophic level aggregates","South","ps",":=","sqrt(ps1^2)",0.3209,0.0593,0
+"Upper trophic level aggregates","South","pt",":=","sqrt(pt1^2+pt2^2)",0.0653,0.0574,0.2555
+"Upper trophic level aggregates","South","pa",":=","sqrt(pa1^2+pa2^2+pa3^2)",0.1678,0.0611,0.006
+"Upper trophic level aggregates","South","fb",":=","sqrt(fb1^2+fb2^2+fb3^2)",0.2017,0.0661,0.0023
+"Upper trophic level aggregates","South","fs",":=","sqrt(fs1^2)",0.1957,0.0679,0.004
+"Upper trophic level aggregates","South","ft",":=","sqrt(ft1^2+ft2^2+ft3^2)",0.1167,0.0658,0.0762
+"Upper trophic level aggregates","South","fa",":=","sqrt(fa1^2+fa2^2+fa3^2)",0.2318,0.0735,0.0016
+"Lower trophic level aggregates","Far West","din","~","din_1",0.4259,0.0501,0
+"Lower trophic level aggregates","Far West","din","~","chla",-0.1302,0.057,0.0224
+"Lower trophic level aggregates","Far West","din","~","hzoop_1",0.0296,0.0593,0.6176
+"Lower trophic level aggregates","Far West","din","~","pzoop_1",-0.0224,0.0595,0.7071
+"Lower trophic level aggregates","Far West","din","~","potam_1",-0.0059,0.0584,0.9195
+"Lower trophic level aggregates","Far West","din","~","flow",-0.012,0.0634,0.8501
+"Lower trophic level aggregates","Far West","din","~","temp",-0.1492,0.0606,0.0138
+"Lower trophic level aggregates","Far West","din","~","turbid",-0.1298,0.0632,0.0398
+"Lower trophic level aggregates","Far West","chla","~","din_1",0.0202,0.064,0.7524
+"Lower trophic level aggregates","Far West","chla","~","chla_1",0.2631,0.0608,0
+"Lower trophic level aggregates","Far West","chla","~","hzoop_1",-0.018,0.0653,0.7826
+"Lower trophic level aggregates","Far West","chla","~","potam_1",-0.0235,0.0641,0.714
+"Lower trophic level aggregates","Far West","chla","~","flow",0.0735,0.0679,0.2787
+"Lower trophic level aggregates","Far West","chla","~","temp",0.1536,0.0663,0.0204
+"Lower trophic level aggregates","Far West","chla","~","turbid",-0.0552,0.0697,0.4286
+"Lower trophic level aggregates","Far West","potam","~","chla_1",0.0513,0.0475,0.2795
+"Lower trophic level aggregates","Far West","potam","~","hzoop_1",-0.072,0.0494,0.1448
+"Lower trophic level aggregates","Far West","potam","~","pzoop_1",-0.1607,0.0486,9e-04
+"Lower trophic level aggregates","Far West","potam","~","potam_1",0.6295,0.0351,0
+"Lower trophic level aggregates","Far West","potam","~","flow",0.1032,0.0519,0.0467
+"Lower trophic level aggregates","Far West","potam","~","temp",-0.0396,0.0505,0.4327
+"Lower trophic level aggregates","Far West","potam","~","turbid",0.0334,0.0528,0.5265
+"Lower trophic level aggregates","Far West","din","~~","din",0.7531,0.0461,0
+"Lower trophic level aggregates","Far West","chla","~~","chla",0.9082,0.0351,0
+"Lower trophic level aggregates","Far West","potam","~~","potam",0.5175,0.0409,0
+"Lower trophic level aggregates","Far West","din","~~","potam",-0.067,0.0651,0.3029
 "Lower trophic level aggregates","Far West","din_1","~~","din_1",1,0,NA
-"Lower trophic level aggregates","Far West","din_1","~~","hzoop_1",0.0682,0,NA
+"Lower trophic level aggregates","Far West","din_1","~~","hzoop_1",0.0628,0,NA
 "Lower trophic level aggregates","Far West","din_1","~~","pzoop_1",0.0564,0,NA
 "Lower trophic level aggregates","Far West","din_1","~~","potam_1",-0.0718,0,NA
 "Lower trophic level aggregates","Far West","din_1","~~","flow",-0.0862,0,NA
@@ -435,12 +435,12 @@
 "Lower trophic level aggregates","Far West","din_1","~~","turbid",-0.019,0,NA
 "Lower trophic level aggregates","Far West","din_1","~~","chla_1",-0.1512,0,NA
 "Lower trophic level aggregates","Far West","hzoop_1","~~","hzoop_1",1,0,NA
-"Lower trophic level aggregates","Far West","hzoop_1","~~","pzoop_1",0.1018,0,NA
+"Lower trophic level aggregates","Far West","hzoop_1","~~","pzoop_1",0.0985,0,NA
 "Lower trophic level aggregates","Far West","hzoop_1","~~","potam_1",-0.2169,0,NA
-"Lower trophic level aggregates","Far West","hzoop_1","~~","flow",-0.0385,0,NA
-"Lower trophic level aggregates","Far West","hzoop_1","~~","temp",0.1484,0,NA
-"Lower trophic level aggregates","Far West","hzoop_1","~~","turbid",0.0099,0,NA
-"Lower trophic level aggregates","Far West","hzoop_1","~~","chla_1",0.1026,0,NA
+"Lower trophic level aggregates","Far West","hzoop_1","~~","flow",-0.0351,0,NA
+"Lower trophic level aggregates","Far West","hzoop_1","~~","temp",0.163,0,NA
+"Lower trophic level aggregates","Far West","hzoop_1","~~","turbid",-0.0017,0,NA
+"Lower trophic level aggregates","Far West","hzoop_1","~~","chla_1",0.0959,0,NA
 "Lower trophic level aggregates","Far West","pzoop_1","~~","pzoop_1",1,0,NA
 "Lower trophic level aggregates","Far West","pzoop_1","~~","potam_1",-0.0382,0,NA
 "Lower trophic level aggregates","Far West","pzoop_1","~~","flow",0.2448,0,NA
@@ -462,46 +462,46 @@
 "Lower trophic level aggregates","Far West","turbid","~~","turbid",1,0,NA
 "Lower trophic level aggregates","Far West","turbid","~~","chla_1",-0.04,0,NA
 "Lower trophic level aggregates","Far West","chla_1","~~","chla_1",1,0,NA
-"Lower trophic level aggregates","Far West","ns",":=","sqrt(ns1^2)",0.4256,0.0501,0
-"Lower trophic level aggregates","Far West","nt",":=","sqrt(nt1^2)",0.1305,0.057,0.0221
-"Lower trophic level aggregates","Far West","nn",":=","sqrt(nn1^2+nn2^2+nn3^2)",0.0403,0.0612,0.5103
-"Lower trophic level aggregates","Far West","na",":=","sqrt(na1^2+na2^2+na3^2)",0.1985,0.0673,0.0032
-"Lower trophic level aggregates","Far West","cb",":=","sqrt(cb1^2)",0.02,0.0641,0.755
-"Lower trophic level aggregates","Far West","cs",":=","sqrt(cs1^2)",0.2627,0.0609,0
-"Lower trophic level aggregates","Far West","ct",":=","sqrt(ct1^2+ct2^2)",0.0271,0.0703,0.6994
-"Lower trophic level aggregates","Far West","ca",":=","sqrt(ca1^2+ca2^2+ca3^2)",0.1783,0.0669,0.0077
-"Lower trophic level aggregates","Far West","lb",":=","sqrt(lb1^2+lb2^2+lb3^2)",0.1851,0.046,1e-04
-"Lower trophic level aggregates","Far West","ls",":=","sqrt(ls1^2)",0.6284,0.0352,0
-"Lower trophic level aggregates","Far West","la",":=","sqrt(la1^2+la2^2+la3^2)",0.115,0.0441,0.0092
-"Lower trophic level aggregates","West","din","~","din_1",0.4099,0.0479,0
-"Lower trophic level aggregates","West","din","~","chla",-0.1298,0.0468,0.0056
-"Lower trophic level aggregates","West","din","~","hzoop_1",0.0182,0.0524,0.7285
-"Lower trophic level aggregates","West","din","~","pzoop_1",0.0413,0.0487,0.3966
-"Lower trophic level aggregates","West","din","~","potam_1",0.0782,0.053,0.1397
-"Lower trophic level aggregates","West","din","~","flow",-0.3488,0.0498,0
-"Lower trophic level aggregates","West","din","~","temp",0.0274,0.0473,0.5615
-"Lower trophic level aggregates","West","din","~","turbid",0.1064,0.05,0.0334
-"Lower trophic level aggregates","West","chla","~","din_1",-0.1403,0.0684,0.0403
-"Lower trophic level aggregates","West","chla","~","chla_1",0.149,0.0639,0.0197
-"Lower trophic level aggregates","West","chla","~","hzoop_1",0.1052,0.0661,0.1116
-"Lower trophic level aggregates","West","chla","~","potam_1",0.0389,0.0696,0.5765
-"Lower trophic level aggregates","West","chla","~","flow",0.053,0.0684,0.4383
-"Lower trophic level aggregates","West","chla","~","temp",-0.0668,0.0615,0.2772
-"Lower trophic level aggregates","West","chla","~","turbid",-0.0317,0.0659,0.6311
-"Lower trophic level aggregates","West","potam","~","din_1",0.0722,0.0431,0.0938
-"Lower trophic level aggregates","West","potam","~","chla_1",-0.0067,0.0404,0.8687
-"Lower trophic level aggregates","West","potam","~","hzoop_1",-0.031,0.0437,0.4773
-"Lower trophic level aggregates","West","potam","~","pzoop_1",0.0777,0.0399,0.0515
-"Lower trophic level aggregates","West","potam","~","potam_1",0.6978,0.0335,0
-"Lower trophic level aggregates","West","potam","~","flow",-0.1036,0.0429,0.0157
-"Lower trophic level aggregates","West","potam","~","temp",-0.011,0.0388,0.7767
-"Lower trophic level aggregates","West","potam","~","turbid",-0.0783,0.041,0.0564
-"Lower trophic level aggregates","West","din","~~","din",0.5249,0.0398,0
-"Lower trophic level aggregates","West","chla","~~","chla",0.9002,0.0346,0
-"Lower trophic level aggregates","West","potam","~~","potam",0.3507,0.029,0
-"Lower trophic level aggregates","West","din","~~","potam",0.0877,0.0619,0.1565
+"Lower trophic level aggregates","Far West","ns",":=","sqrt(ns1^2)",0.4259,0.0501,0
+"Lower trophic level aggregates","Far West","nt",":=","sqrt(nt1^2)",0.1302,0.057,0.0224
+"Lower trophic level aggregates","Far West","nn",":=","sqrt(nn1^2+nn2^2+nn3^2)",0.0376,0.0611,0.5384
+"Lower trophic level aggregates","Far West","na",":=","sqrt(na1^2+na2^2+na3^2)",0.1981,0.0673,0.0032
+"Lower trophic level aggregates","Far West","cb",":=","sqrt(cb1^2)",0.0202,0.064,0.7524
+"Lower trophic level aggregates","Far West","cs",":=","sqrt(cs1^2)",0.2631,0.0608,0
+"Lower trophic level aggregates","Far West","ct",":=","sqrt(ct1^2+ct2^2)",0.0296,0.0707,0.6754
+"Lower trophic level aggregates","Far West","ca",":=","sqrt(ca1^2+ca2^2+ca3^2)",0.179,0.0671,0.0076
+"Lower trophic level aggregates","Far West","lb",":=","sqrt(lb1^2+lb2^2+lb3^2)",0.1834,0.0461,1e-04
+"Lower trophic level aggregates","Far West","ls",":=","sqrt(ls1^2)",0.6295,0.0351,0
+"Lower trophic level aggregates","Far West","la",":=","sqrt(la1^2+la2^2+la3^2)",0.1155,0.0444,0.0093
+"Lower trophic level aggregates","West","din","~","din_1",0.4095,0.048,0
+"Lower trophic level aggregates","West","din","~","chla",-0.1279,0.0469,0.0064
+"Lower trophic level aggregates","West","din","~","hzoop_1",0.0086,0.0534,0.8724
+"Lower trophic level aggregates","West","din","~","pzoop_1",0.0444,0.0491,0.3655
+"Lower trophic level aggregates","West","din","~","potam_1",0.0768,0.0532,0.1491
+"Lower trophic level aggregates","West","din","~","flow",-0.3473,0.05,0
+"Lower trophic level aggregates","West","din","~","temp",0.0263,0.0472,0.5771
+"Lower trophic level aggregates","West","din","~","turbid",0.1065,0.0501,0.0335
+"Lower trophic level aggregates","West","chla","~","din_1",-0.1397,0.0684,0.0413
+"Lower trophic level aggregates","West","chla","~","chla_1",0.148,0.0641,0.0209
+"Lower trophic level aggregates","West","chla","~","hzoop_1",0.1061,0.067,0.1133
+"Lower trophic level aggregates","West","chla","~","potam_1",0.0418,0.07,0.5505
+"Lower trophic level aggregates","West","chla","~","flow",0.0513,0.0686,0.455
+"Lower trophic level aggregates","West","chla","~","temp",-0.0683,0.0614,0.2657
+"Lower trophic level aggregates","West","chla","~","turbid",-0.0282,0.066,0.6695
+"Lower trophic level aggregates","West","potam","~","din_1",0.0732,0.0431,0.0899
+"Lower trophic level aggregates","West","potam","~","chla_1",-0.0123,0.0405,0.7617
+"Lower trophic level aggregates","West","potam","~","hzoop_1",-0.0057,0.0446,0.8979
+"Lower trophic level aggregates","West","potam","~","pzoop_1",0.0706,0.0402,0.0792
+"Lower trophic level aggregates","West","potam","~","potam_1",0.7022,0.0336,0
+"Lower trophic level aggregates","West","potam","~","flow",-0.1081,0.0431,0.0121
+"Lower trophic level aggregates","West","potam","~","temp",-0.0087,0.0388,0.8235
+"Lower trophic level aggregates","West","potam","~","turbid",-0.0781,0.0411,0.0574
+"Lower trophic level aggregates","West","din","~~","din",0.5252,0.0398,0
+"Lower trophic level aggregates","West","chla","~~","chla",0.9003,0.0346,0
+"Lower trophic level aggregates","West","potam","~~","potam",0.3513,0.029,0
+"Lower trophic level aggregates","West","din","~~","potam",0.0863,0.0619,0.1632
 "Lower trophic level aggregates","West","din_1","~~","din_1",1,0,NA
-"Lower trophic level aggregates","West","din_1","~~","hzoop_1",-0.2519,0,NA
+"Lower trophic level aggregates","West","din_1","~~","hzoop_1",-0.2684,0,NA
 "Lower trophic level aggregates","West","din_1","~~","pzoop_1",-0.0281,0,NA
 "Lower trophic level aggregates","West","din_1","~~","potam_1",0.3518,0,NA
 "Lower trophic level aggregates","West","din_1","~~","flow",-0.3989,0,NA
@@ -509,12 +509,12 @@
 "Lower trophic level aggregates","West","din_1","~~","turbid",-0.1344,0,NA
 "Lower trophic level aggregates","West","din_1","~~","chla_1",-0.2684,0,NA
 "Lower trophic level aggregates","West","hzoop_1","~~","hzoop_1",1,0,NA
-"Lower trophic level aggregates","West","hzoop_1","~~","pzoop_1",0.3243,0,NA
-"Lower trophic level aggregates","West","hzoop_1","~~","potam_1",-0.2937,0,NA
-"Lower trophic level aggregates","West","hzoop_1","~~","flow",0.283,0,NA
-"Lower trophic level aggregates","West","hzoop_1","~~","temp",-0.1334,0,NA
-"Lower trophic level aggregates","West","hzoop_1","~~","turbid",0.121,0,NA
-"Lower trophic level aggregates","West","hzoop_1","~~","chla_1",0.3134,0,NA
+"Lower trophic level aggregates","West","hzoop_1","~~","pzoop_1",0.3412,0,NA
+"Lower trophic level aggregates","West","hzoop_1","~~","potam_1",-0.3143,0,NA
+"Lower trophic level aggregates","West","hzoop_1","~~","flow",0.2977,0,NA
+"Lower trophic level aggregates","West","hzoop_1","~~","temp",-0.1169,0,NA
+"Lower trophic level aggregates","West","hzoop_1","~~","turbid",0.0996,0,NA
+"Lower trophic level aggregates","West","hzoop_1","~~","chla_1",0.3231,0,NA
 "Lower trophic level aggregates","West","pzoop_1","~~","pzoop_1",1,0,NA
 "Lower trophic level aggregates","West","pzoop_1","~~","potam_1",-0.1232,0,NA
 "Lower trophic level aggregates","West","pzoop_1","~~","flow",-0.038,0,NA
@@ -536,46 +536,46 @@
 "Lower trophic level aggregates","West","turbid","~~","turbid",1,0,NA
 "Lower trophic level aggregates","West","turbid","~~","chla_1",-0.0233,0,NA
 "Lower trophic level aggregates","West","chla_1","~~","chla_1",1,0,NA
-"Lower trophic level aggregates","West","ns",":=","sqrt(ns1^2)",0.4099,0.0479,0
-"Lower trophic level aggregates","West","nt",":=","sqrt(nt1^2)",0.1298,0.0468,0.0056
-"Lower trophic level aggregates","West","nn",":=","sqrt(nn1^2+nn2^2+nn3^2)",0.0903,0.0533,0.0904
-"Lower trophic level aggregates","West","na",":=","sqrt(na1^2+na2^2+na3^2)",0.3657,0.0519,0
-"Lower trophic level aggregates","West","cb",":=","sqrt(cb1^2)",0.1403,0.0684,0.0403
-"Lower trophic level aggregates","West","cs",":=","sqrt(cs1^2)",0.149,0.0639,0.0197
-"Lower trophic level aggregates","West","ct",":=","sqrt(ct1^2+ct2^2)",0.1122,0.0712,0.1151
-"Lower trophic level aggregates","West","ca",":=","sqrt(ca1^2+ca2^2+ca3^2)",0.091,0.0677,0.1792
-"Lower trophic level aggregates","West","lb",":=","sqrt(lb1^2+lb2^2+lb3^2+lb4^2)",0.1107,0.0426,0.0093
-"Lower trophic level aggregates","West","ls",":=","sqrt(ls1^2)",0.6978,0.0335,0
-"Lower trophic level aggregates","West","la",":=","sqrt(la1^2+la2^2+la3^2)",0.1304,0.0386,7e-04
-"Lower trophic level aggregates","North","din","~","din_1",0.1304,0.0535,0.0148
-"Lower trophic level aggregates","North","din","~","chla",-0.1744,0.0497,4e-04
-"Lower trophic level aggregates","North","din","~","hzoop_1",0.0512,0.0515,0.3208
-"Lower trophic level aggregates","North","din","~","pzoop_1",0.1735,0.0527,0.001
-"Lower trophic level aggregates","North","din","~","corbic_1",-0.0262,0.0503,0.6019
-"Lower trophic level aggregates","North","din","~","flow",-0.4597,0.05,0
-"Lower trophic level aggregates","North","din","~","temp",0.0277,0.0514,0.5897
-"Lower trophic level aggregates","North","din","~","turbid",0.0564,0.0499,0.2589
-"Lower trophic level aggregates","North","chla","~","din_1",0.0247,0.0661,0.7083
-"Lower trophic level aggregates","North","chla","~","chla_1",0.281,0.0572,0
-"Lower trophic level aggregates","North","chla","~","hzoop_1",-0.0525,0.0618,0.3954
-"Lower trophic level aggregates","North","chla","~","corbic_1",0.0161,0.0605,0.7903
-"Lower trophic level aggregates","North","chla","~","pzoop_1",-0.1654,0.0634,0.009
-"Lower trophic level aggregates","North","chla","~","flow",-0.0524,0.0673,0.4363
-"Lower trophic level aggregates","North","chla","~","temp",0.1356,0.0605,0.0251
-"Lower trophic level aggregates","North","chla","~","turbid",0.0787,0.0597,0.1877
-"Lower trophic level aggregates","North","corbic","~","chla_1",0.0032,0.0544,0.9538
-"Lower trophic level aggregates","North","corbic","~","hzoop_1",0.0149,0.0565,0.7913
-"Lower trophic level aggregates","North","corbic","~","pzoop_1",-0.0116,0.0582,0.8425
-"Lower trophic level aggregates","North","corbic","~","corbic_1",0.46,0.0471,0
-"Lower trophic level aggregates","North","corbic","~","flow",0.0908,0.0588,0.1226
-"Lower trophic level aggregates","North","corbic","~","temp",-0.0344,0.0561,0.5399
-"Lower trophic level aggregates","North","corbic","~","turbid",-0.1209,0.0541,0.0254
-"Lower trophic level aggregates","North","din","~~","din",0.6098,0.0435,0
-"Lower trophic level aggregates","North","chla","~~","chla",0.8792,0.0371,0
-"Lower trophic level aggregates","North","corbic","~~","corbic",0.7396,0.0441,0
-"Lower trophic level aggregates","North","din","~~","corbic",-0.0264,0.0626,0.673
+"Lower trophic level aggregates","West","ns",":=","sqrt(ns1^2)",0.4095,0.048,0
+"Lower trophic level aggregates","West","nt",":=","sqrt(nt1^2)",0.1279,0.0469,0.0064
+"Lower trophic level aggregates","West","nn",":=","sqrt(nn1^2+nn2^2+nn3^2)",0.0891,0.0533,0.0946
+"Lower trophic level aggregates","West","na",":=","sqrt(na1^2+na2^2+na3^2)",0.3642,0.0523,0
+"Lower trophic level aggregates","West","cb",":=","sqrt(cb1^2)",0.1397,0.0684,0.0413
+"Lower trophic level aggregates","West","cs",":=","sqrt(cs1^2)",0.148,0.0641,0.0209
+"Lower trophic level aggregates","West","ct",":=","sqrt(ct1^2+ct2^2)",0.1141,0.0729,0.1177
+"Lower trophic level aggregates","West","ca",":=","sqrt(ca1^2+ca2^2+ca3^2)",0.0899,0.0671,0.1801
+"Lower trophic level aggregates","West","lb",":=","sqrt(lb1^2+lb2^2+lb3^2+lb4^2)",0.1026,0.0406,0.0116
+"Lower trophic level aggregates","West","ls",":=","sqrt(ls1^2)",0.7022,0.0336,0
+"Lower trophic level aggregates","West","la",":=","sqrt(la1^2+la2^2+la3^2)",0.1337,0.0386,5e-04
+"Lower trophic level aggregates","North","din","~","din_1",0.1299,0.0535,0.0152
+"Lower trophic level aggregates","North","din","~","chla",-0.1748,0.0497,4e-04
+"Lower trophic level aggregates","North","din","~","hzoop_1",0.0476,0.0517,0.3569
+"Lower trophic level aggregates","North","din","~","pzoop_1",0.1742,0.0527,0.001
+"Lower trophic level aggregates","North","din","~","corbic_1",-0.0263,0.0503,0.6011
+"Lower trophic level aggregates","North","din","~","flow",-0.4591,0.0501,0
+"Lower trophic level aggregates","North","din","~","temp",0.0274,0.0514,0.5934
+"Lower trophic level aggregates","North","din","~","turbid",0.057,0.05,0.2539
+"Lower trophic level aggregates","North","chla","~","din_1",0.0251,0.0661,0.7039
+"Lower trophic level aggregates","North","chla","~","chla_1",0.2812,0.0572,0
+"Lower trophic level aggregates","North","chla","~","hzoop_1",-0.0499,0.0619,0.4207
+"Lower trophic level aggregates","North","chla","~","corbic_1",0.0162,0.0605,0.7894
+"Lower trophic level aggregates","North","chla","~","pzoop_1",-0.1659,0.0634,0.0089
+"Lower trophic level aggregates","North","chla","~","flow",-0.0528,0.0673,0.4333
+"Lower trophic level aggregates","North","chla","~","temp",0.1359,0.0605,0.0247
+"Lower trophic level aggregates","North","chla","~","turbid",0.0779,0.0598,0.1924
+"Lower trophic level aggregates","North","corbic","~","chla_1",0.0031,0.0544,0.9542
+"Lower trophic level aggregates","North","corbic","~","hzoop_1",0.011,0.0566,0.8458
+"Lower trophic level aggregates","North","corbic","~","pzoop_1",-0.0108,0.0583,0.8532
+"Lower trophic level aggregates","North","corbic","~","corbic_1",0.4599,0.0471,0
+"Lower trophic level aggregates","North","corbic","~","flow",0.0919,0.0589,0.1188
+"Lower trophic level aggregates","North","corbic","~","temp",-0.0345,0.0561,0.5389
+"Lower trophic level aggregates","North","corbic","~","turbid",-0.121,0.0541,0.0255
+"Lower trophic level aggregates","North","din","~~","din",0.6101,0.0435,0
+"Lower trophic level aggregates","North","chla","~~","chla",0.8794,0.0371,0
+"Lower trophic level aggregates","North","corbic","~~","corbic",0.7397,0.0441,0
+"Lower trophic level aggregates","North","din","~~","corbic",-0.0262,0.0626,0.676
 "Lower trophic level aggregates","North","din_1","~~","din_1",1,0,NA
-"Lower trophic level aggregates","North","din_1","~~","hzoop_1",-0.147,0,NA
+"Lower trophic level aggregates","North","din_1","~~","hzoop_1",-0.1475,0,NA
 "Lower trophic level aggregates","North","din_1","~~","pzoop_1",0.2341,0,NA
 "Lower trophic level aggregates","North","din_1","~~","corbic_1",-0.1171,0,NA
 "Lower trophic level aggregates","North","din_1","~~","flow",-0.3654,0,NA
@@ -583,12 +583,12 @@
 "Lower trophic level aggregates","North","din_1","~~","turbid",0.0951,0,NA
 "Lower trophic level aggregates","North","din_1","~~","chla_1",-0.1466,0,NA
 "Lower trophic level aggregates","North","hzoop_1","~~","hzoop_1",1,0,NA
-"Lower trophic level aggregates","North","hzoop_1","~~","pzoop_1",0.1273,0,NA
-"Lower trophic level aggregates","North","hzoop_1","~~","corbic_1",-0.0044,0,NA
-"Lower trophic level aggregates","North","hzoop_1","~~","flow",0.2217,0,NA
-"Lower trophic level aggregates","North","hzoop_1","~~","temp",-0.0284,0,NA
-"Lower trophic level aggregates","North","hzoop_1","~~","turbid",-0.0328,0,NA
-"Lower trophic level aggregates","North","hzoop_1","~~","chla_1",0.0038,0,NA
+"Lower trophic level aggregates","North","hzoop_1","~~","pzoop_1",0.1286,0,NA
+"Lower trophic level aggregates","North","hzoop_1","~~","corbic_1",-0.003,0,NA
+"Lower trophic level aggregates","North","hzoop_1","~~","flow",0.2229,0,NA
+"Lower trophic level aggregates","North","hzoop_1","~~","temp",-0.0225,0,NA
+"Lower trophic level aggregates","North","hzoop_1","~~","turbid",-0.0495,0,NA
+"Lower trophic level aggregates","North","hzoop_1","~~","chla_1",0.0029,0,NA
 "Lower trophic level aggregates","North","pzoop_1","~~","pzoop_1",1,0,NA
 "Lower trophic level aggregates","North","pzoop_1","~~","corbic_1",-0.1373,0,NA
 "Lower trophic level aggregates","North","pzoop_1","~~","flow",-0.2681,0,NA
@@ -610,45 +610,45 @@
 "Lower trophic level aggregates","North","turbid","~~","turbid",1,0,NA
 "Lower trophic level aggregates","North","turbid","~~","chla_1",0.0811,0,NA
 "Lower trophic level aggregates","North","chla_1","~~","chla_1",1,0,NA
-"Lower trophic level aggregates","North","ns",":=","sqrt(ns1^2)",0.1304,0.0535,0.0148
-"Lower trophic level aggregates","North","nt",":=","sqrt(nt1^2)",0.1744,0.0497,4e-04
-"Lower trophic level aggregates","North","nn",":=","sqrt(nn1^2+nn2^2+nn3^2)",0.1828,0.0488,2e-04
-"Lower trophic level aggregates","North","na",":=","sqrt(na1^2+na2^2+na3^2)",0.464,0.0502,0
-"Lower trophic level aggregates","North","cb",":=","sqrt(cb1^2)",0.0247,0.0661,0.7083
-"Lower trophic level aggregates","North","cs",":=","sqrt(cs1^2)",0.281,0.0572,0
-"Lower trophic level aggregates","North","ct",":=","sqrt(ct1^2+ct2^2+ct3^2)",0.1743,0.0585,0.0029
-"Lower trophic level aggregates","North","ca",":=","sqrt(ca1^2+ca2^2+ca3^2)",0.1652,0.0595,0.0055
-"Lower trophic level aggregates","North","lb",":=","sqrt(lb1^2+lb2^2+lb3^2)",0.0192,0.0629,0.7606
-"Lower trophic level aggregates","North","ls",":=","sqrt(ls1^2)",0.46,0.0471,0
-"Lower trophic level aggregates","North","la",":=","sqrt(la1^2+la2^2+la3^2)",0.1551,0.0567,0.0062
-"Lower trophic level aggregates","South","din","~","din_1",0.2031,0.0599,7e-04
-"Lower trophic level aggregates","South","din","~","chla",0.0254,0.0585,0.6642
-"Lower trophic level aggregates","South","din","~","hzoop_1",-0.0194,0.0605,0.7479
-"Lower trophic level aggregates","South","din","~","pzoop_1",0.025,0.0597,0.6749
-"Lower trophic level aggregates","South","din","~","corbic_1",0.0722,0.0595,0.225
-"Lower trophic level aggregates","South","din","~","flow",-0.0063,0.0593,0.916
-"Lower trophic level aggregates","South","din","~","temp",0.0944,0.0583,0.1057
-"Lower trophic level aggregates","South","din","~","turbid",0.2499,0.0599,0
-"Lower trophic level aggregates","South","chla","~","din_1",-0.0074,0.0629,0.9067
-"Lower trophic level aggregates","South","chla","~","chla_1",0.2858,0.057,0
-"Lower trophic level aggregates","South","chla","~","hzoop_1",0.0704,0.0616,0.2532
-"Lower trophic level aggregates","South","chla","~","corbic_1",0.087,0.0605,0.1507
-"Lower trophic level aggregates","South","chla","~","flow",-0.1152,0.0595,0.053
-"Lower trophic level aggregates","South","chla","~","temp",0.0204,0.0592,0.7307
-"Lower trophic level aggregates","South","chla","~","turbid",0.0156,0.0638,0.8065
-"Lower trophic level aggregates","South","corbic","~","chla_1",0.0536,0.0586,0.3606
-"Lower trophic level aggregates","South","corbic","~","hzoop_1",-0.0291,0.0587,0.6205
-"Lower trophic level aggregates","South","corbic","~","pzoop_1",-0.0384,0.0591,0.5163
-"Lower trophic level aggregates","South","corbic","~","corbic_1",0.3187,0.0541,0
-"Lower trophic level aggregates","South","corbic","~","flow",0.0811,0.0573,0.1571
-"Lower trophic level aggregates","South","corbic","~","temp",-0.0775,0.0572,0.1753
-"Lower trophic level aggregates","South","corbic","~","turbid",0.1854,0.0566,0.0011
-"Lower trophic level aggregates","South","din","~~","din",0.8447,0.0399,0
-"Lower trophic level aggregates","South","chla","~~","chla",0.8813,0.0368,0
-"Lower trophic level aggregates","South","corbic","~~","corbic",0.8083,0.0421,0
-"Lower trophic level aggregates","South","din","~~","corbic",-0.0882,0.062,0.1552
+"Lower trophic level aggregates","North","ns",":=","sqrt(ns1^2)",0.1299,0.0535,0.0152
+"Lower trophic level aggregates","North","nt",":=","sqrt(nt1^2)",0.1748,0.0497,4e-04
+"Lower trophic level aggregates","North","nn",":=","sqrt(nn1^2+nn2^2+nn3^2)",0.1825,0.049,2e-04
+"Lower trophic level aggregates","North","na",":=","sqrt(na1^2+na2^2+na3^2)",0.4634,0.0503,0
+"Lower trophic level aggregates","North","cb",":=","sqrt(cb1^2)",0.0251,0.0661,0.7039
+"Lower trophic level aggregates","North","cs",":=","sqrt(cs1^2)",0.2812,0.0572,0
+"Lower trophic level aggregates","North","ct",":=","sqrt(ct1^2+ct2^2+ct3^2)",0.174,0.0587,0.003
+"Lower trophic level aggregates","North","ca",":=","sqrt(ca1^2+ca2^2+ca3^2)",0.1653,0.0595,0.0055
+"Lower trophic level aggregates","North","lb",":=","sqrt(lb1^2+lb2^2+lb3^2)",0.0157,0.0635,0.8044
+"Lower trophic level aggregates","North","ls",":=","sqrt(ls1^2)",0.4599,0.0471,0
+"Lower trophic level aggregates","North","la",":=","sqrt(la1^2+la2^2+la3^2)",0.1558,0.0569,0.0062
+"Lower trophic level aggregates","South","din","~","din_1",0.2038,0.0598,7e-04
+"Lower trophic level aggregates","South","din","~","chla",0.0261,0.0586,0.6564
+"Lower trophic level aggregates","South","din","~","hzoop_1",-0.0245,0.0607,0.6868
+"Lower trophic level aggregates","South","din","~","pzoop_1",0.0262,0.0598,0.6616
+"Lower trophic level aggregates","South","din","~","corbic_1",0.0725,0.0595,0.2228
+"Lower trophic level aggregates","South","din","~","flow",-0.0052,0.0594,0.9296
+"Lower trophic level aggregates","South","din","~","temp",0.0945,0.0583,0.1052
+"Lower trophic level aggregates","South","din","~","turbid",0.2492,0.06,0
+"Lower trophic level aggregates","South","chla","~","din_1",-0.0075,0.0629,0.9048
+"Lower trophic level aggregates","South","chla","~","chla_1",0.2845,0.0573,0
+"Lower trophic level aggregates","South","chla","~","hzoop_1",0.0723,0.0618,0.2423
+"Lower trophic level aggregates","South","chla","~","corbic_1",0.0869,0.0605,0.151
+"Lower trophic level aggregates","South","chla","~","flow",-0.1162,0.0596,0.0513
+"Lower trophic level aggregates","South","chla","~","temp",0.0202,0.0592,0.7333
+"Lower trophic level aggregates","South","chla","~","turbid",0.0168,0.0639,0.7928
+"Lower trophic level aggregates","South","corbic","~","chla_1",0.0529,0.0587,0.368
+"Lower trophic level aggregates","South","corbic","~","hzoop_1",-0.0232,0.0591,0.695
+"Lower trophic level aggregates","South","corbic","~","pzoop_1",-0.039,0.0593,0.5102
+"Lower trophic level aggregates","South","corbic","~","corbic_1",0.3183,0.0541,0
+"Lower trophic level aggregates","South","corbic","~","flow",0.0805,0.0574,0.1609
+"Lower trophic level aggregates","South","corbic","~","temp",-0.0776,0.0572,0.1745
+"Lower trophic level aggregates","South","corbic","~","turbid",0.1853,0.0567,0.0011
+"Lower trophic level aggregates","South","din","~~","din",0.8446,0.04,0
+"Lower trophic level aggregates","South","chla","~~","chla",0.8811,0.0368,0
+"Lower trophic level aggregates","South","corbic","~~","corbic",0.8086,0.0421,0
+"Lower trophic level aggregates","South","din","~~","corbic",-0.088,0.062,0.1558
 "Lower trophic level aggregates","South","din_1","~~","din_1",1,0,NA
-"Lower trophic level aggregates","South","din_1","~~","hzoop_1",0.1713,0,NA
+"Lower trophic level aggregates","South","din_1","~~","hzoop_1",0.1649,0,NA
 "Lower trophic level aggregates","South","din_1","~~","pzoop_1",0.107,0,NA
 "Lower trophic level aggregates","South","din_1","~~","corbic_1",-9e-04,0,NA
 "Lower trophic level aggregates","South","din_1","~~","flow",-0.019,0,NA
@@ -656,12 +656,12 @@
 "Lower trophic level aggregates","South","din_1","~~","turbid",0.3,0,NA
 "Lower trophic level aggregates","South","din_1","~~","chla_1",0.0558,0,NA
 "Lower trophic level aggregates","South","hzoop_1","~~","hzoop_1",1,0,NA
-"Lower trophic level aggregates","South","hzoop_1","~~","pzoop_1",0.1818,0,NA
-"Lower trophic level aggregates","South","hzoop_1","~~","corbic_1",0.0773,0,NA
-"Lower trophic level aggregates","South","hzoop_1","~~","flow",0.1205,0,NA
-"Lower trophic level aggregates","South","hzoop_1","~~","temp",0.0557,0,NA
-"Lower trophic level aggregates","South","hzoop_1","~~","turbid",-0.0037,0,NA
-"Lower trophic level aggregates","South","hzoop_1","~~","chla_1",0.1921,0,NA
+"Lower trophic level aggregates","South","hzoop_1","~~","pzoop_1",0.1941,0,NA
+"Lower trophic level aggregates","South","hzoop_1","~~","corbic_1",0.0744,0,NA
+"Lower trophic level aggregates","South","hzoop_1","~~","flow",0.1288,0,NA
+"Lower trophic level aggregates","South","hzoop_1","~~","temp",0.0589,0,NA
+"Lower trophic level aggregates","South","hzoop_1","~~","turbid",-0.0164,0,NA
+"Lower trophic level aggregates","South","hzoop_1","~~","chla_1",0.2031,0,NA
 "Lower trophic level aggregates","South","pzoop_1","~~","pzoop_1",1,0,NA
 "Lower trophic level aggregates","South","pzoop_1","~~","corbic_1",-0.0063,0,NA
 "Lower trophic level aggregates","South","pzoop_1","~~","flow",-0.0671,0,NA
@@ -683,71 +683,71 @@
 "Lower trophic level aggregates","South","turbid","~~","turbid",1,0,NA
 "Lower trophic level aggregates","South","turbid","~~","chla_1",0.0696,0,NA
 "Lower trophic level aggregates","South","chla_1","~~","chla_1",1,0,NA
-"Lower trophic level aggregates","South","ns",":=","sqrt(ns1^2)",0.2031,0.0599,7e-04
-"Lower trophic level aggregates","South","nt",":=","sqrt(nt1^2)",0.0254,0.0585,0.6642
-"Lower trophic level aggregates","South","nn",":=","sqrt(nn1^2+nn2^2+nn3^2)",0.0789,0.0614,0.1993
-"Lower trophic level aggregates","South","na",":=","sqrt(na1^2+na2^2+na3^2)",0.2672,0.0604,0
-"Lower trophic level aggregates","South","cb",":=","sqrt(cb1^2)",0.0074,0.0629,0.9067
-"Lower trophic level aggregates","South","cs",":=","sqrt(cs1^2)",0.2858,0.057,0
-"Lower trophic level aggregates","South","ct",":=","sqrt(ct1^2+ct2^2)",0.1119,0.0579,0.0534
-"Lower trophic level aggregates","South","ca",":=","sqrt(ca1^2+ca2^2+ca3^2)",0.118,0.0602,0.05
-"Lower trophic level aggregates","South","lb",":=","sqrt(lb1^2+lb2^2+lb3^2)",0.072,0.0638,0.2588
-"Lower trophic level aggregates","South","ls",":=","sqrt(ls1^2)",0.3187,0.0541,0
-"Lower trophic level aggregates","South","la",":=","sqrt(la1^2+la2^2+la3^2)",0.2167,0.0534,0
-"Individual zooplankton groups","Far West","chla","~","chla_1",0.2141,0.0668,0.0014
-"Individual zooplankton groups","Far West","chla","~","hcope_1",0.0868,0.0693,0.2108
-"Individual zooplankton groups","Far West","chla","~","amphi_m_1",0.022,0.0841,0.7941
-"Individual zooplankton groups","Far West","chla","~","rotif_m_1",-0.1146,0.0724,0.1135
-"Individual zooplankton groups","Far West","chla","~","potam_1",-0.0135,0.0694,0.8458
-"Individual zooplankton groups","Far West","chla","~","flow",0.1418,0.0847,0.094
-"Individual zooplankton groups","Far West","chla","~","turbid",-0.0919,0.0775,0.2356
-"Individual zooplankton groups","Far West","chla","~","temp",0.1602,0.0703,0.0226
-"Individual zooplankton groups","Far West","hcope","~","chla_1",0.0855,0.0654,0.1913
-"Individual zooplankton groups","Far West","hcope","~","hcope_1",0.232,0.0683,7e-04
-"Individual zooplankton groups","Far West","hcope","~","pcope_1",0.0612,0.0697,0.3801
-"Individual zooplankton groups","Far West","hcope","~","potam_1",-0.158,0.0677,0.0196
-"Individual zooplankton groups","Far West","hcope","~","flow",-0.0673,0.0768,0.3804
-"Individual zooplankton groups","Far West","hcope","~","turbid",-0.0138,0.0752,0.8547
-"Individual zooplankton groups","Far West","hcope","~","temp",-0.0502,0.0707,0.477
-"Individual zooplankton groups","Far West","hcope","~","estfish_bsmt_1",-0.1307,0.0738,0.0766
-"Individual zooplankton groups","Far West","amphi_m","~","chla_1",0.0416,0.0322,0.1957
-"Individual zooplankton groups","Far West","amphi_m","~","amphi_m_1",0.7455,0.0293,0
-"Individual zooplankton groups","Far West","amphi_m","~","flow",-0.2482,0.0392,0
-"Individual zooplankton groups","Far West","amphi_m","~","turbid",-0.0104,0.036,0.7726
-"Individual zooplankton groups","Far West","amphi_m","~","temp",0.013,0.0336,0.6993
-"Individual zooplankton groups","Far West","amphi_m","~","estfish_bsmt_1",0.0417,0.0342,0.223
-"Individual zooplankton groups","Far West","rotif_m","~","chla_1",-0.1653,0.065,0.011
-"Individual zooplankton groups","Far West","rotif_m","~","rotif_m_1",0.3724,0.0597,0
-"Individual zooplankton groups","Far West","rotif_m","~","flow",0.0699,0.0754,0.354
-"Individual zooplankton groups","Far West","rotif_m","~","turbid",0.0286,0.0741,0.7
-"Individual zooplankton groups","Far West","rotif_m","~","temp",0.0068,0.0693,0.9223
-"Individual zooplankton groups","Far West","rotif_m","~","estfish_bsmt_1",-0.0066,0.0697,0.9245
-"Individual zooplankton groups","Far West","pcope","~","hcope_1",0.0442,0.0684,0.5178
-"Individual zooplankton groups","Far West","pcope","~","pcope_1",0.3005,0.0639,0
-"Individual zooplankton groups","Far West","pcope","~","potam_1",-0.1056,0.0662,0.1107
-"Individual zooplankton groups","Far West","pcope","~","flow",0.2017,0.0728,0.0056
-"Individual zooplankton groups","Far West","pcope","~","turbid",0.081,0.0723,0.2625
-"Individual zooplankton groups","Far West","pcope","~","temp",0.1527,0.0677,0.0241
-"Individual zooplankton groups","Far West","pcope","~","estfish_bsmt_1",-0.0079,0.0722,0.9131
-"Individual zooplankton groups","Far West","chla","~~","chla",0.8873,0.0417,0
-"Individual zooplankton groups","Far West","hcope","~~","hcope",0.8513,0.0455,0
+"Lower trophic level aggregates","South","ns",":=","sqrt(ns1^2)",0.2038,0.0598,7e-04
+"Lower trophic level aggregates","South","nt",":=","sqrt(nt1^2)",0.0261,0.0586,0.6564
+"Lower trophic level aggregates","South","nn",":=","sqrt(nn1^2+nn2^2+nn3^2)",0.0809,0.062,0.1915
+"Lower trophic level aggregates","South","na",":=","sqrt(na1^2+na2^2+na3^2)",0.2666,0.0605,0
+"Lower trophic level aggregates","South","cb",":=","sqrt(cb1^2)",0.0075,0.0629,0.9048
+"Lower trophic level aggregates","South","cs",":=","sqrt(cs1^2)",0.2845,0.0573,0
+"Lower trophic level aggregates","South","ct",":=","sqrt(ct1^2+ct2^2)",0.113,0.058,0.0514
+"Lower trophic level aggregates","South","ca",":=","sqrt(ca1^2+ca2^2+ca3^2)",0.1191,0.0604,0.0485
+"Lower trophic level aggregates","South","lb",":=","sqrt(lb1^2+lb2^2+lb3^2)",0.0697,0.064,0.276
+"Lower trophic level aggregates","South","ls",":=","sqrt(ls1^2)",0.3183,0.0541,0
+"Lower trophic level aggregates","South","la",":=","sqrt(la1^2+la2^2+la3^2)",0.2165,0.0534,1e-04
+"Individual zooplankton groups","Far West","chla","~","chla_1",0.2124,0.0671,0.0015
+"Individual zooplankton groups","Far West","chla","~","hcope_1",0.0836,0.0694,0.2283
+"Individual zooplankton groups","Far West","chla","~","amphi_m_1",0.0324,0.0847,0.7018
+"Individual zooplankton groups","Far West","chla","~","rotif_m_1",-0.08,0.0727,0.2713
+"Individual zooplankton groups","Far West","chla","~","potam_1",-0.0044,0.0692,0.9488
+"Individual zooplankton groups","Far West","chla","~","flow",0.1437,0.085,0.091
+"Individual zooplankton groups","Far West","chla","~","turbid",-0.0884,0.0778,0.256
+"Individual zooplankton groups","Far West","chla","~","temp",0.1606,0.0705,0.0228
+"Individual zooplankton groups","Far West","hcope","~","chla_1",0.0851,0.0653,0.1926
+"Individual zooplankton groups","Far West","hcope","~","hcope_1",0.2345,0.0682,6e-04
+"Individual zooplankton groups","Far West","hcope","~","pcope_1",0.0639,0.0697,0.3589
+"Individual zooplankton groups","Far West","hcope","~","potam_1",-0.158,0.0677,0.0195
+"Individual zooplankton groups","Far West","hcope","~","flow",-0.0678,0.0767,0.3767
+"Individual zooplankton groups","Far West","hcope","~","turbid",-0.0139,0.0751,0.8532
+"Individual zooplankton groups","Far West","hcope","~","temp",-0.0505,0.0706,0.4745
+"Individual zooplankton groups","Far West","hcope","~","estfish_bsmt_1",-0.1299,0.0738,0.0782
+"Individual zooplankton groups","Far West","amphi_m","~","chla_1",0.0417,0.0322,0.1956
+"Individual zooplankton groups","Far West","amphi_m","~","amphi_m_1",0.7454,0.0293,0
+"Individual zooplankton groups","Far West","amphi_m","~","flow",-0.2483,0.0393,0
+"Individual zooplankton groups","Far West","amphi_m","~","turbid",-0.0104,0.036,0.772
+"Individual zooplankton groups","Far West","amphi_m","~","temp",0.013,0.0336,0.7001
+"Individual zooplankton groups","Far West","amphi_m","~","estfish_bsmt_1",0.0416,0.0342,0.2242
+"Individual zooplankton groups","Far West","rotif_m","~","chla_1",-0.1726,0.0641,0.0071
+"Individual zooplankton groups","Far West","rotif_m","~","rotif_m_1",0.3791,0.0591,0
+"Individual zooplankton groups","Far West","rotif_m","~","flow",0.1029,0.0746,0.1678
+"Individual zooplankton groups","Far West","rotif_m","~","turbid",0.0072,0.0734,0.9215
+"Individual zooplankton groups","Far West","rotif_m","~","temp",0.0548,0.0685,0.4232
+"Individual zooplankton groups","Far West","rotif_m","~","estfish_bsmt_1",0.0089,0.0688,0.8967
+"Individual zooplankton groups","Far West","pcope","~","hcope_1",0.0465,0.0683,0.4961
+"Individual zooplankton groups","Far West","pcope","~","pcope_1",0.3028,0.0638,0
+"Individual zooplankton groups","Far West","pcope","~","potam_1",-0.1053,0.0662,0.1116
+"Individual zooplankton groups","Far West","pcope","~","flow",0.201,0.0727,0.0057
+"Individual zooplankton groups","Far West","pcope","~","turbid",0.0808,0.0723,0.2632
+"Individual zooplankton groups","Far West","pcope","~","temp",0.1524,0.0677,0.0243
+"Individual zooplankton groups","Far West","pcope","~","estfish_bsmt_1",-0.0069,0.0721,0.9235
+"Individual zooplankton groups","Far West","chla","~~","chla",0.8925,0.0411,0
+"Individual zooplankton groups","Far West","hcope","~~","hcope",0.85,0.0456,0
 "Individual zooplankton groups","Far West","amphi_m","~~","amphi_m",0.1934,0.0194,0
-"Individual zooplankton groups","Far West","rotif_m","~~","rotif_m",0.826,0.0472,0
-"Individual zooplankton groups","Far West","pcope","~~","pcope",0.8025,0.0488,0
-"Individual zooplankton groups","Far West","chla","~~","hcope",0.0528,0.072,0.4632
-"Individual zooplankton groups","Far West","chla","~~","amphi_m",0.0435,0.072,0.5459
-"Individual zooplankton groups","Far West","chla","~~","rotif_m",0.1221,0.0711,0.0859
-"Individual zooplankton groups","Far West","chla","~~","pcope",-0.0095,0.0722,0.8948
-"Individual zooplankton groups","Far West","hcope","~~","amphi_m",-0.0285,0.0721,0.6931
-"Individual zooplankton groups","Far West","hcope","~~","rotif_m",0.0555,0.0719,0.4404
-"Individual zooplankton groups","Far West","hcope","~~","pcope",-0.2367,0.0681,5e-04
-"Individual zooplankton groups","Far West","amphi_m","~~","rotif_m",-0.0923,0.0716,0.1973
-"Individual zooplankton groups","Far West","amphi_m","~~","pcope",-0.0201,0.0721,0.7809
-"Individual zooplankton groups","Far West","rotif_m","~~","pcope",0.0673,0.0718,0.3492
+"Individual zooplankton groups","Far West","rotif_m","~~","rotif_m",0.8071,0.0484,0
+"Individual zooplankton groups","Far West","pcope","~~","pcope",0.8014,0.0489,0
+"Individual zooplankton groups","Far West","chla","~~","hcope",0.0483,0.072,0.502
+"Individual zooplankton groups","Far West","chla","~~","amphi_m",0.0498,0.072,0.4892
+"Individual zooplankton groups","Far West","chla","~~","rotif_m",0.1066,0.0713,0.1352
+"Individual zooplankton groups","Far West","chla","~~","pcope",-0.0091,0.0722,0.8996
+"Individual zooplankton groups","Far West","hcope","~~","amphi_m",-0.028,0.0721,0.6982
+"Individual zooplankton groups","Far West","hcope","~~","rotif_m",0.0446,0.072,0.5355
+"Individual zooplankton groups","Far West","hcope","~~","pcope",-0.2368,0.0681,5e-04
+"Individual zooplankton groups","Far West","amphi_m","~~","rotif_m",-0.0819,0.0717,0.2535
+"Individual zooplankton groups","Far West","amphi_m","~~","pcope",-0.0196,0.0721,0.7854
+"Individual zooplankton groups","Far West","rotif_m","~~","pcope",0.0639,0.0719,0.3738
 "Individual zooplankton groups","Far West","chla_1","~~","chla_1",1,0,NA
 "Individual zooplankton groups","Far West","chla_1","~~","hcope_1",0.0868,0,NA
 "Individual zooplankton groups","Far West","chla_1","~~","amphi_m_1",0.0676,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","rotif_m_1",0.0347,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","rotif_m_1",0.0352,0,NA
 "Individual zooplankton groups","Far West","chla_1","~~","potam_1",0.0191,0,NA
 "Individual zooplankton groups","Far West","chla_1","~~","flow",0.0423,0,NA
 "Individual zooplankton groups","Far West","chla_1","~~","turbid",-0.0821,0,NA
@@ -756,7 +756,7 @@
 "Individual zooplankton groups","Far West","chla_1","~~","estfish_bsmt_1",-0.0932,0,NA
 "Individual zooplankton groups","Far West","hcope_1","~~","hcope_1",1,0,NA
 "Individual zooplankton groups","Far West","hcope_1","~~","amphi_m_1",0.0954,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","rotif_m_1",0.114,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","rotif_m_1",0.0683,0,NA
 "Individual zooplankton groups","Far West","hcope_1","~~","potam_1",-0.1153,0,NA
 "Individual zooplankton groups","Far West","hcope_1","~~","flow",-0.0409,0,NA
 "Individual zooplankton groups","Far West","hcope_1","~~","turbid",-0.0195,0,NA
@@ -764,7 +764,7 @@
 "Individual zooplankton groups","Far West","hcope_1","~~","pcope_1",-0.1426,0,NA
 "Individual zooplankton groups","Far West","hcope_1","~~","estfish_bsmt_1",-0.2515,0,NA
 "Individual zooplankton groups","Far West","amphi_m_1","~~","amphi_m_1",1,0,NA
-"Individual zooplankton groups","Far West","amphi_m_1","~~","rotif_m_1",-0.2587,0,NA
+"Individual zooplankton groups","Far West","amphi_m_1","~~","rotif_m_1",-0.2845,0,NA
 "Individual zooplankton groups","Far West","amphi_m_1","~~","potam_1",-0.0711,0,NA
 "Individual zooplankton groups","Far West","amphi_m_1","~~","flow",-0.5277,0,NA
 "Individual zooplankton groups","Far West","amphi_m_1","~~","turbid",-0.3219,0,NA
@@ -772,12 +772,12 @@
 "Individual zooplankton groups","Far West","amphi_m_1","~~","pcope_1",-0.2108,0,NA
 "Individual zooplankton groups","Far West","amphi_m_1","~~","estfish_bsmt_1",-0.2771,0,NA
 "Individual zooplankton groups","Far West","rotif_m_1","~~","rotif_m_1",1,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","potam_1",-0.1843,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","flow",0.1142,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","turbid",-0.0397,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","temp",0.0541,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","pcope_1",0.1785,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","estfish_bsmt_1",-0.0842,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","potam_1",-0.1383,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","flow",0.1417,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","turbid",-0.0376,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","temp",0.0636,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","pcope_1",0.184,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","estfish_bsmt_1",-0.0426,0,NA
 "Individual zooplankton groups","Far West","potam_1","~~","potam_1",1,0,NA
 "Individual zooplankton groups","Far West","potam_1","~~","flow",0.0482,0,NA
 "Individual zooplankton groups","Far West","potam_1","~~","turbid",0.0636,0,NA
@@ -799,81 +799,81 @@
 "Individual zooplankton groups","Far West","pcope_1","~~","pcope_1",1,0,NA
 "Individual zooplankton groups","Far West","pcope_1","~~","estfish_bsmt_1",-0.0871,0,NA
 "Individual zooplankton groups","Far West","estfish_bsmt_1","~~","estfish_bsmt_1",1,0,NA
-"Individual zooplankton groups","West","chla","~","chla_1",0.1626,0.0672,0.0156
-"Individual zooplankton groups","West","chla","~","hcope_1",0.044,0.0702,0.5308
-"Individual zooplankton groups","West","chla","~","amphi_m_1",0.1612,0.0733,0.0278
-"Individual zooplankton groups","West","chla","~","rotif_m_1",0.0935,0.0702,0.1828
-"Individual zooplankton groups","West","chla","~","potam_1",-0.069,0.0744,0.354
-"Individual zooplankton groups","West","chla","~","flow",0.072,0.0717,0.3156
-"Individual zooplankton groups","West","chla","~","turbid",0.0771,0.0737,0.2958
-"Individual zooplankton groups","West","chla","~","temp",-0.1071,0.0654,0.1018
-"Individual zooplankton groups","West","chla","~","mysid_1",-0.1601,0.0702,0.0224
-"Individual zooplankton groups","West","hcope","~","chla_1",0.044,0.0646,0.4955
-"Individual zooplankton groups","West","hcope","~","hcope_1",0.2962,0.0644,0
-"Individual zooplankton groups","West","hcope","~","pcope_1",-0.1109,0.063,0.0783
-"Individual zooplankton groups","West","hcope","~","mysid_1",0.0503,0.0704,0.475
-"Individual zooplankton groups","West","hcope","~","potam_1",-0.1758,0.0664,0.0081
-"Individual zooplankton groups","West","hcope","~","flow",-0.1372,0.0689,0.0464
-"Individual zooplankton groups","West","hcope","~","turbid",-0.1146,0.0706,0.1049
-"Individual zooplankton groups","West","hcope","~","temp",0.0669,0.0635,0.2921
-"Individual zooplankton groups","West","hcope","~","estfish_bsmt_1",0.0671,0.0635,0.2908
-"Individual zooplankton groups","West","hcope","~","rotif_m_1",0.2118,0.0627,7e-04
-"Individual zooplankton groups","West","amphi_m","~","chla_1",-0.0412,0.0359,0.2509
-"Individual zooplankton groups","West","amphi_m","~","amphi_m_1",0.7838,0.0265,0
-"Individual zooplankton groups","West","amphi_m","~","mysid_1",0.0727,0.0365,0.0466
-"Individual zooplankton groups","West","amphi_m","~","flow",0.0068,0.0372,0.8547
-"Individual zooplankton groups","West","amphi_m","~","turbid",-0.1035,0.0388,0.0077
-"Individual zooplankton groups","West","amphi_m","~","temp",-0.0994,0.0356,0.0052
-"Individual zooplankton groups","West","amphi_m","~","estfish_bsmt_1",-0.1776,0.0363,0
-"Individual zooplankton groups","West","rotif_m","~","chla_1",0.0313,0.0572,0.5845
-"Individual zooplankton groups","West","rotif_m","~","rotif_m_1",0.4198,0.0522,0
-"Individual zooplankton groups","West","rotif_m","~","flow",0.2091,0.0586,4e-04
-"Individual zooplankton groups","West","rotif_m","~","turbid",-0.1266,0.0591,0.0321
-"Individual zooplankton groups","West","rotif_m","~","temp",-0.0075,0.0567,0.8944
-"Individual zooplankton groups","West","rotif_m","~","estfish_bsmt_1",-0.1812,0.0551,0.001
-"Individual zooplankton groups","West","pcope","~","hcope_1",-0.1408,0.0576,0.0146
-"Individual zooplankton groups","West","pcope","~","pcope_1",0.428,0.0507,0
-"Individual zooplankton groups","West","pcope","~","mysid_1",0.1209,0.0614,0.0489
-"Individual zooplankton groups","West","pcope","~","potam_1",0.034,0.0609,0.5763
-"Individual zooplankton groups","West","pcope","~","flow",0.1399,0.06,0.0197
-"Individual zooplankton groups","West","pcope","~","turbid",-0.1422,0.0618,0.0214
-"Individual zooplankton groups","West","pcope","~","temp",0.2215,0.0535,0
-"Individual zooplankton groups","West","pcope","~","estfish_bsmt_1",0.0288,0.0572,0.615
-"Individual zooplankton groups","West","pcope","~","rotif_m_1",0.1237,0.0568,0.0294
-"Individual zooplankton groups","West","mysid","~","chla_1",0.1674,0.0572,0.0035
-"Individual zooplankton groups","West","mysid","~","hcope_1",0.0749,0.0593,0.2071
-"Individual zooplankton groups","West","mysid","~","pcope_1",0.112,0.0563,0.0467
-"Individual zooplankton groups","West","mysid","~","amphi_m_1",-0.126,0.0595,0.0341
-"Individual zooplankton groups","West","mysid","~","mysid_1",0.37,0.0585,0
-"Individual zooplankton groups","West","mysid","~","flow",-0.1648,0.0583,0.0047
-"Individual zooplankton groups","West","mysid","~","turbid",0.257,0.0614,0
-"Individual zooplankton groups","West","mysid","~","temp",0.1004,0.0566,0.0761
-"Individual zooplankton groups","West","mysid","~","estfish_bsmt_1",-0.0234,0.0585,0.6895
-"Individual zooplankton groups","West","chla","~~","chla",0.8463,0.0433,0
-"Individual zooplankton groups","West","hcope","~~","hcope",0.7832,0.0462,0
-"Individual zooplankton groups","West","amphi_m","~~","amphi_m",0.2504,0.0232,0
-"Individual zooplankton groups","West","rotif_m","~~","rotif_m",0.6375,0.0471,0
-"Individual zooplankton groups","West","pcope","~~","pcope",0.6041,0.0462,0
-"Individual zooplankton groups","West","mysid","~~","mysid",0.6282,0.047,0
-"Individual zooplankton groups","West","chla","~~","hcope",0.2127,0.0651,0.0011
-"Individual zooplankton groups","West","chla","~~","amphi_m",-0.0155,0.0682,0.8205
-"Individual zooplankton groups","West","chla","~~","rotif_m",0.1069,0.0674,0.1127
-"Individual zooplankton groups","West","chla","~~","pcope",0.0236,0.0682,0.7289
-"Individual zooplankton groups","West","chla","~~","mysid",0.1182,0.0672,0.0787
-"Individual zooplankton groups","West","hcope","~~","amphi_m",-0.1049,0.0674,0.1199
-"Individual zooplankton groups","West","hcope","~~","rotif_m",0.0226,0.0682,0.7401
-"Individual zooplankton groups","West","hcope","~~","pcope",0.1193,0.0672,0.076
-"Individual zooplankton groups","West","hcope","~~","mysid",0.2987,0.0621,0
-"Individual zooplankton groups","West","amphi_m","~~","rotif_m",0.1433,0.0668,0.0319
-"Individual zooplankton groups","West","amphi_m","~~","pcope",0.1472,0.0667,0.0274
-"Individual zooplankton groups","West","amphi_m","~~","mysid",-0.097,0.0676,0.1512
-"Individual zooplankton groups","West","rotif_m","~~","pcope",0.0707,0.0679,0.2972
-"Individual zooplankton groups","West","rotif_m","~~","mysid",0.0878,0.0677,0.1946
-"Individual zooplankton groups","West","pcope","~~","mysid",0.0835,0.0677,0.2174
+"Individual zooplankton groups","West","chla","~","chla_1",0.1569,0.0678,0.0206
+"Individual zooplankton groups","West","chla","~","hcope_1",0.0627,0.0696,0.3681
+"Individual zooplankton groups","West","chla","~","amphi_m_1",0.161,0.0697,0.0209
+"Individual zooplankton groups","West","chla","~","rotif_m_1",0.103,0.0676,0.1275
+"Individual zooplankton groups","West","chla","~","potam_1",-0.0552,0.0737,0.4539
+"Individual zooplankton groups","West","chla","~","flow",0.0721,0.0716,0.3145
+"Individual zooplankton groups","West","chla","~","turbid",0.0802,0.0737,0.2769
+"Individual zooplankton groups","West","chla","~","temp",-0.1057,0.0654,0.1058
+"Individual zooplankton groups","West","chla","~","mysid_1",-0.1716,0.0695,0.0135
+"Individual zooplankton groups","West","hcope","~","chla_1",0.0447,0.0653,0.4938
+"Individual zooplankton groups","West","hcope","~","hcope_1",0.307,0.0649,0
+"Individual zooplankton groups","West","hcope","~","pcope_1",-0.1024,0.064,0.1096
+"Individual zooplankton groups","West","hcope","~","mysid_1",0.0487,0.0708,0.4916
+"Individual zooplankton groups","West","hcope","~","potam_1",-0.1716,0.0668,0.0102
+"Individual zooplankton groups","West","hcope","~","flow",-0.1352,0.0693,0.0511
+"Individual zooplankton groups","West","hcope","~","turbid",-0.1193,0.0708,0.092
+"Individual zooplankton groups","West","hcope","~","temp",0.0651,0.0639,0.308
+"Individual zooplankton groups","West","hcope","~","estfish_bsmt_1",0.0513,0.0634,0.4189
+"Individual zooplankton groups","West","hcope","~","rotif_m_1",0.1896,0.0633,0.0027
+"Individual zooplankton groups","West","amphi_m","~","chla_1",-0.0412,0.0357,0.248
+"Individual zooplankton groups","West","amphi_m","~","amphi_m_1",0.7869,0.0264,0
+"Individual zooplankton groups","West","amphi_m","~","mysid_1",0.0761,0.0366,0.0376
+"Individual zooplankton groups","West","amphi_m","~","flow",0.0073,0.0371,0.8444
+"Individual zooplankton groups","West","amphi_m","~","turbid",-0.1025,0.0387,0.0081
+"Individual zooplankton groups","West","amphi_m","~","temp",-0.0995,0.0355,0.0051
+"Individual zooplankton groups","West","amphi_m","~","estfish_bsmt_1",-0.1756,0.0363,0
+"Individual zooplankton groups","West","rotif_m","~","chla_1",0.0325,0.0615,0.5977
+"Individual zooplankton groups","West","rotif_m","~","rotif_m_1",0.3318,0.0584,0
+"Individual zooplankton groups","West","rotif_m","~","flow",0.2142,0.0631,7e-04
+"Individual zooplankton groups","West","rotif_m","~","turbid",-0.0955,0.0635,0.133
+"Individual zooplankton groups","West","rotif_m","~","temp",0.0299,0.0609,0.6231
+"Individual zooplankton groups","West","rotif_m","~","estfish_bsmt_1",-0.1819,0.0581,0.0018
+"Individual zooplankton groups","West","pcope","~","hcope_1",-0.125,0.0572,0.0289
+"Individual zooplankton groups","West","pcope","~","pcope_1",0.4046,0.0515,0
+"Individual zooplankton groups","West","pcope","~","mysid_1",0.1145,0.061,0.0606
+"Individual zooplankton groups","West","pcope","~","potam_1",0.0461,0.0604,0.4453
+"Individual zooplankton groups","West","pcope","~","flow",0.1307,0.0599,0.0291
+"Individual zooplankton groups","West","pcope","~","turbid",-0.1379,0.0614,0.0247
+"Individual zooplankton groups","West","pcope","~","temp",0.2274,0.0533,0
+"Individual zooplankton groups","West","pcope","~","estfish_bsmt_1",0.0265,0.0564,0.6385
+"Individual zooplankton groups","West","pcope","~","rotif_m_1",0.1691,0.0557,0.0024
+"Individual zooplankton groups","West","mysid","~","chla_1",0.1687,0.0571,0.0031
+"Individual zooplankton groups","West","mysid","~","hcope_1",0.0725,0.0594,0.2225
+"Individual zooplankton groups","West","mysid","~","pcope_1",0.1165,0.0563,0.0385
+"Individual zooplankton groups","West","mysid","~","amphi_m_1",-0.1309,0.0591,0.0268
+"Individual zooplankton groups","West","mysid","~","mysid_1",0.3726,0.0584,0
+"Individual zooplankton groups","West","mysid","~","flow",-0.1647,0.0582,0.0046
+"Individual zooplankton groups","West","mysid","~","turbid",0.2554,0.0613,0
+"Individual zooplankton groups","West","mysid","~","temp",0.0997,0.0565,0.0774
+"Individual zooplankton groups","West","mysid","~","estfish_bsmt_1",-0.0246,0.0583,0.6725
+"Individual zooplankton groups","West","chla","~~","chla",0.8453,0.0433,0
+"Individual zooplankton groups","West","hcope","~~","hcope",0.7914,0.046,0
+"Individual zooplankton groups","West","amphi_m","~~","amphi_m",0.2489,0.0231,0
+"Individual zooplankton groups","West","rotif_m","~~","rotif_m",0.7352,0.0479,0
+"Individual zooplankton groups","West","pcope","~~","pcope",0.5994,0.046,0
+"Individual zooplankton groups","West","mysid","~~","mysid",0.6249,0.047,0
+"Individual zooplankton groups","West","chla","~~","hcope",0.2104,0.0652,0.0012
+"Individual zooplankton groups","West","chla","~~","amphi_m",-0.0038,0.0682,0.9557
+"Individual zooplankton groups","West","chla","~~","rotif_m",0.1649,0.0663,0.0129
+"Individual zooplankton groups","West","chla","~~","pcope",0.023,0.0682,0.7356
+"Individual zooplankton groups","West","chla","~~","mysid",0.1229,0.0672,0.0673
+"Individual zooplankton groups","West","hcope","~~","amphi_m",-0.0818,0.0677,0.2275
+"Individual zooplankton groups","West","hcope","~~","rotif_m",-0.0189,0.0682,0.7821
+"Individual zooplankton groups","West","hcope","~~","pcope",0.118,0.0672,0.0793
+"Individual zooplankton groups","West","hcope","~~","mysid",0.3056,0.0618,0
+"Individual zooplankton groups","West","amphi_m","~~","rotif_m",0.091,0.0676,0.1786
+"Individual zooplankton groups","West","amphi_m","~~","pcope",0.1686,0.0663,0.0109
+"Individual zooplankton groups","West","amphi_m","~~","mysid",-0.0973,0.0676,0.1497
+"Individual zooplankton groups","West","rotif_m","~~","pcope",0.095,0.0676,0.1599
+"Individual zooplankton groups","West","rotif_m","~~","mysid",0.0408,0.0681,0.5487
+"Individual zooplankton groups","West","pcope","~~","mysid",0.0921,0.0676,0.1733
 "Individual zooplankton groups","West","chla_1","~~","chla_1",1,0,NA
 "Individual zooplankton groups","West","chla_1","~~","hcope_1",0.2032,0,NA
 "Individual zooplankton groups","West","chla_1","~~","amphi_m_1",0.1685,0,NA
-"Individual zooplankton groups","West","chla_1","~~","rotif_m_1",0.2367,0,NA
+"Individual zooplankton groups","West","chla_1","~~","rotif_m_1",0.2519,0,NA
 "Individual zooplankton groups","West","chla_1","~~","potam_1",-0.0381,0,NA
 "Individual zooplankton groups","West","chla_1","~~","flow",0.1766,0,NA
 "Individual zooplankton groups","West","chla_1","~~","turbid",0.0102,0,NA
@@ -883,7 +883,7 @@
 "Individual zooplankton groups","West","chla_1","~~","estfish_bsmt_1",-0.0305,0,NA
 "Individual zooplankton groups","West","hcope_1","~~","hcope_1",1,0,NA
 "Individual zooplankton groups","West","hcope_1","~~","amphi_m_1",-0.0564,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","rotif_m_1",0.0334,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","rotif_m_1",-0.0131,0,NA
 "Individual zooplankton groups","West","hcope_1","~~","potam_1",-0.2747,0,NA
 "Individual zooplankton groups","West","hcope_1","~~","flow",0.0143,0,NA
 "Individual zooplankton groups","West","hcope_1","~~","turbid",0.1907,0,NA
@@ -892,7 +892,7 @@
 "Individual zooplankton groups","West","hcope_1","~~","pcope_1",0.0531,0,NA
 "Individual zooplankton groups","West","hcope_1","~~","estfish_bsmt_1",0.0084,0,NA
 "Individual zooplankton groups","West","amphi_m_1","~~","amphi_m_1",1,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","rotif_m_1",0.366,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","rotif_m_1",0.2319,0,NA
 "Individual zooplankton groups","West","amphi_m_1","~~","potam_1",0.342,0,NA
 "Individual zooplankton groups","West","amphi_m_1","~~","flow",-0.0576,0,NA
 "Individual zooplankton groups","West","amphi_m_1","~~","turbid",-0.3454,0,NA
@@ -901,13 +901,13 @@
 "Individual zooplankton groups","West","amphi_m_1","~~","pcope_1",0.2147,0,NA
 "Individual zooplankton groups","West","amphi_m_1","~~","estfish_bsmt_1",-0.3082,0,NA
 "Individual zooplankton groups","West","rotif_m_1","~~","rotif_m_1",1,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","potam_1",-0.0177,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","flow",0.2035,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","turbid",-0.1388,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","temp",-0.0386,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","mysid_1",-0.0473,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","pcope_1",0.2639,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","estfish_bsmt_1",-0.2224,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","potam_1",-0.0484,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","flow",0.2172,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","turbid",-0.1159,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","temp",-0.0437,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","mysid_1",-0.0142,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","pcope_1",0.2869,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","estfish_bsmt_1",-0.1522,0,NA
 "Individual zooplankton groups","West","potam_1","~~","potam_1",1,0,NA
 "Individual zooplankton groups","West","potam_1","~~","flow",-0.3025,0,NA
 "Individual zooplankton groups","West","potam_1","~~","turbid",-0.3648,0,NA
@@ -936,94 +936,94 @@
 "Individual zooplankton groups","West","pcope_1","~~","pcope_1",1,0,NA
 "Individual zooplankton groups","West","pcope_1","~~","estfish_bsmt_1",-0.0836,0,NA
 "Individual zooplankton groups","West","estfish_bsmt_1","~~","estfish_bsmt_1",1,0,NA
-"Individual zooplankton groups","North","chla","~","chla_1",0.1661,0.0672,0.0135
-"Individual zooplankton groups","North","chla","~","hcope_1",-0.0283,0.0751,0.7058
-"Individual zooplankton groups","North","chla","~","clad_1",0.1519,0.0762,0.0461
-"Individual zooplankton groups","North","chla","~","amphi_m_1",0.0593,0.067,0.3759
-"Individual zooplankton groups","North","chla","~","rotif_m_1",-0.0295,0.0753,0.6951
-"Individual zooplankton groups","North","chla","~","corbic_1",-0.0211,0.0674,0.754
-"Individual zooplankton groups","North","chla","~","flow",-0.0268,0.0768,0.7272
-"Individual zooplankton groups","North","chla","~","turbid",0.0953,0.0704,0.1755
-"Individual zooplankton groups","North","chla","~","temp",0.124,0.0703,0.0778
-"Individual zooplankton groups","North","hcope","~","chla_1",-0.0108,0.051,0.8326
-"Individual zooplankton groups","North","hcope","~","hcope_1",0.1293,0.0713,0.0698
-"Individual zooplankton groups","North","hcope","~","pcope_1",-0.1272,0.0589,0.0308
-"Individual zooplankton groups","North","hcope","~","mysid_1",0.06,0.075,0.4235
-"Individual zooplankton groups","North","hcope","~","corbic_1",0.1255,0.0511,0.014
-"Individual zooplankton groups","North","hcope","~","flow",-0.4964,0.0537,0
-"Individual zooplankton groups","North","hcope","~","turbid",0.1147,0.0603,0.057
-"Individual zooplankton groups","North","hcope","~","temp",0.1263,0.0566,0.0258
-"Individual zooplankton groups","North","hcope","~","estfish_bsmt_1",0.0084,0.0606,0.8899
-"Individual zooplankton groups","North","clad","~","chla_1",-0.0476,0.0556,0.3922
-"Individual zooplankton groups","North","clad","~","clad_1",0.3618,0.0546,0
-"Individual zooplankton groups","North","clad","~","pcope_1",-0.02,0.0576,0.7285
-"Individual zooplankton groups","North","clad","~","flow",0.4093,0.0576,0
-"Individual zooplankton groups","North","clad","~","turbid",0.0021,0.0592,0.9712
-"Individual zooplankton groups","North","clad","~","temp",0.0317,0.0568,0.5762
-"Individual zooplankton groups","North","clad","~","estfish_bsmt_1",0.0404,0.0596,0.4981
-"Individual zooplankton groups","North","amphi_m","~","chla_1",0.06,0.0584,0.3041
-"Individual zooplankton groups","North","amphi_m","~","amphi_m_1",0.5266,0.0474,0
-"Individual zooplankton groups","North","amphi_m","~","flow",0.0535,0.0645,0.4072
-"Individual zooplankton groups","North","amphi_m","~","turbid",-0.0234,0.0609,0.701
-"Individual zooplankton groups","North","amphi_m","~","temp",-0.0421,0.0604,0.4863
-"Individual zooplankton groups","North","amphi_m","~","estfish_bsmt_1",-0.0795,0.0633,0.2089
-"Individual zooplankton groups","North","rotif_m","~","chla_1",-0.0767,0.0589,0.193
-"Individual zooplankton groups","North","rotif_m","~","rotif_m_1",0.1296,0.061,0.0335
-"Individual zooplankton groups","North","rotif_m","~","flow",0.4862,0.0569,0
-"Individual zooplankton groups","North","rotif_m","~","turbid",-0.0527,0.0607,0.3857
-"Individual zooplankton groups","North","rotif_m","~","temp",-0.0363,0.0605,0.5483
-"Individual zooplankton groups","North","rotif_m","~","estfish_bsmt_1",0.0049,0.0629,0.9384
-"Individual zooplankton groups","North","pcope","~","hcope_1",-0.1139,0.0807,0.1582
-"Individual zooplankton groups","North","pcope","~","pcope_1",0.25,0.0644,1e-04
-"Individual zooplankton groups","North","pcope","~","clad_1",-0.1444,0.0659,0.0285
-"Individual zooplankton groups","North","pcope","~","mysid_1",0.0768,0.085,0.3659
-"Individual zooplankton groups","North","pcope","~","corbic_1",0.0618,0.0611,0.3121
-"Individual zooplankton groups","North","pcope","~","flow",-0.1734,0.0703,0.0136
-"Individual zooplankton groups","North","pcope","~","turbid",-0.2389,0.0661,3e-04
-"Individual zooplankton groups","North","pcope","~","temp",0.0692,0.0643,0.2817
-"Individual zooplankton groups","North","pcope","~","estfish_bsmt_1",-0.0711,0.0679,0.2947
-"Individual zooplankton groups","North","pcope","~","chla_1",0.1344,0.0612,0.0281
-"Individual zooplankton groups","North","mysid","~","hcope_1",-0.0162,0.0717,0.8217
-"Individual zooplankton groups","North","mysid","~","pcope_1",-0.0621,0.0595,0.296
-"Individual zooplankton groups","North","mysid","~","mysid_1",0.1794,0.0733,0.0144
-"Individual zooplankton groups","North","mysid","~","amphi_m_1",-0.0783,0.0509,0.1237
-"Individual zooplankton groups","North","mysid","~","flow",-0.4254,0.0569,0
-"Individual zooplankton groups","North","mysid","~","turbid",0.2359,0.0602,1e-04
-"Individual zooplankton groups","North","mysid","~","temp",0.0843,0.0572,0.1407
-"Individual zooplankton groups","North","mysid","~","estfish_bsmt_1",0.0592,0.0612,0.3333
-"Individual zooplankton groups","North","chla","~~","chla",0.9158,0.036,0
-"Individual zooplankton groups","North","hcope","~~","hcope",0.5947,0.0471,0
-"Individual zooplankton groups","North","clad","~~","clad",0.6183,0.0477,0
-"Individual zooplankton groups","North","amphi_m","~~","amphi_m",0.7004,0.0489,0
-"Individual zooplankton groups","North","rotif_m","~~","rotif_m",0.701,0.0493,0
-"Individual zooplankton groups","North","pcope","~~","pcope",0.7512,0.0487,0
-"Individual zooplankton groups","North","mysid","~~","mysid",0.6189,0.0479,0
-"Individual zooplankton groups","North","chla","~~","hcope",0.034,0.0698,0.6263
-"Individual zooplankton groups","North","chla","~~","clad",0.1505,0.0683,0.0275
-"Individual zooplankton groups","North","chla","~~","amphi_m",0.02,0.0698,0.7749
-"Individual zooplankton groups","North","chla","~~","rotif_m",0.1968,0.0671,0.0034
-"Individual zooplankton groups","North","chla","~~","pcope",-0.0681,0.0695,0.3271
-"Individual zooplankton groups","North","chla","~~","mysid",0.1103,0.069,0.1099
-"Individual zooplankton groups","North","hcope","~~","clad",-0.1185,0.0689,0.0852
-"Individual zooplankton groups","North","hcope","~~","amphi_m",0.0839,0.0694,0.2264
-"Individual zooplankton groups","North","hcope","~~","rotif_m",-0.0234,0.0698,0.7372
-"Individual zooplankton groups","North","hcope","~~","pcope",0.1119,0.069,0.1047
-"Individual zooplankton groups","North","hcope","~~","mysid",0.3946,0.059,0
-"Individual zooplankton groups","North","clad","~~","amphi_m",0.0018,0.0698,0.9798
-"Individual zooplankton groups","North","clad","~~","rotif_m",0.2134,0.0667,0.0014
-"Individual zooplankton groups","North","clad","~~","pcope",-0.057,0.0696,0.4132
-"Individual zooplankton groups","North","clad","~~","mysid",-0.1295,0.0687,0.0594
-"Individual zooplankton groups","North","amphi_m","~~","rotif_m",0.0347,0.0698,0.6192
-"Individual zooplankton groups","North","amphi_m","~~","pcope",-0.1193,0.0688,0.0833
-"Individual zooplankton groups","North","amphi_m","~~","mysid",0.1487,0.0683,0.0295
-"Individual zooplankton groups","North","rotif_m","~~","pcope",0.0374,0.0697,0.5919
-"Individual zooplankton groups","North","rotif_m","~~","mysid",-0.0118,0.0698,0.8653
-"Individual zooplankton groups","North","pcope","~~","mysid",0.199,0.0671,0.003
+"Individual zooplankton groups","North","chla","~","chla_1",0.1551,0.0673,0.0212
+"Individual zooplankton groups","North","chla","~","hcope_1",-0.0135,0.075,0.8568
+"Individual zooplankton groups","North","chla","~","clad_1",0.1851,0.075,0.0135
+"Individual zooplankton groups","North","chla","~","amphi_m_1",0.0588,0.0676,0.3844
+"Individual zooplankton groups","North","chla","~","rotif_m_1",-0.0406,0.0712,0.5688
+"Individual zooplankton groups","North","chla","~","corbic_1",-0.0248,0.0675,0.7129
+"Individual zooplankton groups","North","chla","~","flow",-0.0335,0.0768,0.6632
+"Individual zooplankton groups","North","chla","~","turbid",0.0945,0.0705,0.1803
+"Individual zooplankton groups","North","chla","~","temp",0.1204,0.0701,0.0859
+"Individual zooplankton groups","North","hcope","~","chla_1",-0.0108,0.051,0.8324
+"Individual zooplankton groups","North","hcope","~","hcope_1",0.1275,0.0713,0.0737
+"Individual zooplankton groups","North","hcope","~","pcope_1",-0.1306,0.0589,0.0266
+"Individual zooplankton groups","North","hcope","~","mysid_1",0.0576,0.075,0.4427
+"Individual zooplankton groups","North","hcope","~","corbic_1",0.1253,0.0511,0.0141
+"Individual zooplankton groups","North","hcope","~","flow",-0.4977,0.0537,0
+"Individual zooplankton groups","North","hcope","~","turbid",0.1146,0.0603,0.0573
+"Individual zooplankton groups","North","hcope","~","temp",0.1269,0.0567,0.0251
+"Individual zooplankton groups","North","hcope","~","estfish_bsmt_1",0.0101,0.0606,0.8673
+"Individual zooplankton groups","North","clad","~","chla_1",-0.0332,0.0553,0.5486
+"Individual zooplankton groups","North","clad","~","clad_1",0.356,0.0551,0
+"Individual zooplankton groups","North","clad","~","pcope_1",0.0158,0.0575,0.7834
+"Individual zooplankton groups","North","clad","~","flow",0.4277,0.0569,0
+"Individual zooplankton groups","North","clad","~","turbid",0.0033,0.0588,0.9551
+"Individual zooplankton groups","North","clad","~","temp",0.0497,0.0562,0.3769
+"Individual zooplankton groups","North","clad","~","estfish_bsmt_1",0.0196,0.0588,0.7392
+"Individual zooplankton groups","North","amphi_m","~","chla_1",0.0597,0.0589,0.3108
+"Individual zooplankton groups","North","amphi_m","~","amphi_m_1",0.5136,0.0478,0
+"Individual zooplankton groups","North","amphi_m","~","flow",0.0563,0.0651,0.3871
+"Individual zooplankton groups","North","amphi_m","~","turbid",-0.0212,0.0615,0.7297
+"Individual zooplankton groups","North","amphi_m","~","temp",-0.0433,0.0609,0.4769
+"Individual zooplankton groups","North","amphi_m","~","estfish_bsmt_1",-0.0786,0.0638,0.2183
+"Individual zooplankton groups","North","rotif_m","~","chla_1",-0.0795,0.0618,0.1984
+"Individual zooplankton groups","North","rotif_m","~","rotif_m_1",0.1517,0.0617,0.0139
+"Individual zooplankton groups","North","rotif_m","~","flow",0.3809,0.0631,0
+"Individual zooplankton groups","North","rotif_m","~","turbid",-0.0501,0.0644,0.4364
+"Individual zooplankton groups","North","rotif_m","~","temp",-0.0739,0.0633,0.2426
+"Individual zooplankton groups","North","rotif_m","~","estfish_bsmt_1",-0.0149,0.0664,0.8222
+"Individual zooplankton groups","North","pcope","~","hcope_1",-0.1148,0.0798,0.1506
+"Individual zooplankton groups","North","pcope","~","pcope_1",0.2563,0.0636,1e-04
+"Individual zooplankton groups","North","pcope","~","clad_1",-0.1277,0.0664,0.0543
+"Individual zooplankton groups","North","pcope","~","mysid_1",0.0597,0.0841,0.4781
+"Individual zooplankton groups","North","pcope","~","corbic_1",0.0586,0.0605,0.3323
+"Individual zooplankton groups","North","pcope","~","flow",-0.1817,0.0703,0.0097
+"Individual zooplankton groups","North","pcope","~","turbid",-0.2351,0.0662,4e-04
+"Individual zooplankton groups","North","pcope","~","temp",0.0707,0.0645,0.2727
+"Individual zooplankton groups","North","pcope","~","estfish_bsmt_1",-0.0642,0.068,0.3448
+"Individual zooplankton groups","North","pcope","~","chla_1",0.1367,0.0615,0.0263
+"Individual zooplankton groups","North","mysid","~","hcope_1",-0.0181,0.0716,0.8
+"Individual zooplankton groups","North","mysid","~","pcope_1",-0.0675,0.0595,0.2566
+"Individual zooplankton groups","North","mysid","~","mysid_1",0.1745,0.0732,0.0171
+"Individual zooplankton groups","North","mysid","~","amphi_m_1",-0.0799,0.0509,0.1162
+"Individual zooplankton groups","North","mysid","~","flow",-0.4275,0.0569,0
+"Individual zooplankton groups","North","mysid","~","turbid",0.2361,0.0602,1e-04
+"Individual zooplankton groups","North","mysid","~","temp",0.0853,0.0573,0.1362
+"Individual zooplankton groups","North","mysid","~","estfish_bsmt_1",0.062,0.0612,0.311
+"Individual zooplankton groups","North","chla","~~","chla",0.9076,0.0374,0
+"Individual zooplankton groups","North","hcope","~~","hcope",0.5949,0.0471,0
+"Individual zooplankton groups","North","clad","~~","clad",0.6077,0.0475,0
+"Individual zooplankton groups","North","amphi_m","~~","amphi_m",0.7128,0.0485,0
+"Individual zooplankton groups","North","rotif_m","~~","rotif_m",0.7732,0.0483,0
+"Individual zooplankton groups","North","pcope","~~","pcope",0.7552,0.0485,0
+"Individual zooplankton groups","North","mysid","~~","mysid",0.6194,0.0479,0
+"Individual zooplankton groups","North","chla","~~","hcope",0.038,0.0697,0.5861
+"Individual zooplankton groups","North","chla","~~","clad",0.1788,0.0676,0.0082
+"Individual zooplankton groups","North","chla","~~","amphi_m",0.0248,0.0698,0.7227
+"Individual zooplankton groups","North","chla","~~","rotif_m",0.1111,0.069,0.1071
+"Individual zooplankton groups","North","chla","~~","pcope",-0.0671,0.0695,0.3343
+"Individual zooplankton groups","North","chla","~~","mysid",0.115,0.0689,0.0952
+"Individual zooplankton groups","North","hcope","~~","clad",-0.1211,0.0688,0.0784
+"Individual zooplankton groups","North","hcope","~~","amphi_m",0.0829,0.0694,0.2322
+"Individual zooplankton groups","North","hcope","~~","rotif_m",-0.0133,0.0698,0.8486
+"Individual zooplankton groups","North","hcope","~~","pcope",0.1098,0.069,0.1116
+"Individual zooplankton groups","North","hcope","~~","mysid",0.3947,0.059,0
+"Individual zooplankton groups","North","clad","~~","amphi_m",0.0062,0.0698,0.9298
+"Individual zooplankton groups","North","clad","~~","rotif_m",0.1422,0.0684,0.0377
+"Individual zooplankton groups","North","clad","~~","pcope",-0.0694,0.0695,0.3181
+"Individual zooplankton groups","North","clad","~~","mysid",-0.1338,0.0686,0.0511
+"Individual zooplankton groups","North","amphi_m","~~","rotif_m",-0.1795,0.0676,0.0079
+"Individual zooplankton groups","North","amphi_m","~~","pcope",-0.125,0.0688,0.0689
+"Individual zooplankton groups","North","amphi_m","~~","mysid",0.1485,0.0683,0.0297
+"Individual zooplankton groups","North","rotif_m","~~","pcope",0.1811,0.0676,0.0073
+"Individual zooplankton groups","North","rotif_m","~~","mysid",0.0032,0.0698,0.9639
+"Individual zooplankton groups","North","pcope","~~","mysid",0.1962,0.0672,0.0035
 "Individual zooplankton groups","North","chla_1","~~","chla_1",1,0,NA
 "Individual zooplankton groups","North","chla_1","~~","hcope_1",0.04,0,NA
-"Individual zooplankton groups","North","chla_1","~~","clad_1",0.1455,0,NA
+"Individual zooplankton groups","North","chla_1","~~","clad_1",0.1573,0,NA
 "Individual zooplankton groups","North","chla_1","~~","amphi_m_1",-0.0199,0,NA
-"Individual zooplankton groups","North","chla_1","~~","rotif_m_1",0.0639,0,NA
+"Individual zooplankton groups","North","chla_1","~~","rotif_m_1",-0.0022,0,NA
 "Individual zooplankton groups","North","chla_1","~~","corbic_1",-0.098,0,NA
 "Individual zooplankton groups","North","chla_1","~~","flow",0.0891,0,NA
 "Individual zooplankton groups","North","chla_1","~~","turbid",0.1184,0,NA
@@ -1032,9 +1032,9 @@
 "Individual zooplankton groups","North","chla_1","~~","mysid_1",0.1027,0,NA
 "Individual zooplankton groups","North","chla_1","~~","estfish_bsmt_1",-0.0139,0,NA
 "Individual zooplankton groups","North","hcope_1","~~","hcope_1",1,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","clad_1",-0.3178,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","clad_1",-0.339,0,NA
 "Individual zooplankton groups","North","hcope_1","~~","amphi_m_1",-0.0206,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","rotif_m_1",-0.3123,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","rotif_m_1",-0.2335,0,NA
 "Individual zooplankton groups","North","hcope_1","~~","corbic_1",0.0427,0,NA
 "Individual zooplankton groups","North","hcope_1","~~","flow",-0.3322,0,NA
 "Individual zooplankton groups","North","hcope_1","~~","turbid",0.1964,0,NA
@@ -1043,17 +1043,17 @@
 "Individual zooplankton groups","North","hcope_1","~~","mysid_1",0.6384,0,NA
 "Individual zooplankton groups","North","hcope_1","~~","estfish_bsmt_1",0.2948,0,NA
 "Individual zooplankton groups","North","clad_1","~~","clad_1",1,0,NA
-"Individual zooplankton groups","North","clad_1","~~","amphi_m_1",0.119,0,NA
-"Individual zooplankton groups","North","clad_1","~~","rotif_m_1",0.4374,0,NA
-"Individual zooplankton groups","North","clad_1","~~","corbic_1",0.0596,0,NA
-"Individual zooplankton groups","North","clad_1","~~","flow",0.357,0,NA
-"Individual zooplankton groups","North","clad_1","~~","turbid",-0.0637,0,NA
-"Individual zooplankton groups","North","clad_1","~~","temp",-0.0818,0,NA
-"Individual zooplankton groups","North","clad_1","~~","pcope_1",-0.2008,0,NA
-"Individual zooplankton groups","North","clad_1","~~","mysid_1",-0.3384,0,NA
-"Individual zooplankton groups","North","clad_1","~~","estfish_bsmt_1",-0.22,0,NA
+"Individual zooplankton groups","North","clad_1","~~","amphi_m_1",0.0988,0,NA
+"Individual zooplankton groups","North","clad_1","~~","rotif_m_1",0.3174,0,NA
+"Individual zooplankton groups","North","clad_1","~~","corbic_1",0.0639,0,NA
+"Individual zooplankton groups","North","clad_1","~~","flow",0.3619,0,NA
+"Individual zooplankton groups","North","clad_1","~~","turbid",-0.0777,0,NA
+"Individual zooplankton groups","North","clad_1","~~","temp",-0.0827,0,NA
+"Individual zooplankton groups","North","clad_1","~~","pcope_1",-0.1996,0,NA
+"Individual zooplankton groups","North","clad_1","~~","mysid_1",-0.3593,0,NA
+"Individual zooplankton groups","North","clad_1","~~","estfish_bsmt_1",-0.2134,0,NA
 "Individual zooplankton groups","North","amphi_m_1","~~","amphi_m_1",1,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","rotif_m_1",0.0762,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","rotif_m_1",-0.0998,0,NA
 "Individual zooplankton groups","North","amphi_m_1","~~","corbic_1",0.1414,0,NA
 "Individual zooplankton groups","North","amphi_m_1","~~","flow",0.1215,0,NA
 "Individual zooplankton groups","North","amphi_m_1","~~","turbid",0.153,0,NA
@@ -1062,13 +1062,13 @@
 "Individual zooplankton groups","North","amphi_m_1","~~","mysid_1",-0.0314,0,NA
 "Individual zooplankton groups","North","amphi_m_1","~~","estfish_bsmt_1",0.0404,0,NA
 "Individual zooplankton groups","North","rotif_m_1","~~","rotif_m_1",1,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","corbic_1",0.1018,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","flow",0.2999,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","turbid",-0.1201,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","temp",-0.1419,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","pcope_1",-0.0162,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","mysid_1",-0.3056,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","estfish_bsmt_1",-0.2582,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","corbic_1",0.0891,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","flow",0.2436,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","turbid",-0.1848,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","temp",-0.1066,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","pcope_1",0.1329,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","mysid_1",-0.2124,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","estfish_bsmt_1",-0.1981,0,NA
 "Individual zooplankton groups","North","corbic_1","~~","corbic_1",1,0,NA
 "Individual zooplankton groups","North","corbic_1","~~","flow",0.0137,0,NA
 "Individual zooplankton groups","North","corbic_1","~~","turbid",-0.0562,0,NA
@@ -1097,75 +1097,75 @@
 "Individual zooplankton groups","North","mysid_1","~~","mysid_1",1,0,NA
 "Individual zooplankton groups","North","mysid_1","~~","estfish_bsmt_1",0.3664,0,NA
 "Individual zooplankton groups","North","estfish_bsmt_1","~~","estfish_bsmt_1",1,0,NA
-"Individual zooplankton groups","South","chla","~","chla_1",0.2163,0.0658,0.001
-"Individual zooplankton groups","South","chla","~","hcope_1",0.1006,0.0636,0.1135
-"Individual zooplankton groups","South","chla","~","clad_1",0.1949,0.0661,0.0032
-"Individual zooplankton groups","South","chla","~","rotif_m_1",-0.0743,0.0629,0.2378
-"Individual zooplankton groups","South","chla","~","corbic_1",-0.0075,0.063,0.9055
-"Individual zooplankton groups","South","chla","~","flow",-0.0745,0.0677,0.271
-"Individual zooplankton groups","South","chla","~","turbid",0.0025,0.0656,0.9692
-"Individual zooplankton groups","South","chla","~","temp",0.0762,0.0645,0.2372
-"Individual zooplankton groups","South","hcope","~","chla_1",0.1633,0.058,0.0049
-"Individual zooplankton groups","South","hcope","~","hcope_1",0.354,0.056,0
-"Individual zooplankton groups","South","hcope","~","pcope_1",0.002,0.0601,0.9735
-"Individual zooplankton groups","South","hcope","~","corbic_1",0.115,0.0588,0.0507
-"Individual zooplankton groups","South","hcope","~","flow",-0.139,0.0602,0.021
-"Individual zooplankton groups","South","hcope","~","turbid",-0.0977,0.0604,0.1058
-"Individual zooplankton groups","South","hcope","~","temp",0.1868,0.0586,0.0014
-"Individual zooplankton groups","South","hcope","~","estfish_bsmt_1",-0.1883,0.0589,0.0014
-"Individual zooplankton groups","South","clad","~","chla_1",0.1678,0.0557,0.0026
-"Individual zooplankton groups","South","clad","~","clad_1",0.5007,0.0496,0
-"Individual zooplankton groups","South","clad","~","pcope_1",-0.0382,0.0541,0.4804
-"Individual zooplankton groups","South","clad","~","flow",0.1797,0.0543,9e-04
-"Individual zooplankton groups","South","clad","~","turbid",-0.0243,0.0556,0.6627
-"Individual zooplankton groups","South","clad","~","temp",0.125,0.0548,0.0225
-"Individual zooplankton groups","South","clad","~","estfish_bsmt_1",-0.1036,0.0534,0.0525
+"Individual zooplankton groups","South","chla","~","chla_1",0.2201,0.066,9e-04
+"Individual zooplankton groups","South","chla","~","hcope_1",0.1092,0.0635,0.0856
+"Individual zooplankton groups","South","chla","~","clad_1",0.1807,0.0673,0.0072
+"Individual zooplankton groups","South","chla","~","rotif_m_1",-0.069,0.0632,0.2751
+"Individual zooplankton groups","South","chla","~","corbic_1",-0.0079,0.0631,0.8997
+"Individual zooplankton groups","South","chla","~","flow",-0.0695,0.0681,0.3073
+"Individual zooplankton groups","South","chla","~","turbid",0.0162,0.0666,0.8076
+"Individual zooplankton groups","South","chla","~","temp",0.0724,0.0647,0.2636
+"Individual zooplankton groups","South","hcope","~","chla_1",0.163,0.058,0.0049
+"Individual zooplankton groups","South","hcope","~","hcope_1",0.3552,0.056,0
+"Individual zooplankton groups","South","hcope","~","pcope_1",7e-04,0.0601,0.9905
+"Individual zooplankton groups","South","hcope","~","corbic_1",0.1174,0.0589,0.0463
+"Individual zooplankton groups","South","hcope","~","flow",-0.1388,0.0601,0.0211
+"Individual zooplankton groups","South","hcope","~","turbid",-0.098,0.0603,0.1044
+"Individual zooplankton groups","South","hcope","~","temp",0.1872,0.0585,0.0014
+"Individual zooplankton groups","South","hcope","~","estfish_bsmt_1",-0.1892,0.0589,0.0013
+"Individual zooplankton groups","South","clad","~","chla_1",0.1366,0.0555,0.014
+"Individual zooplankton groups","South","clad","~","clad_1",0.5168,0.0494,0
+"Individual zooplankton groups","South","clad","~","pcope_1",-0.0279,0.0538,0.6034
+"Individual zooplankton groups","South","clad","~","flow",0.1805,0.0539,8e-04
+"Individual zooplankton groups","South","clad","~","turbid",-0.0486,0.0556,0.3818
+"Individual zooplankton groups","South","clad","~","temp",0.1068,0.0543,0.0493
+"Individual zooplankton groups","South","clad","~","estfish_bsmt_1",-0.0898,0.0529,0.0895
 "Individual zooplankton groups","South","amphi_m","~","chla_1",-0.0534,0.0659,0.4179
-"Individual zooplankton groups","South","amphi_m","~","amphi_m_1",0.2146,0.0645,9e-04
-"Individual zooplankton groups","South","amphi_m","~","flow",-0.0066,0.0669,0.9217
-"Individual zooplankton groups","South","amphi_m","~","turbid",0.1619,0.0672,0.016
+"Individual zooplankton groups","South","amphi_m","~","amphi_m_1",0.2136,0.0646,9e-04
+"Individual zooplankton groups","South","amphi_m","~","flow",-0.0067,0.0669,0.9198
+"Individual zooplankton groups","South","amphi_m","~","turbid",0.1622,0.0672,0.0158
 "Individual zooplankton groups","South","amphi_m","~","temp",0.0874,0.0668,0.1909
-"Individual zooplankton groups","South","amphi_m","~","estfish_bsmt_1",0.047,0.0679,0.4891
-"Individual zooplankton groups","South","rotif_m","~","chla_1",-0.0139,0.0647,0.8298
-"Individual zooplankton groups","South","rotif_m","~","rotif_m_1",0.1854,0.0626,0.0031
-"Individual zooplankton groups","South","rotif_m","~","flow",0.2959,0.0614,0
-"Individual zooplankton groups","South","rotif_m","~","turbid",-0.0683,0.0651,0.2941
-"Individual zooplankton groups","South","rotif_m","~","temp",-0.0102,0.0657,0.8761
-"Individual zooplankton groups","South","rotif_m","~","estfish_bsmt_1",0.122,0.0649,0.0603
-"Individual zooplankton groups","South","pcope","~","chla_1",0.2289,0.06,1e-04
-"Individual zooplankton groups","South","pcope","~","hcope_1",-0.0607,0.0602,0.3135
-"Individual zooplankton groups","South","pcope","~","clad_1",0.0616,0.0633,0.3306
-"Individual zooplankton groups","South","pcope","~","pcope_1",0.4457,0.0538,0
-"Individual zooplankton groups","South","pcope","~","corbic_1",-0.0534,0.0586,0.3622
-"Individual zooplankton groups","South","pcope","~","flow",0.0299,0.0624,0.632
-"Individual zooplankton groups","South","pcope","~","turbid",-0.0827,0.061,0.1752
-"Individual zooplankton groups","South","pcope","~","temp",0.0126,0.0604,0.8351
-"Individual zooplankton groups","South","pcope","~","estfish_bsmt_1",-0.0537,0.0609,0.3779
-"Individual zooplankton groups","South","chla","~~","chla",0.8572,0.0427,0
-"Individual zooplankton groups","South","hcope","~~","hcope",0.7043,0.0486,0
-"Individual zooplankton groups","South","clad","~~","clad",0.6035,0.0466,0
-"Individual zooplankton groups","South","amphi_m","~~","amphi_m",0.9021,0.0378,0
-"Individual zooplankton groups","South","rotif_m","~~","rotif_m",0.8595,0.0427,0
-"Individual zooplankton groups","South","pcope","~~","pcope",0.7115,0.0483,0
-"Individual zooplankton groups","South","chla","~~","hcope",0.1207,0.068,0.076
-"Individual zooplankton groups","South","chla","~~","clad",0.279,0.0636,0
-"Individual zooplankton groups","South","chla","~~","amphi_m",0.0033,0.069,0.9619
-"Individual zooplankton groups","South","chla","~~","rotif_m",0.1704,0.067,0.011
-"Individual zooplankton groups","South","chla","~~","pcope",-0.0213,0.069,0.7572
-"Individual zooplankton groups","South","hcope","~~","clad",0.1034,0.0683,0.1298
-"Individual zooplankton groups","South","hcope","~~","amphi_m",0.0335,0.0689,0.6271
-"Individual zooplankton groups","South","hcope","~~","rotif_m",0.0343,0.0689,0.6189
-"Individual zooplankton groups","South","hcope","~~","pcope",0.0387,0.0689,0.5746
-"Individual zooplankton groups","South","clad","~~","amphi_m",-0.1241,0.0679,0.0677
-"Individual zooplankton groups","South","clad","~~","rotif_m",0.0963,0.0684,0.1592
-"Individual zooplankton groups","South","clad","~~","pcope",0.1331,0.0678,0.0496
-"Individual zooplankton groups","South","amphi_m","~~","rotif_m",0.0505,0.0688,0.4631
-"Individual zooplankton groups","South","amphi_m","~~","pcope",0.0408,0.0689,0.5535
-"Individual zooplankton groups","South","rotif_m","~~","pcope",0.1707,0.067,0.0109
+"Individual zooplankton groups","South","amphi_m","~","estfish_bsmt_1",0.0467,0.0679,0.4917
+"Individual zooplankton groups","South","rotif_m","~","chla_1",0.0359,0.065,0.58
+"Individual zooplankton groups","South","rotif_m","~","rotif_m_1",0.1145,0.0633,0.0705
+"Individual zooplankton groups","South","rotif_m","~","flow",0.3041,0.0616,0
+"Individual zooplankton groups","South","rotif_m","~","turbid",-0.0723,0.0653,0.2686
+"Individual zooplankton groups","South","rotif_m","~","temp",0.0014,0.0661,0.9832
+"Individual zooplankton groups","South","rotif_m","~","estfish_bsmt_1",0.1725,0.0647,0.0077
+"Individual zooplankton groups","South","pcope","~","chla_1",0.2254,0.06,2e-04
+"Individual zooplankton groups","South","pcope","~","hcope_1",-0.0548,0.0591,0.3536
+"Individual zooplankton groups","South","pcope","~","clad_1",0.0711,0.0626,0.2558
+"Individual zooplankton groups","South","pcope","~","pcope_1",0.4441,0.0531,0
+"Individual zooplankton groups","South","pcope","~","corbic_1",-0.0512,0.0577,0.3749
+"Individual zooplankton groups","South","pcope","~","flow",0.0293,0.0621,0.6367
+"Individual zooplankton groups","South","pcope","~","turbid",-0.0776,0.0615,0.207
+"Individual zooplankton groups","South","pcope","~","temp",0.0109,0.0602,0.8562
+"Individual zooplankton groups","South","pcope","~","estfish_bsmt_1",-0.0494,0.0608,0.417
+"Individual zooplankton groups","South","chla","~~","chla",0.8615,0.0423,0
+"Individual zooplankton groups","South","hcope","~~","hcope",0.7027,0.0487,0
+"Individual zooplankton groups","South","clad","~~","clad",0.5926,0.0463,0
+"Individual zooplankton groups","South","amphi_m","~~","amphi_m",0.9025,0.0377,0
+"Individual zooplankton groups","South","rotif_m","~~","rotif_m",0.8659,0.0421,0
+"Individual zooplankton groups","South","pcope","~~","pcope",0.7101,0.0479,0
+"Individual zooplankton groups","South","chla","~~","hcope",0.1211,0.068,0.0749
+"Individual zooplankton groups","South","chla","~~","clad",0.2856,0.0634,0
+"Individual zooplankton groups","South","chla","~~","amphi_m",0.0044,0.069,0.9487
+"Individual zooplankton groups","South","chla","~~","rotif_m",0.1425,0.0676,0.0351
+"Individual zooplankton groups","South","chla","~~","pcope",-0.0224,0.069,0.7454
+"Individual zooplankton groups","South","hcope","~~","clad",0.0734,0.0686,0.2851
+"Individual zooplankton groups","South","hcope","~~","amphi_m",0.033,0.0689,0.6323
+"Individual zooplankton groups","South","hcope","~~","rotif_m",0.0199,0.069,0.773
+"Individual zooplankton groups","South","hcope","~~","pcope",0.0391,0.0689,0.5706
+"Individual zooplankton groups","South","clad","~~","amphi_m",-0.1205,0.068,0.0764
+"Individual zooplankton groups","South","clad","~~","rotif_m",0.0435,0.0689,0.5272
+"Individual zooplankton groups","South","clad","~~","pcope",0.1201,0.068,0.0774
+"Individual zooplankton groups","South","amphi_m","~~","rotif_m",0.0652,0.0687,0.343
+"Individual zooplankton groups","South","amphi_m","~~","pcope",0.0406,0.0689,0.5555
+"Individual zooplankton groups","South","rotif_m","~~","pcope",0.2498,0.0647,1e-04
 "Individual zooplankton groups","South","chla_1","~~","chla_1",1,0,NA
 "Individual zooplankton groups","South","chla_1","~~","hcope_1",0.1439,0,NA
-"Individual zooplankton groups","South","chla_1","~~","clad_1",0.2748,0,NA
-"Individual zooplankton groups","South","chla_1","~~","rotif_m_1",0.0841,0,NA
+"Individual zooplankton groups","South","chla_1","~~","clad_1",0.2683,0,NA
+"Individual zooplankton groups","South","chla_1","~~","rotif_m_1",0.0959,0,NA
 "Individual zooplankton groups","South","chla_1","~~","corbic_1",-0.0381,0,NA
 "Individual zooplankton groups","South","chla_1","~~","flow",-0.0456,0,NA
 "Individual zooplankton groups","South","chla_1","~~","turbid",0.0691,0,NA
@@ -1174,8 +1174,8 @@
 "Individual zooplankton groups","South","chla_1","~~","estfish_bsmt_1",0.0714,0,NA
 "Individual zooplankton groups","South","chla_1","~~","amphi_m_1",0.0065,0,NA
 "Individual zooplankton groups","South","hcope_1","~~","hcope_1",1,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","clad_1",0.113,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","rotif_m_1",-0.0946,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","clad_1",0.0937,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","rotif_m_1",-0.105,0,NA
 "Individual zooplankton groups","South","hcope_1","~~","corbic_1",0.0913,0,NA
 "Individual zooplankton groups","South","hcope_1","~~","flow",-0.2094,0,NA
 "Individual zooplankton groups","South","hcope_1","~~","turbid",-0.0037,0,NA
@@ -1184,22 +1184,22 @@
 "Individual zooplankton groups","South","hcope_1","~~","estfish_bsmt_1",-0.0519,0,NA
 "Individual zooplankton groups","South","hcope_1","~~","amphi_m_1",0.018,0,NA
 "Individual zooplankton groups","South","clad_1","~~","clad_1",1,0,NA
-"Individual zooplankton groups","South","clad_1","~~","rotif_m_1",0.14,0,NA
-"Individual zooplankton groups","South","clad_1","~~","corbic_1",0.0617,0,NA
-"Individual zooplankton groups","South","clad_1","~~","flow",0.1741,0,NA
-"Individual zooplankton groups","South","clad_1","~~","turbid",-0.0709,0,NA
-"Individual zooplankton groups","South","clad_1","~~","temp",-0.0226,0,NA
-"Individual zooplankton groups","South","clad_1","~~","pcope_1",0.2411,0,NA
-"Individual zooplankton groups","South","clad_1","~~","estfish_bsmt_1",0.0248,0,NA
-"Individual zooplankton groups","South","clad_1","~~","amphi_m_1",-0.1974,0,NA
+"Individual zooplankton groups","South","clad_1","~~","rotif_m_1",0.1367,0,NA
+"Individual zooplankton groups","South","clad_1","~~","corbic_1",0.0664,0,NA
+"Individual zooplankton groups","South","clad_1","~~","flow",0.1692,0,NA
+"Individual zooplankton groups","South","clad_1","~~","turbid",-0.1476,0,NA
+"Individual zooplankton groups","South","clad_1","~~","temp",0.0059,0,NA
+"Individual zooplankton groups","South","clad_1","~~","pcope_1",0.2513,0,NA
+"Individual zooplankton groups","South","clad_1","~~","estfish_bsmt_1",-0.0298,0,NA
+"Individual zooplankton groups","South","clad_1","~~","amphi_m_1",-0.2041,0,NA
 "Individual zooplankton groups","South","rotif_m_1","~~","rotif_m_1",1,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","corbic_1",0.1123,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","flow",0.1345,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","turbid",-0.0396,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","temp",0.0835,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","pcope_1",0.1722,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","estfish_bsmt_1",-0.0599,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","amphi_m_1",-0.0139,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","corbic_1",0.0933,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","flow",0.1607,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","turbid",-0.0195,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","temp",0.1052,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","pcope_1",0.2522,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","estfish_bsmt_1",-0.0309,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","amphi_m_1",0.0162,0,NA
 "Individual zooplankton groups","South","corbic_1","~~","corbic_1",1,0,NA
 "Individual zooplankton groups","South","corbic_1","~~","flow",0.1218,0,NA
 "Individual zooplankton groups","South","corbic_1","~~","turbid",0.1504,0,NA
