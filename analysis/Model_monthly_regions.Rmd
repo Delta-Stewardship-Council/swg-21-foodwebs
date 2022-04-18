@@ -858,7 +858,6 @@ modFW='chla~chla_1+hcope_1+amphi_m_1+rotif_m_1+potam_1+flow+turbid+temp
        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
        rotif_m~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
        pcope~hcope_1+pcope_1+potam_1+flow+turbid+temp+estfish_bsmt_1
-       estfish_bsmt~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+flow+turbid+temp
 '
 modW='chla~chla_1+hcope_1+amphi_m_1+rotif_m_1+potam_1+flow+turbid+temp+mysid_1
        hcope~chla_1+hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1+rotif_m_1
@@ -866,15 +865,14 @@ modW='chla~chla_1+hcope_1+amphi_m_1+rotif_m_1+potam_1+flow+turbid+temp+mysid_1
        rotif_m~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
        pcope~hcope_1+pcope_1+mysid_1+potam_1+flow+turbid+temp+estfish_bsmt_1+rotif_m_1
        mysid~chla_1+hcope_1+pcope_1+amphi_m_1+mysid_1+flow+turbid+temp+estfish_bsmt_1
-       estfish_bsmt~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+mysid_1+flow+turbid+temp
 '
-modN='chla~chla_1+hcope_1+amphi_m_1+rotif_m_1+corbic_1+flow+turbid+temp
+modN='chla~chla_1+hcope_1+clad_1+amphi_m_1+rotif_m_1+corbic_1+flow+turbid+temp
        hcope~chla_1+hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
+       clad~chla_1+clad_1+pcope_1+flow+turbid+temp+estfish_bsmt_1
        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
        rotif_m~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
-       pcope~hcope_1+pcope_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1+chla_1
+       pcope~hcope_1+pcope_1+clad_1+mysid_1+corbic_1+flow+turbid+temp+estfish_bsmt_1+chla_1
        mysid~hcope_1+pcope_1+mysid_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
-       estfish_bsmt~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+mysid_1+flow+turbid+temp
 '
 modS='chla~chla_1+hcope_1+clad_1+rotif_m_1+corbic_1+flow+turbid+temp
        hcope~chla_1+hcope_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
@@ -882,7 +880,6 @@ modS='chla~chla_1+hcope_1+clad_1+rotif_m_1+corbic_1+flow+turbid+temp
        amphi_m~chla_1+amphi_m_1+flow+turbid+temp+estfish_bsmt_1
        rotif_m~chla_1+rotif_m_1+flow+turbid+temp+estfish_bsmt_1
        pcope~chla_1+hcope_1+clad_1+pcope_1+corbic_1+flow+turbid+temp+estfish_bsmt_1
-       estfish_bsmt~estfish_bsmt_1+hcope_1+pcope_1+amphi_m_1+rotif_m_1+clad_1+flow+turbid+temp
 '
 modfitFW=sem(modFW, data=filter(fdr_ds,region=="Far West"))
 modfitW=sem(modW, data=filter(fdr_ds,region=="West"))

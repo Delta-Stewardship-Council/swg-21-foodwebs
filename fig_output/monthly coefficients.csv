@@ -694,571 +694,537 @@
 "Lower trophic level aggregates","South","lb",":=","sqrt(lb1^2+lb2^2+lb3^2)",0.072,0.0638,0.2588
 "Lower trophic level aggregates","South","ls",":=","sqrt(ls1^2)",0.3187,0.0541,0
 "Lower trophic level aggregates","South","la",":=","sqrt(la1^2+la2^2+la3^2)",0.2167,0.0534,0
-"Individual zooplankton groups","Far West","chla","~","chla_1",0.2327,0.0676,6e-04
-"Individual zooplankton groups","Far West","chla","~","hcope_1",0.1135,0.0706,0.108
-"Individual zooplankton groups","Far West","chla","~","amphi_m_1",-0.014,0.0865,0.8714
-"Individual zooplankton groups","Far West","chla","~","rotif_m_1",-0.1119,0.0739,0.1297
-"Individual zooplankton groups","Far West","chla","~","potam_1",-6e-04,0.0706,0.9932
-"Individual zooplankton groups","Far West","chla","~","flow",0.1245,0.087,0.1525
-"Individual zooplankton groups","Far West","chla","~","turbid",-0.1143,0.0798,0.1519
-"Individual zooplankton groups","Far West","chla","~","temp",0.1242,0.073,0.0888
-"Individual zooplankton groups","Far West","hcope","~","chla_1",0.1008,0.0663,0.1286
-"Individual zooplankton groups","Far West","hcope","~","hcope_1",0.2324,0.0699,9e-04
-"Individual zooplankton groups","Far West","hcope","~","pcope_1",0.0571,0.0714,0.4237
-"Individual zooplankton groups","Far West","hcope","~","potam_1",-0.1444,0.0692,0.0369
-"Individual zooplankton groups","Far West","hcope","~","flow",-0.0591,0.0788,0.4533
-"Individual zooplankton groups","Far West","hcope","~","turbid",-0.0432,0.0776,0.5776
-"Individual zooplankton groups","Far West","hcope","~","temp",-0.0627,0.073,0.3901
-"Individual zooplankton groups","Far West","hcope","~","estfish_bsmt_1",-0.1323,0.0758,0.081
-"Individual zooplankton groups","Far West","amphi_m","~","chla_1",0.0429,0.0328,0.1908
-"Individual zooplankton groups","Far West","amphi_m","~","amphi_m_1",0.7484,0.0303,0
-"Individual zooplankton groups","Far West","amphi_m","~","flow",-0.2535,0.0401,0
-"Individual zooplankton groups","Far West","amphi_m","~","turbid",0.0031,0.0372,0.933
-"Individual zooplankton groups","Far West","amphi_m","~","temp",0.0156,0.0347,0.6523
-"Individual zooplankton groups","Far West","amphi_m","~","estfish_bsmt_1",0.0477,0.0351,0.1744
-"Individual zooplankton groups","Far West","rotif_m","~","chla_1",-0.1775,0.0667,0.0078
-"Individual zooplankton groups","Far West","rotif_m","~","rotif_m_1",0.3446,0.0625,0
-"Individual zooplankton groups","Far West","rotif_m","~","flow",0.0675,0.0778,0.3855
-"Individual zooplankton groups","Far West","rotif_m","~","turbid",0.053,0.0769,0.4909
-"Individual zooplankton groups","Far West","rotif_m","~","temp",0.0251,0.0721,0.7275
-"Individual zooplankton groups","Far West","rotif_m","~","estfish_bsmt_1",-0.0172,0.0719,0.8109
-"Individual zooplankton groups","Far West","pcope","~","hcope_1",0.0501,0.0706,0.4781
-"Individual zooplankton groups","Far West","pcope","~","pcope_1",0.2791,0.0665,0
-"Individual zooplankton groups","Far West","pcope","~","potam_1",-0.0965,0.0682,0.1569
-"Individual zooplankton groups","Far West","pcope","~","flow",0.2047,0.0751,0.0064
-"Individual zooplankton groups","Far West","pcope","~","turbid",0.0859,0.0753,0.2538
-"Individual zooplankton groups","Far West","pcope","~","temp",0.1473,0.0705,0.0367
-"Individual zooplankton groups","Far West","pcope","~","estfish_bsmt_1",-0.0475,0.0745,0.5234
-"Individual zooplankton groups","Far West","estfish_bsmt","~","estfish_bsmt_1",0.3574,0.0614,0
-"Individual zooplankton groups","Far West","estfish_bsmt","~","hcope_1",-0.0964,0.0618,0.119
-"Individual zooplankton groups","Far West","estfish_bsmt","~","pcope_1",0.132,0.061,0.0306
-"Individual zooplankton groups","Far West","estfish_bsmt","~","amphi_m_1",-0.0589,0.0737,0.424
-"Individual zooplankton groups","Far West","estfish_bsmt","~","rotif_m_1",-0.1441,0.061,0.0181
-"Individual zooplankton groups","Far West","estfish_bsmt","~","flow",0.0852,0.0736,0.2469
-"Individual zooplankton groups","Far West","estfish_bsmt","~","turbid",0.2182,0.0658,9e-04
-"Individual zooplankton groups","Far West","estfish_bsmt","~","temp",-0.0628,0.0629,0.3182
-"Individual zooplankton groups","Far West","chla","~~","chla",0.8825,0.0433,0
-"Individual zooplankton groups","Far West","hcope","~~","hcope",0.8523,0.0464,0
-"Individual zooplankton groups","Far West","amphi_m","~~","amphi_m",0.1919,0.0197,0
-"Individual zooplankton groups","Far West","rotif_m","~~","rotif_m",0.8389,0.0474,0
-"Individual zooplankton groups","Far West","pcope","~~","pcope",0.8128,0.0495,0
-"Individual zooplankton groups","Far West","estfish_bsmt","~~","estfish_bsmt",0.6241,0.0509,0
-"Individual zooplankton groups","Far West","chla","~~","hcope",0.0417,0.0738,0.5721
-"Individual zooplankton groups","Far West","chla","~~","amphi_m",0.0348,0.0738,0.6369
-"Individual zooplankton groups","Far West","chla","~~","rotif_m",0.1456,0.0724,0.0442
-"Individual zooplankton groups","Far West","chla","~~","pcope",-0.0102,0.0739,0.8901
-"Individual zooplankton groups","Far West","chla","~~","estfish_bsmt",-0.076,0.0735,0.3013
-"Individual zooplankton groups","Far West","hcope","~~","amphi_m",-0.0219,0.0739,0.7666
-"Individual zooplankton groups","Far West","hcope","~~","rotif_m",0.0794,0.0735,0.2798
-"Individual zooplankton groups","Far West","hcope","~~","pcope",-0.2392,0.0697,6e-04
-"Individual zooplankton groups","Far West","hcope","~~","estfish_bsmt",-0.0848,0.0734,0.2476
-"Individual zooplankton groups","Far West","amphi_m","~~","rotif_m",-0.0951,0.0733,0.1942
-"Individual zooplankton groups","Far West","amphi_m","~~","pcope",-0.0073,0.0739,0.921
-"Individual zooplankton groups","Far West","amphi_m","~~","estfish_bsmt",-0.042,0.0738,0.5695
-"Individual zooplankton groups","Far West","rotif_m","~~","pcope",0.0425,0.0738,0.5647
-"Individual zooplankton groups","Far West","rotif_m","~~","estfish_bsmt",-0.0707,0.0736,0.3362
-"Individual zooplankton groups","Far West","pcope","~~","estfish_bsmt",-0.0907,0.0733,0.216
+"Individual zooplankton groups","Far West","chla","~","chla_1",0.2141,0.0668,0.0014
+"Individual zooplankton groups","Far West","chla","~","hcope_1",0.0868,0.0693,0.2108
+"Individual zooplankton groups","Far West","chla","~","amphi_m_1",0.022,0.0841,0.7941
+"Individual zooplankton groups","Far West","chla","~","rotif_m_1",-0.1146,0.0724,0.1135
+"Individual zooplankton groups","Far West","chla","~","potam_1",-0.0135,0.0694,0.8458
+"Individual zooplankton groups","Far West","chla","~","flow",0.1418,0.0847,0.094
+"Individual zooplankton groups","Far West","chla","~","turbid",-0.0919,0.0775,0.2356
+"Individual zooplankton groups","Far West","chla","~","temp",0.1602,0.0703,0.0226
+"Individual zooplankton groups","Far West","hcope","~","chla_1",0.0855,0.0654,0.1913
+"Individual zooplankton groups","Far West","hcope","~","hcope_1",0.232,0.0683,7e-04
+"Individual zooplankton groups","Far West","hcope","~","pcope_1",0.0612,0.0697,0.3801
+"Individual zooplankton groups","Far West","hcope","~","potam_1",-0.158,0.0677,0.0196
+"Individual zooplankton groups","Far West","hcope","~","flow",-0.0673,0.0768,0.3804
+"Individual zooplankton groups","Far West","hcope","~","turbid",-0.0138,0.0752,0.8547
+"Individual zooplankton groups","Far West","hcope","~","temp",-0.0502,0.0707,0.477
+"Individual zooplankton groups","Far West","hcope","~","estfish_bsmt_1",-0.1307,0.0738,0.0766
+"Individual zooplankton groups","Far West","amphi_m","~","chla_1",0.0416,0.0322,0.1957
+"Individual zooplankton groups","Far West","amphi_m","~","amphi_m_1",0.7455,0.0293,0
+"Individual zooplankton groups","Far West","amphi_m","~","flow",-0.2482,0.0392,0
+"Individual zooplankton groups","Far West","amphi_m","~","turbid",-0.0104,0.036,0.7726
+"Individual zooplankton groups","Far West","amphi_m","~","temp",0.013,0.0336,0.6993
+"Individual zooplankton groups","Far West","amphi_m","~","estfish_bsmt_1",0.0417,0.0342,0.223
+"Individual zooplankton groups","Far West","rotif_m","~","chla_1",-0.1653,0.065,0.011
+"Individual zooplankton groups","Far West","rotif_m","~","rotif_m_1",0.3724,0.0597,0
+"Individual zooplankton groups","Far West","rotif_m","~","flow",0.0699,0.0754,0.354
+"Individual zooplankton groups","Far West","rotif_m","~","turbid",0.0286,0.0741,0.7
+"Individual zooplankton groups","Far West","rotif_m","~","temp",0.0068,0.0693,0.9223
+"Individual zooplankton groups","Far West","rotif_m","~","estfish_bsmt_1",-0.0066,0.0697,0.9245
+"Individual zooplankton groups","Far West","pcope","~","hcope_1",0.0442,0.0684,0.5178
+"Individual zooplankton groups","Far West","pcope","~","pcope_1",0.3005,0.0639,0
+"Individual zooplankton groups","Far West","pcope","~","potam_1",-0.1056,0.0662,0.1107
+"Individual zooplankton groups","Far West","pcope","~","flow",0.2017,0.0728,0.0056
+"Individual zooplankton groups","Far West","pcope","~","turbid",0.081,0.0723,0.2625
+"Individual zooplankton groups","Far West","pcope","~","temp",0.1527,0.0677,0.0241
+"Individual zooplankton groups","Far West","pcope","~","estfish_bsmt_1",-0.0079,0.0722,0.9131
+"Individual zooplankton groups","Far West","chla","~~","chla",0.8873,0.0417,0
+"Individual zooplankton groups","Far West","hcope","~~","hcope",0.8513,0.0455,0
+"Individual zooplankton groups","Far West","amphi_m","~~","amphi_m",0.1934,0.0194,0
+"Individual zooplankton groups","Far West","rotif_m","~~","rotif_m",0.826,0.0472,0
+"Individual zooplankton groups","Far West","pcope","~~","pcope",0.8025,0.0488,0
+"Individual zooplankton groups","Far West","chla","~~","hcope",0.0528,0.072,0.4632
+"Individual zooplankton groups","Far West","chla","~~","amphi_m",0.0435,0.072,0.5459
+"Individual zooplankton groups","Far West","chla","~~","rotif_m",0.1221,0.0711,0.0859
+"Individual zooplankton groups","Far West","chla","~~","pcope",-0.0095,0.0722,0.8948
+"Individual zooplankton groups","Far West","hcope","~~","amphi_m",-0.0285,0.0721,0.6931
+"Individual zooplankton groups","Far West","hcope","~~","rotif_m",0.0555,0.0719,0.4404
+"Individual zooplankton groups","Far West","hcope","~~","pcope",-0.2367,0.0681,5e-04
+"Individual zooplankton groups","Far West","amphi_m","~~","rotif_m",-0.0923,0.0716,0.1973
+"Individual zooplankton groups","Far West","amphi_m","~~","pcope",-0.0201,0.0721,0.7809
+"Individual zooplankton groups","Far West","rotif_m","~~","pcope",0.0673,0.0718,0.3492
 "Individual zooplankton groups","Far West","chla_1","~~","chla_1",1,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","hcope_1",0.0769,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","amphi_m_1",0.0711,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","rotif_m_1",0.0309,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","potam_1",0.019,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","flow",0.0517,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","turbid",-0.0612,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","temp",0.0286,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","pcope_1",0.0318,0,NA
-"Individual zooplankton groups","Far West","chla_1","~~","estfish_bsmt_1",-0.0968,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","hcope_1",0.0868,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","amphi_m_1",0.0676,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","rotif_m_1",0.0347,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","potam_1",0.0191,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","flow",0.0423,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","turbid",-0.0821,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","temp",0.0217,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","pcope_1",0.0237,0,NA
+"Individual zooplankton groups","Far West","chla_1","~~","estfish_bsmt_1",-0.0932,0,NA
 "Individual zooplankton groups","Far West","hcope_1","~~","hcope_1",1,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","amphi_m_1",0.1069,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","rotif_m_1",0.1075,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","potam_1",-0.117,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","flow",-0.0317,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","turbid",-0.014,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","temp",0.1689,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","pcope_1",-0.1421,0,NA
-"Individual zooplankton groups","Far West","hcope_1","~~","estfish_bsmt_1",-0.246,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","amphi_m_1",0.0954,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","rotif_m_1",0.114,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","potam_1",-0.1153,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","flow",-0.0409,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","turbid",-0.0195,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","temp",0.1574,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","pcope_1",-0.1426,0,NA
+"Individual zooplankton groups","Far West","hcope_1","~~","estfish_bsmt_1",-0.2515,0,NA
 "Individual zooplankton groups","Far West","amphi_m_1","~~","amphi_m_1",1,0,NA
-"Individual zooplankton groups","Far West","amphi_m_1","~~","rotif_m_1",-0.2521,0,NA
-"Individual zooplankton groups","Far West","amphi_m_1","~~","potam_1",-0.0709,0,NA
-"Individual zooplankton groups","Far West","amphi_m_1","~~","flow",-0.5321,0,NA
-"Individual zooplankton groups","Far West","amphi_m_1","~~","turbid",-0.3419,0,NA
-"Individual zooplankton groups","Far West","amphi_m_1","~~","temp",0.0693,0,NA
-"Individual zooplankton groups","Far West","amphi_m_1","~~","pcope_1",-0.1988,0,NA
-"Individual zooplankton groups","Far West","amphi_m_1","~~","estfish_bsmt_1",-0.2797,0,NA
+"Individual zooplankton groups","Far West","amphi_m_1","~~","rotif_m_1",-0.2587,0,NA
+"Individual zooplankton groups","Far West","amphi_m_1","~~","potam_1",-0.0711,0,NA
+"Individual zooplankton groups","Far West","amphi_m_1","~~","flow",-0.5277,0,NA
+"Individual zooplankton groups","Far West","amphi_m_1","~~","turbid",-0.3219,0,NA
+"Individual zooplankton groups","Far West","amphi_m_1","~~","temp",0.0787,0,NA
+"Individual zooplankton groups","Far West","amphi_m_1","~~","pcope_1",-0.2108,0,NA
+"Individual zooplankton groups","Far West","amphi_m_1","~~","estfish_bsmt_1",-0.2771,0,NA
 "Individual zooplankton groups","Far West","rotif_m_1","~~","rotif_m_1",1,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","potam_1",-0.1866,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","flow",0.1145,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","turbid",-0.031,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","temp",0.0695,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","pcope_1",0.1664,0,NA
-"Individual zooplankton groups","Far West","rotif_m_1","~~","estfish_bsmt_1",-0.0777,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","potam_1",-0.1843,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","flow",0.1142,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","turbid",-0.0397,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","temp",0.0541,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","pcope_1",0.1785,0,NA
+"Individual zooplankton groups","Far West","rotif_m_1","~~","estfish_bsmt_1",-0.0842,0,NA
 "Individual zooplankton groups","Far West","potam_1","~~","potam_1",1,0,NA
-"Individual zooplankton groups","Far West","potam_1","~~","flow",0.0449,0,NA
-"Individual zooplankton groups","Far West","potam_1","~~","turbid",0.0695,0,NA
-"Individual zooplankton groups","Far West","potam_1","~~","temp",-0.0717,0,NA
-"Individual zooplankton groups","Far West","potam_1","~~","pcope_1",-0.1348,0,NA
-"Individual zooplankton groups","Far West","potam_1","~~","estfish_bsmt_1",0.2001,0,NA
+"Individual zooplankton groups","Far West","potam_1","~~","flow",0.0482,0,NA
+"Individual zooplankton groups","Far West","potam_1","~~","turbid",0.0636,0,NA
+"Individual zooplankton groups","Far West","potam_1","~~","temp",-0.071,0,NA
+"Individual zooplankton groups","Far West","potam_1","~~","pcope_1",-0.1363,0,NA
+"Individual zooplankton groups","Far West","potam_1","~~","estfish_bsmt_1",0.2039,0,NA
 "Individual zooplankton groups","Far West","flow","~~","flow",1,0,NA
-"Individual zooplankton groups","Far West","flow","~~","turbid",0.4306,0,NA
-"Individual zooplankton groups","Far West","flow","~~","temp",-0.1991,0,NA
-"Individual zooplankton groups","Far West","flow","~~","pcope_1",0.1698,0,NA
-"Individual zooplankton groups","Far West","flow","~~","estfish_bsmt_1",0.2562,0,NA
+"Individual zooplankton groups","Far West","flow","~~","turbid",0.4229,0,NA
+"Individual zooplankton groups","Far West","flow","~~","temp",-0.1984,0,NA
+"Individual zooplankton groups","Far West","flow","~~","pcope_1",0.1709,0,NA
+"Individual zooplankton groups","Far West","flow","~~","estfish_bsmt_1",0.2587,0,NA
 "Individual zooplankton groups","Far West","turbid","~~","turbid",1,0,NA
-"Individual zooplankton groups","Far West","turbid","~~","temp",-0.2581,0,NA
-"Individual zooplankton groups","Far West","turbid","~~","pcope_1",0.0621,0,NA
-"Individual zooplankton groups","Far West","turbid","~~","estfish_bsmt_1",0.2006,0,NA
+"Individual zooplankton groups","Far West","turbid","~~","temp",-0.2357,0,NA
+"Individual zooplankton groups","Far West","turbid","~~","pcope_1",0.0777,0,NA
+"Individual zooplankton groups","Far West","turbid","~~","estfish_bsmt_1",0.1749,0,NA
 "Individual zooplankton groups","Far West","temp","~~","temp",1,0,NA
-"Individual zooplankton groups","Far West","temp","~~","pcope_1",-0.03,0,NA
-"Individual zooplankton groups","Far West","temp","~~","estfish_bsmt_1",-0.262,0,NA
+"Individual zooplankton groups","Far West","temp","~~","pcope_1",-0.0395,0,NA
+"Individual zooplankton groups","Far West","temp","~~","estfish_bsmt_1",-0.2457,0,NA
 "Individual zooplankton groups","Far West","pcope_1","~~","pcope_1",1,0,NA
-"Individual zooplankton groups","Far West","pcope_1","~~","estfish_bsmt_1",-0.0906,0,NA
+"Individual zooplankton groups","Far West","pcope_1","~~","estfish_bsmt_1",-0.0871,0,NA
 "Individual zooplankton groups","Far West","estfish_bsmt_1","~~","estfish_bsmt_1",1,0,NA
-"Individual zooplankton groups","West","chla","~","chla_1",0.1761,0.0692,0.011
-"Individual zooplankton groups","West","chla","~","hcope_1",0.0205,0.072,0.7763
-"Individual zooplankton groups","West","chla","~","amphi_m_1",0.1407,0.0743,0.0584
-"Individual zooplankton groups","West","chla","~","rotif_m_1",0.1123,0.0723,0.1202
-"Individual zooplankton groups","West","chla","~","potam_1",-0.0418,0.075,0.5772
-"Individual zooplankton groups","West","chla","~","flow",0.0587,0.074,0.4279
-"Individual zooplankton groups","West","chla","~","turbid",0.0874,0.0752,0.2452
-"Individual zooplankton groups","West","chla","~","temp",-0.1057,0.0679,0.1197
-"Individual zooplankton groups","West","chla","~","mysid_1",-0.144,0.0719,0.0452
-"Individual zooplankton groups","West","hcope","~","chla_1",0.0421,0.0669,0.5294
-"Individual zooplankton groups","West","hcope","~","hcope_1",0.2748,0.0659,0
-"Individual zooplankton groups","West","hcope","~","pcope_1",-0.1157,0.0651,0.0755
-"Individual zooplankton groups","West","hcope","~","mysid_1",0.0777,0.0718,0.2792
-"Individual zooplankton groups","West","hcope","~","potam_1",-0.1756,0.0665,0.0083
-"Individual zooplankton groups","West","hcope","~","flow",-0.1394,0.0711,0.0498
-"Individual zooplankton groups","West","hcope","~","turbid",-0.1058,0.0725,0.1443
-"Individual zooplankton groups","West","hcope","~","temp",0.0841,0.066,0.2024
-"Individual zooplankton groups","West","hcope","~","estfish_bsmt_1",0.0439,0.0654,0.5022
-"Individual zooplankton groups","West","hcope","~","rotif_m_1",0.2299,0.064,3e-04
-"Individual zooplankton groups","West","amphi_m","~","chla_1",-0.0411,0.0381,0.2817
-"Individual zooplankton groups","West","amphi_m","~","amphi_m_1",0.7775,0.0274,0
-"Individual zooplankton groups","West","amphi_m","~","mysid_1",0.075,0.0386,0.0523
-"Individual zooplankton groups","West","amphi_m","~","flow",0.003,0.0394,0.9398
-"Individual zooplankton groups","West","amphi_m","~","turbid",-0.1007,0.0409,0.0138
-"Individual zooplankton groups","West","amphi_m","~","temp",-0.1011,0.038,0.0078
-"Individual zooplankton groups","West","amphi_m","~","estfish_bsmt_1",-0.1805,0.0388,0
-"Individual zooplankton groups","West","rotif_m","~","chla_1",0.0277,0.0578,0.6322
-"Individual zooplankton groups","West","rotif_m","~","rotif_m_1",0.4496,0.0517,0
-"Individual zooplankton groups","West","rotif_m","~","flow",0.1948,0.0597,0.0011
-"Individual zooplankton groups","West","rotif_m","~","turbid",-0.1407,0.0595,0.0181
-"Individual zooplankton groups","West","rotif_m","~","temp",-0.0168,0.0575,0.7707
-"Individual zooplankton groups","West","rotif_m","~","estfish_bsmt_1",-0.1847,0.0555,9e-04
-"Individual zooplankton groups","West","pcope","~","hcope_1",-0.1538,0.0575,0.0074
-"Individual zooplankton groups","West","pcope","~","pcope_1",0.4355,0.0514,0
-"Individual zooplankton groups","West","pcope","~","mysid_1",0.1353,0.0614,0.0277
-"Individual zooplankton groups","West","pcope","~","potam_1",0.045,0.0602,0.4548
-"Individual zooplankton groups","West","pcope","~","flow",0.1502,0.0606,0.0131
-"Individual zooplankton groups","West","pcope","~","turbid",-0.1254,0.0621,0.0436
-"Individual zooplankton groups","West","pcope","~","temp",0.2216,0.0545,0
-"Individual zooplankton groups","West","pcope","~","estfish_bsmt_1",0.0209,0.0575,0.716
-"Individual zooplankton groups","West","pcope","~","rotif_m_1",0.1358,0.0571,0.0174
-"Individual zooplankton groups","West","mysid","~","chla_1",0.1673,0.059,0.0045
-"Individual zooplankton groups","West","mysid","~","hcope_1",0.0486,0.0614,0.4288
-"Individual zooplankton groups","West","mysid","~","pcope_1",0.0987,0.0591,0.0949
-"Individual zooplankton groups","West","mysid","~","amphi_m_1",-0.1184,0.0611,0.0525
-"Individual zooplankton groups","West","mysid","~","mysid_1",0.3732,0.0604,0
-"Individual zooplankton groups","West","mysid","~","flow",-0.1641,0.0607,0.0069
-"Individual zooplankton groups","West","mysid","~","turbid",0.2489,0.0637,1e-04
-"Individual zooplankton groups","West","mysid","~","temp",0.1154,0.0595,0.0522
-"Individual zooplankton groups","West","mysid","~","estfish_bsmt_1",0.0033,0.0611,0.9574
-"Individual zooplankton groups","West","estfish_bsmt","~","estfish_bsmt_1",0.2229,0.0668,8e-04
-"Individual zooplankton groups","West","estfish_bsmt","~","hcope_1",0.1017,0.0677,0.1328
-"Individual zooplankton groups","West","estfish_bsmt","~","pcope_1",-0.0082,0.0684,0.9043
-"Individual zooplankton groups","West","estfish_bsmt","~","amphi_m_1",-0.1908,0.0723,0.0084
-"Individual zooplankton groups","West","estfish_bsmt","~","rotif_m_1",0.0331,0.0708,0.6402
-"Individual zooplankton groups","West","estfish_bsmt","~","mysid_1",-0.0836,0.0726,0.2493
-"Individual zooplankton groups","West","estfish_bsmt","~","flow",-0.1954,0.0684,0.0043
-"Individual zooplankton groups","West","estfish_bsmt","~","turbid",0.1923,0.0723,0.0078
-"Individual zooplankton groups","West","estfish_bsmt","~","temp",0.0187,0.0659,0.7771
-"Individual zooplankton groups","West","chla","~~","chla",0.8485,0.0445,0
-"Individual zooplankton groups","West","hcope","~~","hcope",0.7855,0.0475,0
-"Individual zooplankton groups","West","amphi_m","~~","amphi_m",0.2645,0.0252,0
-"Individual zooplankton groups","West","rotif_m","~~","rotif_m",0.6083,0.0479,0
-"Individual zooplankton groups","West","pcope","~~","pcope",0.5802,0.0469,0
-"Individual zooplankton groups","West","mysid","~~","mysid",0.6437,0.0489,0
-"Individual zooplankton groups","West","estfish_bsmt","~~","estfish_bsmt",0.8031,0.0476,0
-"Individual zooplankton groups","West","chla","~~","hcope",0.2124,0.0672,0.0016
-"Individual zooplankton groups","West","chla","~~","amphi_m",-0.0357,0.0703,0.6113
-"Individual zooplankton groups","West","chla","~~","rotif_m",0.0777,0.0699,0.2664
-"Individual zooplankton groups","West","chla","~~","pcope",0.0186,0.0703,0.7913
-"Individual zooplankton groups","West","chla","~~","mysid",0.1226,0.0693,0.0768
-"Individual zooplankton groups","West","chla","~~","estfish_bsmt",0.0794,0.0699,0.2561
-"Individual zooplankton groups","West","hcope","~~","amphi_m",-0.1249,0.0693,0.0713
-"Individual zooplankton groups","West","hcope","~~","rotif_m",-0.0186,0.0703,0.792
-"Individual zooplankton groups","West","hcope","~~","pcope",0.1025,0.0696,0.1409
-"Individual zooplankton groups","West","hcope","~~","mysid",0.3001,0.064,0
-"Individual zooplankton groups","West","hcope","~~","estfish_bsmt",-0.0443,0.0702,0.5285
-"Individual zooplankton groups","West","amphi_m","~~","rotif_m",0.13,0.0692,0.0603
-"Individual zooplankton groups","West","amphi_m","~~","pcope",0.1242,0.0693,0.0731
-"Individual zooplankton groups","West","amphi_m","~~","mysid",-0.1132,0.0695,0.1032
-"Individual zooplankton groups","West","amphi_m","~~","estfish_bsmt",-0.0415,0.0702,0.555
-"Individual zooplankton groups","West","rotif_m","~~","pcope",0.0474,0.0702,0.4996
-"Individual zooplankton groups","West","rotif_m","~~","mysid",0.0597,0.0701,0.3944
-"Individual zooplankton groups","West","rotif_m","~~","estfish_bsmt",-0.0331,0.0703,0.638
-"Individual zooplankton groups","West","pcope","~~","mysid",0.1145,0.0694,0.0991
-"Individual zooplankton groups","West","pcope","~~","estfish_bsmt",0.0293,0.0703,0.677
-"Individual zooplankton groups","West","mysid","~~","estfish_bsmt",0.1604,0.0685,0.0193
+"Individual zooplankton groups","West","chla","~","chla_1",0.1626,0.0672,0.0156
+"Individual zooplankton groups","West","chla","~","hcope_1",0.044,0.0702,0.5308
+"Individual zooplankton groups","West","chla","~","amphi_m_1",0.1612,0.0733,0.0278
+"Individual zooplankton groups","West","chla","~","rotif_m_1",0.0935,0.0702,0.1828
+"Individual zooplankton groups","West","chla","~","potam_1",-0.069,0.0744,0.354
+"Individual zooplankton groups","West","chla","~","flow",0.072,0.0717,0.3156
+"Individual zooplankton groups","West","chla","~","turbid",0.0771,0.0737,0.2958
+"Individual zooplankton groups","West","chla","~","temp",-0.1071,0.0654,0.1018
+"Individual zooplankton groups","West","chla","~","mysid_1",-0.1601,0.0702,0.0224
+"Individual zooplankton groups","West","hcope","~","chla_1",0.044,0.0646,0.4955
+"Individual zooplankton groups","West","hcope","~","hcope_1",0.2962,0.0644,0
+"Individual zooplankton groups","West","hcope","~","pcope_1",-0.1109,0.063,0.0783
+"Individual zooplankton groups","West","hcope","~","mysid_1",0.0503,0.0704,0.475
+"Individual zooplankton groups","West","hcope","~","potam_1",-0.1758,0.0664,0.0081
+"Individual zooplankton groups","West","hcope","~","flow",-0.1372,0.0689,0.0464
+"Individual zooplankton groups","West","hcope","~","turbid",-0.1146,0.0706,0.1049
+"Individual zooplankton groups","West","hcope","~","temp",0.0669,0.0635,0.2921
+"Individual zooplankton groups","West","hcope","~","estfish_bsmt_1",0.0671,0.0635,0.2908
+"Individual zooplankton groups","West","hcope","~","rotif_m_1",0.2118,0.0627,7e-04
+"Individual zooplankton groups","West","amphi_m","~","chla_1",-0.0412,0.0359,0.2509
+"Individual zooplankton groups","West","amphi_m","~","amphi_m_1",0.7838,0.0265,0
+"Individual zooplankton groups","West","amphi_m","~","mysid_1",0.0727,0.0365,0.0466
+"Individual zooplankton groups","West","amphi_m","~","flow",0.0068,0.0372,0.8547
+"Individual zooplankton groups","West","amphi_m","~","turbid",-0.1035,0.0388,0.0077
+"Individual zooplankton groups","West","amphi_m","~","temp",-0.0994,0.0356,0.0052
+"Individual zooplankton groups","West","amphi_m","~","estfish_bsmt_1",-0.1776,0.0363,0
+"Individual zooplankton groups","West","rotif_m","~","chla_1",0.0313,0.0572,0.5845
+"Individual zooplankton groups","West","rotif_m","~","rotif_m_1",0.4198,0.0522,0
+"Individual zooplankton groups","West","rotif_m","~","flow",0.2091,0.0586,4e-04
+"Individual zooplankton groups","West","rotif_m","~","turbid",-0.1266,0.0591,0.0321
+"Individual zooplankton groups","West","rotif_m","~","temp",-0.0075,0.0567,0.8944
+"Individual zooplankton groups","West","rotif_m","~","estfish_bsmt_1",-0.1812,0.0551,0.001
+"Individual zooplankton groups","West","pcope","~","hcope_1",-0.1408,0.0576,0.0146
+"Individual zooplankton groups","West","pcope","~","pcope_1",0.428,0.0507,0
+"Individual zooplankton groups","West","pcope","~","mysid_1",0.1209,0.0614,0.0489
+"Individual zooplankton groups","West","pcope","~","potam_1",0.034,0.0609,0.5763
+"Individual zooplankton groups","West","pcope","~","flow",0.1399,0.06,0.0197
+"Individual zooplankton groups","West","pcope","~","turbid",-0.1422,0.0618,0.0214
+"Individual zooplankton groups","West","pcope","~","temp",0.2215,0.0535,0
+"Individual zooplankton groups","West","pcope","~","estfish_bsmt_1",0.0288,0.0572,0.615
+"Individual zooplankton groups","West","pcope","~","rotif_m_1",0.1237,0.0568,0.0294
+"Individual zooplankton groups","West","mysid","~","chla_1",0.1674,0.0572,0.0035
+"Individual zooplankton groups","West","mysid","~","hcope_1",0.0749,0.0593,0.2071
+"Individual zooplankton groups","West","mysid","~","pcope_1",0.112,0.0563,0.0467
+"Individual zooplankton groups","West","mysid","~","amphi_m_1",-0.126,0.0595,0.0341
+"Individual zooplankton groups","West","mysid","~","mysid_1",0.37,0.0585,0
+"Individual zooplankton groups","West","mysid","~","flow",-0.1648,0.0583,0.0047
+"Individual zooplankton groups","West","mysid","~","turbid",0.257,0.0614,0
+"Individual zooplankton groups","West","mysid","~","temp",0.1004,0.0566,0.0761
+"Individual zooplankton groups","West","mysid","~","estfish_bsmt_1",-0.0234,0.0585,0.6895
+"Individual zooplankton groups","West","chla","~~","chla",0.8463,0.0433,0
+"Individual zooplankton groups","West","hcope","~~","hcope",0.7832,0.0462,0
+"Individual zooplankton groups","West","amphi_m","~~","amphi_m",0.2504,0.0232,0
+"Individual zooplankton groups","West","rotif_m","~~","rotif_m",0.6375,0.0471,0
+"Individual zooplankton groups","West","pcope","~~","pcope",0.6041,0.0462,0
+"Individual zooplankton groups","West","mysid","~~","mysid",0.6282,0.047,0
+"Individual zooplankton groups","West","chla","~~","hcope",0.2127,0.0651,0.0011
+"Individual zooplankton groups","West","chla","~~","amphi_m",-0.0155,0.0682,0.8205
+"Individual zooplankton groups","West","chla","~~","rotif_m",0.1069,0.0674,0.1127
+"Individual zooplankton groups","West","chla","~~","pcope",0.0236,0.0682,0.7289
+"Individual zooplankton groups","West","chla","~~","mysid",0.1182,0.0672,0.0787
+"Individual zooplankton groups","West","hcope","~~","amphi_m",-0.1049,0.0674,0.1199
+"Individual zooplankton groups","West","hcope","~~","rotif_m",0.0226,0.0682,0.7401
+"Individual zooplankton groups","West","hcope","~~","pcope",0.1193,0.0672,0.076
+"Individual zooplankton groups","West","hcope","~~","mysid",0.2987,0.0621,0
+"Individual zooplankton groups","West","amphi_m","~~","rotif_m",0.1433,0.0668,0.0319
+"Individual zooplankton groups","West","amphi_m","~~","pcope",0.1472,0.0667,0.0274
+"Individual zooplankton groups","West","amphi_m","~~","mysid",-0.097,0.0676,0.1512
+"Individual zooplankton groups","West","rotif_m","~~","pcope",0.0707,0.0679,0.2972
+"Individual zooplankton groups","West","rotif_m","~~","mysid",0.0878,0.0677,0.1946
+"Individual zooplankton groups","West","pcope","~~","mysid",0.0835,0.0677,0.2174
 "Individual zooplankton groups","West","chla_1","~~","chla_1",1,0,NA
-"Individual zooplankton groups","West","chla_1","~~","hcope_1",0.2037,0,NA
-"Individual zooplankton groups","West","chla_1","~~","amphi_m_1",0.1731,0,NA
-"Individual zooplankton groups","West","chla_1","~~","rotif_m_1",0.2406,0,NA
-"Individual zooplankton groups","West","chla_1","~~","potam_1",-0.0379,0,NA
-"Individual zooplankton groups","West","chla_1","~~","flow",0.1913,0,NA
-"Individual zooplankton groups","West","chla_1","~~","turbid",0.0084,0,NA
-"Individual zooplankton groups","West","chla_1","~~","temp",-0.1883,0,NA
-"Individual zooplankton groups","West","chla_1","~~","mysid_1",0.0649,0,NA
-"Individual zooplankton groups","West","chla_1","~~","pcope_1",0.0648,0,NA
-"Individual zooplankton groups","West","chla_1","~~","estfish_bsmt_1",-0.0544,0,NA
+"Individual zooplankton groups","West","chla_1","~~","hcope_1",0.2032,0,NA
+"Individual zooplankton groups","West","chla_1","~~","amphi_m_1",0.1685,0,NA
+"Individual zooplankton groups","West","chla_1","~~","rotif_m_1",0.2367,0,NA
+"Individual zooplankton groups","West","chla_1","~~","potam_1",-0.0381,0,NA
+"Individual zooplankton groups","West","chla_1","~~","flow",0.1766,0,NA
+"Individual zooplankton groups","West","chla_1","~~","turbid",0.0102,0,NA
+"Individual zooplankton groups","West","chla_1","~~","temp",-0.188,0,NA
+"Individual zooplankton groups","West","chla_1","~~","mysid_1",0.0805,0,NA
+"Individual zooplankton groups","West","chla_1","~~","pcope_1",0.0461,0,NA
+"Individual zooplankton groups","West","chla_1","~~","estfish_bsmt_1",-0.0305,0,NA
 "Individual zooplankton groups","West","hcope_1","~~","hcope_1",1,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","amphi_m_1",-0.0553,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","rotif_m_1",0.0173,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","potam_1",-0.2546,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","flow",0.0218,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","turbid",0.1817,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","temp",-0.0497,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","mysid_1",0.3535,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","pcope_1",0.0493,0,NA
-"Individual zooplankton groups","West","hcope_1","~~","estfish_bsmt_1",0.0591,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","amphi_m_1",-0.0564,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","rotif_m_1",0.0334,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","potam_1",-0.2747,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","flow",0.0143,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","turbid",0.1907,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","temp",-0.0462,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","mysid_1",0.3694,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","pcope_1",0.0531,0,NA
+"Individual zooplankton groups","West","hcope_1","~~","estfish_bsmt_1",0.0084,0,NA
 "Individual zooplankton groups","West","amphi_m_1","~~","amphi_m_1",1,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","rotif_m_1",0.3552,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","potam_1",0.3076,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","flow",-0.0281,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","turbid",-0.3158,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","temp",0.0885,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","mysid_1",-0.2227,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","pcope_1",0.2005,0,NA
-"Individual zooplankton groups","West","amphi_m_1","~~","estfish_bsmt_1",-0.3111,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","rotif_m_1",0.366,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","potam_1",0.342,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","flow",-0.0576,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","turbid",-0.3454,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","temp",0.0832,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","mysid_1",-0.2408,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","pcope_1",0.2147,0,NA
+"Individual zooplankton groups","West","amphi_m_1","~~","estfish_bsmt_1",-0.3082,0,NA
 "Individual zooplankton groups","West","rotif_m_1","~~","rotif_m_1",1,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","potam_1",-0.038,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","flow",0.2298,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","turbid",-0.1284,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","temp",-0.0311,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","mysid_1",-0.0507,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","pcope_1",0.2561,0,NA
-"Individual zooplankton groups","West","rotif_m_1","~~","estfish_bsmt_1",-0.1809,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","potam_1",-0.0177,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","flow",0.2035,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","turbid",-0.1388,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","temp",-0.0386,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","mysid_1",-0.0473,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","pcope_1",0.2639,0,NA
+"Individual zooplankton groups","West","rotif_m_1","~~","estfish_bsmt_1",-0.2224,0,NA
 "Individual zooplankton groups","West","potam_1","~~","potam_1",1,0,NA
-"Individual zooplankton groups","West","potam_1","~~","flow",-0.2914,0,NA
-"Individual zooplankton groups","West","potam_1","~~","turbid",-0.3327,0,NA
-"Individual zooplankton groups","West","potam_1","~~","temp",0.0433,0,NA
-"Individual zooplankton groups","West","potam_1","~~","mysid_1",-0.2632,0,NA
-"Individual zooplankton groups","West","potam_1","~~","pcope_1",0.0433,0,NA
-"Individual zooplankton groups","West","potam_1","~~","estfish_bsmt_1",-0.132,0,NA
+"Individual zooplankton groups","West","potam_1","~~","flow",-0.3025,0,NA
+"Individual zooplankton groups","West","potam_1","~~","turbid",-0.3648,0,NA
+"Individual zooplankton groups","West","potam_1","~~","temp",0.0301,0,NA
+"Individual zooplankton groups","West","potam_1","~~","mysid_1",-0.2872,0,NA
+"Individual zooplankton groups","West","potam_1","~~","pcope_1",0.0818,0,NA
+"Individual zooplankton groups","West","potam_1","~~","estfish_bsmt_1",-0.1156,0,NA
 "Individual zooplankton groups","West","flow","~~","flow",1,0,NA
-"Individual zooplankton groups","West","flow","~~","turbid",0.2838,0,NA
-"Individual zooplankton groups","West","flow","~~","temp",-0.1657,0,NA
-"Individual zooplankton groups","West","flow","~~","mysid_1",-0.0602,0,NA
-"Individual zooplankton groups","West","flow","~~","pcope_1",-0.006,0,NA
-"Individual zooplankton groups","West","flow","~~","estfish_bsmt_1",-0.1305,0,NA
+"Individual zooplankton groups","West","flow","~~","turbid",0.2973,0,NA
+"Individual zooplankton groups","West","flow","~~","temp",-0.1581,0,NA
+"Individual zooplankton groups","West","flow","~~","mysid_1",-0.0603,0,NA
+"Individual zooplankton groups","West","flow","~~","pcope_1",-0.0027,0,NA
+"Individual zooplankton groups","West","flow","~~","estfish_bsmt_1",-0.1207,0,NA
 "Individual zooplankton groups","West","turbid","~~","turbid",1,0,NA
-"Individual zooplankton groups","West","turbid","~~","temp",-0.2156,0,NA
-"Individual zooplankton groups","West","turbid","~~","mysid_1",0.2056,0,NA
-"Individual zooplankton groups","West","turbid","~~","pcope_1",-0.2137,0,NA
-"Individual zooplankton groups","West","turbid","~~","estfish_bsmt_1",0.1392,0,NA
+"Individual zooplankton groups","West","turbid","~~","temp",-0.1939,0,NA
+"Individual zooplankton groups","West","turbid","~~","mysid_1",0.2132,0,NA
+"Individual zooplankton groups","West","turbid","~~","pcope_1",-0.2165,0,NA
+"Individual zooplankton groups","West","turbid","~~","estfish_bsmt_1",0.125,0,NA
 "Individual zooplankton groups","West","temp","~~","temp",1,0,NA
-"Individual zooplankton groups","West","temp","~~","mysid_1",0.0329,0,NA
-"Individual zooplankton groups","West","temp","~~","pcope_1",0.1651,0,NA
-"Individual zooplankton groups","West","temp","~~","estfish_bsmt_1",-0.0514,0,NA
+"Individual zooplankton groups","West","temp","~~","mysid_1",0.0309,0,NA
+"Individual zooplankton groups","West","temp","~~","pcope_1",0.1467,0,NA
+"Individual zooplankton groups","West","temp","~~","estfish_bsmt_1",-0.0425,0,NA
 "Individual zooplankton groups","West","mysid_1","~~","mysid_1",1,0,NA
-"Individual zooplankton groups","West","mysid_1","~~","pcope_1",0.1326,0,NA
-"Individual zooplankton groups","West","mysid_1","~~","estfish_bsmt_1",0.274,0,NA
+"Individual zooplankton groups","West","mysid_1","~~","pcope_1",0.1006,0,NA
+"Individual zooplankton groups","West","mysid_1","~~","estfish_bsmt_1",0.2646,0,NA
 "Individual zooplankton groups","West","pcope_1","~~","pcope_1",1,0,NA
-"Individual zooplankton groups","West","pcope_1","~~","estfish_bsmt_1",-0.0404,0,NA
+"Individual zooplankton groups","West","pcope_1","~~","estfish_bsmt_1",-0.0836,0,NA
 "Individual zooplankton groups","West","estfish_bsmt_1","~~","estfish_bsmt_1",1,0,NA
-"Individual zooplankton groups","North","chla","~","chla_1",0.193,0.0696,0.0055
-"Individual zooplankton groups","North","chla","~","hcope_1",-0.0369,0.0794,0.6422
-"Individual zooplankton groups","North","chla","~","amphi_m_1",0.0222,0.071,0.7546
-"Individual zooplankton groups","North","chla","~","rotif_m_1",-0.0032,0.0756,0.9667
-"Individual zooplankton groups","North","chla","~","corbic_1",-0.0486,0.0722,0.5007
-"Individual zooplankton groups","North","chla","~","flow",0.0193,0.0793,0.8075
-"Individual zooplankton groups","North","chla","~","turbid",0.0897,0.074,0.2251
-"Individual zooplankton groups","North","chla","~","temp",0.1564,0.0733,0.033
-"Individual zooplankton groups","North","hcope","~","chla_1",-0.0228,0.0533,0.6694
-"Individual zooplankton groups","North","hcope","~","hcope_1",0.1677,0.0739,0.0232
-"Individual zooplankton groups","North","hcope","~","pcope_1",-0.1432,0.0611,0.019
-"Individual zooplankton groups","North","hcope","~","mysid_1",0.06,0.077,0.436
-"Individual zooplankton groups","North","hcope","~","corbic_1",0.1554,0.0528,0.0032
-"Individual zooplankton groups","North","hcope","~","flow",-0.4794,0.0568,0
-"Individual zooplankton groups","North","hcope","~","turbid",0.1017,0.0626,0.1042
-"Individual zooplankton groups","North","hcope","~","temp",0.1215,0.0588,0.0389
-"Individual zooplankton groups","North","hcope","~","estfish_bsmt_1",0.0045,0.0638,0.944
-"Individual zooplankton groups","North","amphi_m","~","chla_1",0.0605,0.0616,0.3266
-"Individual zooplankton groups","North","amphi_m","~","amphi_m_1",0.5248,0.0498,0
-"Individual zooplankton groups","North","amphi_m","~","flow",0.0406,0.0687,0.5545
-"Individual zooplankton groups","North","amphi_m","~","turbid",-0.0418,0.0644,0.5156
-"Individual zooplankton groups","North","amphi_m","~","temp",-0.043,0.0639,0.5013
-"Individual zooplankton groups","North","amphi_m","~","estfish_bsmt_1",-0.0751,0.0676,0.2666
-"Individual zooplankton groups","North","rotif_m","~","chla_1",-0.1023,0.061,0.0937
-"Individual zooplankton groups","North","rotif_m","~","rotif_m_1",0.1339,0.0641,0.0367
-"Individual zooplankton groups","North","rotif_m","~","flow",0.5035,0.0587,0
-"Individual zooplankton groups","North","rotif_m","~","turbid",-0.082,0.063,0.1933
-"Individual zooplankton groups","North","rotif_m","~","temp",-0.036,0.0628,0.5664
-"Individual zooplankton groups","North","rotif_m","~","estfish_bsmt_1",0.0181,0.0663,0.7844
-"Individual zooplankton groups","North","pcope","~","hcope_1",-0.0319,0.0836,0.703
-"Individual zooplankton groups","North","pcope","~","pcope_1",0.2671,0.0661,1e-04
-"Individual zooplankton groups","North","pcope","~","mysid_1",0.1195,0.0855,0.1624
-"Individual zooplankton groups","North","pcope","~","corbic_1",0.0363,0.0637,0.5692
-"Individual zooplankton groups","North","pcope","~","flow",-0.1943,0.0719,0.0068
-"Individual zooplankton groups","North","pcope","~","turbid",-0.2473,0.0688,3e-04
-"Individual zooplankton groups","North","pcope","~","temp",0.0459,0.0674,0.4955
-"Individual zooplankton groups","North","pcope","~","estfish_bsmt_1",-0.1035,0.0716,0.1485
-"Individual zooplankton groups","North","pcope","~","chla_1",0.163,0.0638,0.0106
-"Individual zooplankton groups","North","mysid","~","hcope_1",0.0465,0.0739,0.5289
-"Individual zooplankton groups","North","mysid","~","pcope_1",-0.0606,0.061,0.3204
-"Individual zooplankton groups","North","mysid","~","mysid_1",0.2076,0.0745,0.0053
-"Individual zooplankton groups","North","mysid","~","amphi_m_1",-0.086,0.0529,0.1039
-"Individual zooplankton groups","North","mysid","~","flow",-0.405,0.0591,0
-"Individual zooplankton groups","North","mysid","~","turbid",0.2274,0.0612,2e-04
-"Individual zooplankton groups","North","mysid","~","temp",0.0738,0.0585,0.2069
-"Individual zooplankton groups","North","mysid","~","estfish_bsmt_1",0.0504,0.0636,0.4275
-"Individual zooplankton groups","North","estfish_bsmt","~","estfish_bsmt_1",0.1393,0.0713,0.0506
-"Individual zooplankton groups","North","estfish_bsmt","~","hcope_1",0.1115,0.0832,0.1799
-"Individual zooplankton groups","North","estfish_bsmt","~","pcope_1",-0.0534,0.0691,0.4397
-"Individual zooplankton groups","North","estfish_bsmt","~","amphi_m_1",-0.0374,0.0648,0.5638
-"Individual zooplankton groups","North","estfish_bsmt","~","rotif_m_1",0.1226,0.0675,0.0692
-"Individual zooplankton groups","North","estfish_bsmt","~","mysid_1",0.116,0.085,0.1723
-"Individual zooplankton groups","North","estfish_bsmt","~","flow",-0.3714,0.068,0
-"Individual zooplankton groups","North","estfish_bsmt","~","turbid",0.0791,0.0703,0.2609
-"Individual zooplankton groups","North","estfish_bsmt","~","temp",-0.0496,0.0657,0.4505
-"Individual zooplankton groups","North","chla","~~","chla",0.9212,0.0371,0
-"Individual zooplankton groups","North","hcope","~~","hcope",0.583,0.049,0
-"Individual zooplankton groups","North","amphi_m","~~","amphi_m",0.709,0.051,0
-"Individual zooplankton groups","North","rotif_m","~~","rotif_m",0.6825,0.0517,0
-"Individual zooplankton groups","North","pcope","~~","pcope",0.7538,0.0509,0
-"Individual zooplankton groups","North","mysid","~~","mysid",0.5842,0.0491,0
-"Individual zooplankton groups","North","estfish_bsmt","~~","estfish_bsmt",0.7316,0.0517,0
-"Individual zooplankton groups","North","chla","~~","hcope",0.0599,0.0731,0.4126
-"Individual zooplankton groups","North","chla","~~","amphi_m",-0.0235,0.0733,0.7489
-"Individual zooplankton groups","North","chla","~~","rotif_m",0.1269,0.0721,0.0785
-"Individual zooplankton groups","North","chla","~~","pcope",-0.1268,0.0721,0.0789
-"Individual zooplankton groups","North","chla","~~","mysid",0.1025,0.0726,0.1578
-"Individual zooplankton groups","North","chla","~~","estfish_bsmt",0.0153,0.0733,0.8352
-"Individual zooplankton groups","North","hcope","~~","amphi_m",0.0785,0.0729,0.2813
-"Individual zooplankton groups","North","hcope","~~","rotif_m",0.0046,0.0733,0.9494
-"Individual zooplankton groups","North","hcope","~~","pcope",0.1224,0.0722,0.0901
-"Individual zooplankton groups","North","hcope","~~","mysid",0.3834,0.0625,0
-"Individual zooplankton groups","North","hcope","~~","estfish_bsmt",-0.0206,0.0733,0.779
-"Individual zooplankton groups","North","amphi_m","~~","rotif_m",0.044,0.0732,0.5481
-"Individual zooplankton groups","North","amphi_m","~~","pcope",-0.1726,0.0711,0.0152
-"Individual zooplankton groups","North","amphi_m","~~","mysid",0.1234,0.0722,0.0876
-"Individual zooplankton groups","North","amphi_m","~~","estfish_bsmt",0.1192,0.0723,0.0992
-"Individual zooplankton groups","North","rotif_m","~~","pcope",0.037,0.0732,0.6134
-"Individual zooplankton groups","North","rotif_m","~~","mysid",0.0145,0.0733,0.8431
-"Individual zooplankton groups","North","rotif_m","~~","estfish_bsmt",-0.0179,0.0733,0.8076
-"Individual zooplankton groups","North","pcope","~~","mysid",0.153,0.0716,0.0326
-"Individual zooplankton groups","North","pcope","~~","estfish_bsmt",0.0432,0.0732,0.5548
-"Individual zooplankton groups","North","mysid","~~","estfish_bsmt",0.0725,0.0729,0.3199
+"Individual zooplankton groups","North","chla","~","chla_1",0.1661,0.0672,0.0135
+"Individual zooplankton groups","North","chla","~","hcope_1",-0.0283,0.0751,0.7058
+"Individual zooplankton groups","North","chla","~","clad_1",0.1519,0.0762,0.0461
+"Individual zooplankton groups","North","chla","~","amphi_m_1",0.0593,0.067,0.3759
+"Individual zooplankton groups","North","chla","~","rotif_m_1",-0.0295,0.0753,0.6951
+"Individual zooplankton groups","North","chla","~","corbic_1",-0.0211,0.0674,0.754
+"Individual zooplankton groups","North","chla","~","flow",-0.0268,0.0768,0.7272
+"Individual zooplankton groups","North","chla","~","turbid",0.0953,0.0704,0.1755
+"Individual zooplankton groups","North","chla","~","temp",0.124,0.0703,0.0778
+"Individual zooplankton groups","North","hcope","~","chla_1",-0.0108,0.051,0.8326
+"Individual zooplankton groups","North","hcope","~","hcope_1",0.1293,0.0713,0.0698
+"Individual zooplankton groups","North","hcope","~","pcope_1",-0.1272,0.0589,0.0308
+"Individual zooplankton groups","North","hcope","~","mysid_1",0.06,0.075,0.4235
+"Individual zooplankton groups","North","hcope","~","corbic_1",0.1255,0.0511,0.014
+"Individual zooplankton groups","North","hcope","~","flow",-0.4964,0.0537,0
+"Individual zooplankton groups","North","hcope","~","turbid",0.1147,0.0603,0.057
+"Individual zooplankton groups","North","hcope","~","temp",0.1263,0.0566,0.0258
+"Individual zooplankton groups","North","hcope","~","estfish_bsmt_1",0.0084,0.0606,0.8899
+"Individual zooplankton groups","North","clad","~","chla_1",-0.0476,0.0556,0.3922
+"Individual zooplankton groups","North","clad","~","clad_1",0.3618,0.0546,0
+"Individual zooplankton groups","North","clad","~","pcope_1",-0.02,0.0576,0.7285
+"Individual zooplankton groups","North","clad","~","flow",0.4093,0.0576,0
+"Individual zooplankton groups","North","clad","~","turbid",0.0021,0.0592,0.9712
+"Individual zooplankton groups","North","clad","~","temp",0.0317,0.0568,0.5762
+"Individual zooplankton groups","North","clad","~","estfish_bsmt_1",0.0404,0.0596,0.4981
+"Individual zooplankton groups","North","amphi_m","~","chla_1",0.06,0.0584,0.3041
+"Individual zooplankton groups","North","amphi_m","~","amphi_m_1",0.5266,0.0474,0
+"Individual zooplankton groups","North","amphi_m","~","flow",0.0535,0.0645,0.4072
+"Individual zooplankton groups","North","amphi_m","~","turbid",-0.0234,0.0609,0.701
+"Individual zooplankton groups","North","amphi_m","~","temp",-0.0421,0.0604,0.4863
+"Individual zooplankton groups","North","amphi_m","~","estfish_bsmt_1",-0.0795,0.0633,0.2089
+"Individual zooplankton groups","North","rotif_m","~","chla_1",-0.0767,0.0589,0.193
+"Individual zooplankton groups","North","rotif_m","~","rotif_m_1",0.1296,0.061,0.0335
+"Individual zooplankton groups","North","rotif_m","~","flow",0.4862,0.0569,0
+"Individual zooplankton groups","North","rotif_m","~","turbid",-0.0527,0.0607,0.3857
+"Individual zooplankton groups","North","rotif_m","~","temp",-0.0363,0.0605,0.5483
+"Individual zooplankton groups","North","rotif_m","~","estfish_bsmt_1",0.0049,0.0629,0.9384
+"Individual zooplankton groups","North","pcope","~","hcope_1",-0.1139,0.0807,0.1582
+"Individual zooplankton groups","North","pcope","~","pcope_1",0.25,0.0644,1e-04
+"Individual zooplankton groups","North","pcope","~","clad_1",-0.1444,0.0659,0.0285
+"Individual zooplankton groups","North","pcope","~","mysid_1",0.0768,0.085,0.3659
+"Individual zooplankton groups","North","pcope","~","corbic_1",0.0618,0.0611,0.3121
+"Individual zooplankton groups","North","pcope","~","flow",-0.1734,0.0703,0.0136
+"Individual zooplankton groups","North","pcope","~","turbid",-0.2389,0.0661,3e-04
+"Individual zooplankton groups","North","pcope","~","temp",0.0692,0.0643,0.2817
+"Individual zooplankton groups","North","pcope","~","estfish_bsmt_1",-0.0711,0.0679,0.2947
+"Individual zooplankton groups","North","pcope","~","chla_1",0.1344,0.0612,0.0281
+"Individual zooplankton groups","North","mysid","~","hcope_1",-0.0162,0.0717,0.8217
+"Individual zooplankton groups","North","mysid","~","pcope_1",-0.0621,0.0595,0.296
+"Individual zooplankton groups","North","mysid","~","mysid_1",0.1794,0.0733,0.0144
+"Individual zooplankton groups","North","mysid","~","amphi_m_1",-0.0783,0.0509,0.1237
+"Individual zooplankton groups","North","mysid","~","flow",-0.4254,0.0569,0
+"Individual zooplankton groups","North","mysid","~","turbid",0.2359,0.0602,1e-04
+"Individual zooplankton groups","North","mysid","~","temp",0.0843,0.0572,0.1407
+"Individual zooplankton groups","North","mysid","~","estfish_bsmt_1",0.0592,0.0612,0.3333
+"Individual zooplankton groups","North","chla","~~","chla",0.9158,0.036,0
+"Individual zooplankton groups","North","hcope","~~","hcope",0.5947,0.0471,0
+"Individual zooplankton groups","North","clad","~~","clad",0.6183,0.0477,0
+"Individual zooplankton groups","North","amphi_m","~~","amphi_m",0.7004,0.0489,0
+"Individual zooplankton groups","North","rotif_m","~~","rotif_m",0.701,0.0493,0
+"Individual zooplankton groups","North","pcope","~~","pcope",0.7512,0.0487,0
+"Individual zooplankton groups","North","mysid","~~","mysid",0.6189,0.0479,0
+"Individual zooplankton groups","North","chla","~~","hcope",0.034,0.0698,0.6263
+"Individual zooplankton groups","North","chla","~~","clad",0.1505,0.0683,0.0275
+"Individual zooplankton groups","North","chla","~~","amphi_m",0.02,0.0698,0.7749
+"Individual zooplankton groups","North","chla","~~","rotif_m",0.1968,0.0671,0.0034
+"Individual zooplankton groups","North","chla","~~","pcope",-0.0681,0.0695,0.3271
+"Individual zooplankton groups","North","chla","~~","mysid",0.1103,0.069,0.1099
+"Individual zooplankton groups","North","hcope","~~","clad",-0.1185,0.0689,0.0852
+"Individual zooplankton groups","North","hcope","~~","amphi_m",0.0839,0.0694,0.2264
+"Individual zooplankton groups","North","hcope","~~","rotif_m",-0.0234,0.0698,0.7372
+"Individual zooplankton groups","North","hcope","~~","pcope",0.1119,0.069,0.1047
+"Individual zooplankton groups","North","hcope","~~","mysid",0.3946,0.059,0
+"Individual zooplankton groups","North","clad","~~","amphi_m",0.0018,0.0698,0.9798
+"Individual zooplankton groups","North","clad","~~","rotif_m",0.2134,0.0667,0.0014
+"Individual zooplankton groups","North","clad","~~","pcope",-0.057,0.0696,0.4132
+"Individual zooplankton groups","North","clad","~~","mysid",-0.1295,0.0687,0.0594
+"Individual zooplankton groups","North","amphi_m","~~","rotif_m",0.0347,0.0698,0.6192
+"Individual zooplankton groups","North","amphi_m","~~","pcope",-0.1193,0.0688,0.0833
+"Individual zooplankton groups","North","amphi_m","~~","mysid",0.1487,0.0683,0.0295
+"Individual zooplankton groups","North","rotif_m","~~","pcope",0.0374,0.0697,0.5919
+"Individual zooplankton groups","North","rotif_m","~~","mysid",-0.0118,0.0698,0.8653
+"Individual zooplankton groups","North","pcope","~~","mysid",0.199,0.0671,0.003
 "Individual zooplankton groups","North","chla_1","~~","chla_1",1,0,NA
-"Individual zooplankton groups","North","chla_1","~~","hcope_1",0.0271,0,NA
-"Individual zooplankton groups","North","chla_1","~~","amphi_m_1",0.0022,0,NA
-"Individual zooplankton groups","North","chla_1","~~","rotif_m_1",0.048,0,NA
-"Individual zooplankton groups","North","chla_1","~~","corbic_1",-0.096,0,NA
-"Individual zooplankton groups","North","chla_1","~~","flow",0.1047,0,NA
-"Individual zooplankton groups","North","chla_1","~~","turbid",0.1306,0,NA
-"Individual zooplankton groups","North","chla_1","~~","temp",-0.0316,0,NA
-"Individual zooplankton groups","North","chla_1","~~","pcope_1",-0.1514,0,NA
-"Individual zooplankton groups","North","chla_1","~~","mysid_1",0.0871,0,NA
-"Individual zooplankton groups","North","chla_1","~~","estfish_bsmt_1",0.0105,0,NA
+"Individual zooplankton groups","North","chla_1","~~","hcope_1",0.04,0,NA
+"Individual zooplankton groups","North","chla_1","~~","clad_1",0.1455,0,NA
+"Individual zooplankton groups","North","chla_1","~~","amphi_m_1",-0.0199,0,NA
+"Individual zooplankton groups","North","chla_1","~~","rotif_m_1",0.0639,0,NA
+"Individual zooplankton groups","North","chla_1","~~","corbic_1",-0.098,0,NA
+"Individual zooplankton groups","North","chla_1","~~","flow",0.0891,0,NA
+"Individual zooplankton groups","North","chla_1","~~","turbid",0.1184,0,NA
+"Individual zooplankton groups","North","chla_1","~~","temp",-0.0337,0,NA
+"Individual zooplankton groups","North","chla_1","~~","pcope_1",-0.1382,0,NA
+"Individual zooplankton groups","North","chla_1","~~","mysid_1",0.1027,0,NA
+"Individual zooplankton groups","North","chla_1","~~","estfish_bsmt_1",-0.0139,0,NA
 "Individual zooplankton groups","North","hcope_1","~~","hcope_1",1,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","amphi_m_1",0.0091,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","rotif_m_1",-0.309,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","corbic_1",0.0419,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","flow",-0.3417,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","turbid",0.204,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","temp",0.2146,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","pcope_1",0.2327,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","mysid_1",0.6281,0,NA
-"Individual zooplankton groups","North","hcope_1","~~","estfish_bsmt_1",0.3326,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","clad_1",-0.3178,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","amphi_m_1",-0.0206,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","rotif_m_1",-0.3123,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","corbic_1",0.0427,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","flow",-0.3322,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","turbid",0.1964,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","temp",0.2203,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","pcope_1",0.2074,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","mysid_1",0.6384,0,NA
+"Individual zooplankton groups","North","hcope_1","~~","estfish_bsmt_1",0.2948,0,NA
+"Individual zooplankton groups","North","clad_1","~~","clad_1",1,0,NA
+"Individual zooplankton groups","North","clad_1","~~","amphi_m_1",0.119,0,NA
+"Individual zooplankton groups","North","clad_1","~~","rotif_m_1",0.4374,0,NA
+"Individual zooplankton groups","North","clad_1","~~","corbic_1",0.0596,0,NA
+"Individual zooplankton groups","North","clad_1","~~","flow",0.357,0,NA
+"Individual zooplankton groups","North","clad_1","~~","turbid",-0.0637,0,NA
+"Individual zooplankton groups","North","clad_1","~~","temp",-0.0818,0,NA
+"Individual zooplankton groups","North","clad_1","~~","pcope_1",-0.2008,0,NA
+"Individual zooplankton groups","North","clad_1","~~","mysid_1",-0.3384,0,NA
+"Individual zooplankton groups","North","clad_1","~~","estfish_bsmt_1",-0.22,0,NA
 "Individual zooplankton groups","North","amphi_m_1","~~","amphi_m_1",1,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","rotif_m_1",0.0736,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","corbic_1",0.1492,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","flow",0.1149,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","turbid",0.1367,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","temp",-0.0737,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","pcope_1",-0.1556,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","mysid_1",-9e-04,0,NA
-"Individual zooplankton groups","North","amphi_m_1","~~","estfish_bsmt_1",0.0781,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","rotif_m_1",0.0762,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","corbic_1",0.1414,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","flow",0.1215,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","turbid",0.153,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","temp",-0.0645,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","pcope_1",-0.1515,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","mysid_1",-0.0314,0,NA
+"Individual zooplankton groups","North","amphi_m_1","~~","estfish_bsmt_1",0.0404,0,NA
 "Individual zooplankton groups","North","rotif_m_1","~~","rotif_m_1",1,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","corbic_1",0.1252,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","flow",0.2885,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","turbid",-0.1224,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","temp",-0.1597,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","pcope_1",-0.0139,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","mysid_1",-0.301,0,NA
-"Individual zooplankton groups","North","rotif_m_1","~~","estfish_bsmt_1",-0.2469,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","corbic_1",0.1018,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","flow",0.2999,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","turbid",-0.1201,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","temp",-0.1419,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","pcope_1",-0.0162,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","mysid_1",-0.3056,0,NA
+"Individual zooplankton groups","North","rotif_m_1","~~","estfish_bsmt_1",-0.2582,0,NA
 "Individual zooplankton groups","North","corbic_1","~~","corbic_1",1,0,NA
-"Individual zooplankton groups","North","corbic_1","~~","flow",0.0089,0,NA
-"Individual zooplankton groups","North","corbic_1","~~","turbid",-0.0431,0,NA
-"Individual zooplankton groups","North","corbic_1","~~","temp",-0.1608,0,NA
-"Individual zooplankton groups","North","corbic_1","~~","pcope_1",0.0651,0,NA
-"Individual zooplankton groups","North","corbic_1","~~","mysid_1",-0.0789,0,NA
-"Individual zooplankton groups","North","corbic_1","~~","estfish_bsmt_1",0.0648,0,NA
+"Individual zooplankton groups","North","corbic_1","~~","flow",0.0137,0,NA
+"Individual zooplankton groups","North","corbic_1","~~","turbid",-0.0562,0,NA
+"Individual zooplankton groups","North","corbic_1","~~","temp",-0.1737,0,NA
+"Individual zooplankton groups","North","corbic_1","~~","pcope_1",0.0532,0,NA
+"Individual zooplankton groups","North","corbic_1","~~","mysid_1",-0.1027,0,NA
+"Individual zooplankton groups","North","corbic_1","~~","estfish_bsmt_1",0.057,0,NA
 "Individual zooplankton groups","North","flow","~~","flow",1,0,NA
-"Individual zooplankton groups","North","flow","~~","turbid",0.0796,0,NA
-"Individual zooplankton groups","North","flow","~~","temp",-0.2411,0,NA
-"Individual zooplankton groups","North","flow","~~","pcope_1",-0.1846,0,NA
+"Individual zooplankton groups","North","flow","~~","turbid",0.0868,0,NA
+"Individual zooplankton groups","North","flow","~~","temp",-0.2384,0,NA
+"Individual zooplankton groups","North","flow","~~","pcope_1",-0.1934,0,NA
 "Individual zooplankton groups","North","flow","~~","mysid_1",-0.3225,0,NA
-"Individual zooplankton groups","North","flow","~~","estfish_bsmt_1",-0.3399,0,NA
+"Individual zooplankton groups","North","flow","~~","estfish_bsmt_1",-0.3306,0,NA
 "Individual zooplankton groups","North","turbid","~~","turbid",1,0,NA
-"Individual zooplankton groups","North","turbid","~~","temp",0.0444,0,NA
-"Individual zooplankton groups","North","turbid","~~","pcope_1",-0.2342,0,NA
-"Individual zooplankton groups","North","turbid","~~","mysid_1",0.2544,0,NA
-"Individual zooplankton groups","North","turbid","~~","estfish_bsmt_1",0.1833,0,NA
+"Individual zooplankton groups","North","turbid","~~","temp",0.0373,0,NA
+"Individual zooplankton groups","North","turbid","~~","pcope_1",-0.2587,0,NA
+"Individual zooplankton groups","North","turbid","~~","mysid_1",0.2534,0,NA
+"Individual zooplankton groups","North","turbid","~~","estfish_bsmt_1",0.1655,0,NA
 "Individual zooplankton groups","North","temp","~~","temp",1,0,NA
-"Individual zooplankton groups","North","temp","~~","pcope_1",0.0925,0,NA
-"Individual zooplankton groups","North","temp","~~","mysid_1",0.2208,0,NA
-"Individual zooplankton groups","North","temp","~~","estfish_bsmt_1",0.144,0,NA
+"Individual zooplankton groups","North","temp","~~","pcope_1",0.0722,0,NA
+"Individual zooplankton groups","North","temp","~~","mysid_1",0.2236,0,NA
+"Individual zooplankton groups","North","temp","~~","estfish_bsmt_1",0.1404,0,NA
 "Individual zooplankton groups","North","pcope_1","~~","pcope_1",1,0,NA
-"Individual zooplankton groups","North","pcope_1","~~","mysid_1",0.2312,0,NA
-"Individual zooplankton groups","North","pcope_1","~~","estfish_bsmt_1",0.144,0,NA
+"Individual zooplankton groups","North","pcope_1","~~","mysid_1",0.221,0,NA
+"Individual zooplankton groups","North","pcope_1","~~","estfish_bsmt_1",0.1379,0,NA
 "Individual zooplankton groups","North","mysid_1","~~","mysid_1",1,0,NA
-"Individual zooplankton groups","North","mysid_1","~~","estfish_bsmt_1",0.385,0,NA
+"Individual zooplankton groups","North","mysid_1","~~","estfish_bsmt_1",0.3664,0,NA
 "Individual zooplankton groups","North","estfish_bsmt_1","~~","estfish_bsmt_1",1,0,NA
-"Individual zooplankton groups","South","chla","~","chla_1",0.1766,0.0691,0.0106
-"Individual zooplankton groups","South","chla","~","hcope_1",0.0737,0.0671,0.2723
-"Individual zooplankton groups","South","chla","~","clad_1",0.2444,0.0681,3e-04
-"Individual zooplankton groups","South","chla","~","rotif_m_1",-0.088,0.0666,0.1867
-"Individual zooplankton groups","South","chla","~","corbic_1",-0.0433,0.0661,0.5125
-"Individual zooplankton groups","South","chla","~","flow",-0.1116,0.0702,0.1117
-"Individual zooplankton groups","South","chla","~","turbid",0.0163,0.0681,0.8112
-"Individual zooplankton groups","South","chla","~","temp",0.083,0.0669,0.2147
-"Individual zooplankton groups","South","hcope","~","chla_1",0.1768,0.0598,0.0031
-"Individual zooplankton groups","South","hcope","~","hcope_1",0.3526,0.058,0
-"Individual zooplankton groups","South","hcope","~","pcope_1",0.0338,0.0624,0.5887
-"Individual zooplankton groups","South","hcope","~","corbic_1",0.1009,0.0613,0.0998
-"Individual zooplankton groups","South","hcope","~","flow",-0.1504,0.0625,0.0161
-"Individual zooplankton groups","South","hcope","~","turbid",-0.0994,0.0623,0.1102
-"Individual zooplankton groups","South","hcope","~","temp",0.1721,0.061,0.0048
-"Individual zooplankton groups","South","hcope","~","estfish_bsmt_1",-0.183,0.0614,0.0029
-"Individual zooplankton groups","South","clad","~","chla_1",0.194,0.0558,5e-04
-"Individual zooplankton groups","South","clad","~","clad_1",0.5157,0.0492,0
-"Individual zooplankton groups","South","clad","~","pcope_1",-0.0181,0.0548,0.7418
-"Individual zooplankton groups","South","clad","~","flow",0.1923,0.0548,4e-04
-"Individual zooplankton groups","South","clad","~","turbid",-0.0367,0.0557,0.5099
-"Individual zooplankton groups","South","clad","~","temp",0.1022,0.0554,0.0654
-"Individual zooplankton groups","South","clad","~","estfish_bsmt_1",-0.0861,0.0546,0.1147
-"Individual zooplankton groups","South","amphi_m","~","chla_1",-0.0473,0.0676,0.4836
-"Individual zooplankton groups","South","amphi_m","~","amphi_m_1",0.2349,0.0666,4e-04
-"Individual zooplankton groups","South","amphi_m","~","flow",-0.0466,0.0689,0.4982
-"Individual zooplankton groups","South","amphi_m","~","turbid",0.1926,0.0688,0.0051
-"Individual zooplankton groups","South","amphi_m","~","temp",0.0967,0.0686,0.159
-"Individual zooplankton groups","South","amphi_m","~","estfish_bsmt_1",0.0548,0.0697,0.432
-"Individual zooplankton groups","South","rotif_m","~","chla_1",-0.0297,0.0673,0.6584
-"Individual zooplankton groups","South","rotif_m","~","rotif_m_1",0.1941,0.0648,0.0027
-"Individual zooplankton groups","South","rotif_m","~","flow",0.3027,0.0639,0
-"Individual zooplankton groups","South","rotif_m","~","turbid",-0.081,0.0676,0.231
-"Individual zooplankton groups","South","rotif_m","~","temp",-0.0374,0.0682,0.5833
-"Individual zooplankton groups","South","rotif_m","~","estfish_bsmt_1",0.1204,0.0674,0.074
-"Individual zooplankton groups","South","pcope","~","chla_1",0.2491,0.0611,0
-"Individual zooplankton groups","South","pcope","~","hcope_1",-0.0589,0.062,0.3417
-"Individual zooplankton groups","South","pcope","~","clad_1",0.0724,0.0648,0.2638
-"Individual zooplankton groups","South","pcope","~","pcope_1",0.4578,0.0544,0
-"Individual zooplankton groups","South","pcope","~","corbic_1",-0.0266,0.0599,0.6571
-"Individual zooplankton groups","South","pcope","~","flow",0.007,0.0648,0.9134
-"Individual zooplankton groups","South","pcope","~","turbid",-0.0652,0.0629,0.3002
-"Individual zooplankton groups","South","pcope","~","temp",0.003,0.0626,0.9622
-"Individual zooplankton groups","South","pcope","~","estfish_bsmt_1",-0.0539,0.063,0.3924
-"Individual zooplankton groups","South","estfish_bsmt","~","estfish_bsmt_1",0.2258,0.0671,8e-04
-"Individual zooplankton groups","South","estfish_bsmt","~","hcope_1",-0.0051,0.0693,0.9419
-"Individual zooplankton groups","South","estfish_bsmt","~","pcope_1",-0.068,0.07,0.3313
-"Individual zooplankton groups","South","estfish_bsmt","~","amphi_m_1",0.1226,0.0679,0.0711
-"Individual zooplankton groups","South","estfish_bsmt","~","rotif_m_1",-0.0082,0.0678,0.9037
-"Individual zooplankton groups","South","estfish_bsmt","~","clad_1",0.1374,0.0696,0.0485
-"Individual zooplankton groups","South","estfish_bsmt","~","flow",-0.1017,0.0707,0.1501
-"Individual zooplankton groups","South","estfish_bsmt","~","turbid",0.2212,0.0678,0.0011
-"Individual zooplankton groups","South","estfish_bsmt","~","temp",-0.0033,0.0684,0.962
-"Individual zooplankton groups","South","chla","~~","chla",0.8499,0.0453,0
-"Individual zooplankton groups","South","hcope","~~","hcope",0.6952,0.0509,0
-"Individual zooplankton groups","South","clad","~~","clad",0.5599,0.0471,0
-"Individual zooplankton groups","South","amphi_m","~~","amphi_m",0.8718,0.0434,0
-"Individual zooplankton groups","South","rotif_m","~~","rotif_m",0.8507,0.0454,0
-"Individual zooplankton groups","South","pcope","~~","pcope",0.7007,0.0503,0
-"Individual zooplankton groups","South","estfish_bsmt","~~","estfish_bsmt",0.8395,0.0465,0
-"Individual zooplankton groups","South","chla","~~","hcope",0.0814,0.0717,0.2564
-"Individual zooplankton groups","South","chla","~~","clad",0.2253,0.0685,0.001
-"Individual zooplankton groups","South","chla","~~","amphi_m",0.0073,0.0722,0.9197
-"Individual zooplankton groups","South","chla","~~","rotif_m",0.1778,0.0699,0.011
-"Individual zooplankton groups","South","chla","~~","pcope",-0.0515,0.072,0.474
-"Individual zooplankton groups","South","chla","~~","estfish_bsmt",-0.0145,0.0722,0.8409
-"Individual zooplankton groups","South","hcope","~~","clad",0.0598,0.0719,0.4058
-"Individual zooplankton groups","South","hcope","~~","amphi_m",0.0183,0.0721,0.7999
-"Individual zooplankton groups","South","hcope","~~","rotif_m",0.009,0.0722,0.9005
-"Individual zooplankton groups","South","hcope","~~","pcope",0.0115,0.0722,0.8735
-"Individual zooplankton groups","South","hcope","~~","estfish_bsmt",-0.0109,0.0722,0.8795
-"Individual zooplankton groups","South","clad","~~","amphi_m",-0.1083,0.0713,0.129
-"Individual zooplankton groups","South","clad","~~","rotif_m",0.1029,0.0714,0.1497
-"Individual zooplankton groups","South","clad","~~","pcope",0.1135,0.0712,0.111
-"Individual zooplankton groups","South","clad","~~","estfish_bsmt",0.0481,0.072,0.5043
-"Individual zooplankton groups","South","amphi_m","~~","rotif_m",0.0331,0.0721,0.6465
-"Individual zooplankton groups","South","amphi_m","~~","pcope",0.0356,0.0721,0.6213
-"Individual zooplankton groups","South","amphi_m","~~","estfish_bsmt",-0.0814,0.0717,0.2559
-"Individual zooplankton groups","South","rotif_m","~~","pcope",0.1931,0.0695,0.0055
-"Individual zooplankton groups","South","rotif_m","~~","estfish_bsmt",-0.0153,0.0722,0.8318
-"Individual zooplankton groups","South","pcope","~~","estfish_bsmt",0.1483,0.0706,0.0357
+"Individual zooplankton groups","South","chla","~","chla_1",0.2163,0.0658,0.001
+"Individual zooplankton groups","South","chla","~","hcope_1",0.1006,0.0636,0.1135
+"Individual zooplankton groups","South","chla","~","clad_1",0.1949,0.0661,0.0032
+"Individual zooplankton groups","South","chla","~","rotif_m_1",-0.0743,0.0629,0.2378
+"Individual zooplankton groups","South","chla","~","corbic_1",-0.0075,0.063,0.9055
+"Individual zooplankton groups","South","chla","~","flow",-0.0745,0.0677,0.271
+"Individual zooplankton groups","South","chla","~","turbid",0.0025,0.0656,0.9692
+"Individual zooplankton groups","South","chla","~","temp",0.0762,0.0645,0.2372
+"Individual zooplankton groups","South","hcope","~","chla_1",0.1633,0.058,0.0049
+"Individual zooplankton groups","South","hcope","~","hcope_1",0.354,0.056,0
+"Individual zooplankton groups","South","hcope","~","pcope_1",0.002,0.0601,0.9735
+"Individual zooplankton groups","South","hcope","~","corbic_1",0.115,0.0588,0.0507
+"Individual zooplankton groups","South","hcope","~","flow",-0.139,0.0602,0.021
+"Individual zooplankton groups","South","hcope","~","turbid",-0.0977,0.0604,0.1058
+"Individual zooplankton groups","South","hcope","~","temp",0.1868,0.0586,0.0014
+"Individual zooplankton groups","South","hcope","~","estfish_bsmt_1",-0.1883,0.0589,0.0014
+"Individual zooplankton groups","South","clad","~","chla_1",0.1678,0.0557,0.0026
+"Individual zooplankton groups","South","clad","~","clad_1",0.5007,0.0496,0
+"Individual zooplankton groups","South","clad","~","pcope_1",-0.0382,0.0541,0.4804
+"Individual zooplankton groups","South","clad","~","flow",0.1797,0.0543,9e-04
+"Individual zooplankton groups","South","clad","~","turbid",-0.0243,0.0556,0.6627
+"Individual zooplankton groups","South","clad","~","temp",0.125,0.0548,0.0225
+"Individual zooplankton groups","South","clad","~","estfish_bsmt_1",-0.1036,0.0534,0.0525
+"Individual zooplankton groups","South","amphi_m","~","chla_1",-0.0534,0.0659,0.4179
+"Individual zooplankton groups","South","amphi_m","~","amphi_m_1",0.2146,0.0645,9e-04
+"Individual zooplankton groups","South","amphi_m","~","flow",-0.0066,0.0669,0.9217
+"Individual zooplankton groups","South","amphi_m","~","turbid",0.1619,0.0672,0.016
+"Individual zooplankton groups","South","amphi_m","~","temp",0.0874,0.0668,0.1909
+"Individual zooplankton groups","South","amphi_m","~","estfish_bsmt_1",0.047,0.0679,0.4891
+"Individual zooplankton groups","South","rotif_m","~","chla_1",-0.0139,0.0647,0.8298
+"Individual zooplankton groups","South","rotif_m","~","rotif_m_1",0.1854,0.0626,0.0031
+"Individual zooplankton groups","South","rotif_m","~","flow",0.2959,0.0614,0
+"Individual zooplankton groups","South","rotif_m","~","turbid",-0.0683,0.0651,0.2941
+"Individual zooplankton groups","South","rotif_m","~","temp",-0.0102,0.0657,0.8761
+"Individual zooplankton groups","South","rotif_m","~","estfish_bsmt_1",0.122,0.0649,0.0603
+"Individual zooplankton groups","South","pcope","~","chla_1",0.2289,0.06,1e-04
+"Individual zooplankton groups","South","pcope","~","hcope_1",-0.0607,0.0602,0.3135
+"Individual zooplankton groups","South","pcope","~","clad_1",0.0616,0.0633,0.3306
+"Individual zooplankton groups","South","pcope","~","pcope_1",0.4457,0.0538,0
+"Individual zooplankton groups","South","pcope","~","corbic_1",-0.0534,0.0586,0.3622
+"Individual zooplankton groups","South","pcope","~","flow",0.0299,0.0624,0.632
+"Individual zooplankton groups","South","pcope","~","turbid",-0.0827,0.061,0.1752
+"Individual zooplankton groups","South","pcope","~","temp",0.0126,0.0604,0.8351
+"Individual zooplankton groups","South","pcope","~","estfish_bsmt_1",-0.0537,0.0609,0.3779
+"Individual zooplankton groups","South","chla","~~","chla",0.8572,0.0427,0
+"Individual zooplankton groups","South","hcope","~~","hcope",0.7043,0.0486,0
+"Individual zooplankton groups","South","clad","~~","clad",0.6035,0.0466,0
+"Individual zooplankton groups","South","amphi_m","~~","amphi_m",0.9021,0.0378,0
+"Individual zooplankton groups","South","rotif_m","~~","rotif_m",0.8595,0.0427,0
+"Individual zooplankton groups","South","pcope","~~","pcope",0.7115,0.0483,0
+"Individual zooplankton groups","South","chla","~~","hcope",0.1207,0.068,0.076
+"Individual zooplankton groups","South","chla","~~","clad",0.279,0.0636,0
+"Individual zooplankton groups","South","chla","~~","amphi_m",0.0033,0.069,0.9619
+"Individual zooplankton groups","South","chla","~~","rotif_m",0.1704,0.067,0.011
+"Individual zooplankton groups","South","chla","~~","pcope",-0.0213,0.069,0.7572
+"Individual zooplankton groups","South","hcope","~~","clad",0.1034,0.0683,0.1298
+"Individual zooplankton groups","South","hcope","~~","amphi_m",0.0335,0.0689,0.6271
+"Individual zooplankton groups","South","hcope","~~","rotif_m",0.0343,0.0689,0.6189
+"Individual zooplankton groups","South","hcope","~~","pcope",0.0387,0.0689,0.5746
+"Individual zooplankton groups","South","clad","~~","amphi_m",-0.1241,0.0679,0.0677
+"Individual zooplankton groups","South","clad","~~","rotif_m",0.0963,0.0684,0.1592
+"Individual zooplankton groups","South","clad","~~","pcope",0.1331,0.0678,0.0496
+"Individual zooplankton groups","South","amphi_m","~~","rotif_m",0.0505,0.0688,0.4631
+"Individual zooplankton groups","South","amphi_m","~~","pcope",0.0408,0.0689,0.5535
+"Individual zooplankton groups","South","rotif_m","~~","pcope",0.1707,0.067,0.0109
 "Individual zooplankton groups","South","chla_1","~~","chla_1",1,0,NA
-"Individual zooplankton groups","South","chla_1","~~","hcope_1",0.112,0,NA
-"Individual zooplankton groups","South","chla_1","~~","clad_1",0.2756,0,NA
-"Individual zooplankton groups","South","chla_1","~~","rotif_m_1",0.0859,0,NA
-"Individual zooplankton groups","South","chla_1","~~","corbic_1",-0.0569,0,NA
-"Individual zooplankton groups","South","chla_1","~~","flow",-0.0625,0,NA
-"Individual zooplankton groups","South","chla_1","~~","turbid",0.0284,0,NA
-"Individual zooplankton groups","South","chla_1","~~","temp",0.0926,0,NA
-"Individual zooplankton groups","South","chla_1","~~","pcope_1",-0.0238,0,NA
-"Individual zooplankton groups","South","chla_1","~~","estfish_bsmt_1",0.0539,0,NA
-"Individual zooplankton groups","South","chla_1","~~","amphi_m_1",-0.0021,0,NA
+"Individual zooplankton groups","South","chla_1","~~","hcope_1",0.1439,0,NA
+"Individual zooplankton groups","South","chla_1","~~","clad_1",0.2748,0,NA
+"Individual zooplankton groups","South","chla_1","~~","rotif_m_1",0.0841,0,NA
+"Individual zooplankton groups","South","chla_1","~~","corbic_1",-0.0381,0,NA
+"Individual zooplankton groups","South","chla_1","~~","flow",-0.0456,0,NA
+"Individual zooplankton groups","South","chla_1","~~","turbid",0.0691,0,NA
+"Individual zooplankton groups","South","chla_1","~~","temp",0.0763,0,NA
+"Individual zooplankton groups","South","chla_1","~~","pcope_1",-0.0105,0,NA
+"Individual zooplankton groups","South","chla_1","~~","estfish_bsmt_1",0.0714,0,NA
+"Individual zooplankton groups","South","chla_1","~~","amphi_m_1",0.0065,0,NA
 "Individual zooplankton groups","South","hcope_1","~~","hcope_1",1,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","clad_1",0.104,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","rotif_m_1",-0.1086,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","corbic_1",0.091,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","flow",-0.2165,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","turbid",-0.0198,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","temp",-0.0153,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","pcope_1",0.1005,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","estfish_bsmt_1",-0.0508,0,NA
-"Individual zooplankton groups","South","hcope_1","~~","amphi_m_1",0.0198,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","clad_1",0.113,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","rotif_m_1",-0.0946,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","corbic_1",0.0913,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","flow",-0.2094,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","turbid",-0.0037,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","temp",-0.0185,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","pcope_1",0.1186,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","estfish_bsmt_1",-0.0519,0,NA
+"Individual zooplankton groups","South","hcope_1","~~","amphi_m_1",0.018,0,NA
 "Individual zooplankton groups","South","clad_1","~~","clad_1",1,0,NA
-"Individual zooplankton groups","South","clad_1","~~","rotif_m_1",0.1449,0,NA
-"Individual zooplankton groups","South","clad_1","~~","corbic_1",0.0518,0,NA
-"Individual zooplankton groups","South","clad_1","~~","flow",0.1662,0,NA
-"Individual zooplankton groups","South","clad_1","~~","turbid",-0.0771,0,NA
-"Individual zooplankton groups","South","clad_1","~~","temp",-0.0213,0,NA
-"Individual zooplankton groups","South","clad_1","~~","pcope_1",0.2062,0,NA
-"Individual zooplankton groups","South","clad_1","~~","estfish_bsmt_1",-0.0036,0,NA
-"Individual zooplankton groups","South","clad_1","~~","amphi_m_1",-0.1888,0,NA
+"Individual zooplankton groups","South","clad_1","~~","rotif_m_1",0.14,0,NA
+"Individual zooplankton groups","South","clad_1","~~","corbic_1",0.0617,0,NA
+"Individual zooplankton groups","South","clad_1","~~","flow",0.1741,0,NA
+"Individual zooplankton groups","South","clad_1","~~","turbid",-0.0709,0,NA
+"Individual zooplankton groups","South","clad_1","~~","temp",-0.0226,0,NA
+"Individual zooplankton groups","South","clad_1","~~","pcope_1",0.2411,0,NA
+"Individual zooplankton groups","South","clad_1","~~","estfish_bsmt_1",0.0248,0,NA
+"Individual zooplankton groups","South","clad_1","~~","amphi_m_1",-0.1974,0,NA
 "Individual zooplankton groups","South","rotif_m_1","~~","rotif_m_1",1,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","corbic_1",0.1282,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","flow",0.14,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","turbid",-0.0421,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","temp",0.0668,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","pcope_1",0.1649,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","estfish_bsmt_1",-0.0708,0,NA
-"Individual zooplankton groups","South","rotif_m_1","~~","amphi_m_1",-0.0272,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","corbic_1",0.1123,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","flow",0.1345,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","turbid",-0.0396,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","temp",0.0835,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","pcope_1",0.1722,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","estfish_bsmt_1",-0.0599,0,NA
+"Individual zooplankton groups","South","rotif_m_1","~~","amphi_m_1",-0.0139,0,NA
 "Individual zooplankton groups","South","corbic_1","~~","corbic_1",1,0,NA
-"Individual zooplankton groups","South","corbic_1","~~","flow",0.094,0,NA
-"Individual zooplankton groups","South","corbic_1","~~","turbid",0.1346,0,NA
-"Individual zooplankton groups","South","corbic_1","~~","temp",-0.0676,0,NA
-"Individual zooplankton groups","South","corbic_1","~~","pcope_1",0.0783,0,NA
-"Individual zooplankton groups","South","corbic_1","~~","estfish_bsmt_1",-0.0349,0,NA
-"Individual zooplankton groups","South","corbic_1","~~","amphi_m_1",0.0727,0,NA
+"Individual zooplankton groups","South","corbic_1","~~","flow",0.1218,0,NA
+"Individual zooplankton groups","South","corbic_1","~~","turbid",0.1504,0,NA
+"Individual zooplankton groups","South","corbic_1","~~","temp",-0.0932,0,NA
+"Individual zooplankton groups","South","corbic_1","~~","pcope_1",0.0398,0,NA
+"Individual zooplankton groups","South","corbic_1","~~","estfish_bsmt_1",-0.0287,0,NA
+"Individual zooplankton groups","South","corbic_1","~~","amphi_m_1",0.055,0,NA
 "Individual zooplankton groups","South","flow","~~","flow",1,0,NA
-"Individual zooplankton groups","South","flow","~~","turbid",0.1045,0,NA
-"Individual zooplankton groups","South","flow","~~","temp",-0.0371,0,NA
-"Individual zooplankton groups","South","flow","~~","pcope_1",0.0718,0,NA
-"Individual zooplankton groups","South","flow","~~","estfish_bsmt_1",-0.1112,0,NA
-"Individual zooplankton groups","South","flow","~~","amphi_m_1",-0.0946,0,NA
+"Individual zooplankton groups","South","flow","~~","turbid",0.0945,0,NA
+"Individual zooplankton groups","South","flow","~~","temp",-0.0543,0,NA
+"Individual zooplankton groups","South","flow","~~","pcope_1",0.0592,0,NA
+"Individual zooplankton groups","South","flow","~~","estfish_bsmt_1",-0.1034,0,NA
+"Individual zooplankton groups","South","flow","~~","amphi_m_1",-0.0928,0,NA
 "Individual zooplankton groups","South","turbid","~~","turbid",1,0,NA
-"Individual zooplankton groups","South","turbid","~~","temp",-0.037,0,NA
-"Individual zooplankton groups","South","turbid","~~","pcope_1",-0.1273,0,NA
-"Individual zooplankton groups","South","turbid","~~","estfish_bsmt_1",0.1356,0,NA
-"Individual zooplankton groups","South","turbid","~~","amphi_m_1",0.217,0,NA
+"Individual zooplankton groups","South","turbid","~~","temp",-0.0366,0,NA
+"Individual zooplankton groups","South","turbid","~~","pcope_1",-0.1606,0,NA
+"Individual zooplankton groups","South","turbid","~~","estfish_bsmt_1",0.1398,0,NA
+"Individual zooplankton groups","South","turbid","~~","amphi_m_1",0.2021,0,NA
 "Individual zooplankton groups","South","temp","~~","temp",1,0,NA
-"Individual zooplankton groups","South","temp","~~","pcope_1",0.1442,0,NA
-"Individual zooplankton groups","South","temp","~~","estfish_bsmt_1",0.1825,0,NA
-"Individual zooplankton groups","South","temp","~~","amphi_m_1",-0.0743,0,NA
+"Individual zooplankton groups","South","temp","~~","pcope_1",0.1387,0,NA
+"Individual zooplankton groups","South","temp","~~","estfish_bsmt_1",0.1915,0,NA
+"Individual zooplankton groups","South","temp","~~","amphi_m_1",-0.0477,0,NA
 "Individual zooplankton groups","South","pcope_1","~~","pcope_1",1,0,NA
-"Individual zooplankton groups","South","pcope_1","~~","estfish_bsmt_1",0.0885,0,NA
-"Individual zooplankton groups","South","pcope_1","~~","amphi_m_1",-0.0222,0,NA
+"Individual zooplankton groups","South","pcope_1","~~","estfish_bsmt_1",0.089,0,NA
+"Individual zooplankton groups","South","pcope_1","~~","amphi_m_1",-0.0226,0,NA
 "Individual zooplankton groups","South","estfish_bsmt_1","~~","estfish_bsmt_1",1,0,NA
-"Individual zooplankton groups","South","estfish_bsmt_1","~~","amphi_m_1",0.0102,0,NA
+"Individual zooplankton groups","South","estfish_bsmt_1","~~","amphi_m_1",0.0123,0,NA
 "Individual zooplankton groups","South","amphi_m_1","~~","amphi_m_1",1,0,NA
