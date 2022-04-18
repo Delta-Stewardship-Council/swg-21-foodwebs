@@ -23,6 +23,7 @@ library(lavaan)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
+source("functions/table_funcs.R")
 
 # For saving SEM diagrams:
 library(purrr)
@@ -72,7 +73,7 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                        "#7030A0","#4472C4")))
 
 #focal variables
-varnames=c("temp","flow","turbid","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
+varnames=c("temp","flow","turbid","chla","hzoop","pzoop","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
 source("analysis/semDiagramFunctions.r")
@@ -132,16 +133,32 @@ fdr_dtr=fdr0 %>% group_by(region) %>%
 
 ### Time series plots
 
-```{r timeseries, fig.width=8, fig.height=10, echo=FALSE, warning=FALSE}
-plot1=select(focaldata,region,year,varnames) %>% 
-  gather(Var,Value,varnames) %>% 
-  mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
-ggplot(plot1,aes(x=year,y=Value)) +
-  facet_grid(Var~region, scales="free_y") +
+```{r timeseries_orig, fig.width=10, fig.height=6, echo=FALSE, warning=FALSE}
+load("./fig_output/focaldata_we.Rdata")
+focaldata_we2=focaldata_we %>% 
+  mutate(region="Whole estuary") %>% 
+  select(region,year,varnames)
+
+plot1=select(focaldata,region,year,varnames) %>% rbind(focaldata_we2) %>% 
+  gather(Var,Value,varnames) %>% left_join(cnames, by=c("Var"="Shortname")) %>% 
+  mutate(Diagramname=gsub("[\r\\\\\\\n]"," ",.data$Diagramname),
+         Diagramname=gsub(" n"," ",.data$Diagramname),
+         Diagramname=factor(Diagramname, levels=unique(Diagramname)),
+         Var=factor(Var,levels = varnames),
+         region=factor(region,levels=c("Whole estuary", regionorder)))
+ggplot(plot1,aes(x=year,y=Value,color=region,size=region)) +
+  facet_wrap(Diagramname~., scales="free_y",ncol = 4) +
   geom_line() +
   theme_bw() +
-  labs(title = "Original Units")
+  scale_color_manual(values=c("black","green4","violetred1","purple")) +
+  scale_size_manual(values=c(1,0.6,0.6,0.6)) + scale_y_continuous(labels = scales::comma) +
+  labs(color="Region", size="Region",x="Year") + 
+  theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1), 
+        legend.position = "top",legend.direction = "horizontal")
+ggsave("./fig_output/annual_timeseries.png", height = 5.5, width = 8.5)
+```
 
+```{r timeseries, fig.width=8, fig.height=10, echo=FALSE, warning=FALSE}
 plot2=select(fdr,region,year,varnames) %>% 
   gather(Var,Value,varnames) %>% 
   mutate(Var=factor(Var,levels = varnames),region=factor(region,levels=regionorder))
@@ -512,11 +529,12 @@ myLavaanPlot(model=modfitwest_dtr, labels=labelswest,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-createGraph(fit=modfitwest_dtr, 
-            reference_df=cnames_with_latent, 
-            model_type="annual",
-            title="West",
-            manual_port_settings=TRUE)
+figWdt <- createGraph(fit=modfitwest_dtr, 
+                      reference_df=cnames_with_latent, 
+                      model_type="annual",
+                      title="West",
+                      manual_port_settings=TRUE)
+figWdt
 ```
 
 *North*
@@ -528,11 +546,12 @@ myLavaanPlot(model=modfitnorth_dtr, labels=labelsnorth,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-createGraph(fit=modfitnorth_dtr, 
-            reference_df=cnames_with_latent, 
-            model_type="annual",
-            title="North",
-            manual_port_settings=TRUE)
+figNdt <- createGraph(fit=modfitnorth_dtr, 
+                      reference_df=cnames_with_latent, 
+                      model_type="annual",
+                      title="North",
+                      manual_port_settings=TRUE)
+figNdt
 ```
 
 *South*
@@ -544,11 +563,12 @@ myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-createGraph(fit=modfitsouth_dtr, 
-            reference_df=cnames_with_latent, 
-            model_type="annual",
-            title="South",
-            manual_port_settings=TRUE)
+figSdt <- createGraph(fit=modfitsouth_dtr, 
+                      reference_df=cnames_with_latent, 
+                      model_type="annual",
+                      title="South",
+                      manual_port_settings=TRUE)
+figSdt
 ```
 
 *Save updated SEM diagrams*
@@ -564,5 +584,45 @@ combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto",
   #theme(plot.margin = unit(c(1,0,0,0), "lines"))
 
 ggsave('./fig_output/sem_annual_regions.png', combined_figure, width=6, height=6,
-       dpi=300)
+       dpi=300, bg = "white")
 ```
+
+*Combine and save annual no region model and annual regional models*
+
+```{r}
+load('./fig_output/sem_annual_noregions.RData')
+
+plot_grobs <- map(list(sem_annual_noregions, figW, figN, figS),
+                  ~convert_html_to_grob(.x, 2000))
+combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto", 
+                             font.label=list(size=9)) %>%
+  annotate_figure(top = text_grob("Annual SEMs",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 11))
+
+ggsave('./fig_output/sem_annual.png', combined_figure, width=8, height=7, dpi=300, 
+       bg = "white")
+
+#detrended
+plot_grobs <- map(list(sem_annual_noregions_dtr, figWdt, figNdt, figSdt),
+                  ~convert_html_to_grob(.x, 2000))
+combined_figure_dtr <- ggarrange(plotlist=plot_grobs, labels="auto", 
+                             font.label=list(size=9)) %>%
+  annotate_figure(top = text_grob("Annual SEMs, Detrended",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 11))
+
+ggsave('./fig_output/sem_annual_detrend.png', combined_figure_dtr, width=8, height=7,
+       dpi=300, bg = "white")
+```
+
+*Save model coefficients for manuscript table*
+```{r}
+bind_rows(
+  coef_tabler(modfitwest, modfitnorth, modfitsouth, name="Original"),
+  coef_tabler(modfitwest_dtr, modfitnorth_dtr, modfitsouth_dtr, name="Detrended"))%>%
+  write.csv("fig_output/annual region coefficients.csv", row.names = FALSE)
+```
+

@@ -23,6 +23,7 @@ library(lavaan)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
+source("functions/table_funcs.R")
 
 # For saving SEM diagrams:
 library(purrr)
@@ -69,7 +70,7 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                        "#7030A0","#4472C4")))
 
 #focal variables
-varnames=c("temp","flow","turbid","chla","hzoop","pzoop","tzoop","amphi","potam","corbic","estfish","estfish_bsmt","estfish_stn")
+varnames=c("temp","flow","turbid","chla","hzoop","pzoop","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
 source("analysis/semDiagramFunctions.r")
@@ -283,13 +284,14 @@ myLavaanPlot(model=modfit1, labels=labels1,
 ## Updated SEM diagram:
 cnames_with_latent <- rbind(cnames,
                             data.frame(Longname="fish", Shortname="fish",
-                                       Diagramname="estuarine\nfishes", Datacolumn=NA, Log=NA,
+                                       Diagramname="estuarine\nfishes", 
+                                       Datacolumn=NA, Log=NA,
                                        Color="#FF0000"))
 
 plot_modfit1 <- createGraph(fit=modfit1, 
                             reference_df=cnames_with_latent, 
                             model_type="annual",
-                            title="Annual no region",
+                            title="Whole Estuary",
                             manual_port_settings=TRUE)
 plot_modfit1
 ```
@@ -303,11 +305,12 @@ myLavaanPlot(model=modfit1_dtr, labels=labels1,
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
 
-createGraph(fit=modfit1_dtr, 
-            reference_df=cnames_with_latent, 
-            model_type="annual",
-            title="Annual no region, detrended",
-            manual_port_settings=TRUE)
+plot_modfit2 <- createGraph(fit=modfit1_dtr, 
+                            reference_df=cnames_with_latent, 
+                            model_type="annual",
+                            title="Whole Estuary",
+                            manual_port_settings=TRUE)
+plot_modfit2
 ```
 
 #### With covariances
@@ -356,5 +359,26 @@ modfit1_figure <- ggarrange(plotlist=modfit1_grobs) %>%
                                   face = "bold",
                                   size = 8))
 
-ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure, width=3, height=3, dpi=300)
+ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure, width=3, height=3, dpi=300, bg = "white")
 ```
+
+*Save figure object for combining with annual regional figure*
+
+```{r}
+# Give the object an informative name for when it is loaded into the annual regional file:
+sem_annual_noregions <- plot_modfit1
+sem_annual_noregions_dtr <- plot_modfit2
+
+save(sem_annual_noregions, sem_annual_noregions_dtr,
+     file='./fig_output/sem_annual_noregions.RData')
+
+focaldata_we <- focaldata
+save(focaldata_we, file = "./fig_output/focaldata_we.Rdata")
+```
+
+*Save model coefficients for manuscript table*
+```{r}
+coef_tabler(modfit1, modfit1_dtr, name="")%>%
+  write.csv("fig_output/annual noregion coefficients.csv", row.names = FALSE)
+```
+

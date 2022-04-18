@@ -18,16 +18,16 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
-#devtools::install_github("sbashevkin/LTMRdata")
+#devtools::install_github("Delta-Stewardship-Council/deltafish")
 
 #Set to project directory
-library(LTMRdata)
 library(tidyverse)
 library(lubridate)
 library(ggmap)
 library(sf)
 source('functions/nutrient_funcs.R', local = TRUE)
 source('functions/region_assigner.R', local = TRUE)
+source('functions/fish_funcs.R', local = TRUE)
 
 ```
 
@@ -39,11 +39,16 @@ The United States Fish and Wildlife Service Delta Juvenile Fish Monitoring Progr
 
 ## Load data and show sampling effort
 
-Load data using Sam's LTMRdata package and show map of beach seine stations. 
+Load data using `deltafish` package and show map of beach seine stations. 
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
-DJFMP_Silverside_seine <-LTMRdata::fish(sources="DJFMP", species="Menidia audens", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>%
+DJFMP_Silverside_seine <-get_fish(source="DJFMP", 
+                                  taxa="Menidia audens", 
+                                  remove_cols=c("Survey", "Tide", "Sal_bot", 
+                                                "Secchi_estimated", "Tow_duration", 
+                                                "Tow_area", "Cable_length", "Notes_tow", 
+                                                "Notes_flowmeter", "Notes_catch"))%>%
   filter(Method=="Beach seine")
 
 #Map
@@ -212,10 +217,21 @@ Centrarchid length-weight conversion equations are taken from Sarah's compiled e
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 
-DJFMP_fish_monthly<-LTMRdata::fish(sources="DJFMP", species=c("Menidia audens","Micropterus salmoides"), size_cutoff=NULL,remove_unknown_lengths=FALSE)%>%
+DJFMP_fish_monthly<-get_fish(source="DJFMP", 
+                              taxa=c("Menidia audens","Micropterus salmoides"), 
+                                  remove_cols=c("Survey", "Tide", "Sal_bot", 
+                                                "Secchi_estimated", "Tow_duration", 
+                                                "Tow_area", "Cable_length", "Notes_tow", 
+                                                "Notes_flowmeter", "Notes_catch"))%>%
   filter(Method=="Beach seine")
 
-DJFMP_centrarchids<-LTMRdata::fish(sources="DJFMP", species=c("Micropterus dolomieu","Micropterus salmoides","Lepomis microlophus","Lepomis macrochirus"), size_cutoff=NULL,remove_unknown_lengths=FALSE)%>%
+DJFMP_centrarchids<-get_fish(source="DJFMP", 
+                              taxa=c("Micropterus dolomieu","Micropterus salmoides",
+                                     "Lepomis microlophus","Lepomis macrochirus"), 
+                                  remove_cols=c("Survey", "Tide", "Sal_bot", 
+                                                "Secchi_estimated", "Tow_duration", 
+                                                "Tow_area", "Cable_length", "Notes_tow", 
+                                                "Notes_flowmeter", "Notes_catch"))%>%
   filter(Method=="Beach seine")
 
 
@@ -229,7 +245,7 @@ DJFMP_seine_monthly_region<- DJFMP_seine_monthly_station_fixed %>% mutate(Month=
                                                                           Biomass=
                                                                             case_when(Taxa=="Menidia audens" ~ (0.0097*(Length^2.87))*Count,
                                                                                       #Sarah's equation is in cm and converts to grams instead of mg
-                                                                          Taxa=="Micropterus salmoides" ~ (0.012*((Length/10)^3.07))*Count*1000)) %>%
+                                                                                      Taxa=="Micropterus salmoides" ~ (0.012*((Length/10)^3.07))*Count*1000)) %>%
   filter(Station %in% unique(DJFMP_seine_sampling_effort_monthly$Station) & Year>=1995) %>%
   region_assigner(analysis="monthly",plot=FALSE) %>%
   group_by(Year,Month, Taxa, Station, Datetime, Region) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%
@@ -252,11 +268,11 @@ levels(DJFMP_seine_monthly_station_fixed_centrarchids$Station)[levels(DJFMP_sein
 levels(DJFMP_seine_monthly_station_fixed_centrarchids$Station)[levels(DJFMP_seine_monthly_station_fixed_centrarchids$Station)=="SJ058E"] <- "SJ058W"
 
 DJFMP_seine_monthly_station_fixed_centrarchids<- DJFMP_seine_monthly_station_fixed_centrarchids %>% mutate(Month=month(Date),Year=year(Date),Length=ifelse(is.na(Length),0,Length),
-                                                                          Biomass=
-                                                                            case_when(Taxa=="Lepomis macrochirus" ~ (0.0117*((Length/10)^3.25))*Count*1000,
-                                                                                      Taxa=="Lepomis microlophus" ~ (0.05105*((Length/10)^2.712))*Count*1000,
-                                                                                      Taxa=="Micropterus dolomieu" ~ (0.01005*((Length/10)^3.125))*Count*1000,
-                                                                          Taxa=="Micropterus salmoides" ~ (0.012*((Length/10)^3.07))*Count*1000)) %>%
+                                                                                                           Biomass=
+                                                                                                             case_when(Taxa=="Lepomis macrochirus" ~ (0.0117*((Length/10)^3.25))*Count*1000,
+                                                                                                                       Taxa=="Lepomis microlophus" ~ (0.05105*((Length/10)^2.712))*Count*1000,
+                                                                                                                       Taxa=="Micropterus dolomieu" ~ (0.01005*((Length/10)^3.125))*Count*1000,
+                                                                                                                       Taxa=="Micropterus salmoides" ~ (0.012*((Length/10)^3.07))*Count*1000)) %>%
   filter(Station %in% unique(DJFMP_seine_sampling_effort_monthly$Station) & Year>=1995) %>%
   region_assigner(analysis="monthly",plot=FALSE) %>%
   group_by(Year,Month, Taxa, Station, Datetime, Region) %>% summarise(Catch_per_seine=sum(Count),Biomass=sum(Biomass)) %>%

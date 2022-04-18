@@ -39,6 +39,6 @@ vignettes/*.pdf
 .Renviron
 
 # the big benthic file
-**/DWR Benthic raw count data 1975-2020 2021_10_01.csv
+data_raw
 
 .DS_Store

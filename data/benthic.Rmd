@@ -38,14 +38,14 @@ source("functions/region_assigner.R") #loads function to analyze regional data
 
 # Download benthic data if it's not already found locally in the data_raw folder
 ```{r}
-if(!file.exists(file.path("data_raw", "DWR Benthic raw count data 1975-2020 2021_10_01.csv"))){
+if(!file.exists(file.path("data_raw", "DWR Benthic raw count data 1975-2020.csv"))){
   if(!dir.exists("data_raw")){
     dir.create("data_raw")
   }
   timeout<-getOption('timeout')
   options(timeout=300)
-  download.file("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn:uuid:25b7befd-e931-4a50-9bf6-14715561f64a", method = "libcurl",
-                destfile=file.path("data_raw", "DWR Benthic raw count data 1975-2020 2021_10_01.csv"))
+  download.file("https://portal.edirepository.org/nis/dataviewer?packageid=edi.1036.1&entityid=e65a3e7da08744a8cd6114d4e5f78c53", method = "libcurl",
+                destfile=file.path("data_raw", "DWR Benthic raw count data 1975-2020.csv"))
   options(timeout=timeout)
 }
 ```
@@ -73,7 +73,7 @@ Benthic file does not exist locally so can get it from KMB: https://knb.ecoinfor
 * Take mean of lat/ long for each site since some sites moved slightly over the years based on the L, R, C
 
 ```{r}
-ben <- read.csv("data_raw/DWR Benthic raw count data 1975-2020 2021_10_01.csv")  %>% 
+ben <- read.csv("data_raw/DWR Benthic raw count data 1975-2020.csv")  %>% 
   filter(Genus %in% c("Potamocorbula", "Corbicula", "Ampelisca", 
                       "Monocorophium", "Sinocorophium", "Americorophium", 
                       "Crangonyx", "Gammarus", "Hyalella"))%>%

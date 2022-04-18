@@ -21,32 +21,66 @@ knitr::opts_chunk$set(echo = TRUE)
 Information on the Summer Townet Survey is available on the California Department of Fish and Wildlife website: [https://wildlife.ca.gov/Conservation/Delta/Townet-Survey](https://wildlife.ca.gov/Conservation/Delta/Townet-Survey)
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-#devtools::install_github("sbashevkin/LTMRdata")
+#devtools::install_github("Delta-Stewardship-Council/deltafish")
 
-library(LTMRdata)
 library(tidyverse)
 library(lubridate)
 library(ggmap)
 source("functions/region_assigner.R")
+source('functions/fish_funcs.R', local = TRUE)
 ```
 
 ## All sampling stations
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig1, fig.height=6, fig.width=7, fig.align = "center"}
 
-#From Sam's LTMRdata package
+#From deltafish package
 
 #Load species
-STN_Delta_Smelt <-LTMRdata::fish(sources="STN", species="Hypomesus transpacificus", size_cutoff=NULL,remove_unknown_lengths=FALSE)
-STN_Longfin_Smelt <-LTMRdata::fish(sources="STN", species="Spirinchus thaleichthys", size_cutoff=NULL,remove_unknown_lengths=FALSE)
-STN_Threadfin_Shad <-LTMRdata::fish(sources="STN", species="Dorosoma petenense", size_cutoff=NULL,remove_unknown_lengths=FALSE)
-STN_American_Shad <-LTMRdata::fish(sources="STN", species="Alosa sapidissima", size_cutoff=NULL,remove_unknown_lengths=FALSE)
-STN_Northern_Anchovy <-LTMRdata::fish(sources="STN", species="Engraulis mordax", size_cutoff=NULL,remove_unknown_lengths=FALSE)
-STN_Pacific_Herring <-LTMRdata::fish(sources="STN", species="Clupea pallasii", size_cutoff=NULL,remove_unknown_lengths=FALSE)
+STN_Delta_Smelt <-get_fish(source="STN",
+                           taxa="Hypomesus transpacificus",
+                           remove_cols = c("Sal_bot", "Secchi_estimated", "Tow_duration", 
+                                           "Tow_area", "Notes_tow", "Notes_flowmeter", 
+                                           "Notes_catch"))
+
+STN_Longfin_Smelt <-get_fish(source="STN",
+                           taxa="Spirinchus thaleichthys",
+                           remove_cols = c("Sal_bot", "Secchi_estimated", "Tow_duration", 
+                                           "Tow_area", "Notes_tow", "Notes_flowmeter", 
+                                           "Notes_catch"))
+
+STN_Threadfin_Shad <-get_fish(source="STN",
+                           taxa="Dorosoma petenense",
+                           remove_cols = c("Sal_bot", "Secchi_estimated", "Tow_duration", 
+                                           "Tow_area", "Notes_tow", "Notes_flowmeter", 
+                                           "Notes_catch"))
+  
+STN_American_Shad <-get_fish(source="STN",
+                           taxa="Alosa sapidissima",
+                           remove_cols = c("Sal_bot", "Secchi_estimated", "Tow_duration", 
+                                           "Tow_area", "Notes_tow", "Notes_flowmeter", 
+                                           "Notes_catch"))
+  
+STN_Northern_Anchovy <-get_fish(source="STN",
+                           taxa="Engraulis mordax",
+                           remove_cols = c("Sal_bot", "Secchi_estimated", "Tow_duration", 
+                                           "Tow_area", "Notes_tow", "Notes_flowmeter", 
+                                           "Notes_catch"))
+  
+STN_Pacific_Herring <-get_fish(source="STN",
+                           taxa="Clupea pallasii",
+                           remove_cols = c("Sal_bot", "Secchi_estimated", "Tow_duration", 
+                                           "Tow_area", "Notes_tow", "Notes_flowmeter", 
+                                           "Notes_catch"))
 
 #Load age-0 Striped Bass
 #Remove age-1 Striped Bass and NOTE that we assume that unmeasured Striped Bass are age-0
-STN_Striped_Bass <-LTMRdata::fish(sources="STN", species="Morone saxatilis", size_cutoff=NULL,remove_unknown_lengths=FALSE) %>% filter(is.na(Length)|Length<150)
+STN_Striped_Bass <-get_fish(source="STN",
+                           taxa="Morone saxatilis",
+                           remove_cols = c("Sal_bot", "Secchi_estimated", "Tow_duration", 
+                                           "Tow_area", "Notes_tow", "Notes_flowmeter", 
+                                           "Notes_catch")) %>% 
+  filter(is.na(Length)|Length<150)
 
 #str(STN_Delta_Smelt)
 #Limit the data to just April to October (this was for baystudy, we aren't limiting the date extent)
@@ -291,4 +325,14 @@ STN_annual_regional_values_final <- full_join(STN_annual_regional_values_CPUE,
 
 write.csv(STN_annual_regional_values_final, row.names=FALSE,
           file=file.path("data/annual_averages/fish_STN_regions.csv"))
+```
+
+Lastly, export out station list to data/stations folder
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+STNCoords_studyregion %>%
+  dplyr::select(-Region) %>%
+  dplyr::mutate(Survey="Summer Townet") %>%
+  write.csv(row.names=FALSE,
+            file=file.path("data/stations/stations_fish_STN_annual.csv"))
 ```
