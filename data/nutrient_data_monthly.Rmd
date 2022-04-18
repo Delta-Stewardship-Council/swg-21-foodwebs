@@ -27,6 +27,14 @@ if(utils::packageVersion('discretewq') < '2.1.0') {
 }
 ```
 
+```{r}
+anti_join(EMP, df)
+```
+```{r}
+anti_join(df,EMP)
+```
+
+
 ```{r id-missing-data}
 df_wq_fill <- read_wq_data(monthly = FALSE)
 
@@ -48,7 +56,7 @@ df_wq_fill <- df_wq_fill %>% pivot_wider(names_from = 'Station', values_from = '
 for (analyte in (unique(df_wq_fill$Analyte))) {
   df <- df_wq_fill %>% filter(Analyte == analyte)
   
-  write_csv(df, paste0('data/missing_data/missing_data/missingdat_',analyte,'.csv'))
+  write_csv(df, paste0('data/missing_data/missing_data/missingdat_test_',analyte,'.csv'))
 }
 ```
 

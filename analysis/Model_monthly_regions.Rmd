@@ -54,26 +54,27 @@ focaldata = focaldata %>%
          hzoop_e=hcope_e+clad_e+rotif_e,
          pzoop=mysid+pcope,
          pzoop_e=mysid_e+pcope_e,
-         turbid=-secchi) 
+         turbid=-secchi,
+         nit_phos = din/dophos) 
 fvars=c(fvars,"tzoop","tzoop_e",
         "hzoop","hzoop_e",
-        "pzoop","pzoop_e","turbid")
+        "pzoop","pzoop_e","turbid","nit_phos")
 cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                                        "hzoop","hzoop_e",
-                                                       "pzoop","pzoop_e","turbid"),
+                                                       "pzoop","pzoop_e","turbid","nit_phos"),
                                Diagramname=c("total zooplankton",
                                              "total zooplankton\nenergy",
                                              "herbivorous\nzooplankton",
                                              "herbivorous\nzooplankton\nenergy",
                                              "predatory\nzooplankton",
                                              "predatory\nzooplankton\nenergy",
-                                             "turbidity"),
-                               Datacolumn=NA,Log=c(rep("yes",6),"no"),
+                                             "turbidity","nitrogen\nphosphorus"),
+                               Datacolumn=NA,Log=c(rep("yes",7),"no"),
                                Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
-                                       "#7030A0","#4472C4")))
+                                       "#7030A0","#4472C4","black")))
 
 #focal variables
-varnames=c("temp","flow","turbid","dophos","din","chla","hcope","clad","amphi_m","pcope","mysid","rotif_m","potam","corbic","sside","cent","sbass1_bsmt","marfish_bsmt","estfish_bsmt","tzoop","hzoop","pzoop")
+varnames=c("temp","flow","turbid","nit_phos","chla","hcope","clad","amphi_m","pcope","mysid","rotif_m","potam","corbic","sside","cent","sbass1_bsmt","marfish_bsmt","estfish_bsmt","tzoop","hzoop","pzoop")
 
 #labels for lagged vars
 cnameslag=cnames
@@ -375,7 +376,7 @@ ccfplot=function(v1,v2) {
   }
 }
 
-ccfplot("chla","din")
+ccfplot("chla","nit_phos")
 ccfplot("chla","hzoop")
 ccfplot("hzoop","pzoop")
 ccfplot("chla","potam")
@@ -619,8 +620,8 @@ ggsave("./fig_output/uteffects.png",width = 6,height=5)
 ### Phytoplankton-centered model (lower trophic level aggregates)
 
 ```{r, fig.width=8, fig.height=8}
-modFW='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
-        chla~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
+modFW='nit_phos~ns1*nit_phos_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
+        chla~cb1*nit_phos_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
         potam~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
         
         ns:=sqrt(ns1^2)
@@ -638,9 +639,9 @@ modFW='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*t
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modW='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
-        chla~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
-        potam~lb1*din_1+lb2*chla_1+lb3*hzoop_1+lb4*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
+modW='nit_phos~ns1*nit_phos_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
+        chla~cb1*nit_phos_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
+        potam~lb1*nit_phos_1+lb2*chla_1+lb3*hzoop_1+lb4*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
         
         ns:=sqrt(ns1^2)
         nt:=sqrt(nt1^2)
@@ -657,8 +658,8 @@ modW='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*te
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modN='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
-        chla~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ct3*pzoop_1+ca1*flow+ca2*temp+ca3*turbid
+modN='nit_phos~ns1*nit_phos_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
+        chla~cb1*nit_phos_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ct3*pzoop_1+ca1*flow+ca2*temp+ca3*turbid
         corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*turbid
         
         ns:=sqrt(ns1^2)
@@ -676,8 +677,8 @@ modN='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*t
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modS='din~ns1*din_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
-        chla~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*turbid
+modS='nit_phos~ns1*nit_phos_1+nt1*chla+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
+        chla~cb1*nit_phos_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*turbid
         corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*turbid
         
         ns:=sqrt(ns1^2)
@@ -796,7 +797,7 @@ ssS=standardizedsolution(modfitS) %>% mutate(region="South")
 
 sslt=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:ci.upper) %>% 
   separate(lhs,c("variable","influence"), sep=1) %>% 
-  mutate(variable=case_when(variable=="n" ~ "DIN",
+  mutate(variable=case_when(variable=="n" ~ "nit_phos",
                             variable=="c" ~ "phytoplankton",
                             variable=="l" ~ "clams"),
          influence=case_when(influence=="b" ~ "bottom-up",
@@ -806,7 +807,7 @@ sslt=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:
                             influence=="n" ~ "nutrient cycling"),
          region=factor(region, levels=regionorder),
          influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","abiotic drivers","nutrient cycling")),
-         variable=factor(variable,levels=c("clams","phytoplankton","DIN")),
+         variable=factor(variable,levels=c("clams","phytoplankton","nit_phos")),
          sig=ifelse(pvalue<0.05,"*",""))
 
 ggplot(sslt,aes(x=influence,y=est.std)) +
@@ -1117,8 +1118,8 @@ upper_plot_south
 ### Lower trophic
 
 ```{r, fig.width=8, fig.height=8}
-modFW='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
-        chla_gr~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
+modFW='nit_phos_gr~ns1*nit_phos_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
+        chla_gr~cb1*nit_phos_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
         potam~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
         
         ns:=sqrt(ns1^2)
@@ -1136,9 +1137,9 @@ modFW='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modW='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
-        chla_gr~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
-        potam~lb1*din_1+lb2*chla_1+lb3*hzoop_1+lb4*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
+modW='nit_phos_gr~ns1*nit_phos_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+na2*temp+na3*turbid
+        chla_gr~cb1*nit_phos_1+cs1*chla_1+ct1*hzoop_1+ct2*potam_1+ca1*flow+ca2*temp+ca3*turbid
+        potam~lb1*nit_phos_1+lb2*chla_1+lb3*hzoop_1+lb4*pzoop_1+ls1*potam_1+la1*flow+la2*temp+la3*turbid
         
         ns:=sqrt(ns1^2)
         nt:=sqrt(nt1^2)
@@ -1155,8 +1156,8 @@ modW='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*potam_1+na1*flow+
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modN='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
-        chla_gr~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ct3*pzoop_1+ca1*flow+ca2*temp+ca3*turbid
+modN='nit_phos_gr~ns1*nit_phos_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
+        chla_gr~cb1*nit_phos_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ct3*pzoop_1+ca1*flow+ca2*temp+ca3*turbid
         corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*turbid
         
         ns:=sqrt(ns1^2)
@@ -1174,8 +1175,8 @@ modN='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow
         la:=sqrt(la1^2+la2^2+la3^2)
 '
 
-modS='din_gr~ns1*din_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
-        chla_gr~cb1*din_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*turbid
+modS='nit_phos_gr~ns1*nit_phos_1+nt1*chla_gr+nn1*hzoop_1+nn2*pzoop_1+nn3*corbic_1+na1*flow+na2*temp+na3*turbid
+        chla_gr~cb1*nit_phos_1+cs1*chla_1+ct1*hzoop_1+ct2*corbic_1+ca1*flow+ca2*temp+ca3*turbid
         corbic~lb1*chla_1+lb2*hzoop_1+lb3*pzoop_1+ls1*corbic_1+la1*flow+la2*temp+la3*turbid
         
         ns:=sqrt(ns1^2)
