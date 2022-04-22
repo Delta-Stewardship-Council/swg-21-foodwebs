@@ -713,7 +713,7 @@
 "Individual zooplankton groups","Far West","amphi_m","~","chla_1",0.0417,0.0322,0.1956
 "Individual zooplankton groups","Far West","amphi_m","~","amphi_m_1",0.7454,0.0293,0
 "Individual zooplankton groups","Far West","amphi_m","~","flow",-0.2483,0.0393,0
-"Individual zooplankton groups","Far West","amphi_m","~","turbid",-0.0104,0.036,0.772
+"Individual zooplankton groups","Far West","amphi_m","~","turbid",-0.0104,0.036,0.7721
 "Individual zooplankton groups","Far West","amphi_m","~","temp",0.013,0.0336,0.7001
 "Individual zooplankton groups","Far West","amphi_m","~","estfish_bsmt_1",0.0416,0.0342,0.2242
 "Individual zooplankton groups","Far West","rotif_m","~","chla_1",-0.1726,0.0641,0.0071
@@ -726,7 +726,7 @@
 "Individual zooplankton groups","Far West","pcope","~","pcope_1",0.3028,0.0638,0
 "Individual zooplankton groups","Far West","pcope","~","potam_1",-0.1053,0.0662,0.1116
 "Individual zooplankton groups","Far West","pcope","~","flow",0.201,0.0727,0.0057
-"Individual zooplankton groups","Far West","pcope","~","turbid",0.0808,0.0723,0.2632
+"Individual zooplankton groups","Far West","pcope","~","turbid",0.0808,0.0723,0.2633
 "Individual zooplankton groups","Far West","pcope","~","temp",0.1524,0.0677,0.0243
 "Individual zooplankton groups","Far West","pcope","~","estfish_bsmt_1",-0.0069,0.0721,0.9235
 "Individual zooplankton groups","Far West","chla","~~","chla",0.8925,0.0411,0
@@ -741,7 +741,7 @@
 "Individual zooplankton groups","Far West","hcope","~~","amphi_m",-0.028,0.0721,0.6982
 "Individual zooplankton groups","Far West","hcope","~~","rotif_m",0.0446,0.072,0.5355
 "Individual zooplankton groups","Far West","hcope","~~","pcope",-0.2368,0.0681,5e-04
-"Individual zooplankton groups","Far West","amphi_m","~~","rotif_m",-0.0819,0.0717,0.2535
+"Individual zooplankton groups","Far West","amphi_m","~~","rotif_m",-0.0819,0.0717,0.2534
 "Individual zooplankton groups","Far West","amphi_m","~~","pcope",-0.0196,0.0721,0.7854
 "Individual zooplankton groups","Far West","rotif_m","~~","pcope",0.0639,0.0719,0.3738
 "Individual zooplankton groups","Far West","chla_1","~~","chla_1",1,0,NA
@@ -937,7 +937,7 @@
 "Individual zooplankton groups","West","pcope_1","~~","estfish_bsmt_1",-0.0836,0,NA
 "Individual zooplankton groups","West","estfish_bsmt_1","~~","estfish_bsmt_1",1,0,NA
 "Individual zooplankton groups","North","chla","~","chla_1",0.1551,0.0673,0.0212
-"Individual zooplankton groups","North","chla","~","hcope_1",-0.0135,0.075,0.8568
+"Individual zooplankton groups","North","chla","~","hcope_1",-0.0135,0.075,0.8567
 "Individual zooplankton groups","North","chla","~","clad_1",0.1851,0.075,0.0135
 "Individual zooplankton groups","North","chla","~","amphi_m_1",0.0588,0.0676,0.3844
 "Individual zooplankton groups","North","chla","~","rotif_m_1",-0.0406,0.0712,0.5688

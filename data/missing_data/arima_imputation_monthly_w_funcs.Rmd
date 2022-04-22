@@ -1197,6 +1197,14 @@ monthly_imputed_export_noregions %>% write_csv("data/monthly_averages/nutrient_d
 test <- read_csv("data/monthly_averages/nutrient_data_monthly_noregions.csv")
 ```
 
+```{r}
+# check dwq and edi are the same
+df_dwq <- read_csv('data/missing_data/imputed_data/nutrient_data_dwq_monthly_regions_imputed.csv')
+df_edi <- read_csv('data/missing_data/imputed_data/nutrient_data_monthly_regions_imputed.csv')
+
+all.equal(df_dwq, df_edi)
+```
+
 # compare monthly vs. yearly imputed values. diff?
 ```{r}
 temp_monthly <- read_csv("data/missing_data/imputed_data/monthly/temperature_imputed_monthly_data.csv") %>% 

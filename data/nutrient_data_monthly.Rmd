@@ -47,7 +47,7 @@ df_wq_fill <- combine_wq_stations(df_wq_fill)
 df_wq_fill <- df_wq_fill[df_wq_fill$Station %in% station_list,]
 
 df_wq_fill <- df_wq_fill %>%
-  pivot_longer(Chlorophyll:TKN, names_to = 'Analyte', values_to = 'Value') %>%
+  pivot_longer(c(Temperature, Secchi, Chlorophyll:TKN), names_to = 'Analyte', values_to = 'Value') %>%
   select('MonthYear', 'Station', 'Analyte', 'Value')
 
 df_wq_fill <- df_wq_fill[df_wq_fill$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'Salinity', 'Secchi', 'Temperature', 'DissOrthophos'),]
