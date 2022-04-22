@@ -33,7 +33,7 @@ source('functions/missingdat_graph_funcs.R')
 ## import data
 This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022; 2-24-2022)
 ```{r}
-missingdat_Temperature <- read_csv("data/missing_data/missing_data/missingdat_Temperature.csv") %>% 
+missingdat_Temperature <- read_csv("data/missing_data/missing_data/missingdat_edi_Temperature.csv") %>% 
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date) %>% 
@@ -223,7 +223,7 @@ plt_diagnos_obs_pred(df_ts, 'Temperature (C)')
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/monthly/temperature_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/temperature_edi_imputed_data.csv")
 ```
 
 
@@ -237,7 +237,7 @@ This is data generated from the "nutrient_data_monthly.Rmd" script written by Sa
 The chlorophyll-a pilot model uses "lambda=auto" to transform the data automatically, but the full model uses
 pre-log-transformed data, which then needs to be back-transformed afterward. The results are the same.
 ```{r}
-missingdat_Chlorophyll <- read_csv("data/missing_data/missing_data/missingdat_Chlorophyll.csv") %>% 
+missingdat_Chlorophyll <- read_csv("data/missing_data/missing_data/missingdat_edi_Chlorophyll.csv") %>% 
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
@@ -368,7 +368,7 @@ plt_diagnos_obs_pred(df_ts, 'Chlorophyll (mg/L)')
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/chlorophyll_edi_imputed_data.csv")
 ```
 
 
@@ -378,7 +378,7 @@ df_ts %>% write_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_
 ## import data
 This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
 ```{r}
-missingdat_Ammonia <- read_csv("data/missing_data/missing_data/missingdat_DissAmmonia.csv") %>%  
+missingdat_Ammonia <- read_csv("data/missing_data/missing_data/missingdat_edi_DissAmmonia.csv") %>%  
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
@@ -511,7 +511,7 @@ plt_diagnos_obs_pred(df_ts, 'Dissolved Ammonia (ug/L)')
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_ammonia_edi_imputed_data.csv")
 ```
 
 
@@ -522,7 +522,7 @@ df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed
 ## import data
 This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
 ```{r}
-missingdat_Nit <- read_csv("data/missing_data/missing_data/missingdat_DissNitrateNitrite.csv") %>%  
+missingdat_Nit <- read_csv("data/missing_data/missing_data/missingdat_edi_DissNitrateNitrite.csv") %>%  
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
@@ -663,7 +663,7 @@ plt_diagnos_obs_pred(df_ts, 'Diss Nitrate/Nitrite (ug/L)')
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_edi_imputed_data.csv")
 ```
 
 
@@ -674,7 +674,7 @@ df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite
 ## import data
 This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
 ```{r}
-missingdat_phos <- read_csv("data/missing_data/missing_data/missingdat_DissOrthophos.csv") %>%  
+missingdat_phos <- read_csv("data/missing_data/missing_data/missingdat_edi_DissOrthophos.csv") %>%  
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
@@ -807,7 +807,7 @@ plt_diagnos_obs_pred(df_ts, 'Diss orthophosphate (ug/L)')
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_orthophos_edi_imputed_data.csv")
 ```
 
 
@@ -819,7 +819,7 @@ df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imput
 ## import data
 This is data generated from the "nutrient_data_monthly.Rmd" script written by Sarah Perry (1-13-2022)
 ```{r}
-missingdat_Secchi <- read_csv("data/missing_data/missing_data/missingdat_Secchi.csv") %>%  
+missingdat_Secchi <- read_csv("data/missing_data/missing_data/missingdat_edi_Secchi.csv") %>%  
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date) %>% 
@@ -1104,7 +1104,7 @@ plot(fit$fitted, fit$residuals,ylab="Residuals",xlab="Fitted values")
 
 ## export df
 ```{r}
-Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/monthly/secchi_imputed_data.csv")
+Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/monthly/secchi_edi_imputed_data.csv")
 ```
 
 
@@ -1116,17 +1116,17 @@ Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/monthly/secchi_im
 Combine all analytes into one wide format dataframe, create new column for DIN
 ```{r}
 # re-import all imputed data frames
-temp_imputed <- read_csv("data/missing_data/imputed_data/monthly/temperature_imputed_data.csv") %>% 
+temp_imputed <- read_csv("data/missing_data/imputed_data/monthly/temperature_edi_imputed_data.csv") %>% 
   mutate(Analyte="Temperature")
-chl_imputed <- read_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_data.csv")%>% 
+chl_imputed <- read_csv("data/missing_data/imputed_data/monthly/chlorophyll_edi_imputed_data.csv")%>% 
   mutate(Analyte="Chlorophyll")
-amm_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed_data.csv")%>% 
+amm_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_ammonia_edi_imputed_data.csv")%>% 
   mutate(Analyte="DissAmmonia")
-nitr_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_imputed_data.csv")%>% 
+nitr_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_edi_imputed_data.csv")%>% 
   mutate(Analyte="DissNitrateNitrite")
-ophos_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_data.csv")%>% 
+ophos_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_orthophos_edi_imputed_data.csv")%>% 
   mutate(Analyte="DissOrthophos")
-secchi_imputed <- read_csv("data/missing_data/imputed_data/monthly/secchi_imputed_data.csv")%>% 
+secchi_imputed <- read_csv("data/missing_data/imputed_data/monthly/secchi_edi_imputed_data.csv")%>% 
   mutate(Analyte="Secchi")
 
 # combine and pivot
