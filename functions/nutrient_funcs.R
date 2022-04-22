@@ -1,6 +1,16 @@
 # read in all wq data, pivot to long
 read_wq_data <- function(monthly = FALSE) {
-  df <- discretewq::wq(Sources = c('EMP'))
+  df <- read_csv(url("https://portal.edirepository.org/nis/dataviewer?packageid=edi.731.5&entityid=6c5f35b1d316e39c8de0bfadfb3c9692"),
+                 col_types = list(Date="c", Datetime="c"))%>%
+    filter(Source=="EMP")%>%
+    mutate(Date=ymd(Date, tz="America/Los_Angeles"),
+           Datetime=ymd_hms(Datetime, tz="America/Los_Angeles"),
+           Station=str_remove(Station, paste0(Source, " ")),
+           Month=month(Date),
+           Year=year(Date),
+           MonthYear=lubridate::floor_date(.data$Date, unit = "month"))%>%
+    select(-Sample_depth_surface, -Sample_depth_nutr_surface, -Sample_depth_bottom,
+           -Secchi_estimated, -Chlorophyll_Sign, -Notes)
 
   # temp corrections
   df_time <-readr::read_csv('data/data_in/Time_correction_PST.csv')
