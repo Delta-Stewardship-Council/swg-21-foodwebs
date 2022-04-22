@@ -39,10 +39,10 @@ missingdat_Temperature <- read_csv("data/missing_data/missing_data/missingdat_Te
   arrange(Date) %>% 
   filter(Date> "1994-12-31") # Must filter starting in 1995 for monthly models!
 
-str(missingdat_Temperature)
-head(missingdat_Temperature)
-dim(missingdat_Temperature)
-View(missingdat_Temperature)
+# str(missingdat_Temperature)
+# head(missingdat_Temperature)
+# dim(missingdat_Temperature)
+# View(missingdat_Temperature)
 ```
 
 ## tidy data format
@@ -207,7 +207,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(temp_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(temp_table, model_params, monthly = TRUE)
+# model_fits <- eval_fit(temp_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests
@@ -218,7 +218,7 @@ plt_diagnos_obs_pred(df_ts, 'Temperature (C)')
 
 ```{r}
 # model summary
-model_sum(model_fits)
+# model_sum(model_fits)
 ```
 
 ## export df
@@ -241,10 +241,10 @@ missingdat_Chlorophyll <- read_csv("data/missing_data/missing_data/missingdat_Ch
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
-str(missingdat_Chlorophyll)
-summary(missingdat_Chlorophyll)
-dim(missingdat_Chlorophyll)
-View(missingdat_Chlorophyll)
+# str(missingdat_Chlorophyll)
+# summary(missingdat_Chlorophyll)
+# dim(missingdat_Chlorophyll)
+# View(missingdat_Chlorophyll)
 ```
 
 ## tidy data format
@@ -352,7 +352,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(chl_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(chl_table, model_params, monthly = TRUE)
+# model_fit <- eval_fit(chl_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests
@@ -363,7 +363,7 @@ plt_diagnos_obs_pred(df_ts, 'Chlorophyll (mg/L)')
 
 ```{r}
 # model summary
-model_sum(model_fits)
+# model_sum(model_fits)
 ```
 
 ## export df
@@ -382,10 +382,10 @@ missingdat_Ammonia <- read_csv("data/missing_data/missing_data/missingdat_DissAm
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
-str(missingdat_Ammonia)
-head(missingdat_Ammonia)
-dim(missingdat_Ammonia)
-View(missingdat_Ammonia)
+# str(missingdat_Ammonia)
+# head(missingdat_Ammonia)
+# dim(missingdat_Ammonia)
+# View(missingdat_Ammonia)
 ```
 
 ## tidy data format
@@ -495,7 +495,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(amm_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(amm_table, model_params, monthly = TRUE)
+# model_fits <- eval_fit(amm_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests
@@ -506,7 +506,7 @@ plt_diagnos_obs_pred(df_ts, 'Dissolved Ammonia (ug/L)')
 
 ```{r}
 # model summary
-model_sum(model_fits)
+# model_sum(model_fits)
 ```
 
 ## export df
@@ -526,10 +526,18 @@ missingdat_Nit <- read_csv("data/missing_data/missing_data/missingdat_DissNitrat
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
-str(missingdat_Nit)
-head(missingdat_Nit)
-dim(missingdat_Nit)
-View(missingdat_Nit)
+
+# remove outliers (added in by RL code b/c of high RLs. future code should keep those NAs)
+missingdat_Nit$D28A[missingdat_Nit$D28A >= 15] <- NA
+missingdat_Nit$D7[missingdat_Nit$D7 >= 7] <- NA
+missingdat_Nit$D4[missingdat_Nit$D4 >= 0.5] <- NA
+missingdat_Nit$D6[missingdat_Nit$D6 >= 3] <- NA
+missingdat_Nit$D41[missingdat_Nit$D41 >= 2] <- NA
+
+# str(missingdat_Nit)
+# head(missingdat_Nit)
+# dim(missingdat_Nit)
+# View(missingdat_Nit)
 ```
 
 ## tidy data format
@@ -639,7 +647,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(nit_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(nit_table, model_params, monthly = TRUE)
+# model_fits <- eval_fit(nit_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests
@@ -650,7 +658,7 @@ plt_diagnos_obs_pred(df_ts, 'Diss Nitrate/Nitrite (ug/L)')
 
 ```{r}
 # model summary
-model_sum(model_fits)
+# model_sum(model_fits)
 ```
 
 ## export df
@@ -670,10 +678,10 @@ missingdat_phos <- read_csv("data/missing_data/missing_data/missingdat_DissOrtho
   mutate(Date=lubridate::as_date(MonthYear)) %>% 
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date)
-str(missingdat_phos)
-head(missingdat_phos)
-dim(missingdat_phos)
-View(missingdat_phos)
+# str(missingdat_phos)
+# head(missingdat_phos)
+# dim(missingdat_phos)
+# View(missingdat_phos)
 ```
 
 ## tidy data format
@@ -783,7 +791,7 @@ model_params <- list(
   )
 
 df_ts <- create_ts_df(phos_table, model_params, log_trans = TRUE, monthly = TRUE)
-model_fits <- eval_fit(phos_table, model_params, monthly = TRUE)
+# model_fits <- eval_fit(phos_table, model_params, monthly = TRUE)
 ```
 
 ## diagnostic tests
@@ -794,12 +802,12 @@ plt_diagnos_obs_pred(df_ts, 'Diss orthophosphate (ug/L)')
 
 ```{r}
 # model summary
-model_sum(model_fits)
+# model_sum(model_fits)
 ```
 
 ## export df
 ```{r}
-df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_monthly_data.csv")
+df_ts %>% write_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_data.csv")
 ```
 
 
@@ -816,10 +824,10 @@ missingdat_Secchi <- read_csv("data/missing_data/missing_data/missingdat_Secchi.
   select(Date, Analyte:P8) %>%  # rearrange df with date, no time
   arrange(Date) %>% 
   select(-C10A, -C3A) # remove land-based stations for secchi, not sampled consistently
-str(missingdat_Secchi)
-head(missingdat_Secchi)
-dim(missingdat_Secchi)
-View(missingdat_Secchi)
+# str(missingdat_Secchi)
+# head(missingdat_Secchi)
+# dim(missingdat_Secchi)
+# View(missingdat_Secchi)
 ```
 
 ## tidy data format
@@ -1039,9 +1047,9 @@ Time_series_imp <- Time_series_imp_wide %>%
     cols= "D26":"P8",
     names_to="Station", 
     values_to = "Imputed_values")
-View(Time_series_imp)
-summary(Time_series_imp)
-dim(Time_series_imp) # 2808 rows - only 8 NAs remaining in last time steps
+# View(Time_series_imp)
+# summary(Time_series_imp)
+# dim(Time_series_imp) # 2808 rows - only 8 NAs remaining in last time steps
 
 # identify which values were imputed - which values DONT they have in common?
 # If Imputed_values has a value, where the raw data has an NA, and Missing=TRUE, it's imputed
@@ -1052,16 +1060,16 @@ Secchi_table_long <- Secchi_table %>%
     values_to = "Raw_values"
   ) %>% 
   mutate(Missing=ifelse(is.na(Raw_values), TRUE, FALSE)) # Is it missing?
-View(Secchi_table_long)
-summary(Secchi_table_long)
-dim(Secchi_table_long) # 2808 rows- with 46 NAs present
+# View(Secchi_table_long)
+# summary(Secchi_table_long)
+# dim(Secchi_table_long) # 2808 rows- with 46 NAs present
 
 # Join them to create a master table tracking which values were modeled
 # Should still be 10 NAs that are missing but not imputed
 Time_series_imp2 <- Time_series_imp %>% 
   left_join(Secchi_table_long) %>% 
   mutate(Imputed=ifelse(Missing==TRUE & Imputed_values>0, TRUE, FALSE))
-View(Time_series_imp2)
+# View(Time_series_imp2)
 ```
 
 
@@ -1108,17 +1116,17 @@ Time_series_imp2 %>% write_csv("data/missing_data/imputed_data/monthly/secchi_im
 Combine all analytes into one wide format dataframe, create new column for DIN
 ```{r}
 # re-import all imputed data frames
-temp_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/temperature_imputed_monthly_data.csv") %>% 
+temp_imputed <- read_csv("data/missing_data/imputed_data/monthly/temperature_imputed_data.csv") %>% 
   mutate(Analyte="Temperature")
-chl_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_monthly_data.csv")%>% 
+chl_imputed <- read_csv("data/missing_data/imputed_data/monthly/chlorophyll_imputed_data.csv")%>% 
   mutate(Analyte="Chlorophyll")
-amm_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed_monthly_data.csv")%>% 
+amm_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_ammonia_imputed_data.csv")%>% 
   mutate(Analyte="DissAmmonia")
-nitr_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_imputed_monthly_data.csv")%>% 
+nitr_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_nitrate_nitrite_imputed_data.csv")%>% 
   mutate(Analyte="DissNitrateNitrite")
-ophos_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_monthly_data.csv")%>% 
+ophos_imputed <- read_csv("data/missing_data/imputed_data/monthly/diss_orthophos_imputed_data.csv")%>% 
   mutate(Analyte="DissOrthophos")
-secchi_monthly_imputed <- read_csv("data/missing_data/imputed_data/monthly/secchi_imputed_monthly_data.csv")%>% 
+secchi_imputed <- read_csv("data/missing_data/imputed_data/monthly/secchi_imputed_data.csv")%>% 
   mutate(Analyte="Secchi")
 
 # combine and pivot
