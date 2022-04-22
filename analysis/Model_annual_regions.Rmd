@@ -1,16 +1,18 @@
 ---
 title: "Annual model - Regions"
 author: "Tanya Rogers"
-date: "3/29/2022"
+date: "4/22/2022"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
-      output_dir = '../docs',
-      knit_root_dir = '..',
+      output_dir = 'docs',
+      knit_root_dir = "../",
       envir = globalenv()
     )
-  })
+    })
 ---
 
 ```{r setup, include=FALSE}
