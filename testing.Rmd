@@ -1,0 +1,42 @@
+
+```{r}
+library(tidyverse)
+source('functions/nutrient_funcs.R')
+
+df_pack <- discretewq::wq(Sources = c('EMP'))
+df_edi_new <- read_csv('C:/Users/sperry/Downloads/Delta_Integrated_WQ (1).csv')
+df_edi_new <- df_edi_new[df_edi_new$Source == 'EMP',] 
+
+df_edi_new <- df_edi_new[,order(colnames(df_edi_new))]
+df_pack <- df_pack[,order(colnames(df_pack))]
+EMP <- EMP[,order(colnames(EMP))]
+
+df_wq <- read_wq_data(monthly = FALSE) 
+```
+
+```{r}
+colnames(EMP)
+```
+
+
+```{r}
+colnames(df_edi_new)
+```
+
+
+```{r}
+colnames(df_pack)
+```
+
+```{r}
+# anti join of old EMP data and discretewq df are same
+anti_join(df_pack, EMP)
+
+anti_join(df_pack, df_edi)
+```
+
+
+```{r}
+anti_join(df_edi, df_pack)
+```
+

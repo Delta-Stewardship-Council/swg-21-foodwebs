@@ -27,8 +27,17 @@ if(utils::packageVersion('discretewq') < '2.1.0') {
 }
 ```
 
+
 ```{r id-missing-data}
-df_wq_fill <- read_wq_data(monthly = FALSE)
+df_wq <- read_wq_data(monthly = FALSE)
+
+df_wq$DissAmmonia <- replace_rl(df_wq, 'DissAmmonia')
+df_wq$DissNitrateNitrite <- replace_rl(df_wq, 'DissNitrateNitrite')
+df_wq$DissOrthophos <- replace_rl(df_wq, 'DissOrthophos')
+
+df_wq <- combine_wq_stations(df_wq)
+
+df_wq_fill <- df_wq # silly step, but needed b/c of how replace_rl works rn
 
 df_wq_fill <- df_wq_fill %>%
   select(select = -c('DissAmmonia_Sign','DissNitrateNitrite_Sign','DissOrthophos_Sign'))
@@ -51,6 +60,9 @@ for (analyte in (unique(df_wq_fill$Analyte))) {
   write_csv(df, paste0('data/missing_data/missing_data/missingdat_',analyte,'.csv'))
 }
 ```
+
+*Switch to arima_imputation_\*.Rmd files at this point*
+Rest of code is legacy code
 
 ```{r read-in-data, warning = FALSE, message = FALSE}
 # read in data
