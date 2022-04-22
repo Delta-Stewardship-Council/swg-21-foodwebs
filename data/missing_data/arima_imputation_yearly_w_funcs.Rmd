@@ -44,10 +44,10 @@ missingdat_Temperature <- read_csv("data/missing_data/missing_data/missingdat_Te
   # filter out stations with too much missing data
   select(Date, Analyte, D26, D28A, D4, D6, D7, D8)
 
-str(missingdat_Temperature)
-head(missingdat_Temperature)
-dim(missingdat_Temperature)
-View(missingdat_Temperature)
+# str(missingdat_Temperature)
+# head(missingdat_Temperature)
+# dim(missingdat_Temperature)
+# View(missingdat_Temperature)
 ```
 
 ## tidy data format
