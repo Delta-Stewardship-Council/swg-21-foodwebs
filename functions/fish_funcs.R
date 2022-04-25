@@ -1,7 +1,13 @@
 get_fish<-function(source, taxa, remove_cols=NULL){
   if(!require(deltafish)){
-    stop('The deltafish package is requried, please install with `devtools::install_github("Delta-Stewardship-Council/deltafish")`')
+    stop('The deltafish package is requried, please install with `devtools::install_github("Delta-Stewardship-Council/deltafish", ref="v0.1.0")`')
   }
+
+  if(utils::packageVersion('deltafish') != '0.1.0') {
+    stop('deltafish version 0.1.0 is required, please update deltafish to the correct version:
+         devtools::install_github("Delta-Stewardship-Council/deltafish", ref="v0.1.0")')
+  }
+
   left_join(open_survey()%>%
               filter(Source==source),
             open_fish()%>%

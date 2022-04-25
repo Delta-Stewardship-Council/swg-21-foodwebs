@@ -42,7 +42,7 @@ zoop_stations<-read_csv(file.path(tempdir(), "zoop_station_lookup.csv"))%>%
 Load zoop data
 ```{r}
 if(utils::packageVersion('zooper') != '2.4.1') {
-    stop('zooper version >= 2.4.1 is required, please update zooper to the correct version: 
+    stop('zooper version 2.4.1 is required, please update zooper to the correct version: 
          devtools::install_github("InteragencyEcologicalProgram/zooper", ref="v2.4.1")')
 }
 
