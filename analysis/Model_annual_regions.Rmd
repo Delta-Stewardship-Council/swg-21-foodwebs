@@ -47,6 +47,7 @@ fvars=cnames$Shortname
 colnames(focaldata)=fvars
 regions=unique(focaldata$region)
 regionorder=c("West","North","South")
+regionorder_pub=c("Suisun","Sacramento","San Joaquin")
 years=1975:2021
 
 focaldata = focaldata %>% 
@@ -147,7 +148,8 @@ plot1=select(focaldata,region,year,varnames) %>% rbind(focaldata_we2) %>%
          Diagramname=gsub(" n"," ",.data$Diagramname),
          Diagramname=factor(Diagramname, levels=unique(Diagramname)),
          Var=factor(Var,levels = varnames),
-         region=factor(region,levels=c("Whole estuary", regionorder)))
+         region=recode(region, West="Suisun", North="Sacramento", South="San Joaquin"),
+         region=factor(region,levels=c("Whole estuary", regionorder_pub)))
 ggplot(plot1,aes(x=year,y=Value,color=region,size=region)) +
   facet_wrap(Diagramname~., scales="free_y",ncol = 4) +
   geom_line() +
@@ -481,7 +483,7 @@ cnames_with_latent <- rbind(cnames,
 figW <- createGraph(fit=modfitwest, 
                     reference_df=cnames_with_latent, 
                     model_type="annual",
-                    title="West",
+                    title="Suisun",
                     manual_port_settings=TRUE)
 figW
 ```
@@ -498,7 +500,7 @@ myLavaanPlot(model=modfitnorth, labels=labelsnorth,
 figN <- createGraph(fit=modfitnorth, 
                     reference_df=cnames_with_latent, 
                     model_type="annual",
-                    title="North",
+                    title="Sacramento",
                     manual_port_settings=TRUE)
 figN
 ```
@@ -515,7 +517,7 @@ myLavaanPlot(model=modfitsouth, labels=labelssouth,
 figS <- createGraph(fit=modfitsouth, 
                     reference_df=cnames_with_latent, 
                     model_type="annual",
-                    title="South",
+                    title="San Joaquin",
                     manual_port_settings=TRUE)
 figS
 ```
@@ -534,7 +536,7 @@ myLavaanPlot(model=modfitwest_dtr, labels=labelswest,
 figWdt <- createGraph(fit=modfitwest_dtr, 
                       reference_df=cnames_with_latent, 
                       model_type="annual",
-                      title="West",
+                      title="Suisun",
                       manual_port_settings=TRUE)
 figWdt
 ```
@@ -551,7 +553,7 @@ myLavaanPlot(model=modfitnorth_dtr, labels=labelsnorth,
 figNdt <- createGraph(fit=modfitnorth_dtr, 
                       reference_df=cnames_with_latent, 
                       model_type="annual",
-                      title="North",
+                      title="Sacramento",
                       manual_port_settings=TRUE)
 figNdt
 ```
@@ -568,7 +570,7 @@ myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
 figSdt <- createGraph(fit=modfitsouth_dtr, 
                       reference_df=cnames_with_latent, 
                       model_type="annual",
-                      title="South",
+                      title="San Joaquin",
                       manual_port_settings=TRUE)
 figSdt
 ```
@@ -594,7 +596,7 @@ ggsave('./fig_output/sem_annual_regions.png', combined_figure, width=6, height=6
 ```{r}
 load('./fig_output/sem_annual_noregions.RData')
 
-plot_grobs <- map(list(sem_annual_noregions, figW, figN, figS),
+plot_grobs <- map(list(sem_annual_noregions, figN, figW, figS),
                   ~convert_html_to_grob(.x, 2000))
 combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto", 
                              font.label=list(size=9)) %>%
@@ -607,7 +609,7 @@ ggsave('./fig_output/sem_annual.png', combined_figure, width=8, height=7, dpi=30
        bg = "white")
 
 #detrended
-plot_grobs <- map(list(sem_annual_noregions_dtr, figWdt, figNdt, figSdt),
+plot_grobs <- map(list(sem_annual_noregions_dtr, figNdt, figWdt, figSdt),
                   ~convert_html_to_grob(.x, 2000))
 combined_figure_dtr <- ggarrange(plotlist=plot_grobs, labels="auto", 
                              font.label=list(size=9)) %>%

@@ -101,10 +101,10 @@ cities_pts <- sf::st_as_sf(cities_pts_df, coords=c("lon","lat"), crs=sf::st_crs(
 	sf::st_transform(crs=sf::st_crs(regions_NAD83))
 
 region_lab_df <- as.data.frame(do.call("rbind",
-	list(c(-122.55, 38.14, "Far\nWest"),
-			 c(-121.9834, 38.265, "West"),
-			 c(-121.73, 38.22, "North"),
-			 c(-121.638, 37.983, "South")
+	list(c(-122.55, 38.14, "San\nPablo"),
+			 c(-121.9834, 38.265, "Suisun"),
+			 c(-121.73, 38.265, "Sacramento"),
+			 c(-121.65, 37.96, "San\nJoaquin")
 			)))
 names(region_lab_df) <- c("lon","lat","Name")
 region_lab <- sf::st_as_sf(region_lab_df, coords=c("lon","lat"), crs=sf::st_crs(4326)) %>%
@@ -153,13 +153,13 @@ annualRegionalMap <- baseMap +
 	geom_sf(data=subset(regions_NAD83, Region == "South"), fill=NA, color="purple") +
 	geom_sf(data=cities_pts, size=0.7, col="gray50") +
 	geom_sf_text(data=cities_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
-	geom_sf_text(data=subset(region_lab, Name == "Far\nWest"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "San\nPablo"), aes(label=Name),
 								color="blue") +
-	geom_sf_text(data=subset(region_lab, Name == "West"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "Suisun"), aes(label=Name),
 								color="green4") +
-	geom_sf_text(data=subset(region_lab, Name == "North"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "Sacramento"), aes(label=Name),
 								color="violetred1") +
-	geom_sf_text(data=subset(region_lab, Name == "South"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "San\nJoaquin"), aes(label=Name),
 								color="purple") +
 	ggspatial::annotation_scale(
     location="bl", text_cex=0.5, bar_cols=c("grey60", "white"), pad_x=unit(1.7, "in")) +
@@ -196,13 +196,13 @@ monthlyRegionalMap <- baseMap +
 	geom_sf(data=subset(regions_NAD83, Region == "South"), fill=NA, color="purple") +
 	geom_sf(data=cities_pts, size=0.7, col="gray50") +
 	geom_sf_text(data=cities_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
-	geom_sf_text(data=subset(region_lab, Name == "Far\nWest"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "San\nPablo"), aes(label=Name),
 								color="blue") +
-	geom_sf_text(data=subset(region_lab, Name == "West"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "Suisun"), aes(label=Name),
 								color="green4") +
-	geom_sf_text(data=subset(region_lab, Name == "North"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "Sacramento"), aes(label=Name),
 								color="violetred1") +
-	geom_sf_text(data=subset(region_lab, Name == "South"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "San\nJoaquin"), aes(label=Name),
 								color="purple") +
 	annotate(geom="text", x=-122.6, y=37.86, label="b)")
 

@@ -46,6 +46,7 @@ fvars=cnames$Shortname
 colnames(focaldata)=fvars
 regions=unique(focaldata$region)
 regionorder=c("Far West","West","North","South")
+regionorder_pub=c("San Pablo","Suisun","Sacramento","San Joaquin")
 focaldata=focaldata%>% 
   mutate(decyear=year+(month-1)/12)
 focaldata = focaldata %>% 
@@ -192,7 +193,8 @@ plot1=select(focaldata,region,decyear,varnames) %>%
          Diagramname=gsub(" n"," ",.data$Diagramname),
          Diagramname=factor(Diagramname, levels=unique(Diagramname)),
          Var=factor(Var,levels = varnames),
-         region=factor(region,levels=regionorder))
+         region=recode(region, `Far West`="San Pablo", West="Suisun", North="Sacramento", South="San Joaquin"),
+         region=factor(region,levels=regionorder_pub))
 ggplot(plot1,aes(x=decyear,y=Value,color=region)) +
   facet_wrap(Diagramname~., scales="free_y",ncol = 4) +
   geom_line() +
@@ -478,7 +480,7 @@ coef_table<-coef_tabler(modfitFW, modfitW, modfitN, modfitS, name="Upper trophic
 upper_plot_far_west <- createGraph(fit=modfitFW, 
                                    reference_df=cnameslag, 
                                    model_type="monthly_upper_trophic",
-                                   title="Far West",
+                                   title="San Pablo",
                                    manual_port_settings=TRUE)
 upper_plot_far_west
 #WEST
@@ -490,7 +492,7 @@ upper_plot_far_west
 upper_plot_west <- createGraph(fit=modfitW, 
                                reference_df=cnameslag, 
                                model_type="monthly_upper_trophic",
-                               title="West",
+                               title="Suisun",
                                manual_port_settings=TRUE)
 upper_plot_west
 #NORTH
@@ -502,7 +504,7 @@ upper_plot_west
 upper_plot_north <- createGraph(fit=modfitN, 
                                 reference_df=cnameslag, 
                                 model_type="monthly_upper_trophic",
-                                title="North",
+                                title="Sacramento",
                                 manual_port_settings=TRUE)
 upper_plot_north
 #SOUTH
@@ -514,7 +516,7 @@ upper_plot_north
 upper_plot_south <- createGraph(fit=modfitS, 
                                 reference_df=cnameslag, 
                                 model_type="monthly_upper_trophic",
-                                title="South",
+                                title="San Joaquin",
                                 manual_port_settings=TRUE)
 upper_plot_south
 ```
@@ -523,8 +525,8 @@ upper_plot_south
 
 ```{r, echo=FALSE}
 upper_grobs <-  map(list(upper_plot_far_west,
-                         upper_plot_west,
                          upper_plot_north,
+                         upper_plot_west,
                          upper_plot_south), ~convert_html_to_grob(.x, 2000))
 upper_figure <- ggarrange(plotlist=upper_grobs, labels="auto",
                           font.label=list(size=11)) %>%
@@ -539,10 +541,10 @@ ggsave('./fig_output/sem_upper_trophic.png',upper_figure, width=8, height=7, dpi
 Total effects
 
 ```{r}
-ssFW=standardizedsolution(modfitFW) %>% mutate(region="Far West")
-ssW=standardizedsolution(modfitW) %>% mutate(region="West")
-ssN=standardizedsolution(modfitN) %>% mutate(region="North")
-ssS=standardizedsolution(modfitS) %>% mutate(region="South")
+ssFW=standardizedsolution(modfitFW) %>% mutate(region="San Pablo")
+ssW=standardizedsolution(modfitW) %>% mutate(region="Suisun")
+ssN=standardizedsolution(modfitN) %>% mutate(region="Sacramento")
+ssS=standardizedsolution(modfitS) %>% mutate(region="San Joaquin")
 ssut=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:ci.upper) %>% 
   separate(lhs,c("variable","influence"), sep=1) %>% 
   mutate(variable=case_when(variable=="h" ~ "herbivorous\nzooplankton",
@@ -552,7 +554,7 @@ ssut=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:
                             influence=="t" ~ "top-down",
                             influence=="s" ~ "self-regulation",
                             influence=="a" ~ "abiotic drivers"),
-         region=factor(region, levels=regionorder),
+         region=factor(region, levels=regionorder_pub),
          influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","abiotic drivers")),
          variable=factor(variable,levels=c("estuarine\nfishes","predatory\nzooplankton","herbivorous\nzooplankton")),
          sig=ifelse(pvalue<0.05,"*",""))
@@ -667,7 +669,7 @@ coef_table<-bind_rows(coef_table, coef_tabler(modfitFW, modfitW, modfitN, modfit
 lower_plot_far_west <- createGraph(fit=modfitFW, 
                                    reference_df=cnameslag, 
                                    model_type="monthly_lower_trophic",
-                                   title="Far West",
+                                   title="San Pablo",
                                    manual_port_settings=TRUE)
 lower_plot_far_west
 #WEST
@@ -679,7 +681,7 @@ lower_plot_far_west
 lower_plot_west <- createGraph(fit=modfitW, 
                                reference_df=cnameslag, 
                                model_type="monthly_lower_trophic",
-                               title="West",
+                               title="Suisun",
                                manual_port_settings=TRUE)
 lower_plot_west
 #NORTH
@@ -691,7 +693,7 @@ lower_plot_west
 lower_plot_north <- createGraph(fit=modfitN, 
                                 reference_df=cnameslag, 
                                 model_type="monthly_lower_trophic",
-                                title="North",
+                                title="Sacramento",
                                 manual_port_settings=TRUE)
 lower_plot_north
 #SOUTH
@@ -703,7 +705,7 @@ lower_plot_north
 lower_plot_south <- createGraph(fit=modfitS, 
                                 reference_df=cnameslag, 
                                 model_type="monthly_lower_trophic",
-                                title="South",
+                                title="San Joaquin",
                                 manual_port_settings=TRUE)
 lower_plot_south
 ```
@@ -712,8 +714,8 @@ lower_plot_south
 
 ```{r, echo=FALSE}
 lower_grobs <-  map(list(lower_plot_far_west,
-                         lower_plot_west,
                          lower_plot_north,
+                         lower_plot_west,
                          lower_plot_south), ~convert_html_to_grob(.x, 2000))
 lower_figure <- ggarrange(plotlist=lower_grobs, labels="auto",
                           font.label=list(size=11)) %>%
@@ -727,10 +729,10 @@ ggsave('./fig_output/sem_lower_trophic.png',lower_figure, width=8, height=7, dpi
 Total effects
 
 ```{r}
-ssFW=standardizedsolution(modfitFW) %>% mutate(region="Far West")
-ssW=standardizedsolution(modfitW) %>% mutate(region="West")
-ssN=standardizedsolution(modfitN) %>% mutate(region="North")
-ssS=standardizedsolution(modfitS) %>% mutate(region="South")
+ssFW=standardizedsolution(modfitFW) %>% mutate(region="San Pablo")
+ssW=standardizedsolution(modfitW) %>% mutate(region="Suisun")
+ssN=standardizedsolution(modfitN) %>% mutate(region="Sacramento")
+ssS=standardizedsolution(modfitS) %>% mutate(region="San Joaquin")
 sslt=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:ci.upper) %>% 
   separate(lhs,c("variable","influence"), sep=1) %>% 
   mutate(variable=case_when(variable=="n" ~ "DIN",
@@ -741,7 +743,7 @@ sslt=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:
                             influence=="s" ~ "self-regulation",
                             influence=="a" ~ "abiotic drivers",
                             influence=="n" ~ "nutrient cycling"),
-         region=factor(region, levels=regionorder),
+         region=factor(region, levels=regionorder_pub),
          influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","abiotic drivers","nutrient cycling")),
          variable=factor(variable,levels=c("clams","phytoplankton","DIN")),
          sig=ifelse(pvalue<0.05,"*",""))
@@ -839,7 +841,7 @@ zoop_plot_far_west <- createGraph(fit=modfitFW,
                                   reference_df=cnameslag, 
                                   model_type="monthly_zoop",
                                   region="Far West",
-                                  title="Far West",
+                                  title="San Pablo",
                                   manual_port_settings=TRUE)
 zoop_plot_far_west
 #WEST
@@ -852,7 +854,7 @@ zoop_plot_west <- createGraph(fit=modfitW,
                               reference_df=cnameslag, 
                               model_type="monthly_zoop",
                               region="West",
-                              title="West",
+                              title="Suisun",
                               manual_port_settings=TRUE)
 zoop_plot_west
 #NORTH
@@ -865,7 +867,7 @@ zoop_plot_north <- createGraph(fit=modfitN,
                                reference_df=cnameslag, 
                                model_type="monthly_zoop",
                                region="North",
-                               title="North",
+                               title="Sacramento",
                                manual_port_settings=TRUE)
 zoop_plot_north
 #SOUTH
@@ -878,7 +880,7 @@ zoop_plot_south <- createGraph(fit=modfitS,
                                reference_df=cnameslag, 
                                model_type="monthly_zoop",
                                region="South",
-                               title="South",
+                               title="San Joaquin",
                                manual_port_settings=TRUE)
 zoop_plot_south
 ```
@@ -887,8 +889,8 @@ zoop_plot_south
 
 ```{r}
 zoop_grobs <-  map(list(zoop_plot_far_west,
-                        zoop_plot_west,
                         zoop_plot_north,
+                        zoop_plot_west,
                         zoop_plot_south), ~convert_html_to_grob(.x, 2000))
 zoop_figure <- ggarrange(plotlist=zoop_grobs, labels="auto",
                          font.label=list(size=11)) %>%
