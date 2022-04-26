@@ -1,32 +1,39 @@
 ---
 title: "Annual model - No Regions"
 author: "Tanya Rogers"
-date: "12/15/2021"
+date: "4/22/2022"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
-      output_dir = '../docs',
-      knit_root_dir = '..',
+      output_dir = 'docs',
+      knit_root_dir = "../",
       envir = globalenv()
     )
-  })
+    })
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r packages, message=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(dplyr)
-#library(psych) #for pairs.panels, but could use other packages, e.g. GGalley
 library(lavaan)
-library(semPlot)
 library(DiagrammeR)
 library(tidyr)
 library(ggplot2)
-library(performance)
+source("functions/table_funcs.R")
+
+# For saving SEM diagrams:
 library(purrr)
+library(DiagrammeRsvg)
+library(rsvg)
+library(png)
+library(grid)
+library(ggpubr)
 ```
 
 ### Import data
@@ -37,25 +44,53 @@ cnames=read.csv("analysis/column_names.csv", stringsAsFactors = F)
 dsub=filter(combined, Year>=1975)
 focaldata=dsub[,cnames$Datacolumn]
 fvars=cnames$Shortname
-colnames(focaldata)=fvars 
+colnames(focaldata)=fvars
+
+focaldata = focaldata %>% 
+  mutate(tzoop=hcope+clad+mysid+pcope+rotif_m,
+         tzoop_e=hcope_e+clad_e+mysid_e+pcope_e+rotif_e,
+         hzoop=hcope+clad+rotif_m,
+         hzoop_e=hcope_e+clad_e+rotif_e,
+         pzoop=mysid+pcope,
+         pzoop_e=mysid_e+pcope_e,
+         turbid=-secchi) 
+fvars=c(fvars,"tzoop","tzoop_e",
+        "hzoop","hzoop_e",
+        "pzoop","pzoop_e","turbid")
+cnames=rbind(cnames,data.frame(Longname = c("Total zooplankton biomass",
+                                            "Total zooplankton energy",
+                                            "Herbivorous zooplankton biomass",
+                                            "Herbivorous zooplankton energy",
+                                            "Predatory zooplankton biomass",
+                                            "Predatory zooplankton energy",
+                                            "Turbidity"),
+                               Shortname=c("tzoop","tzoop_e",
+                                           "hzoop","hzoop_e",
+                                           "pzoop","pzoop_e","turbid"),
+                               Diagramname=c("total zooplankton",
+                                             "total zooplankton\nenergy",
+                                             "herbivorous\nzooplankton",
+                                             "herbivorous\nzooplankton\nenergy",
+                                             "predatory\nzooplankton",
+                                             "predatory\nzooplankton\nenergy",
+                                             "turbidity"),
+                               Datacolumn=NA,Log=c(rep("yes",6),"no"),
+                               Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
+                                       "#7030A0","#4472C4"),
+                               Defination = c("summed zooplankton biomass",
+                                              "summed zooplankton energy",
+                                              "summed herbivorous zooplankton biomass",
+                                              "summed herbivorous zooplankton energy",
+                                              "summed predatory zooplankton biomass",
+                                              "summed predatory zooplankton energy",
+                                              "negative secchi depth")))
+
 #focal variables
-varnames=c("temp","flow","nitrate","ammonia","dophos","chla","hcope","clad","amphi","pcope","mysid","potam","corbic","sside","estfish","estfish_bsot","estfish_bsmt","estfish_stn")
+varnames=c("temp","flow","turbid","chla","hzoop","pzoop","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
 source("analysis/myLavaanPlot.r")
+source("analysis/semDiagramFunctions.r")
 ```
-
-#### Make aggerate data columns
-```{r}
-focaldata = focaldata %>% 
-  mutate(rep_zoop_c = hcope_c + clad_c + mysid_c ,
-         rep_zoop_m = hcope+clad+mysid ,
-         rep_zoop_e = hcope_e+clad_e+mysid_e ,
-         all_zoop_c = hcope_c+clad_c+mysid_c+pcope_c+rotif_c ,
-         all_zoop_m = hcope+clad+mysid+pcope+rotif_m ,
-         all_zoop_e = hcope_e+clad_e+mysid_e+pcope_e+rotif_e ,
-         all_fish = estfish_bsmt+estfish_bsot)
-```
-
 
 ### Data prep
 
@@ -74,13 +109,7 @@ focaldatalog = focaldata %>%
 
 #scale data
 fd0=focaldatalog
-tvars=c(fvars[-1], c("rep_zoop_c",
-                     "rep_zoop_m",
-                     "rep_zoop_e",
-                     "all_zoop_c",
-                     "all_zoop_m",
-                     "all_zoop_e",
-                     "all_fish"))
+tvars=fvars[-1]
 
 fd=fd0 %>% 
   #lag
@@ -137,6 +166,40 @@ ggplot(plot3,aes(x=year,y=Value)) +
   labs(title = "Log scaled detrended")
 ```
 
+### Other useful plots
+
+Breakdown of total zooplankton biomass.
+
+```{r zoops, echo=FALSE}
+plot4=select(focaldata,year,hcope,pcope,clad,mysid,rotif_m) %>% 
+  gather(Var,Value,hcope:rotif_m)
+#proportion of biomass, on average
+plot4 %>% group_by(Var) %>% summarise(Val=mean(Value, na.rm=T)) %>% 
+  ungroup %>% mutate(prop=Val/sum(Val))
+ggplot(plot4,aes(x=year,y=Value,fill=Var)) +
+  geom_area() +
+  theme_bw() + scale_fill_brewer(palette = "Dark2") +
+  labs(title = "Original units")
+```
+
+Similarity of fish indices.
+
+```{r fish, echo=FALSE}
+plot5=select(fd,year,estfish,estfish_bsmt,estfish_stn) %>% 
+  gather(Var,Value,estfish,estfish_bsmt,estfish_stn) 
+ggplot(plot5,aes(x=year,y=Value,color=Var)) +
+  geom_line(size=1) +
+  theme_bw() + scale_color_brewer(palette = "Dark2") +
+  labs(title = "Log scaled")
+
+plot6=select(fd_dtr,year,estfish,estfish_bsmt,estfish_stn) %>% 
+  gather(Var,Value,estfish,estfish_bsmt,estfish_stn)
+ggplot(plot6,aes(x=year,y=Value,color=Var)) +
+  geom_line(size=1) +
+  theme_bw() + scale_color_brewer(palette = "Dark2") +
+  labs(title = "Log scaled detrended")
+```
+
 ### Cross-correlation matrices  
 (only sig correlations shown... no correction for multiple comparisons)
 
@@ -165,417 +228,128 @@ ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
 
-#lag 1
-lags1=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
+#lag 0, detrended
+lags0dtr=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
                   stringsAsFactors = F)
-for(i in 1:nrow(lags1)) {
-  v1=fd[,lags1$V1[i]]
-  v2=fd[,lags1$V2[i]]
-  if(!all(is.na(v1)) & !all(is.na(v2))) {
-    tccf=cor.test(v1,lag(v2,1))
-    lags1$Cor[i]=tccf$estimate
-    lags1$P[i]=tccf$p.value
-  }
-}
-lags1$V1=factor(lags1$V1,levels = varnames)
-lags1$V2=factor(lags1$V2,levels = varnames)
-ggplot(filter(lags1,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
-  geom_tile() +
-  geom_abline(slope=1,intercept = 0) +
-  scale_fill_gradient2() +
-  theme_bw() +
-  labs(x="V2 (t-1)", y="V1 (t)", title = "lag 1 cross-cor") +
-  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
-  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
-  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
-
-#lag 1 seasonality removed
-lags1dtr=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
-                  stringsAsFactors = F)
-for(i in 1:nrow(lags1dtr)) {
-  v1=fd_dtr[,lags1dtr$V1[i]]
-  v2=fd_dtr[,lags1dtr$V2[i]]
+for(i in 1:nrow(lags0dtr)) {
+  v1=fd_dtr[,lags0dtr$V1[i]]
+  v2=fd_dtr[,lags0dtr$V2[i]]
   if(!all(is.na(v1)) & !all(is.na(v2))) {
     tccf=cor.test(v1,v2)
-    lags1dtr$Cor[i]=tccf$estimate
-    lags1dtr$P[i]=tccf$p.value
+    lags0dtr$Cor[i]=tccf$estimate
+    lags0dtr$P[i]=tccf$p.value
   }
 }
-lags1dtr$V1=factor(lags1dtr$V1,levels = varnames)
-lags1dtr$V2=factor(lags1dtr$V2,levels = varnames)
-ggplot(filter(lags1dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+lags0dtr$V1=factor(lags0dtr$V1,levels = varnames)
+lags0dtr$V2=factor(lags0dtr$V2,levels = varnames)
+ggplot(filter(lags0dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   geom_tile() +
   geom_abline(slope=1,intercept = 0) +
   scale_fill_gradient2() +
   theme_bw() +
-  labs(x="V2 (t-1)", y="V1 (t)",title = "lag 0 cross-cor, detrended") +
+  labs(x="V2 (t)", y="V1 (t)", title = "lag 0 cross-cor, detrended") +
   scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
 ```
 
-```{r bivariate, fig.width=9, fig.height=9, echo=FALSE, eval=FALSE}
-psych::pairs.panels(dplyr::select(fd, year, varnames),lm = T)
+### Make a definations tabel
+Make a table similar to table 1 in Mac Nally et al. 2010 in Eco. Apps.
+```{r echo = FALSE, fig.width=8, fig.height=8}
+definations_data = focaldata %>% 
+  # take out lag data if present
+  select(-ends_with("_1")) %>% 
+  pivot_longer(cols = -year, names_to = "Shortname", values_to = "value") %>% 
+  na.omit() %>% 
+  # Join so we can get the long names
+  left_join(select(cnames, Longname, Shortname, Defination), by = "Shortname") %>% 
+  group_by(Shortname, Longname, Defination) %>% 
+  # some calculations to get range, years missing, ect.
+  summarize(max = max(value, na.rm = TRUE),
+         min = min(value, na.rm = TRUE),
+         Range = paste0(format(round(min, 2), nsmall = 2),
+                        "\U2012",
+                        format(round(max, 2), nsmall = 2)),
+         first_year = min(year, na.rm = TRUE),
+         last_year = max(year, na.rm = TRUE),
+         time_span = last_year - first_year,
+         year_count = length(unique(year)),
+         missing = time_span - year_count + 1,
+         Years_missing = paste0(first_year, "\U2012", last_year, " (", missing, ")")) %>% 
+  ungroup() %>% 
+  rename(Variable = Longname) %>% 
+  select(Variable, Range, Years_missing, Defination) 
+
+# Do a little formating of the table
+knitr::kable(definations_data, col.names = c("Variable",
+                                             "Range",
+                                             "Years (missing)",
+                                             "Defination"))
+# Write it as a csv
+write.csv(definations_data,
+          "fig_output/definitions tabel.csv",
+          row.names = FALSE)
 ```
+
+
 
 ### SEM model
 
 With and without detrending.
 
 ```{r}
-# add_logs = function(inputs){
-#   output = map_dbl(inputs, ~exp(.x)) %>% 
-#     sum() %>% 
-#     log()
-#   return(output)
-# }
-# 
-# fd = fd %>% 
-#   rowwise() %>% 
-#   mutate(rep_zoop_c = add_logs(c(hcope_c,clad_c,mysid_c)),
-#          rep_zoop_m =  add_logs(c(hcope,clad,mysid)),
-#          rep_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e)),
-#          all_zoop_c =  add_logs(c(hcope_c,clad_c,mysid_c,pcope_c,rotif_c)),
-#          all_zoop_m =  add_logs(c(hcope,clad,mysid,pcope,rotif_m)),
-#          all_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e,pcope_e,rotif_e)),
-#          all_fish =  add_logs(c(estfish_bsmt,estfish_bsot)))
-#   
-# fd_dtr = fd_dtr %>% 
-#   rowwise() %>% 
-#   mutate(rep_zoop_c = add_logs(c(hcope_c,clad_c,mysid_c)),
-#          rep_zoop_m =  add_logs(c(hcope,clad,mysid)),
-#          rep_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e)),
-#          all_zoop_c =  add_logs(c(hcope_c,clad_c,mysid_c,pcope_c,rotif_c)),
-#          all_zoop_m =  add_logs(c(hcope,clad,mysid,pcope,rotif_m)),
-#          all_zoop_e =  add_logs(c(hcope_e,clad_e,mysid_e,pcope_e,rotif_e)),
-#          all_fish =  add_logs(c(estfish_bsmt,estfish_bsot)))
-```
+#1
+# model1='zoop=~hcope+clad+mysid
+#         fish=~estfish_bsmt+estfish_bsot
+#         zoop~chla+potam+flow
+#         chla~potam+flow
+#         fish~zoop+flow
+# '
+#2
+model1='chla~potam+flow+temp
+        hzoop~chla+potam+flow+temp
+        pzoop~chla+potam+flow+hzoop+temp
+        fish~hzoop+pzoop+flow+turbid+temp+potam
+        fish=~estfish+estfish_stn+estfish_bsmt
+'
 
-```{r}
+modfit1=sem(model1, data=fd)
+modfit1_dtr=sem(model1, data=fd_dtr)
+summary(modfit1, standardized=T, rsq=T)
+summary(modfit1_dtr, standardized=T, rsq=T)
 
-
-
-l_models = data.frame(l_model = c("rep_zoop_c",
-                                "rep_zoop_m",
-                                "rep_zoop_e",
-                                "all_zoop_c",
-                                "all_zoop_m",
-                                "all_zoop_e",
-                                "hcope_c+clad_c+mysid_c",
-                                "hcope+clad+mysid",
-                                "hcope_e+clad_e+mysid_e",
-                                "hcope_c+clad_c+mysid_c+pcope_c+rotif_c",
-                                "hcope+clad+mysid+pcope+rotif_m",
-                                "hcope_e+clad_e+mysid_e+pcope_e+rotif_e",
-                                "amphi+hcope_c+clad_c+mysid_c",
-                                "amphi+hcope+clad+mysid",
-                                "amphi+hcope_e+clad_e+mysid_e",
-                                "amphi+hcope_c+clad_c+mysid_c+pcope_c+rotif_c",
-                                "amphi+hcope+clad+mysid+pcope+rotif_m",
-                                "amphi+hcope_e+clad_e+mysid_e+pcope_e+rotif_e"),
-                      model_name = c("model_r_c",
-                                      "model_r_m",
-                                      "model_r_e",
-                                      "model_a_c",
-                                      "model_a_m",
-                                      "model_a_e",
-                                      "model_l_c",
-                                      "model_l_m",
-                                      "model_l_e",
-                                      "model_al_c",
-                                      "model_al_m",
-                                      "model_al_e",
-                                      "model_la_c",
-                                      "model_la_m",
-                                      "model_la_e",
-                                      "model_ala_c",
-                                      "model_ala_m",
-                                      "model_ala_e"))
-
-
-AICs_dtr = map(l_models$l_model, ~AIC(lm(paste0("all_fish ~", .x), data = fd_dtr))) %>% 
-  unlist() %>% 
-  data.frame() %>% 
-  setNames("lm_AIC") %>% 
-  bind_cols(l_models) %>% 
-  ungroup() %>% 
-  mutate(type = "result_dt")
-AICs = map(l_models$l_model, ~AIC(lm(paste0("all_fish ~", .x), data = fd))) %>% 
-  unlist() %>% 
-  data.frame() %>% 
-  setNames("lm_AIC") %>% 
-  bind_cols(l_models) %>% 
-  mutate(type = "result") %>% 
-  bind_rows(AICs_dtr) %>% 
-  mutate(delta_AIC = lm_AIC - min(lm_AIC))
-  
-
-
-```
-
-
-```{r}
-model_l_c='zoop=~hcope_c+clad_c+mysid_c
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_l_m='zoop=~hcope+clad+mysid
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_l_e='zoop=~hcope_e+clad_e+mysid_e
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_la_c='zoop=~hcope_c+clad_c+mysid_c+amphi
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_la_m='zoop=~hcope+clad+mysid+amphi
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_la_e='zoop=~hcope_e+clad_e+mysid_e+amphi
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_r_c='fish=~estfish_bsmt+estfish_bsot
-        rep_zoop_c~chla+potam+flow
-        chla~potam+flow
-        fish~rep_zoop_c+flow'
-
-model_r_m='fish=~estfish_bsmt+estfish_bsot
-        rep_zoop_m~chla+potam+flow
-        chla~potam+flow
-        fish~rep_zoop_m+flow'
-
-model_r_e='fish=~estfish_bsmt+estfish_bsot
-        rep_zoop_e~chla+potam+flow
-        chla~potam+flow
-        fish~rep_zoop_e+flow'
-
-model_a_c='fish=~estfish_bsmt+estfish_bsot
-        all_zoop_c~chla+potam+flow
-        chla~potam+flow
-        fish~all_zoop_c+flow'
-
-model_a_m='fish=~estfish_bsmt+estfish_bsot
-        all_zoop_m~chla+potam+flow
-        chla~potam+flow
-        fish~all_zoop_m+flow'
-
-model_a_e='fish=~estfish_bsmt+estfish_bsot
-        all_zoop_e~chla+potam+flow
-        chla~potam+flow
-        fish~all_zoop_e+flow'
-
-model_al_c='zoop=~hcope_c+clad_c+mysid_c+pcope_c+rotif_c
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_al_m='zoop=~hcope+clad+mysid+pcope+rotif_m
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_al_e='zoop=~hcope_e+clad_e+mysid_e+pcope_e+rotif_e
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_ala_c='zoop=~hcope_c+clad_c+mysid_c+pcope_c+rotif_c+amphi
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_ala_m='zoop=~hcope+clad+mysid+pcope+rotif_m+amphi
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_ala_e='zoop=~hcope_e+clad_e+mysid_e+pcope_e+rotif_e+amphi
-        fish=~estfish_bsmt+estfish_bsot
-        zoop~chla+potam+flow
-        chla~potam+flow
-        fish~zoop+flow'
-
-model_list = c(model_l_c = model_l_c,
-               model_l_m = model_l_m,
-               model_l_e = model_l_e,
-               model_la_c = model_la_c,
-               model_la_m = model_la_m,
-               model_la_e = model_la_e,
-               model_r_c = model_r_c,
-               model_r_m = model_r_m,
-               model_r_e = model_r_e,
-               model_a_c = model_a_c,
-               model_a_m = model_a_m,
-               model_a_e = model_a_e,
-               model_al_c = model_al_c,
-               model_al_m = model_al_m,
-               model_al_e = model_al_e,
-               model_ala_c = model_ala_c,
-               model_ala_m = model_ala_m,
-               model_ala_e = model_ala_e)
-
-```
-
-Plot the IFIs
-```{r}
-
-metric = "AIC"
-models = data.frame(model_name = names(model_list),
-                    models = model_list) %>% 
-  rowwise() %>% 
-  mutate(result = model_performance(
-    sem(models, data = fd),
-    metrics = c(metric))[[1]],
-    result_dt = model_performance(
-      sem(models, data = fd_dtr),
-      metrics = c(metric))[[1]]) %>% 
-  pivot_longer(cols = c(result, result_dt), names_to = "type", values_to = "metr") %>% 
-  left_join(AICs, by = c("model_name", "type")) %>% 
-    mutate(model_name = forcats::fct_reorder(model_name, metr))
-
-
-met_compare = ggplot(data = models,
-                     aes(x = model_name,
-                         y = metr,
-                         color = type)) +
-  theme_classic(base_size = 20) +
-  labs(title = "SEM", y = metric)+
-  theme(axis.text.x = element_text(angle = 90)) +
-  geom_point()
-print(met_compare)
-
-lm_data_ranked = models %>% 
-   mutate(model_name = forcats::fct_reorder(model_name, lm_AIC))
-
-lm_compare = ggplot(data = lm_data_ranked ,
-                     aes(x = model_name,
-                         y = lm_AIC,
-                         color = type)) +
-  theme_classic(base_size = 20) +
-  labs(title = "Linear Model", y = metric)+
-  theme(axis.text.x = element_text(angle = 90)) +
-  geom_point()
-print(lm_compare)
-
-AIC_compare = ggplot(data = models,
-                     aes(x = lm_AIC,
-                         y = metr,
-                         color = type)) +
-  theme_classic(base_size = 20) +
-  labs(y = paste0("SEM ", metric))+
-  theme(axis.text.x = element_text(angle = 90)) +
-  geom_point()
-print(AIC_compare)
-```
-
-
-```{r}
-
-modfit_l_m=sem(model_l_m, data=fd)
-modfit_l_m_dtr=sem(model_l_m, data=fd_dtr)
-
-modfit_l_c=sem(model_l_c, data=fd)
-modfit_l_c_dtr=sem(model_l_c, data=fd_dtr)
-
-modfit_l_e=sem(model_l_e, data=fd)
-modfit_l_e_dtr=sem(model_l_e, data=fd_dtr)
-
-modfit_la_m=sem(model_la_m, data=fd)
-modfit_la_m_dtr=sem(model_la_m, data=fd_dtr)
-
-modfit_la_c=sem(model_la_c, data=fd)
-modfit_la_c_dtr=sem(model_la_c, data=fd_dtr)
-
-modfit_la_e=sem(model_la_e, data=fd)
-modfit_la_e_dtr=sem(model_la_e, data=fd_dtr)
-
-modfit_r_m=sem(model_r_m, data=fd)
-modfit_r_m_dtr=sem(model_r_m, data=fd_dtr)
-
-modfit_r_c=sem(model_r_c, data=fd)
-modfit_r_c_dtr=sem(model_r_c, data=fd_dtr)
-
-modfit_r_e=sem(model_r_e, data=fd)
-modfit_r_e_dtr=sem(model_r_e, data=fd_dtr)
-
-modfit_a_m=sem(model_a_m, data=fd)
-modfit_a_m_dtr=sem(model_a_m, data=fd_dtr)
-
-modfit_a_c=sem(model_a_c, data=fd)
-modfit_a_c_dtr=sem(model_a_c, data=fd_dtr)
-
-modfit_a_e=sem(model_a_e, data=fd)
-modfit_a_e_dtr=sem(model_a_e, data=fd_dtr)
-
-modfit_al_m=sem(model_al_m, data=fd)
-modfit_al_m_dtr=sem(model_al_m, data=fd_dtr)
-
-modfit_al_c=sem(model_al_c, data=fd)
-modfit_al_c_dtr=sem(model_al_c, data=fd_dtr)
-
-modfit_al_e=sem(model_al_e, data=fd)
-modfit_al_e_dtr=sem(model_al_e, data=fd_dtr)
-
-modfit_ala_m=sem(model_ala_m, data=fd)
-modfit_ala_m_dtr=sem(model_ala_m, data=fd_dtr)
-
-modfit_ala_c=sem(model_ala_c, data=fd)
-modfit_ala_c_dtr=sem(model_ala_c, data=fd_dtr)
-
-modfit_ala_e=sem(model_ala_e, data=fd)
-modfit_ala_e_dtr=sem(model_ala_e, data=fd_dtr)
-
+# residuals(modfit1)
+# modificationindices(modfit1, sort=T, maximum.number=20)
 ```
 
 ### Nice plots
 
 #### Without covariances
-Plots
-
-```{r, echo=FALSE}
-myLavaanPlot(model=modfit_r_c, 
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-
-myLavaanPlot(model=modfit_r_e, 
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
-```
 
 Original units
 
 ```{r, echo=FALSE}
-myLavaanPlot(model=modfit_m, labels=labels_m,
+labels1 <- createLabels(modfit1, cnames)
+
+myLavaanPlot(model=modfit1, labels=labels1,
 						 node_options=list(shape="box", fontname="Helvetica"), 
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+## Updated SEM diagram:
+cnames_with_latent <- rbind(cnames,
+                            data.frame(Longname="fish", Shortname="fish",
+                                       Diagramname="estuarine\nfishes", 
+                                       Datacolumn=NA, Log=NA,
+                                       Color="#FF0000", Defination = NA))
+
+plot_modfit1 <- createGraph(fit=modfit1, 
+                            reference_df=cnames_with_latent, 
+                            model_type="annual",
+                            title="Whole Estuary",
+                            manual_port_settings=TRUE)
+plot_modfit1
 ```
 
 Detrended
@@ -586,6 +360,13 @@ myLavaanPlot(model=modfit1_dtr, labels=labels1,
 						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
 						 width=c("regress","latent"),
 						 color=c("regress","latent"))
+
+plot_modfit2 <- createGraph(fit=modfit1_dtr, 
+                            reference_df=cnames_with_latent, 
+                            model_type="annual",
+                            title="Whole Estuary",
+                            manual_port_settings=TRUE)
+plot_modfit2
 ```
 
 #### With covariances
@@ -599,6 +380,12 @@ myLavaanPlot(model=modfit1, labels=labels1,
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
 
+createGraph(fit=modfit1, 
+            reference_df=cnames_with_latent, 
+            cov=TRUE,
+            model_type="annual",
+            title="Annual no region",
+            manual_port_settings=TRUE)
 ```
 
 Detrended
@@ -609,4 +396,45 @@ myLavaanPlot(model=modfit1_dtr, labels=labels1,
 						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
 						 width=c("regress","latent","covs"),
 						 color=c("regress","latent","covs"))
+
+createGraph(fit=modfit1_dtr, 
+            reference_df=cnames_with_latent, 
+            cov=TRUE,
+            model_type="annual",
+            title="Annual no region, detrended",
+            manual_port_settings=TRUE)
 ```
+
+*Save updated SEM diagrams*
+
+```{r}
+modfit1_grobs <-  map(list(plot_modfit1), ~convert_html_to_grob(.x, 2000))
+modfit1_figure <- ggarrange(plotlist=modfit1_grobs) %>%
+  annotate_figure(top = text_grob("Annual SEM (whole estuary)",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 8))
+
+ggsave('./fig_output/sem_annual_noregions.png',modfit1_figure, width=3, height=3, dpi=300, bg = "white")
+```
+
+*Save figure object for combining with annual regional figure*
+
+```{r}
+# Give the object an informative name for when it is loaded into the annual regional file:
+sem_annual_noregions <- plot_modfit1
+sem_annual_noregions_dtr <- plot_modfit2
+
+save(sem_annual_noregions, sem_annual_noregions_dtr,
+     file='./fig_output/sem_annual_noregions.RData')
+
+focaldata_we <- focaldata
+save(focaldata_we, file = "./fig_output/focaldata_we.Rdata")
+```
+
+*Save model coefficients for manuscript table*
+```{r}
+coef_tabler(modfit1, modfit1_dtr, name="")%>%
+  write.csv("fig_output/annual noregion coefficients.csv", row.names = FALSE)
+```
+
