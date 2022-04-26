@@ -434,7 +434,8 @@ save(focaldata_we, file = "./fig_output/focaldata_we.Rdata")
 
 *Save model coefficients for manuscript table*
 ```{r}
-coef_tabler(modfit1, modfit1_dtr, name="")%>%
-  write.csv("fig_output/annual noregion coefficients.csv", row.names = FALSE)
+coeftable_we<-coef_tabler(modfit1, modfit1_dtr, name="")
+
+save(coeftable_we, file = "./fig_output/coeftable_we.Rdata")
 ```
 
