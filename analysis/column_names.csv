@@ -1,14 +1,14 @@
 Longname,Shortname,Diagramname,Datacolumn,Log,Color,Defination
 Year,year,year,Year,no,,
 Flow,flow,flow,Mean_outflow_WY,yes,#4472C4,continuous - mean Delta outflow (water leaving the Delta to the Bay)
-Secchi,secchi,secchi,Secchi,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly - selected stations to ensure continuous monthly coverage
-Ammonia,ammonia,ammonia,DissAmmonia,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly - selected stations to ensure continuous monthly coverage
-Phytoplankton,chla,phytoplankton,Chlorophyll,yes,#70AD47,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly - selected stations to ensure continuous monthly coverage
-Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly - selected stations to ensure continuous monthly coverage
-Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly - selected stations to ensure continuous monthly coverage
-Temperature,temp,temperature,Temperature,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly - selected stations to ensure continuous monthly coverage
-Potamocorbula,potam,Potamocorbula\nclams,Potamocorbula_cpue,no,#A5A5A5,from the Environmental Monitoring Program (EMP) Benthic Survey at DWR - continuous monthly - selected stations (8 and 3 averaged for monthly and annual models respectively)
-Corbicula,corbic,Corbicula\nclams,Corbicula_cpue,no,#A5A5A5,from the Environmental Monitoring Program (EMP) Benthic Survey at DWR - continuous monthly - selected stations (8 and 3 averaged for monthly and annual models respectively) 
+Secchi,secchi,secchi,Secchi,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Ammonia,ammonia,ammonia,DissAmmonia,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Phytoplankton,chla,phytoplankton,Chlorophyll,yes,#70AD47,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Temperature,temp,temperature,Temperature,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Potamocorbula,potam,Potamocorbula\nclams,Potamocorbula_cpue,no,#A5A5A5,from the Environmental Monitoring Program (EMP) Benthic Survey at DWR - continuous monthly
+Corbicula,corbic,Corbicula\nclams,Corbicula_cpue,no,#A5A5A5,from the Environmental Monitoring Program (EMP) Benthic Survey at DWR - continuous monthly
 Herbivorous copepods,hcope,herbivorous\ncopepods,Herbivorous_Copepods_BPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
 Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes,#7030A0,from 5 different sources - continuous - see Bashevkin et al. 2022
 Mysids,mysid,mysids,Mysids_BPUE,yes,#7030A0,from 5 different sources - continuous - see Bashevkin et al. 2022

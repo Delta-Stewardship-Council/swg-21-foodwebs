@@ -1,45 +1,45 @@
-Longname,Shortname,Diagramname,Datacolumn,Log,Color
-Year,year,year,Year,no,
-Month,month,month,Month,no,
-Region,region,region,Region,no,
-Flow,flow,flow,Flow,yes,#4472C4
-Secchi,secchi,secchi,Secchi,no,#4472C4
-Ammonia,ammonia,ammonia,DissAmmonia,yes,#4472C4
-Phytoplankton,chla,phytoplankton,Chlorophyll,yes,#70AD47
-Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4
-Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes,#4472C4
-Dissolved Inorganic Nitrogen,din,DIN,DIN,yes,#4472C4
-Temperature,temp,temperature,Temperature,no,#4472C4
-Potamocorbula,potam,Potamocorbula\nclams,Potamocorbula_cpue,no,#A5A5A5
-Corbicula,corbic,Corbicula\nclams,Corbicula_cpue,no,#A5A5A5
-Herbivorous copepods,hcope,herbivorous\ncopepods,Herbivorous_Copepods_BPUE,yes,#ED7D31
-Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes,#7030A0
-Mysids,mysid,mysids,Mysids_BPUE,yes,#7030A0
-Cladocera,clad,cladocera,Cladoceran_BPUE,yes,#ED7D31
-Amphipods catch,amphi,amphipods catch,Amphipoda_CPUE,yes,#ED7D31
-Amphipods mass,amphi_m,amphipods,Amphipoda_BPUE,yes,#ED7D31
-Cladocera catch,clad_c,cladocera catch,Cladoceran_CPUE,yes,#ED7D31
-Cladocera energy,clad_e,cladocera energy,Cladoceran_JPUE,yes,#ED7D31
-Herbivorous copepods catch,hcope_c,herbivorous copepods catch,Herbivorous_Copepods_CPUE,yes,#ED7D31
-Herbivorous copepods energy,hcope_e,herbivorous copepods energy,Herbivorous_Copepods_JPUE,yes,#ED7D31
-Mysids catch,mysid_c,mysids catch,Mysids_CPUE,yes,#7030A0
-Mysids energy,mysid_e,mysids energy,Mysids_JPUE,yes,#7030A0
-Predatory copepods catch,pcope_c,predatory copepods catch,Predatory_Copepods_CPUE,yes,#7030A0
-Predatory copepods energy,pcope_e,predatory copepods energy,Predatory_Copepods_JPUE,yes,#7030A0
-Rotifers mass,rotif_m,rotifers,Rotifers_BPUE,yes,#F446A1
-Rotifers catch,rotif_c,rotifers catch,Rotifers_CPUE,yes,#F446A1
-Rotifers energy,rotif_e,rotifers energy,Rotifers_JPUE,yes,#F446A1
-Estuarine fishes BSMT,estfish_bsmt,BSMT\nestuarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000
-Marine fishes BSMT,marfish_bsmt,BSMT\nmarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50
-Delta smelt BSMT,smelt_bsmt,BSMT\ndelta smelt,BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,yes,#333F50
-Striped bass BSMT,sbass_bsmt,BSMT\nstriped bass,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0,yes,#333F50
-Longfin smelt BSMT,lfin_bsmt,BSMT\nlongfin smelt,BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,yes,#333F50
-Estuarine fishes BSOT,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000
-Marine fishes BSOT,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50
-Delta smelt BSOT,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes,#333F50
-Striped bass BSOT,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes,#333F50
-Longfin smelt BSOT,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes,#333F50
-Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes,#333F50
-Centrarchids,cent,Centrarchids,DJFMP_fish_biomass_Centrarchids,yes,#333F50
-Striped bass age 1+ BSMT,sbass1_bsmt,striped bass\nage 1+,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age1above,yes,#333F50
-Striped bass age 1+ BSOT,sbass1_bsot,BSOT striped bass\nage 1+,BayStudy_OtterTrawl_fish_biomass_StripedBass_age1above,yes,#333F50
+Longname,Shortname,Diagramname,Datacolumn,Log,Color,Defination
+Year,year,year,Year,no,,
+Month,month,month,Month,no,,
+Region,region,region,Region,no,,
+Flow,flow,flow,Flow,yes,#4472C4,continuous - mean Delta outflow (water leaving the Delta to the Bay)
+Secchi,secchi,secchi,Secchi,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Ammonia,ammonia,ammonia,DissAmmonia,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Phytoplankton,chla,phytoplankton,Chlorophyll,yes,#70AD47,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Dissolved Inorganic Nitrogen,din,DIN,DIN,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Temperature,temp,temperature,Temperature,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
+Potamocorbula,potam,Potamocorbula\nclams,Potamocorbula_cpue,no,#A5A5A5,from the Environmental Monitoring Program (EMP) Benthic Survey at DWR - continuous monthly
+Corbicula,corbic,Corbicula\nclams,Corbicula_cpue,no,#A5A5A5,from the Environmental Monitoring Program (EMP) Benthic Survey at DWR - continuous monthly
+Herbivorous copepods,hcope,herbivorous\ncopepods,Herbivorous_Copepods_BPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
+Predatory copepods,pcope,predatory\ncopepods,Predatory_Copepods_BPUE,yes,#7030A0,from 5 different sources - continuous - see Bashevkin et al. 2022
+Mysids,mysid,mysids,Mysids_BPUE,yes,#7030A0,from 5 different sources - continuous - see Bashevkin et al. 2022
+Cladocera,clad,cladocera,Cladoceran_BPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
+Amphipods catch,amphi,amphipods catch,Amphipoda_CPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
+Amphipods mass,amphi_m,amphipods,Amphipoda_BPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
+Cladocera catch,clad_c,cladocera catch,Cladoceran_CPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
+Cladocera energy,clad_e,cladocera energy,Cladoceran_JPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
+Herbivorous copepods catch,hcope_c,herbivorous copepods catch,Herbivorous_Copepods_CPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
+Herbivorous copepods energy,hcope_e,herbivorous copepods energy,Herbivorous_Copepods_JPUE,yes,#ED7D31,from 5 different sources - continuous - see Bashevkin et al. 2022
+Mysids catch,mysid_c,mysids catch,Mysids_CPUE,yes,#7030A0,from 5 different sources - continuous - see Bashevkin et al. 2022
+Mysids energy,mysid_e,mysids energy,Mysids_JPUE,yes,#7030A0,from 5 different sources - continuous - see Bashevkin et al. 2022
+Predatory copepods catch,pcope_c,predatory copepods catch,Predatory_Copepods_CPUE,yes,#7030A0,from 5 different sources - continuous - see Bashevkin et al. 2022
+Predatory copepods energy,pcope_e,predatory copepods energy,Predatory_Copepods_JPUE,yes,#7030A0,from 5 different sources - continuous - see Bashevkin et al. 2022
+Rotifers mass,rotif_m,rotifers,Rotifers_BPUE,yes,#F446A1,from 5 different sources - continuous - see Bashevkin et al. 2022
+Rotifers catch,rotif_c,rotifers catch,Rotifers_CPUE,yes,#F446A1,from 5 different sources - continuous - see Bashevkin et al. 2022
+Rotifers energy,rotif_e,rotifers energy,Rotifers_JPUE,yes,#F446A1,from 5 different sources - continuous - see Bashevkin et al. 2022
+Estuarine fishes BSMT,estfish_bsmt,BSMT\nestuarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,continuous - midwater trawl - biomass of estuarine pelagic forage fishes
+Marine fishes BSMT,marfish_bsmt,BSMT\nmarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,continuous - midwater trawl - biomass
+Delta smelt BSMT,smelt_bsmt,BSMT\ndelta smelt,BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,continuous - midwater trawl - biomass
+Striped bass BSMT,sbass_bsmt,BSMT\nstriped bass,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,continuous - midwater trawl - biomass of age 0 individuals
+Longfin smelt BSMT,lfin_bsmt,BSMT\nlongfin smelt,BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,continuous - midwater trawl - biomass
+Estuarine fishes BSOT,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,continuous - ottor trawl - biomass of estuarine pelagic forage fishes
+Marine fishes BSOT,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,continuous - ottor trawl - biomass
+Delta smelt BSOT,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,continuous - ottor trawl - biomass
+Striped bass BSOT,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,continuous - ottor trawl - biomass of age 0 individuals
+Longfin smelt BSOT,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,continuous - ottor trawl - biomass
+Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes,#333F50,from the Delta juvenile fish monitoring program - continuous - combination of surface trawls and beach seines - biomass
+Centrarchids,cent,Centrarchids,DJFMP_fish_biomass_Centrarchids,yes,#333F50,from the Delta juvenile fish monitoring program - continuous - combination of surface trawls and beach seines - biomass
+Striped bass age 1+ BSMT,sbass1_bsmt,striped bass\nage 1+,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age1above,yes,#333F50,continuous - midwater trawl - biomass of age 1+ individuals
+Striped bass age 1+ BSOT,sbass1_bsot,BSOT striped bass\nage 1+,BayStudy_OtterTrawl_fish_biomass_StripedBass_age1above,yes,#333F50,continuous - ottor trawl - biomass of age 1+ individuals

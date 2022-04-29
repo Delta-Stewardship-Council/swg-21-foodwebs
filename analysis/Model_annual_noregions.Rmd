@@ -278,11 +278,10 @@ definations_data = focaldata %>%
          Years_missing = paste0(first_year, "\U2012", last_year, " (", missing, ")")) %>% 
   ungroup() %>% 
   rename(Variable = Longname) %>% 
-  select(Variable, Range, Years_missing, Defination) 
+  select(Variable, Years_missing, Defination) 
 
 # Do a little formating of the table
 knitr::kable(definations_data, col.names = c("Variable",
-                                             "Range",
                                              "Years (missing)",
                                              "Defination"))
 # Write it as a csv

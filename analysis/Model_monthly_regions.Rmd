@@ -6,13 +6,15 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 knit: (function(input, ...) {
+    
+    
     rmarkdown::render(
       input,
       output_dir = 'docs',
       knit_root_dir = "../",
       envir = globalenv()
-    )
-    })
+      )
+      })
 ---
 
 ```{r setup, include=FALSE}
@@ -25,6 +27,7 @@ library(lavaan)
 library(DiagrammeR)
 library(ggplot2)
 library(tidyr)
+library(lubridate)
 source("functions/table_funcs.R")
 # For saving SEM diagrams:
 library(purrr)
@@ -60,9 +63,16 @@ focaldata = focaldata %>%
 fvars=c(fvars,"tzoop","tzoop_e",
         "hzoop","hzoop_e",
         "pzoop","pzoop_e","turbid")
-cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
-                                                       "hzoop","hzoop_e",
-                                                       "pzoop","pzoop_e","turbid"),
+cnames=rbind(cnames,data.frame(Longname = c("Total zooplankton biomass",
+                                            "Total zooplankton energy",
+                                            "Herbivorous zooplankton biomass",
+                                            "Herbivorous zooplankton energy",
+                                            "Predatory zooplankton biomass",
+                                            "Predatory zooplankton energy",
+                                            "Turbidity"),
+                               Shortname=c("tzoop","tzoop_e",
+                                           "hzoop","hzoop_e",
+                                           "pzoop","pzoop_e","turbid"),
                                Diagramname=c("total zooplankton",
                                              "total zooplankton\nenergy",
                                              "herbivorous\nzooplankton",
@@ -72,7 +82,14 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
                                              "turbidity"),
                                Datacolumn=NA,Log=c(rep("yes",6),"no"),
                                Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
-                                       "#7030A0","#4472C4")))
+                                       "#7030A0","#4472C4"),
+                               Defination = c("summed zooplankton biomass",
+                                              "summed zooplankton energy",
+                                              "summed herbivorous zooplankton biomass",
+                                              "summed herbivorous zooplankton energy",
+                                              "summed predatory zooplankton biomass",
+                                              "summed predatory zooplankton energy",
+                                              "negative secchi depth")))
 #focal variables
 varnames=c("temp","flow","turbid","din","chla","hzoop","pzoop","potam","corbic","estfish_bsmt","sside","cent","sbass1_bsmt","marfish_bsmt","hcope","clad","amphi_m","pcope","mysid","rotif_m")
 #labels for lagged vars
@@ -335,6 +352,52 @@ In N and W, chla lags potam, negative. The opposite in W.
 
 Mysid and hcope postive, lag 0.  
 In S and W, hcope lags pcope, negative. 
+
+### Make a definations tabel
+Make a table similar to table 1 in Mac Nally et al. 2010 in Eco. Apps.
+```{r echo = FALSE, fig.width=8, fig.height=8}
+definations_data = focaldata %>% 
+  # take out lag data if present
+  select(-ends_with("_1")) %>% 
+  mutate(year_month = ym(paste0(year, ".", month))) %>% 
+  group_by(year_month) %>% 
+  select(-region) %>% 
+  summarise(across(everything(), .f = mean , na.rm = TRUE)) %>% 
+  pivot_longer(cols = -year_month, names_to = "Shortname", values_to = "value") %>% 
+  na.omit() %>% 
+  filter(Shortname != "decyear") %>% 
+  # Join so we can get the long names
+  left_join(select(cnames, Longname, Shortname, Defination), by = "Shortname") %>% 
+  group_by(Shortname, Longname, Defination) %>% 
+  # some calculations to get range, years missing, ect.
+  summarize(max = max(value, na.rm = TRUE),
+         min = min(value, na.rm = TRUE),
+         Range = paste0(format(round(min, 2), nsmall = 2),
+                        "\U2012",
+                        format(round(max, 2), nsmall = 2)),
+         first_date = min((year_month), na.rm = TRUE),
+         last_date = max((year_month), na.rm = TRUE),
+         first_year = year(first_date),
+         last_year = year(last_date),
+         time_span = as.period(interval(first_date, last_date)) %/% months(1),
+         month_count = length(unique(year_month)),
+         missing = time_span - month_count + 1,
+         Months_missing = paste0(first_year, "\U2012", last_year, " (", missing, ")")) %>% 
+  ungroup() %>% 
+  rename(Variable = Longname) %>% 
+  select(Variable, Months_missing, Defination) %>% 
+  filter(Variable != "Month",
+         Variable != "Year")
+
+# Do a little formating of the table
+knitr::kable(definations_data, col.names = c("Variable",
+                                             "Years (missing years)",
+                                             "Defination"))
+# Write it as a csv
+write.csv(definations_data,
+          "fig_output/month definitions tabel.csv",
+          row.names = FALSE)
+```
 
 ### Exploratory plots
 
