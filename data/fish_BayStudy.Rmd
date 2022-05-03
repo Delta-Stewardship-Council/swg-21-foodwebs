@@ -308,7 +308,7 @@ write.csv(BayStudy_annual_values_final_by_region,row.names=FALSE,file=file.path(
 
 ```
 
-Export annual station list to data/stations folder
+Export annual station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use BayStudy_annual_derived so the stations saved here match those used 
@@ -398,11 +398,11 @@ BayStudy_monthly_values_final_by_region<-full_join(BayStudy_Midwater_monthly_val
 write.csv(BayStudy_monthly_values_final_by_region,row.names=FALSE,file=file.path("data/monthly_averages/fish_BayStudy_monthly.csv"))
 ```
 
-Export monthly station list to data/stations folder
+Export monthly station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use BayStudy_monthly_derived so the stations saved here match those used 
-## in the annual and annual regional datasets saved above.
+## in the monthly dataset saved above.
 BayStudy_monthly_derived %>% 
   select(Station, Latitude, Longitude) %>%
   distinct() %>%

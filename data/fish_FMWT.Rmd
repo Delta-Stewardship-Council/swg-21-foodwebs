@@ -350,7 +350,7 @@ write.csv(FMWT_regional_values_wide,
 
 ```
 
-Lastly, export out station list to data/stations folder
+Lastly, export out station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use FMWT_combined_sum so the stations saved here match those used in the annual 

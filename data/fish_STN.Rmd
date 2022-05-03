@@ -327,7 +327,7 @@ write.csv(STN_annual_regional_values_final, row.names=FALSE,
           file=file.path("data/annual_averages/fish_STN_regions.csv"))
 ```
 
-Lastly, export out station list to data/stations folder
+Lastly, export out station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use STN_combined_derived so the stations saved here match those used in the annual 

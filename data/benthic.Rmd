@@ -235,7 +235,7 @@ write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv"
 
 ```
 
-Export annual station list to data/stations folder
+Export annual station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use ben_LT so the stations saved here match those used in the annual and annual 
@@ -334,7 +334,7 @@ write.csv(ST_amph_mon, "data/monthly_averages/amphipod_monthly_regions.csv",
           row.names=FALSE)
 ```
 
-Export monthly station list to data/stations folder
+Export monthly station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use ben_ST so the stations saved here match those used in the monthly dataset saved

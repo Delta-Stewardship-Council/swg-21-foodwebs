@@ -179,7 +179,7 @@ write.csv(DJFMP_Silverside_seine_annual_region,row.names=FALSE,file=file.path("d
 
 ```
 
-Export annual station list to data/stations folder
+Export annual station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use DJFMP_Silverside_seine_annual_input so the stations saved here match those used 

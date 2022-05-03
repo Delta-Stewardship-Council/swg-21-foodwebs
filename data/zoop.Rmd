@@ -221,7 +221,7 @@ str(zoop_data_annual_final_regions)
 write_csv(zoop_data_annual_final_regions, "data/annual_averages/zoop_annual_regions.csv")
 ```
 
-Export annual station list to data/stations folder
+Export annual station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use zoop_data_annual_final so the stations saved here match those used 
@@ -258,7 +258,7 @@ str(zoop_data_month_final_regions)
 write_csv(zoop_data_month_final_regions, "data/monthly_averages/zoop_month.csv")
 ```
 
-Export monthly station list to data/stations folder
+Export monthly station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
 ## Use zoop_data_month_final so the stations saved here match those used 
