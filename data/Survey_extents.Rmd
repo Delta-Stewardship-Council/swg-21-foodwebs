@@ -146,14 +146,12 @@ nutrients_month <- read_csv("data/stations/stations_nutrients_monthly.csv")%>%
 ```{r}
 benthic_month <- read_csv("data/stations/stations_benthic_monthly.csv")%>% 
   mutate(Category="Clams", Survey="EMP Benthic") %>% 
-  rename(Station=StationCode) %>% 
   select(Station:Survey)
 ```
 
 ```{r}
 benthic_annual <- read_csv("data/stations/stations_benthic_annual.csv")%>% 
   mutate(Category="Clams", Survey="EMP Benthic") %>% 
-  rename(Station=StationCode) %>% 
   select(Station:Survey)
 ```
 

@@ -116,9 +116,6 @@ ggplot(Baystudy_sample_size %>% filter(Method== "Otter trawl"),aes(x=Year,y=as.f
 BayStudyCoords<-Baystudy_sample_size %>% filter(Station %in% c(101:110,211:216,317:323,325,427:433,534,535,736,837)) %>% group_by(Station) %>% summarise(Latitude=mean(Latitude),Longitude=mean(Longitude))
 
 create_station_map(BayStudyCoords) 
-
-write.csv((BayStudyCoords %>% mutate(Survey="San Francisco Bay Study")),row.names = FALSE,file=file.path("data/stations/stations_fish_BayStudy_annual.csv"))
-
 ```
 
 Per Denise's suggestion, we will be subsetting data from just April to October. Will also subset according to the regional cutoffs.
@@ -311,6 +308,19 @@ write.csv(BayStudy_annual_values_final_by_region,row.names=FALSE,file=file.path(
 
 ```
 
+Export annual station list
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+## Use BayStudy_annual_derived so the stations saved here match those used 
+## in the annual and annual regional datasets saved above.
+BayStudy_annual_derived %>% 
+  select(Station, Latitude, Longitude) %>%
+  distinct() %>%
+  mutate(Survey="San Francisco Bay Study") %>%
+  write.csv(file=file.path("data/stations/stations_fish_BayStudy_annual.csv"),
+            row.names=FALSE)
+```
+
 ## Process monthly data by region
 
 Denise code:
@@ -330,8 +340,6 @@ View(BayStudy_full_monthly)
 
 #Map showing final list of monthly stations
 create_station_map(BayStudy_full_monthly)
-
-BayStudy_full_monthly %>% write.csv("data/stations/stations_fish_BayStudy_monthly.csv") # exported on 12/2/2021 by Denise
 ```
 
 Create dataset for month and region
@@ -388,7 +396,17 @@ BayStudy_monthly_values_final_by_region<-full_join(BayStudy_Midwater_monthly_val
   full_join(BayStudy_Midwater_monthly_values_biomass_by_region) %>% full_join(BayStudy_Otter_monthly_values_biomass_by_region)
 
 write.csv(BayStudy_monthly_values_final_by_region,row.names=FALSE,file=file.path("data/monthly_averages/fish_BayStudy_monthly.csv"))
-
-
 ```
 
+Export monthly station list
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+## Use BayStudy_monthly_derived so the stations saved here match those used 
+## in the monthly dataset saved above.
+BayStudy_monthly_derived %>% 
+  select(Station, Latitude, Longitude) %>%
+  distinct() %>%
+  mutate(Survey="San Francisco Bay Study") %>%
+  write.csv(file=file.path("data/stations/stations_fish_BayStudy_monthly.csv"),
+            row.names=FALSE)
+```

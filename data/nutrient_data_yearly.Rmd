@@ -3,13 +3,13 @@ title: "Nutrient Data - Yearly"
 output:
   html_document:
     code_folding: hide
-  knit: (function(input, ...) {
+knit: (function(input, ...) {
     rmarkdown::render(
       input,
       output_dir = 'docs',
-      knit_root_dir = '.',
+      knit_root_dir = "../",
       envir = globalenv()
-      )
+    )
     })
 ---
 
@@ -160,7 +160,7 @@ df_wq_wide_noregions <- pivot_wider(data = df_wq_noregions, id_cols = Year,
                                       names_from = Analyte, values_from = Value)
 
 write_csv(df_wq_wide_regions, 'data/annual_averages/nutrient_data_yearly_regions.csv')
-write_csv(df_wq_wide_noregions, 'data/annual_averages/nutrient_data_yearly_no_regions.csv')
+write_csv(df_wq_wide_noregions, 'data/annual_averages/nutrient_data_yearly_noregions.csv')
 write_csv(df_stations, 'data/stations/stations_nutrients_annual.csv')
 ```
 

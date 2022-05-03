@@ -62,7 +62,6 @@ if (window.hljs) {
 
 
 
-
 <style type="text/css">
 .main-container {
   max-width: 940px;
@@ -83,9 +82,6 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
-}
-details > summary > p:only-child {
-  display: inline;
 }
 pre code {
   padding: 0;
@@ -414,7 +410,18 @@ write.csv(FMWT_regional_values_wide,
           row.names=FALSE,
           file=file.path(&quot;data/annual_averages/fish_FMWT_by_regions.csv&quot;))</code></pre>
 <p>Lastly, export out station list to data/stations folder</p>
-<pre class="r"><code>FMWT_Coords_stations&lt;- data.frame(FMWT_combined) %&gt;% filter(Station %in% FMWT_index_stations_only$Station) %&gt;% group_by(Station) %&gt;% summarise(Latitude=mean(Latitude, na.rm = TRUE),Longitude=mean(Longitude, na.rm = TRUE)) %&gt;% mutate(Survey=&quot;Fall Midwater Trawl&quot;)
+<pre class="r"><code>## Use FMWT_combined_sum so the stations saved here match those used in the annual 
+## and annual regional datasets saved above.
+
+station_ref &lt;- FMWT_combined %&gt;%
+  select(Station, Latitude, Longitude) %&gt;%
+  distinct()
+
+FMWT_Coords_stations &lt;- data.frame(FMWT_combined_sum) %&gt;%
+  select(Station) %&gt;%
+  distinct() %&gt;%
+  left_join(station_ref, by=&quot;Station&quot;) %&gt;%
+  mutate(Survey=&quot;Fall Midwater Trawl&quot;)
 
 write.csv(FMWT_Coords_stations,row.names = FALSE,file=file.path(&quot;data/stations/stations_fish_FMWT_annual.csv&quot;))</code></pre>
 </div>

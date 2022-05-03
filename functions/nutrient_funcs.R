@@ -52,7 +52,7 @@ clean_df <- function(df){
   df <- subset(df, select = -c(DissAmmonia_Sign,DissNitrateNitrite_Sign,DissOrthophos_Sign))
 
   # pivot longer
-  df <- tidyr::pivot_longer(df, cols = c(Temperature, Chlorophyll:TKN, Salinity), names_to = 'Analyte', values_to = 'Value')
+  df <- tidyr::pivot_longer(df, cols = c(Temperature, Chlorophyll:TKN, Secchi, Salinity), names_to = 'Analyte', values_to = 'Value')
 
   # subset by wanted nutrients
   df_sub <- df[df$Analyte %in% c('Chlorophyll', 'DissNitrateNitrite', 'DissAmmonia', 'Salinity', 'Secchi', 'Temperature', 'DissOrthophos'),]

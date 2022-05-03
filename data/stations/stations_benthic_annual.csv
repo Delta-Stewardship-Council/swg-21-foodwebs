@@ -1,4 +1,4 @@
-"","StationCode","Latitude","Longitude"
-"1","D28A-L",37.9701652,-121.5741188
-"2","D4-L",38.0581151,-121.8193499
-"3","D7-C",38.1171292,-122.0395539
+"Station","Latitude","Longitude","Survey"
+"D4-L",38.0581151,-121.8193499,"EMP Benthic"
+"D7-C",38.1171292,-122.0395539,"EMP Benthic"
+"D28A-L",37.9701652,-121.5741188,"EMP Benthic"

@@ -23,8 +23,7 @@ annual_station_file <- file.path("data/stations/station_list_for_annual_analysis
 station_annual_points_filtered_NAD83 <- read.csv(annual_station_file,
 																								stringsAsFactors=FALSE) %>%
 	sf::st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, agr="constant") %>%
-	sf::st_transform(crs=sf::st_crs(water_NAD83)) %>%
-  sf::st_filter(regions_NAD83)
+	sf::st_transform(crs=sf::st_crs(water_NAD83))
 
 
 ## Stations from monthly data:
@@ -32,8 +31,8 @@ monthly_station_file <- file.path("data/stations/station_list_for_monthly_analys
 station_month_points_filtered_NAD83 <- read.csv(monthly_station_file,
 																								stringsAsFactors=FALSE) %>%
 	sf::st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, agr="constant") %>%
-	sf::st_transform(crs=st_crs(water_NAD83)) %>%
-  sf::st_filter(regions_NAD83)
+	sf::st_transform(crs=st_crs(water_NAD83))
+
 
 ## California:
 california <- USAboundaries::us_states(states="California")
@@ -147,14 +146,11 @@ annualRegionalMap <- baseMap +
 										 values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
 										          "EMP Nutrients"=7,"DJFMP"=8,"FMWT"=3,"STN"=5)) +
 	# geom_sf(data=regions_NAD83, fill=NA, color="gray40") +
-	geom_sf(data=subset(regions_NAD83, Region == "Far West"), fill=NA, color="blue") +
 	geom_sf(data=subset(regions_NAD83, Region == "West"), fill=NA, color="green4") +
 	geom_sf(data=subset(regions_NAD83, Region == "North"), fill=NA, color="violetred1") +
 	geom_sf(data=subset(regions_NAD83, Region == "South"), fill=NA, color="purple") +
 	geom_sf(data=cities_pts, size=0.7, col="gray50") +
 	geom_sf_text(data=cities_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
-	geom_sf_text(data=subset(region_lab, Name == "San\nPablo"), aes(label=Name),
-								color="blue") +
 	geom_sf_text(data=subset(region_lab, Name == "Suisun"), aes(label=Name),
 								color="green4") +
 	geom_sf_text(data=subset(region_lab, Name == "Sacramento"), aes(label=Name),

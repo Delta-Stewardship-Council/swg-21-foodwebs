@@ -327,11 +327,15 @@ write.csv(STN_annual_regional_values_final, row.names=FALSE,
           file=file.path("data/annual_averages/fish_STN_regions.csv"))
 ```
 
-Lastly, export out station list to data/stations folder
+Lastly, export out station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
-STNCoords_studyregion %>%
-  dplyr::select(-Region) %>%
+## Use STN_combined_derived so the stations saved here match those used in the annual 
+## and annual regional datasets saved above.
+STN_combined_derived %>%
+  dplyr::select(Station, Latitude, Longitude) %>%
+  dplyr::distinct() %>%
+  dplyr::arrange(Station) %>%
   dplyr::mutate(Survey="Summer Townet") %>%
   write.csv(row.names=FALSE,
             file=file.path("data/stations/stations_fish_STN_annual.csv"))

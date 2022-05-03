@@ -4,12 +4,13 @@ output:
   html_document:
     code_folding: hide
 knit: (function(input, ...) {
-  rmarkdown::render(
-    input,
-    output_dir = '../docs',
-    envir = globalenv()
+    rmarkdown::render(
+      input,
+      output_dir = 'docs',
+      knit_root_dir = "../",
+      envir = globalenv()
     )
-  })
+    })
 ---
 
 ```{r imports, echo = FALSE, results='hide', message=FALSE, warning=FALSE}
