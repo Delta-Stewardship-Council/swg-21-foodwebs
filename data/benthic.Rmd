@@ -183,23 +183,6 @@ leaflet(sites) %>%
 
 ```
 
-# Write csv of stations sampled continuously for region analysis
-
-```{r}
-#stations for annual analysis (1980 to present)
-
-write.csv(sites %>% 
-            filter(StationCode %in% ben_1980) %>% 
-            select(-n_months), "data/stations/stations_benthic_annual.csv")
-
-#stations for monthly analysis (1997 to present)
-
-write.csv(sites %>% 
-            filter(StationCode %in% c(ben_1980, ben_1990)) %>% 
-            select(-n_months), "data/stations/stations_benthic_monthly.csv")
-```
-
-
 # Calculate summarised CPUE 
 
 * Do all critters first and then filter out later for what we want
@@ -252,6 +235,19 @@ write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv"
 
 ```
 
+Export annual station list to data/stations folder
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+## Use ben_LT so the stations saved here match those used in the annual and annual 
+## regional datasets saved above.
+ben_LT %>% 
+  rename(Station=StationCode) %>%
+  select(Station, Latitude, Longitude) %>%
+  distinct() %>%
+  mutate(Survey="EMP Benthic") %>%
+  write.csv(file=file.path("data/stations/stations_benthic_annual.csv"),
+            row.names=FALSE)
+```
 
 ## Calculate Annual CPUE for Amphipods
 
@@ -317,7 +313,6 @@ ST_clams_mon <- ben_ST %>%
 
 write.csv(ST_clams_mon, "data/monthly_averages/clams_monthly_regions.csv",
           row.names=FALSE)
-
 ```
 
 
@@ -337,7 +332,18 @@ ST_amph_mon <- ben_ST%>%
 
 write.csv(ST_amph_mon, "data/monthly_averages/amphipod_monthly_regions.csv",
           row.names=FALSE)
+```
 
+Export monthly station list to data/stations folder
 
-
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+## Use ben_ST so the stations saved here match those used in the monthly dataset saved
+## above.
+ben_ST %>% 
+  rename(Station=StationCode) %>%  
+  select(Station, Latitude, Longitude) %>%
+  distinct() %>%
+  mutate(Survey="EMP Benthic") %>%
+  write.csv(file=file.path("data/stations/stations_benthic_monthly.csv"),
+            row.names=FALSE)
 ```
