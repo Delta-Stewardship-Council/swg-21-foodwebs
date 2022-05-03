@@ -187,44 +187,12 @@ zoop_data_annual<-zoop_data_mass%>%
   filter(Station%in%zoop_stations$StationNZ)%>%
   filter(!Station%in%c("NZEZ6", "NZEZ2", "NZD16", "NZD06", "NZ080", "NZ042"))%>% # Renove stations that aren't continuous in time
   filter(Month%in%3:11)
-
-# Save list of annual stations
-zoop_data_annual%>%
-  select(Station, Latitude, Longitude)%>%
-  mutate(Survey="EMP zooplantkon")%>%
-  distinct()%>%
-  write_csv("data/stations/stations_zoop_annual.csv")
-```
-
-Plot the final set of annual stations
-```{r}
-ggplot()+
-  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
-  geom_point(data=zoop_data_annual%>%select(Station, Latitude, Longitude)%>%distinct(), 
-             aes(x=Longitude, y=Latitude),
-             color="red")
 ```
 
 Create monthly data set with final set of monthly stations
 ```{r}
 zoop_data_month<-zoop_data_mass%>%
   filter(Station%in%zoop_stations_month$Station)
-
-# Save list of annual stations
-zoop_data_month%>%
-  select(Station, Latitude, Longitude)%>%
-  mutate(Survey="EMP zooplantkon")%>%
-  distinct()%>%
-  write_csv("data/stations/stations_zoop_month.csv")
-```
-
-Plot the final set of monthly stations
-```{r}
-ggplot()+
-  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
-  geom_point(data=zoop_data_month%>%select(Station, Latitude, Longitude)%>%distinct(), 
-             aes(x=Longitude, y=Latitude),
-             color="red")
 ```
 
 # Export zoop data for analysis
@@ -253,18 +221,61 @@ str(zoop_data_annual_final_regions)
 write_csv(zoop_data_annual_final_regions, "data/annual_averages/zoop_annual_regions.csv")
 ```
 
+Export annual station list to data/stations folder
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+## Use zoop_data_annual_final so the stations saved here match those used 
+## in the annual and annual regional datasets saved above.
+stations_final_annual <- zoop_data_annual_final %>% 
+  select(Station, Latitude, Longitude) %>%
+  distinct() %>%
+  mutate(Survey="EMP zooplantkon")
+
+stations_final_annual %>%
+  write.csv(file=file.path("data/stations/stations_zoop_annual.csv"), row.names=FALSE)
+```
+
+Plot the final set of annual stations
+```{r}
+ggplot()+
+  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
+  geom_point(data=stations_final_annual, aes(x=Longitude, y=Latitude), color="red")
+```
+
 Monthly data
 ```{r}
 zoop_data_month_final<-zoop_data_month%>%
-  region_assigner(analysis="monthly")%>%
+  region_assigner(analysis="monthly")
+
+zoop_data_month_final_regions <- zoop_data_month_final %>%
   group_by(Year, Month, Group, Region)%>%
   summarise(across(c(BPUE, CPUE, JPUE), ~sum(.x, na.rm=T)), .groups="drop")%>%
   pivot_wider(names_from = Group, values_from = c(BPUE, CPUE, JPUE),
               names_glue = "{Group}_{.value}")
 
-str(zoop_data_month_final)
+str(zoop_data_month_final_regions)
 
-write_csv(zoop_data_month_final, "data/monthly_averages/zoop_month.csv")
+write_csv(zoop_data_month_final_regions, "data/monthly_averages/zoop_month.csv")
 ```
 
+Export monthly station list to data/stations folder
+
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
+## Use zoop_data_month_final so the stations saved here match those used 
+## in the monthly dataset saved above.
+stations_final_monthly <- zoop_data_month_final %>% 
+  select(Station, Latitude, Longitude) %>%
+  distinct() %>%
+  mutate(Survey="EMP zooplantkon")
+
+stations_final_monthly %>%
+  write.csv(file=file.path("data/stations/stations_zoop_month.csv"), row.names=FALSE)
+```
+
+Plot the final set of monthly stations
+```{r}
+ggplot()+
+  geom_sf(data=deltamapr::WW_Delta%>%st_transform(crs=4326))+
+  geom_point(data=stations_final_monthly, aes(x=Longitude, y=Latitude), color="red")
+```
 
