@@ -353,8 +353,17 @@ write.csv(FMWT_regional_values_wide,
 Lastly, export out station list to data/stations folder
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
+## Use FMWT_combined_sum so the stations saved here match those used in the annual 
+## and annual regional datasets saved above.
+station_ref <- FMWT_combined %>%
+  select(Station, Latitude, Longitude) %>%
+  distinct()
 
-FMWT_Coords_stations<- data.frame(FMWT_combined) %>% filter(Station %in% FMWT_index_stations_only$Station) %>% group_by(Station) %>% summarise(Latitude=mean(Latitude, na.rm = TRUE),Longitude=mean(Longitude, na.rm = TRUE)) %>% mutate(Survey="Fall Midwater Trawl")
+FMWT_Coords_stations <- data.frame(FMWT_combined_sum) %>%
+  select(Station) %>%
+  distinct() %>%
+  left_join(station_ref, by="Station") %>%
+  mutate(Survey="Fall Midwater Trawl")
 
 write.csv(FMWT_Coords_stations,row.names = FALSE,file=file.path("data/stations/stations_fish_FMWT_annual.csv"))
 
