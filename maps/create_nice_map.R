@@ -1,5 +1,6 @@
 ## Create a nice map showing final survey stations that can be used in a manuscript.
 ## Adapted from Survey_extents.Rmd.
+## Also output station tables.
 
 library(sf)
 library(ggplot2)
@@ -23,7 +24,11 @@ annual_station_file <- file.path("data/stations/station_list_for_annual_analysis
 station_annual_points_filtered_NAD83 <- read.csv(annual_station_file,
 																								stringsAsFactors=FALSE) %>%
 	sf::st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, agr="constant") %>%
-	sf::st_transform(crs=sf::st_crs(water_NAD83))
+	sf::st_transform(crs=sf::st_crs(water_NAD83)) %>%
+  dplyr::mutate(Survey_f=factor(Survey,
+                                levels=c("EMP Benthic","EMP Zoop","EMP Nutrients",
+                                         "DJFMP","STN","Bay Study","FMWT"),
+                                ordered=TRUE))
 
 
 ## Stations from monthly data:
@@ -31,12 +36,15 @@ monthly_station_file <- file.path("data/stations/station_list_for_monthly_analys
 station_month_points_filtered_NAD83 <- read.csv(monthly_station_file,
 																								stringsAsFactors=FALSE) %>%
 	sf::st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, agr="constant") %>%
-	sf::st_transform(crs=st_crs(water_NAD83))
+	sf::st_transform(crs=st_crs(water_NAD83)) %>%
+  dplyr::mutate(Survey_f=factor(Survey,
+                                levels=c("EMP Benthic","EMP Zoop","EMP Nutrients",
+                                         "DJFMP","Bay Study"),
+                                ordered=TRUE))
 
 
 ## California:
 california <- USAboundaries::us_states(states="California")
-
 
 
 ## Base map:
@@ -135,16 +143,6 @@ arrowPlot <- ggplot() +
 ## Annual regional map:
 annualRegionalMap <- baseMap +
 	minTheme() +
-	geom_sf(data=station_annual_points_filtered_NAD83, aes(color=Survey, shape=Survey),
-					size=2) +
-	# geom_sf(data=regions_NAD83, aes(fill=Region), alpha=0.25) +
-	scale_color_manual(name="Survey",
-										 values=c("Bay Study"="darkorange","EMP Zoop"="#6A00A8FF",
-										          "EMP Benthic"="#B12A90FF","EMP Nutrients"="#0D0887FF",
-										          "DJFMP"="green3","FMWT"="red","STN"="black")) +
-	scale_shape_manual(name="Survey",
-										 values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
-										          "EMP Nutrients"=7,"DJFMP"=8,"FMWT"=3,"STN"=5)) +
 	# geom_sf(data=regions_NAD83, fill=NA, color="gray40") +
 	geom_sf(data=subset(regions_NAD83, Region == "West"), fill=NA, color="green4") +
 	geom_sf(data=subset(regions_NAD83, Region == "North"), fill=NA, color="violetred1") +
@@ -163,6 +161,17 @@ annualRegionalMap <- baseMap +
     location="bl", which_north="true",
 		height=unit(0.7, "cm"), width=unit(0.7, "cm"), pad_x=unit(3.3, "in"),
 		style=ggspatial::north_arrow_orienteering(text_size=9)) +
+  geom_sf(data=station_annual_points_filtered_NAD83,
+          aes(color=Survey_f, shape=Survey_f),
+          size=2) +
+  # geom_sf(data=regions_NAD83, aes(fill=Region), alpha=0.25) +
+  scale_color_manual(name="Survey",
+                     values=c("Bay Study"="darkorange","EMP Zoop"="#6A00A8FF",
+                              "EMP Benthic"="#B12A90FF","EMP Nutrients"="#0D0887FF",
+                              "DJFMP"="green3","FMWT"="red","STN"="black")) +
+  scale_shape_manual(name="Survey",
+                     values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
+                              "EMP Nutrients"=7,"DJFMP"=8,"FMWT"=3,"STN"=5)) +
 	annotate(geom="text", x=-122.6, y=37.86, label="a)")
 
 annual_map <- cowplot::ggdraw(annualRegionalMap) +
@@ -177,15 +186,6 @@ annual_map <- cowplot::ggdraw(annualRegionalMap) +
 ## Monthly regional map:
 monthlyRegionalMap <- baseMap +
 	minTheme() +
-	geom_sf(data=station_month_points_filtered_NAD83, aes(color=Survey, shape=Survey),
-					size=2) +
-	scale_color_manual(name="Survey",
-										 values=c("Bay Study"="darkorange","EMP Zoop"="#6A00A8FF",
-										          "EMP Benthic"="#B12A90FF",
-										          "EMP Nutrients"="#0D0887FF","DJFMP"="green3")) +
-	scale_shape_manual(name="Survey",
-										 values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
-										          "EMP Nutrients"=7,"DJFMP"=8)) +
 	geom_sf(data=subset(regions_NAD83, Region == "Far West"), fill=NA, color="blue") +
 	geom_sf(data=subset(regions_NAD83, Region == "West"), fill=NA, color="green4") +
 	geom_sf(data=subset(regions_NAD83, Region == "North"), fill=NA, color="violetred1") +
@@ -200,6 +200,16 @@ monthlyRegionalMap <- baseMap +
 								color="violetred1") +
 	geom_sf_text(data=subset(region_lab, Name == "San\nJoaquin"), aes(label=Name),
 								color="purple") +
+  geom_sf(data=station_month_points_filtered_NAD83,
+          aes(color=Survey_f, shape=Survey_f),
+          size=2) +
+  scale_color_manual(name="Survey",
+                     values=c("Bay Study"="darkorange","EMP Zoop"="#6A00A8FF",
+                              "EMP Benthic"="#B12A90FF",
+                              "EMP Nutrients"="#0D0887FF","DJFMP"="green3")) +
+  scale_shape_manual(name="Survey",
+                     values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
+                              "EMP Nutrients"=7,"DJFMP"=8)) +
 	annotate(geom="text", x=-122.6, y=37.86, label="b)")
 
 monthly_map <- cowplot::ggdraw(monthlyRegionalMap)
@@ -244,4 +254,22 @@ ggsave(
   # units=c("in"),
   # dpi = 300
 # )
+
+
+## Station tables:
+station_annual_points_filtered_NAD83 <- station_annual_points_filtered_NAD83 %>%
+  dplyr::mutate(`Temporal resolution`="Annual")
+
+station_month_points_filtered_NAD83 <- station_month_points_filtered_NAD83 %>%
+  dplyr::mutate(`Temporal resolution`="Monthly")
+
+station_table <- rbind(station_annual_points_filtered_NAD83,
+                              station_month_points_filtered_NAD83) %>%
+  sf::st_drop_geometry() %>%
+  dplyr::group_by(Survey, `Temporal resolution`) %>%
+  dplyr::summarize(Stations=paste(Station, collapse=", "), .groups="drop") %>%
+  dplyr::arrange(`Temporal resolution`, Survey)
+
+write.csv(station_table, file=file.path("fig_output","station_table.csv"),
+          row.names=FALSE)
 
