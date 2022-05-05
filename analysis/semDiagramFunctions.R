@@ -398,19 +398,21 @@ widthFcn <- function(coef, digits) {
 getNodes <- function(fit) {
   ## Adapted from the lavaanPlot package:
 
-  regress <- fit@ParTable$op == "~"
-  latent <- fit@ParTable$op == "=~"
+  fit_std_df <- lavaan::standardizedsolution(fit)
+
+  regress <- fit_std_df$op == "~"
+  latent <- fit_std_df$op == "=~"
 
   observed_nodes <- c()
   latent_nodes <- c()
 
   if(any(regress)){
-    observed_nodes <- c(observed_nodes, unique(fit@ParTable$rhs[regress]))
-    observed_nodes <- c(observed_nodes, unique(fit@ParTable$lhs[regress]))
+    observed_nodes <- c(observed_nodes, unique(fit_std_df$rhs[regress]))
+    observed_nodes <- c(observed_nodes, unique(fit_std_df$lhs[regress]))
   }
   if(any(latent)) {
-    observed_nodes <- c(observed_nodes, unique(fit@ParTable$rhs[latent]))
-    latent_nodes <- c(latent_nodes, unique(fit@ParTable$lhs[latent]))
+    observed_nodes <- c(observed_nodes, unique(fit_std_df$rhs[latent]))
+    latent_nodes <- c(latent_nodes, unique(fit_std_df$lhs[latent]))
   }
   # make sure latent variables don't show up in both
   observed_nodes <- setdiff(observed_nodes, latent_nodes)
@@ -435,11 +437,13 @@ getEdges <- function(fit, node_df, sig, digits, col_pos, col_neg, col_ns) {
   map_node_name_to_id <- node_df$id
   names(map_node_name_to_id) <- node_df$Shortname
 
+  fit_std_df <- lavaan::standardizedsolution(fit)
+
   ## Create input for edges data frame:
-  ret <- as.data.frame(fit@ParTable) %>%
+  ret <- fit_std_df %>%
     dplyr::mutate(lhs_id=map_node_name_to_id[lhs],
                   rhs_id=map_node_name_to_id[rhs],
-                  zval=est/se,
+                  zval=est.std/se,
                   pval=(1 - stats::pnorm(abs(zval))) * 2,
                   var_type=dplyr::case_when(op == "~" ~ "regress",
                                             op == "=~" ~ "latent",
@@ -457,10 +461,10 @@ getEdges <- function(fit, node_df, sig, digits, col_pos, col_neg, col_ns) {
                                          var_type == "latent" ~ rhs_id,
                                          var_type == "cov" ~ rhs_id),
                   dir=dplyr::case_when(var_type == "cov" ~ "both"),
-                  penwidth=widthFcn(est, digits=digits),
-                  color=colorFcn(pval=pval, coef=est, sig=sig, col_pos, col_neg,
+                  penwidth=widthFcn(est.std, digits=digits),
+                  color=colorFcn(pval=pval, coef=est.std, sig=sig, col_pos, col_neg,
                                  col_ns)) %>%
-    dplyr::filter(var_type %in% c("regress","latent","cov")) %>%
+    dplyr::filter(var_type %in% c("regress","latent","cov"))
 
   return(ret)
 }
@@ -572,7 +576,7 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
   ## Create edges:
   edge_input_df <- getEdges(fit, node_df, sig=sig, digits=digits,
                             col_pos=line_col_positive, col_neg=line_col_negative,
-                            col_n=line_col_notsig)
+                            col_ns=line_col_notsig)
   if(!cov) {
     edge_input_df <- subset(edge_input_df, var_type != "cov")
   }
