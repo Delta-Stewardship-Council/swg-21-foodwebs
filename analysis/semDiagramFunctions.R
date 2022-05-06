@@ -443,8 +443,7 @@ getEdges <- function(fit, node_df, sig, digits, col_pos, col_neg, col_ns) {
   ret <- fit_std_df %>%
     dplyr::mutate(lhs_id=map_node_name_to_id[lhs],
                   rhs_id=map_node_name_to_id[rhs],
-                  zval=est.std/se,
-                  pval=(1 - stats::pnorm(abs(zval))) * 2,
+                  pval=ifelse(est.std == 1 & op == "=~", 0, pvalue),
                   var_type=dplyr::case_when(op == "~" ~ "regress",
                                             op == "=~" ~ "latent",
                                             op == "~~" & lhs != rhs ~ "cov"),
