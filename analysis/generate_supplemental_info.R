@@ -10,7 +10,9 @@ monthly_coefficients = read.csv(file.path("fig_output","monthly coefficients.csv
   dplyr::mutate(Model=dplyr::case_when(
     Model == "Individual zooplankton groups" ~ "Zooplankton",
     Model == "Lower trophic level aggregates" ~ "Lower trophic",
-    Model == "Upper trophic level aggregates" ~ "Upper trophic"))
+    Model == "Upper trophic level aggregates" ~ "Upper trophic"),
+    across(c(Response, Predictor),
+           ~recode(.x, amphi_m="amphi", amphi_m_1="amphi_1", rotif_m="rotif", rotif_m_1="rotif_1"))) #Renaming variables for consistency
 
 station_tbl <- flextable::flextable(stations) %>%
   font(fontname="Calibri", part="all") %>%
