@@ -2,6 +2,12 @@ library(officer)
 library(flextable)
 library(dplyr)
 
+variables = read.csv(file.path("fig_output", "full definitions tabel.csv"))%>%
+  mutate(across(c(Months_missing, Years_missing), ~ifelse(is.na(.x), "", .x)))%>%
+  rename(`Monthly years (missing months)`=Months_missing,
+         `Annual years (missing years)`=Years_missing,
+         Definition=Defination)
+
 stations = read.csv(file.path("fig_output","station_table.csv")) %>%
   dplyr::rename(`Temporal resolution`=Temporal.resolution)
 
@@ -14,6 +20,17 @@ monthly_coefficients = read.csv(file.path("fig_output","monthly coefficients.csv
     across(c(Response, Predictor),
            ~recode(.x, amphi_m="amphi", amphi_m_1="amphi_1", rotif_m="rotif", rotif_m_1="rotif_1"))) #Renaming variables for consistency
 
+variable_tbl <- flextable::flextable(variables) %>%
+  font(fontname="Calibri", part="all") %>%
+  fontsize(size=10, part="all") %>%
+  width(j="Variable", width=1.15) %>%
+  width(j="Monthly years (missing months)", width=0.89) %>%
+  width(j="Annual years (missing years)", width=0.89) %>%
+  width(j="Definition", width=3.94) %>%
+  valign(valign="top", part="body")%>%
+  padding(padding=0, part="all") %>%
+  set_caption(caption="Table S1. Variable definitions and temporal extent for the monthly and annual datasets.")
+
 station_tbl <- flextable::flextable(stations) %>%
   font(fontname="Calibri", part="all") %>%
   fontsize(size=10, part="all") %>%
@@ -21,7 +38,7 @@ station_tbl <- flextable::flextable(stations) %>%
   width(j="Temporal resolution", width=0.89) %>%
   width(j="Stations", width=3.94) %>%
   padding(padding=0, part="all") %>%
-  set_caption(caption="Table S1. Stations used to calculate input data for annual and monthly models.")
+  set_caption(caption="Table S2. Stations used to calculate input data for annual and monthly models.")
 
 annual_coefficients_tbl <- flextable::flextable(annual_coefficients) %>%
   font(fontname="Calibri", part="all") %>%
@@ -32,7 +49,7 @@ annual_coefficients_tbl <- flextable::flextable(annual_coefficients) %>%
   width(j="op", width=0.43) %>%
   width(j="Predictor", width=0.9) %>%
   padding(padding=0, part="all") %>%
-  set_caption(caption="Table S2. Path coefficients for annual and annual-regional SEMS.")
+  set_caption(caption="Table S3. Path coefficients for annual and annual-regional SEMS.")
 
 monthly_coefficients_tbl <- flextable::flextable(monthly_coefficients) %>%
   font(fontname="Calibri", part="all") %>%
@@ -43,15 +60,20 @@ monthly_coefficients_tbl <- flextable::flextable(monthly_coefficients) %>%
   width(j="op", width=0.43) %>%
   width(j="Predictor", width=1.17) %>%
   padding(padding=0, part="all") %>%
-  set_caption(caption="Table S3. Path coefficients for monthly-regional SEMS.")
+  set_caption(caption="Table S4. Path coefficients for monthly-regional SEMS.")
 
-supp_doc <- read_docx(path=file.path("fig_output","SI_template.docx")) %>%
+supp_doc <- read_docx(path=file.path("fig_output","SI_template.docx"))%>%
+  body_add_par(value = "Title", style = "heading 1") %>%
+  body_add_par("Authors") %>%
+  body_add_flextable(variable_tbl) %>%
+  body_add_par("") %>%
+  body_add_break() %>%
   body_add_flextable(station_tbl) %>%
   body_add_par("") %>%
-  body_add_par("") %>%
+  body_add_break() %>%
   body_add_flextable(annual_coefficients_tbl) %>%
   body_add_par("") %>%
-  body_add_par("") %>%
+  body_add_break() %>%
   body_add_flextable(monthly_coefficients_tbl) %>%
   body_end_block_section(block_section(
     prop_section(page_margins=page_mar(bottom=0.5, top=0.5, right=0.5, left=0.5,
