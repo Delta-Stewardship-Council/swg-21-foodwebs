@@ -17,14 +17,14 @@ knit: (function(input, ...) {
 library(tidyverse)
 library(ggmap)
 library(lubridate)
-require(discretewq)
+library(discretewq)
 # source('../functions/nutrient_funcs.R', local = TRUE)
 # source('../functions/region_assigner.R', local = TRUE)
-source('functions/nutrient_funcs.R')
 source('functions/region_assigner.R')
-
+source('functions/nutrient_funcs.R')
 if(utils::packageVersion('discretewq') < '2.1.0') {
     stop('discretewq version >= 2.1.0 is required, please update discretewq.')
+    # https://github.com/sbashevkin/discretewq/
 }
 ```
 
@@ -39,15 +39,6 @@ df_wq$DissOrthophos <- replace_rl(df_wq, 'DissOrthophos')
 df_wq <- clean_df(df_wq)
 ```
 
-Nutrients Included Are:
-* 'Chlorophyll' (Chlorophyll)
-* 'DissNitrateNitrite' (Dissolved Nitrate/Nitrite)
-* 'DissAmmonia' (Dissolved Ammonia)
-* 'Salinity' (Salinity)
-* 'Secchi' (Secchi)
-* 'Temperature' (Temperature)
-* 'TotPhos' (Total Phosphorous)
-
 # Check Temporal Coverage
 ```{r check-temporal-coverage, fig.width=15, fig.height=8}
 # check temporal coverage
@@ -59,7 +50,7 @@ plt
 Core stations are:
 
 * P8
-* MD10/MD10A?
+* MD10A
 * D8
 * D7
 * D6
@@ -70,14 +61,16 @@ Core stations are:
 * C3/C3A?
 * C10/C10A?
 
+(D10, D12, D16, D22 are missing decades of nutrient data)
+
 # Subset out Relevant Stations
 ```{r subset-relevant-stations}
-station_list <- c('P8','MD10','MD10A','D8','D7','D6','D41','D4','D28A','D26','C3','C3A','C10','C10A')
+# subset stations
+station_list <- c('P8','MD10A','D8','D7','D6','D41','D4','D28A','D26','C3','C3A','C10','C10A')
 df_wq <- df_wq[df_wq$Station %in% station_list,]
 
 # check temporal coverage
 plt <- check_temporal_coverage(df_wq)
-
 plt
 ```
 
@@ -87,10 +80,10 @@ map <- create_station_map(df_wq)
 map
 ```
 
-# Check if C3/C3A, MD10/MD10A, and C10/C10A can be combined {.tabset .tabset-pills}
+# Check if C3/C3A and C10/C10A can be combined {.tabset .tabset-pills}
 ```{r, results='asis'}
 analytes <- unique(df_wq$Analyte)
-stations_list <- list(c('MD10','MD10A'),c('C10','C10A'),c('C3','C3A'))
+stations_list <- list(c('C10','C10A'),c('C3','C3A'))
 
 for (stations in stations_list){
   cat('\n##', stations, '{.tabset .tabset-fade .tabset-pills}')
@@ -109,7 +102,7 @@ for (stations in stations_list){
 
 #
 Looks good to me, so will combine the stations.
-```{r combine-stations}
+```{r final-temporal-check}
 df_wq <- combine_wq_stations(df_wq)
 
 # check temporal coverage
@@ -117,30 +110,18 @@ plt <- check_temporal_coverage(df_wq)
 plt
 ```
 
-Calculate annual indices (first pass).
+```{r check-scatter-plots, fig.width=15, fig.height=8}
+df_wq <- subset(df_wq, !(Analyte == 'DissOrthophos' & df_wq$Value > 4))
+df_wq <- subset(df_wq, !(Analyte == 'DissNitrateNitrite' & df_wq$Value > 10))
+
+ggplot(data=df_wq, aes(Date, Value, color = Station)) +
+	geom_point() +
+	facet_wrap( ~ Analyte, ncol = 2, scales='free_y')
+```
+
 ```{r assign regions}
 df_wq <- df_wq %>%
 region_assigner(analysis='annual')
-```
-
-```{r calc-annual-indices}
-df_wq$Year <- lubridate::year(df_wq$Date)
-
-df_wq$Value <- round(df_wq$Value, 3)
-
-
-df_wq_regions <- df_wq %>%
-	dplyr::group_by(Analyte, Year, Region) %>%
-	dplyr::summarize(Value=mean(Value, na.rm=TRUE), .groups='drop')
-
-df_wq_noregions <- df_wq %>%
-	dplyr::group_by(Analyte, Year) %>%
-	dplyr::summarize(Value=mean(Value, na.rm=TRUE), .groups='drop')
-
-
-# ggplot(data=df_wq, aes(Year, Value, color = Analyte)) +
-# 	geom_point() +
-# 	facet_wrap( ~ Analyte, scales='free_y')
 ```
 
 ```{r create-stations-df}
@@ -151,17 +132,31 @@ df_stations <- distinct(df_stations)
 df_stations <- df_stations[!(df_stations$Latitude %in% c(38.04381, 37.67575, 38.34575)),]
 ```
 
+```{r flip-wide, message=FALSE, warning = FALSE, results = 'hide'}
+df_wq$Year <- lubridate::year(df_wq$Date)
+df_wq$Month <- lubridate::month(df_wq$Date)
 
-```{r export-csvs, message=FALSE, warning = FALSE, results = 'hide'}
-df_wq_wide_regions <- pivot_wider(data = df_wq_regions, id_cols = c(Year,Region),
-                                      names_from = Analyte, values_from = Value)
+# average by region
+df_wq$Value <- round(df_wq$Value, 3)
 
-df_wq_wide_noregions <- pivot_wider(data = df_wq_noregions, id_cols = Year,
-                                      names_from = Analyte, values_from = Value)
+df_wq_regions <- df_wq %>%
+  group_by(Year, Month, Region, Analyte) %>%
+  summarize(Value = mean(Value), .groups = 'drop')
 
-write_csv(df_wq_wide_regions, 'data/annual_averages/nutrient_data_yearly_regions.csv')
-write_csv(df_wq_wide_noregions, 'data/annual_averages/nutrient_data_yearly_noregions.csv')
-write_csv(df_stations, 'data/stations/stations_nutrients_annual.csv')
+df_wq_noregions <- df_wq %>%
+  group_by(Year, Month, Analyte) %>%
+  summarize(Value = mean(Value), .groups = 'drop')
+
+
+df_wq_wide_regions <- pivot_wider(data=df_wq_regions, id_cols=c(Year,Month,Region),
+                          names_from=Analyte, values_from=Value)
+
+df_wq_wide_noregions <- pivot_wider(data=df_wq_noregions, id_cols=c(Year,Month),
+                          names_from=Analyte, values_from=Value)
 ```
 
-
+```{r export}
+write_csv(df_wq_wide_regions, 'data/annual_averages/nutrient_data_yearly_regions.csv')
+write_csv(df_wq_wide_noregions, 'data/annual_averages/nutrient_data_yearly_noregions.csv')
+write_csv(df_stations, 'data/stations/stations_nutrients_yearly.csv')
+```
