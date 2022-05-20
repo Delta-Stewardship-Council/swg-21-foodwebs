@@ -140,18 +140,18 @@ df_wq$Month <- lubridate::month(df_wq$Date)
 df_wq$Value <- round(df_wq$Value, 3)
 
 df_wq_regions <- df_wq %>%
-  group_by(Year, Month, Region, Analyte) %>%
+  group_by(Year, Region, Analyte) %>%
   summarize(Value = mean(Value), .groups = 'drop')
 
 df_wq_noregions <- df_wq %>%
-  group_by(Year, Month, Analyte) %>%
+  group_by(Year, Analyte) %>%
   summarize(Value = mean(Value), .groups = 'drop')
 
 
-df_wq_wide_regions <- pivot_wider(data=df_wq_regions, id_cols=c(Year,Month,Region),
+df_wq_wide_regions <- pivot_wider(data=df_wq_regions, id_cols=c(Year,Region),
                           names_from=Analyte, values_from=Value)
 
-df_wq_wide_noregions <- pivot_wider(data=df_wq_noregions, id_cols=c(Year,Month),
+df_wq_wide_noregions <- pivot_wider(data=df_wq_noregions, id_cols=c(Year),
                           names_from=Analyte, values_from=Value)
 ```
 
