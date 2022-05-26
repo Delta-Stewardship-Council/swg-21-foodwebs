@@ -158,5 +158,5 @@ df_wq_wide_noregions <- pivot_wider(data=df_wq_noregions, id_cols=c(Year),
 ```{r export}
 write_csv(df_wq_wide_regions, 'data/annual_averages/nutrient_data_yearly_regions.csv')
 write_csv(df_wq_wide_noregions, 'data/annual_averages/nutrient_data_yearly_noregions.csv')
-write_csv(df_stations, 'data/stations/stations_nutrients_yearly.csv')
+write_csv(df_stations, 'data/stations/stations_nutrients_annual.csv')
 ```

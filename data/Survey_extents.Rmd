@@ -132,7 +132,7 @@ Same stations as EMP zooplankton.
 
 # Nutrient surveys
 ```{r}
-nutrients_annual <- read_csv("data/stations/stations_nutrients_yearly.csv")%>% 
+nutrients_annual <- read_csv("data/stations/stations_nutrients_annual.csv")%>% 
   mutate(Category="Nutrients", Survey="EMP Nutrients")
 ```
 
