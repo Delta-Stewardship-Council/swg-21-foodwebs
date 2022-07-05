@@ -616,9 +616,9 @@ ssut=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:
          influence=case_when(influence=="b" ~ "bottom-up",
                             influence=="t" ~ "top-down",
                             influence=="s" ~ "self-regulation",
-                            influence=="a" ~ "abiotic drivers"),
+                            influence=="a" ~ "environmental"),
          region=factor(region, levels=regionorder_pub),
-         influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","abiotic drivers")),
+         influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","environmental")),
          variable=factor(variable,levels=c("estuarine\nfishes","predatory\nzooplankton","herbivorous\nzooplankton")),
          sig=ifelse(pvalue<0.05,"*",""))
 ggplot(ssut,aes(x=influence,y=est.std)) +
@@ -804,10 +804,10 @@ sslt=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:
          influence=case_when(influence=="b" ~ "bottom-up",
                             influence=="t" ~ "top-down",
                             influence=="s" ~ "self-regulation",
-                            influence=="a" ~ "abiotic drivers",
+                            influence=="a" ~ "environmental",
                             influence=="n" ~ "nutrient cycling"),
          region=factor(region, levels=regionorder_pub),
-         influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","abiotic drivers","nutrient cycling")),
+         influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","environmental","nutrient cycling")),
          variable=factor(variable,levels=c("clams","phytoplankton","DIN")),
          sig=ifelse(pvalue<0.05,"*",""))
 ggplot(sslt,aes(x=influence,y=est.std)) +

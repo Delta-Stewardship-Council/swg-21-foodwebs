@@ -440,7 +440,7 @@
 "Lower trophic level aggregates","Suisun","din","~~","din",0.3799,0.0313,0
 "Lower trophic level aggregates","Suisun","chla","~~","chla",0.9021,0.0343,0
 "Lower trophic level aggregates","Suisun","potam","~~","potam",0.3551,0.0293,0
-"Lower trophic level aggregates","Suisun","din","~~","potam",0.0275,0.0623,0.6591
+"Lower trophic level aggregates","Suisun","din","~~","potam",0.0275,0.0623,0.6592
 "Lower trophic level aggregates","Suisun","din_1","~~","din_1",1,0,NA
 "Lower trophic level aggregates","Suisun","din_1","~~","hzoop_1",-0.3554,0,NA
 "Lower trophic level aggregates","Suisun","din_1","~~","pzoop_1",-0.025,0,NA
@@ -746,7 +746,7 @@
 "Individual zooplankton groups","Suisun","pcope","~","flow",0.1307,0.0599,0.0291
 "Individual zooplankton groups","Suisun","pcope","~","turbid",-0.1378,0.0614,0.0248
 "Individual zooplankton groups","Suisun","pcope","~","temp",0.2276,0.0533,0
-"Individual zooplankton groups","Suisun","pcope","~","estfish_bsmt_1",0.0262,0.0564,0.6421
+"Individual zooplankton groups","Suisun","pcope","~","estfish_bsmt_1",0.0262,0.0564,0.6422
 "Individual zooplankton groups","Suisun","pcope","~","rotif_m_1",0.1692,0.0557,0.0024
 "Individual zooplankton groups","Suisun","mysid","~","chla_1",0.1795,0.0569,0.0016
 "Individual zooplankton groups","Suisun","mysid","~","hcope_1",0.0695,0.0594,0.2422
@@ -1048,7 +1048,7 @@
 "Individual zooplankton groups","San Joaquin","pcope","~","flow",0.0259,0.0624,0.6781
 "Individual zooplankton groups","San Joaquin","pcope","~","turbid",-0.0739,0.0618,0.2314
 "Individual zooplankton groups","San Joaquin","pcope","~","temp",0.0111,0.0605,0.8546
-"Individual zooplankton groups","San Joaquin","pcope","~","estfish_bsmt_1",-0.0463,0.0612,0.4495
+"Individual zooplankton groups","San Joaquin","pcope","~","estfish_bsmt_1",-0.0463,0.0612,0.4494
 "Individual zooplankton groups","San Joaquin","chla","~~","chla",0.8404,0.0441,0
 "Individual zooplankton groups","San Joaquin","hcope","~~","hcope",0.6963,0.0487,0
 "Individual zooplankton groups","San Joaquin","clad","~~","clad",0.5961,0.0464,0
