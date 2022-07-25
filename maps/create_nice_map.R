@@ -12,11 +12,13 @@ library(USAboundaries)
 ########################################################################################
 
 ## Water:
-water_NAD83 <- deltamapr::WW_Delta
+water_estuary <- deltamapr::WW_Delta
+water_ocean <- sf::st_read("data/data_in/ocean_shapefile/ocean_shapefile.shp")
+
 
 ## Regions:
 regions_WGS84 <- sf::st_read("data/data_in/regions_shapefile/regions.shp")
-regions_NAD83 <- sf::st_transform(regions_WGS84, crs=sf::st_crs(water_NAD83))
+regions_NAD83 <- sf::st_transform(regions_WGS84, crs=sf::st_crs(water_estuary))
 ##regions_NAD83_with_buffer <- sf::st_buffer(regions_NAD83, dist=-10)
 
 ## Stations from annual data:
@@ -24,7 +26,7 @@ annual_station_file <- file.path("data/stations/station_list_for_annual_analysis
 station_annual_points_filtered_NAD83 <- read.csv(annual_station_file,
 																								stringsAsFactors=FALSE) %>%
 	sf::st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, agr="constant") %>%
-	sf::st_transform(crs=sf::st_crs(water_NAD83)) %>%
+	sf::st_transform(crs=sf::st_crs(water_estuary)) %>%
   dplyr::mutate(Survey_f=factor(Survey,
                                 levels=c("EMP Benthic","EMP Zoop","EMP Nutrients",
                                          "DJFMP","STN","Bay Study","FMWT"),
@@ -36,7 +38,7 @@ monthly_station_file <- file.path("data/stations/station_list_for_monthly_analys
 station_month_points_filtered_NAD83 <- read.csv(monthly_station_file,
 																								stringsAsFactors=FALSE) %>%
 	sf::st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, agr="constant") %>%
-	sf::st_transform(crs=st_crs(water_NAD83)) %>%
+	sf::st_transform(crs=st_crs(water_estuary)) %>%
   dplyr::mutate(Survey_f=factor(Survey,
                                 levels=c("EMP Benthic","EMP Zoop","EMP Nutrients",
                                          "DJFMP","Bay Study"),
@@ -48,14 +50,10 @@ california <- USAboundaries::us_states(states="California")
 
 
 ## Base map:
-blue <- rgb(red=69, green=111, blue=163, maxColorValue=255)
-# grayFill <- "gray80"
-# grayBord <- grayFill
-
 xmin <- -122.6
 xmax <- -121.45
-ymin <- 37.85
-ymax <- 38.4
+ymin <- 37.749250
+ymax <- 38.29925
 
 blankTheme <- function() {
 	theme_bw() +
@@ -73,45 +71,61 @@ minTheme <- function() {
 		theme(panel.grid.major=element_blank(),
 					panel.grid.minor=element_blank(),
 					axis.title=element_blank()) +
-		theme(plot.margin=unit(c(0,0,0,0), "cm"))
+		theme(plot.margin=unit(c(t=0, r=0, b=0, l=0.1), "cm"))
 }
 
 baseMap <- ggplot() +
 	minTheme() +
-	geom_sf(data=water_NAD83, color="slategray1", fill="slategray1") +
+	geom_sf(data=water_estuary, color="slategray1", fill="slategray1") +
+  geom_sf(data=water_ocean, color="slategray1", fill="slategray1") +
 	xlim(xmin, xmax) +
 	ylim(ymin, ymax)
 
 
 ## Feature labels:
 cities_lab_df <- as.data.frame(do.call("rbind",
-	list(c(-122.192, 38.103719, "Vallejo"),
-			 #c(-122.21, 38.103719, "Vallejo"),
-			 c(-121.80563, 37.983, "Antioch"),
-			 #c(-121.28, 37.942, "Stockton"),
-			 # c(-121.442, 38.563, "Sacramento")
-			 c(-121.75, 38.17072346586414, "Rio\nVista")
+	list(c(-122.448605, 37.775, "San\nFrancisco"),
+			 c(-121.75, 38.204, "Rio\nVista"),
+			 c(-121.735, 37.955, "Jersey\nPoint"),
+			 c(-121.911947, 37.955, "Chipps\nIsland")
 			)))
 names(cities_lab_df) <- c("lon","lat","Name")
 cities_lab <- sf::st_as_sf(cities_lab_df, coords=c("lon","lat"), crs=sf::st_crs(4326)) %>%
 	sf::st_transform(crs=sf::st_crs(regions_NAD83))
 
-cities_pts_df <- as.data.frame(do.call("rbind",
-	list(c(-122.25610220918693, 38.103989737465874, "Vallejo"),
-			 c(-121.80872930068863, 38.0051785736139, "Antioch"),
-			 #c(-121.29386818891265, 37.95627566997309, "Stockton"),
-			 # c(-121.49487475270506, 38.579735889891296, "Sacramento")
-			 c(-121.70265615915064, 38.17072346586414, "Rio Vista")
-			)))
-names(cities_pts_df) <- c("lon","lat","Name")
-cities_pts <- sf::st_as_sf(cities_pts_df, coords=c("lon","lat"), crs=sf::st_crs(4326)) %>%
-	sf::st_transform(crs=sf::st_crs(regions_NAD83))
+# cities_pts_df <- as.data.frame(do.call("rbind",
+# 	list(#c(-122.25610220918693, 38.103989737465874, "Vallejo"),
+# 			 #c(-121.80872930068863, 38.0051785736139, "Antioch"),
+# 			 #c(-121.29386818891265, 37.95627566997309, "Stockton"),
+# 			 # c(-121.49487475270506, 38.579735889891296, "Sacramento")
+# 	     #c(-122.435766, 37.791754, "San\nFrancisco")
+# 			 #c(-121.702656, 38.170723, "Rio Vista")
+# 			 #c(-121.688565, 38.051695, "Jersey\nPoint"),
+# 			 #c(-121.911947, 38.054960, "Chipps\nIsland")
+# 			)))
+# names(cities_pts_df) <- c("lon","lat","Name")
+# cities_pts <- sf::st_as_sf(cities_pts_df, coords=c("lon","lat"), crs=sf::st_crs(4326)) %>%
+# 	sf::st_transform(crs=sf::st_crs(regions_NAD83))
+
+
+loc_arrow_df <- as.data.frame(do.call("rbind",
+  list(c(-121.911947, 37.98, -121.911947, 38.035551, "Chipps\nIsland"),
+       c(-121.735, 37.98, -121.688565, 38.045, "Jersey\nPoint"),
+       c(-121.75, 38.170723, -121.69, 38.170723, "Rio\nVista")
+  )))
+names(loc_arrow_df) <- c("x1","y1","x2","y2","loc")
+loc_arrow_df$x1 <- as.numeric(loc_arrow_df$x1)
+loc_arrow_df$y1 <- as.numeric(loc_arrow_df$y1)
+loc_arrow_df$x2 <- as.numeric(loc_arrow_df$x2)
+loc_arrow_df$y2 <- as.numeric(loc_arrow_df$y2)
+
 
 region_lab_df <- as.data.frame(do.call("rbind",
 	list(c(-122.55, 38.14, "San\nPablo"),
 			 c(-121.9834, 38.265, "Suisun"),
 			 c(-121.73, 38.265, "Sacramento"),
-			 c(-121.65, 37.96, "San\nJoaquin")
+			 #c(-121.65, 37.96, "San\nJoaquin")
+			 c(-121.544, 37.87, "San Joaquin")
 			)))
 names(region_lab_df) <- c("lon","lat","Name")
 region_lab <- sf::st_as_sf(region_lab_df, coords=c("lon","lat"), crs=sf::st_crs(4326)) %>%
@@ -143,17 +157,19 @@ arrowPlot <- ggplot() +
 ## Annual regional map:
 annualRegionalMap <- baseMap +
 	minTheme() +
-	# geom_sf(data=regions_NAD83, fill=NA, color="gray40") +
+  geom_segment(aes(x=x1, y=y1, xend=x2, yend=y2),
+               data=loc_arrow_df, size=0.5,
+               arrow=arrow(angle=30, length=unit(0.07,"inches"), type="closed"),
+               arrow.fill="gray50", col="gray50") +
 	geom_sf(data=subset(regions_NAD83, Region == "West"), fill=NA, color="green4") +
 	geom_sf(data=subset(regions_NAD83, Region == "North"), fill=NA, color="violetred1") +
 	geom_sf(data=subset(regions_NAD83, Region == "South"), fill=NA, color="purple") +
-	geom_sf(data=cities_pts, size=0.7, col="gray50") +
 	geom_sf_text(data=cities_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
 	geom_sf_text(data=subset(region_lab, Name == "Suisun"), aes(label=Name),
 								color="green4") +
 	geom_sf_text(data=subset(region_lab, Name == "Sacramento"), aes(label=Name),
 								color="violetred1") +
-	geom_sf_text(data=subset(region_lab, Name == "San\nJoaquin"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "San Joaquin"), aes(label=Name),
 								color="purple") +
 	ggspatial::annotation_scale(
     location="bl", text_cex=0.5, bar_cols=c("grey60", "white"), pad_x=unit(1.7, "in")) +
@@ -172,7 +188,7 @@ annualRegionalMap <- baseMap +
   scale_shape_manual(name="Survey",
                      values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
                               "EMP Nutrients"=7,"DJFMP"=8,"FMWT"=3,"STN"=5)) +
-	annotate(geom="text", x=-122.6, y=37.86, label="a)")
+	annotate(geom="text", x=-122.6, y=ymin + 0.01, label="a)")
 
 annual_map <- cowplot::ggdraw(annualRegionalMap) +
   cowplot::draw_plot(caInset, x=0.00, y=0.65, width=0.33, height=0.33) +
@@ -186,11 +202,14 @@ annual_map <- cowplot::ggdraw(annualRegionalMap) +
 ## Monthly regional map:
 monthlyRegionalMap <- baseMap +
 	minTheme() +
+  geom_segment(aes(x=x1, y=y1, xend=x2, yend=y2),
+               data=loc_arrow_df, size=0.5,
+               arrow=arrow(angle=30, length=unit(0.07,"inches"), type="closed"),
+               arrow.fill="gray50", col="gray50") +
 	geom_sf(data=subset(regions_NAD83, Region == "Far West"), fill=NA, color="blue") +
 	geom_sf(data=subset(regions_NAD83, Region == "West"), fill=NA, color="green4") +
 	geom_sf(data=subset(regions_NAD83, Region == "North"), fill=NA, color="violetred1") +
 	geom_sf(data=subset(regions_NAD83, Region == "South"), fill=NA, color="purple") +
-	geom_sf(data=cities_pts, size=0.7, col="gray50") +
 	geom_sf_text(data=cities_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
 	geom_sf_text(data=subset(region_lab, Name == "San\nPablo"), aes(label=Name),
 								color="blue") +
@@ -198,7 +217,7 @@ monthlyRegionalMap <- baseMap +
 								color="green4") +
 	geom_sf_text(data=subset(region_lab, Name == "Sacramento"), aes(label=Name),
 								color="violetred1") +
-	geom_sf_text(data=subset(region_lab, Name == "San\nJoaquin"), aes(label=Name),
+	geom_sf_text(data=subset(region_lab, Name == "San Joaquin"), aes(label=Name),
 								color="purple") +
   geom_sf(data=station_month_points_filtered_NAD83,
           aes(color=Survey_f, shape=Survey_f),
@@ -210,7 +229,7 @@ monthlyRegionalMap <- baseMap +
   scale_shape_manual(name="Survey",
                      values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
                               "EMP Nutrients"=7,"DJFMP"=8)) +
-	annotate(geom="text", x=-122.6, y=37.86, label="b)")
+	annotate(geom="text", x=-122.6, y=ymin + 0.01, label="b)")
 
 monthly_map <- cowplot::ggdraw(monthlyRegionalMap)
   # cowplot::draw_plot(caInset, x=0.03, y=0.62, width=0.3, height=0.3) +
