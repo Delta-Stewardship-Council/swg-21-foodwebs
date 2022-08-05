@@ -89,5 +89,10 @@ density_plot = ggplot(data = converted_dry,
   geom_dotplot(binaxis='y', stackdir='center', dotsize=2, binwidth = 30, alpha = 0.2)+
   stat_summary(fun=mean, geom="point", color = "red", shape=23, size=4, stroke = 2)
 print(density_plot)
+
+ggsave(plot = density_plot,
+       filename = "./fig_output/zoop_energy_dnesity_average.png",
+       device = "png",
+       dpi = 400)
 ```
 
