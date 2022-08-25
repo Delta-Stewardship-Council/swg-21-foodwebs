@@ -253,7 +253,7 @@ for(i in 1:length(regions)) {
 ### Cross-correlation matrices  
 (only sig correlations shown... no correction for multiple comparisons)
 
-```{r cc, fig.width=7, fig.height=6, echo=FALSE}
+```{r cc, fig.width=7, fig.height=6, echo=FALSE, warning=FALSE}
 #lag 0
 lags0=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
                   stringsAsFactors = F)
@@ -353,7 +353,41 @@ In N and W, chla lags potam, negative. The opposite in W.
 Mysid and hcope postive, lag 0.  
 In S and W, hcope lags pcope, negative. 
 
-### Make a definations tabel
+### Flow-Turbidity-Estuarine Fishes Relationship
+
+Scatterplots showing relationship between flow and turbidity and fish by region to accompany the discussion regarding flow-fish relationship. This shows how flow transports estuarine fishes downstream at a monthly scale, but turbidity-flow correlation swamps out the positive flow-fish relationship in San Pablo Bay.
+```{r flow-fish-turbidity, echo=FALSE}
+plot_t<-fdr_ds %>% mutate(region_name=
+                            case_when(region == "Far West" ~ "San Pablo",
+                                      region == "West" ~ "Suisun",
+                                      region == "North" ~ "Sacramento",
+                                      region == "South" ~ "San Joaquin"))
+plot_t$region_name <- factor(plot_t$region_name, levels=c("San Pablo", "Suisun", "Sacramento", "San Joaquin"))
+
+ggplot(data=plot_t,aes(x=flow,y=turbid)) +
+  facet_wrap(region_name~.,ncol = 4) +
+  geom_point(alpha=0.5) +stat_smooth(method = "lm", col = "red", se=FALSE)+
+  theme_bw() +
+  scale_y_continuous(labels = scales::comma) +
+  labs(y="Turbidity (reverse Secchi depth)", x="Flow") + theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1))
+
+ggsave("./fig_output/scatterplot_turbidity-flow.png", height = 3.5, width = 8.5)
+
+ggplot(data=plot_t,aes(x=flow,y=estfish_bsmt)) +
+  facet_wrap(region_name~.,ncol = 4) +
+  geom_point(alpha=0.5) +stat_smooth(method = "lm", col = "red", se=FALSE)+
+  theme_bw() +
+  scale_y_continuous(labels = scales::comma) +
+  labs(y="Estuarine Fishes (biomass)", x="Flow") + theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1))
+
+ggsave("./fig_output/scatterplot_flow-estfishes.png", height = 3.5, width = 8.5)
+
+
+
+```
+
+
+### Make a definition table
 Make a table similar to table 1 in Mac Nally et al. 2010 in Eco. Apps.
 ```{r echo = FALSE, fig.width=8, fig.height=8}
 definations_data = focaldata %>% 
@@ -389,7 +423,7 @@ definations_data = focaldata %>%
   filter(Variable != "Month",
          Variable != "Year")
 
-# Do a little formating of the table
+# Do a little formatting of the table
 knitr::kable(definations_data, col.names = c("Variable",
                                              "Years (missing years)",
                                              "Defination"))
