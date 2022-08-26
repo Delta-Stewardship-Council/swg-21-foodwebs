@@ -253,10 +253,10 @@ ggplot(filter(lags0dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
 ```
 
-### Make a definations tabel
+### Make a definitions table
 Make a table similar to table 1 in Mac Nally et al. 2010 in Eco. Apps.
 ```{r echo = FALSE, fig.width=8, fig.height=8}
-definations_data = focaldata %>% 
+definitions_data = focaldata %>% 
   # take out lag data if present
   select(-ends_with("_1")) %>% 
   pivot_longer(cols = -year, names_to = "Shortname", values_to = "value") %>% 
@@ -281,12 +281,12 @@ definations_data = focaldata %>%
   select(Variable, Years_missing, Defination) 
 
 # Do a little formating of the table
-knitr::kable(definations_data, col.names = c("Variable",
+knitr::kable(definitions_data, col.names = c("Variable",
                                              "Years (missing)",
                                              "Defination"))
 # Write it as a csv
-write.csv(definations_data,
-          "fig_output/definitions tabel.csv",
+write.csv(definitions_data,
+          "fig_output/definitions table.csv",
           row.names = FALSE)
 ```
 
@@ -429,6 +429,9 @@ save(sem_annual_noregions, sem_annual_noregions_dtr,
 
 focaldata_we <- focaldata
 save(focaldata_we, file = "./fig_output/focaldata_we.Rdata")
+
+# save model data for cross-correlation plots
+save(fd, fd_dtr, file = "./fig_output/data_annual_noregions.Rdata")
 ```
 
 *Save model coefficients for manuscript table*

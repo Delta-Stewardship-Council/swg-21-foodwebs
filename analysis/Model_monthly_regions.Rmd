@@ -254,21 +254,28 @@ for(i in 1:length(regions)) {
 (only sig correlations shown... no correction for multiple comparisons)
 
 ```{r cc, fig.width=7, fig.height=6, echo=FALSE, warning=FALSE}
+varnames_cc<-c(varnames, "dophos", "ammonia", "nitrate")
+
+fdr_cc<-fdr%>%
+  mutate(region=recode(region, `Far West`="San Pablo", West="Suisun", North="Sacramento", South="San Joaquin"))
+
+fdr_ds_cc<-fdr_ds%>%
+  mutate(region=recode(region, `Far West`="San Pablo", West="Suisun", North="Sacramento", South="San Joaquin"))
 #lag 0
-lags0=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+lags0=expand.grid(region=regionorder_pub,V1=varnames_cc,V2=varnames_cc,Cor=NA,P=NA,
                   stringsAsFactors = F)
 for(i in 1:nrow(lags0)) {
-  v1=fdr[fdr$region==lags0$region[i],lags0$V1[i]]
-  v2=fdr[fdr$region==lags0$region[i],lags0$V2[i]]
+  v1=fdr_cc[fdr_cc$region==lags0$region[i],lags0$V1[i]]
+  v2=fdr_cc[fdr_cc$region==lags0$region[i],lags0$V2[i]]
   if(!all(is.na(v1)) & !all(is.na(v2))) {
     tccf=cor.test(v1,v2)
     lags0$Cor[i]=tccf$estimate
     lags0$P[i]=tccf$p.value
   }
 }
-lags0$V1=factor(lags0$V1,levels = varnames)
-lags0$V2=factor(lags0$V2,levels = varnames)
-lags0$region=factor(lags0$region,levels = regionorder)
+lags0$V1=factor(lags0$V1,levels = varnames_cc)
+lags0$V2=factor(lags0$V2,levels = varnames_cc)
+lags0$region=factor(lags0$region,levels = regionorder_pub)
 ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
   geom_tile() +
@@ -279,21 +286,50 @@ ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+
+#lag 0 seasonality removed
+lags0ds=expand.grid(region=regionorder_pub,V1=varnames_cc,V2=varnames_cc,Cor=NA,P=NA,
+                  stringsAsFactors = F)
+for(i in 1:nrow(lags0ds)) {
+  v1=fdr_ds_cc[fdr_ds_cc$region==lags0ds$region[i],lags0ds$V1[i]]
+  v2=fdr_ds_cc[fdr_ds_cc$region==lags0ds$region[i],lags0ds$V2[i]]
+  if(!all(is.na(v1)) & !all(is.na(v2))) {
+    tccf=cor.test(v1,v2)
+    lags0ds$Cor[i]=tccf$estimate
+    lags0ds$P[i]=tccf$p.value
+  }
+}
+lags0ds$V1=factor(lags0ds$V1,levels = varnames_cc)
+lags0ds$V2=factor(lags0ds$V2,levels = varnames_cc)
+lags0ds$region=factor(lags0ds$region,levels = regionorder_pub)
+plags0ds<-ggplot(filter(lags0ds,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+  facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
+  geom_tile() +
+  geom_abline(slope=1,intercept = 0) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(x="V2 (t)", y="V1 (t)", title = "Monthly lag 0 cross-cor, monthly means removed") +
+  scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
+  scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+plags0ds
+ggsave(plot=plags0ds+theme(plot.title = element_blank()), filename="./fig_output/crosscor_monthly_lag0ds.png", height = 8.5, width = 8.5)
+
 #lag 1
-lags1=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+lags1=expand.grid(region=regionorder_pub,V1=varnames_cc,V2=varnames_cc,Cor=NA,P=NA,
                   stringsAsFactors = F)
 for(i in 1:nrow(lags1)) {
-  v1=fdr[fdr$region==lags1$region[i],lags1$V1[i]]
-  v2=fdr[fdr$region==lags1$region[i],lags1$V2[i]]
+  v1=fdr_cc[fdr_cc$region==lags1$region[i],lags1$V1[i]]
+  v2=fdr_cc[fdr_cc$region==lags1$region[i],lags1$V2[i]]
   if(!all(is.na(v1)) & !all(is.na(v2))) {
     tccf=cor.test(v1,lag(v2,1))
     lags1$Cor[i]=tccf$estimate
     lags1$P[i]=tccf$p.value
   }
 }
-lags1$V1=factor(lags1$V1,levels = varnames)
-lags1$V2=factor(lags1$V2,levels = varnames)
-lags1$region=factor(lags1$region,levels = regionorder)
+lags1$V1=factor(lags1$V1,levels = varnames_cc)
+lags1$V2=factor(lags1$V2,levels = varnames_cc)
+lags1$region=factor(lags1$region,levels = regionorder_pub)
 ggplot(filter(lags1,P<0.05), aes(x=V2,y=V1,fill=Cor)) +
   facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
   geom_tile() +
@@ -305,30 +341,32 @@ ggplot(filter(lags1,P<0.05), aes(x=V2,y=V1,fill=Cor)) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
 #lag 1 seasonality removed
-lags1ds=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+lags1ds=expand.grid(region=regionorder_pub,V1=varnames_cc,V2=varnames_cc,Cor=NA,P=NA,
                   stringsAsFactors = F)
 for(i in 1:nrow(lags1ds)) {
-  v1=fdr_ds[fdr_ds$region==lags1ds$region[i],lags1ds$V1[i]]
-  v2=fdr_ds[fdr_ds$region==lags1ds$region[i],lags1ds$V2[i]]
+  v1=fdr_ds_cc[fdr_ds_cc$region==lags1ds$region[i],lags1ds$V1[i]]
+  v2=fdr_ds_cc[fdr_ds_cc$region==lags1ds$region[i],lags1ds$V2[i]]
   if(!all(is.na(v1)) & !all(is.na(v2))) {
     tccf=cor.test(v1,lag(v2,1))
     lags1ds$Cor[i]=tccf$estimate
     lags1ds$P[i]=tccf$p.value
   }
 }
-lags1ds$V1=factor(lags1ds$V1,levels = varnames)
-lags1ds$V2=factor(lags1ds$V2,levels = varnames)
-lags1ds$region=factor(lags1ds$region,levels = regionorder)
-ggplot(filter(lags1ds,P<0.05), aes(x=V2,y=V1,fill=Cor)) +
+lags1ds$V1=factor(lags1ds$V1,levels = varnames_cc)
+lags1ds$V2=factor(lags1ds$V2,levels = varnames_cc)
+lags1ds$region=factor(lags1ds$region,levels = regionorder_pub)
+plags1ds<-ggplot(filter(lags1ds,P<0.05), aes(x=V2,y=V1,fill=Cor)) +
   facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
   geom_tile() +
   geom_abline(slope=1,intercept = 0) +
   scale_fill_gradient2() +
   theme_bw() +
-  labs(x="V2 (t-1)", y="V1 (t)",title = "lag 1 cross-cor, monthly means removed") +
+  labs(x="V2 (t-1)", y="V1 (t)",title = "Monthly lag 1 cross-cor, monthly means removed") +
   scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+plags1ds
+ggsave(plot=plags1ds+theme(plot.title = element_blank()), filename="./fig_output/crosscor_monthly_lag1ds.png", height = 8.5, width = 8.5)
 ```
 
 Other notes:
@@ -429,7 +467,7 @@ knitr::kable(definations_data, col.names = c("Variable",
                                              "Defination"))
 # Write it as a csv
 write.csv(definations_data,
-          "fig_output/month definitions tabel.csv",
+          "fig_output/month definitions table.csv",
           row.names = FALSE)
 ```
 

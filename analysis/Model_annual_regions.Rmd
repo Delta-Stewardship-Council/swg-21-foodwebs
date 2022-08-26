@@ -47,7 +47,7 @@ fvars=cnames$Shortname
 colnames(focaldata)=fvars
 regions=unique(focaldata$region)
 regionorder=c("West","North","South")
-regionorder_pub=c("Suisun","Sacramento","San Joaquin")
+regionorder_pub=c("Whole estuary", "Suisun","Sacramento","San Joaquin")
 years=1975:2021
 
 focaldata = focaldata %>% 
@@ -149,7 +149,7 @@ plot1=select(focaldata,region,year,varnames) %>% rbind(focaldata_we2) %>%
          Diagramname=factor(Diagramname, levels=unique(Diagramname)),
          Var=factor(Var,levels = varnames),
          region=recode(region, West="Suisun", North="Sacramento", South="San Joaquin"),
-         region=factor(region,levels=c("Whole estuary", regionorder_pub)))
+         region=factor(region,levels=regionorder_pub))
 ggplot(plot1,aes(x=year,y=Value,color=region,size=region)) +
   facet_wrap(Diagramname~., scales="free_y",ncol = 4) +
   geom_line() +
@@ -235,57 +235,76 @@ for(i in 1:length(regions)) {
 (only sig correlations shown... no correction for multiple comparisons)
 
 ```{r ccmat, fig.width=7, fig.height=6, echo=FALSE}
+varnames_cc<-c(varnames, "dophos", "ammonia", "nitrate")
+load("./fig_output/data_annual_noregions.Rdata")
+
+fd_cc<-fd%>% 
+  select(-ends_with("_1"))%>%
+  mutate(region="Whole estuary")%>%
+  bind_rows(fdr)%>%
+  mutate(region=recode(region, West="Suisun", North="Sacramento", South="San Joaquin"))
+
+fd_dtr_cc<-fd_dtr%>% 
+  select(-ends_with("_1"))%>%
+  mutate(region="Whole estuary")%>%
+  bind_rows(fdr_dtr)%>%
+  mutate(region=recode(region, West="Suisun", North="Sacramento", South="San Joaquin"))
+
 #lag 0
-lags0=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+lags0=expand.grid(region=regionorder_pub,V1=varnames_cc,V2=varnames_cc,Cor=NA,P=NA,
                   stringsAsFactors = F)
 for(i in 1:nrow(lags0)) {
-  v1=fdr[fdr$region==lags0$region[i],lags0$V1[i]]
-  v2=fdr[fdr$region==lags0$region[i],lags0$V2[i]]
+  v1=fd_cc[fd_cc$region==lags0$region[i],lags0$V1[i]]
+  v2=fd_cc[fd_cc$region==lags0$region[i],lags0$V2[i]]
   if(!all(is.na(v1)) & !all(is.na(v2))) {
     tccf=cor.test(v1,v2)
     lags0$Cor[i]=tccf$estimate
     lags0$P[i]=tccf$p.value
   }
 }
-lags0$V1=factor(lags0$V1,levels = varnames)
-lags0$V2=factor(lags0$V2,levels = varnames)
-lags0$region=factor(lags0$region,levels = regionorder)
-ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+lags0$V1=factor(lags0$V1,levels = varnames_cc)
+lags0$V2=factor(lags0$V2,levels = varnames_cc)
+lags0$region=factor(lags0$region,levels = regionorder_pub)
+plags0<-ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
   geom_tile() +
   geom_abline(slope=1,intercept = 0) +
   scale_fill_gradient2() +
   theme_bw() +
-  labs(x="V2 (t)", y="V1 (t)", title = "lag 0 cross-cor") +
+  labs(x="V2 (t)", y="V1 (t)", title = "Annual lag 0 cross-cor") +
   scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+plags0
+ggsave(plot=plags0+theme(plot.title = element_blank()), filename="./fig_output/crosscor_annual_lag0.png", height = 8.5, width = 8.5)
 
 #lag 0, detrended
-lags0dtr=expand.grid(region=regions,V1=varnames,V2=varnames,Cor=NA,P=NA,
+lags0dtr=expand.grid(region=regionorder_pub, V1=varnames_cc,V2=varnames_cc,Cor=NA,P=NA,
                   stringsAsFactors = F)
 for(i in 1:nrow(lags0dtr)) {
-  v1=fdr_dtr[fdr_dtr$region==lags0dtr$region[i],lags0dtr$V1[i]]
-  v2=fdr_dtr[fdr_dtr$region==lags0dtr$region[i],lags0dtr$V2[i]]
+  v1=fd_dtr_cc[fd_dtr_cc$region==lags0dtr$region[i],lags0dtr$V1[i]]
+  v2=fd_dtr_cc[fd_dtr_cc$region==lags0dtr$region[i],lags0dtr$V2[i]]
   if(!all(is.na(v1)) & !all(is.na(v2))) {
     tccf=cor.test(v1,v2)
     lags0dtr$Cor[i]=tccf$estimate
     lags0dtr$P[i]=tccf$p.value
   }
 }
-lags0dtr$V1=factor(lags0dtr$V1,levels = varnames)
-lags0dtr$V2=factor(lags0dtr$V2,levels = varnames)
-lags0dtr$region=factor(lags0dtr$region,levels = regionorder)
-ggplot(filter(lags0dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
+lags0dtr$V1=factor(lags0dtr$V1,levels = varnames_cc)
+lags0dtr$V2=factor(lags0dtr$V2,levels = varnames_cc)
+lags0dtr$region=factor(lags0dtr$region,levels = regionorder_pub)
+plags0dtr<-ggplot(filter(lags0dtr,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
   facet_wrap(.~region, nrow=2, scales = "free", drop=F, strip.position = "right",dir = "v") +
   geom_tile() +
   geom_abline(slope=1,intercept = 0) +
   scale_fill_gradient2() +
   theme_bw() +
-  labs(x="V2 (t)", y="V1 (t)", title = "lag 0 cross-cor, detrended") +
+  labs(x="V2 (t)", y="V1 (t)", title = "Annual lag 0 cross-cor, detrended") +
   scale_x_discrete(expand = expand_scale(mult = 0),drop=F) +
   scale_y_discrete(expand = expand_scale(mult = 0),drop=F) +
   theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1))
+plags0dtr
+ggsave(plot=plags0dtr+theme(plot.title = element_blank()), filename="./fig_output/crosscor_annual_lag0dtr.png", height = 8.5, width = 8.5)
 ```
 
 *Note correlation of fish indices, or lack thereof.*
