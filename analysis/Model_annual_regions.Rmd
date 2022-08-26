@@ -235,20 +235,23 @@ for(i in 1:length(regions)) {
 (only sig correlations shown... no correction for multiple comparisons)
 
 ```{r ccmat, fig.width=7, fig.height=6, echo=FALSE}
-varnames_cc<-c(varnames, "dophos", "ammonia", "nitrate")
+varnames_cc<-c(varnames, "dophos", "ammonia", "nitrate")%>%
+  recode(estfish="estfish_fmwt")
 load("./fig_output/data_annual_noregions.Rdata")
 
 fd_cc<-fd%>% 
   select(-ends_with("_1"))%>%
   mutate(region="Whole estuary")%>%
   bind_rows(fdr)%>%
-  mutate(region=recode(region, West="Suisun", North="Sacramento", South="San Joaquin"))
+  mutate(region=recode(region, West="Suisun", North="Sacramento", South="San Joaquin"))%>%
+  rename(estfish_fmwt=estfish)
 
 fd_dtr_cc<-fd_dtr%>% 
   select(-ends_with("_1"))%>%
   mutate(region="Whole estuary")%>%
   bind_rows(fdr_dtr)%>%
-  mutate(region=recode(region, West="Suisun", North="Sacramento", South="San Joaquin"))
+  mutate(region=recode(region, West="Suisun", North="Sacramento", South="San Joaquin"))%>%
+  rename(estfish_fmwt=estfish)
 
 #lag 0
 lags0=expand.grid(region=regionorder_pub,V1=varnames_cc,V2=varnames_cc,Cor=NA,P=NA,
