@@ -2,11 +2,10 @@ library(officer)
 library(flextable)
 library(dplyr)
 
-variables = read.csv(file.path("fig_output", "full definitions tabel.csv"))%>%
+variables = read.csv(file.path("fig_output", "full definitions table.csv"))%>%
   mutate(across(c(Months_missing, Years_missing), ~ifelse(is.na(.x), "", .x)))%>%
   rename(`Monthly years (missing months)`=Months_missing,
-         `Annual years (missing years)`=Years_missing,
-         Definition=Defination)
+         `Annual years (missing years)`=Years_missing)
 
 stations = read.csv(file.path("fig_output","station_table.csv")) %>%
   dplyr::rename(`Temporal resolution`=Temporal.resolution)
@@ -63,8 +62,8 @@ monthly_coefficients_tbl <- flextable::flextable(monthly_coefficients) %>%
   set_caption(caption="Table S4. Path coefficients for monthly-regional SEMS.")
 
 supp_doc <- read_docx(path=file.path("fig_output","SI_template.docx"))%>%
-  body_add_par(value = "Title", style = "heading 1") %>%
-  body_add_par("Authors") %>%
+  body_add_par(value = "Evaluating top-down, bottom-up, and environmental drivers of pelagic food web dynamics along an estuarine gradient", style = "heading 1") %>%
+  body_add_par("Tanya L. Rogers, Samuel M. Bashevkin, Christina E. Burdi, Denise D. Colombano, Peter N. Dudley, Brian Mahardja, Lara Mitchell, Sarah Perry, Parsa Saffarinia") %>%
   body_add_flextable(variable_tbl) %>%
   body_add_par("") %>%
   body_add_break() %>%

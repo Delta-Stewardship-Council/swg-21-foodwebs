@@ -1,0 +1,52 @@
+---
+title: "Make Definitions Table"
+author: "Peter Dudley"
+date: "4/29/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+  
+knit: (function(input, ...) {
+    
+   
+    rmarkdown::render(
+      input,
+      output_dir = 'docs',
+      knit_root_dir = "../",
+      envir = globalenv()
+      )
+       })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+# Read in the 2 CSVs
+```{r packages, message=FALSE, warning=FALSE}
+month_defs = read.csv("fig_output/month definitions table.csv")
+
+year_defs = read.csv("fig_output/definitions table.csv")
+
+full_table = month_defs %>% 
+  full_join(year_defs, by = c("Variable", "Definition"))
+
+col_order = c("Variable", "Months_missing", "Years_missing", "Definition")
+full_table_ordered = full_table[, col_order]
+
+# Do a little formating of the table
+knitr::kable(full_table_ordered, col.names = c("Variable",
+                                             "Years (missing months)",
+                                             "Years (missing years)",
+                                             "Definition"))
+
+# Write it as a csv
+write.csv(full_table_ordered,
+          "fig_output/full definitions table.csv",
+          row.names = FALSE)
+```
+

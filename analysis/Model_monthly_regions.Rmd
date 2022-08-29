@@ -83,7 +83,7 @@ cnames=rbind(cnames,data.frame(Longname = c("Total zooplankton biomass",
                                Datacolumn=NA,Log=c(rep("yes",6),"no"),
                                Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
                                        "#7030A0","#4472C4"),
-                               Defination = c("summed zooplankton biomass",
+                               Definition = c("summed zooplankton biomass",
                                               "summed zooplankton energy",
                                               "summed herbivorous zooplankton biomass",
                                               "summed herbivorous zooplankton energy",
@@ -428,7 +428,7 @@ ggsave("./fig_output/scatterplot_flow-estfishes.png", height = 3.5, width = 8.5)
 ### Make a definition table
 Make a table similar to table 1 in Mac Nally et al. 2010 in Eco. Apps.
 ```{r echo = FALSE, fig.width=8, fig.height=8}
-definations_data = focaldata %>% 
+definitions_data = focaldata %>% 
   # take out lag data if present
   select(-ends_with("_1")) %>% 
   mutate(year_month = ym(paste0(year, ".", month))) %>% 
@@ -439,8 +439,8 @@ definations_data = focaldata %>%
   na.omit() %>% 
   filter(Shortname != "decyear") %>% 
   # Join so we can get the long names
-  left_join(select(cnames, Longname, Shortname, Defination), by = "Shortname") %>% 
-  group_by(Shortname, Longname, Defination) %>% 
+  left_join(select(cnames, Longname, Shortname, Definition), by = "Shortname") %>% 
+  group_by(Shortname, Longname, Definition) %>% 
   # some calculations to get range, years missing, ect.
   summarize(max = max(value, na.rm = TRUE),
          min = min(value, na.rm = TRUE),
@@ -457,16 +457,16 @@ definations_data = focaldata %>%
          Months_missing = paste0(first_year, "\U2012", last_year, " (", missing, ")")) %>% 
   ungroup() %>% 
   rename(Variable = Longname) %>% 
-  select(Variable, Months_missing, Defination) %>% 
+  select(Variable, Months_missing, Definition) %>% 
   filter(Variable != "Month",
          Variable != "Year")
 
 # Do a little formatting of the table
-knitr::kable(definations_data, col.names = c("Variable",
+knitr::kable(definitions_data, col.names = c("Variable",
                                              "Years (missing years)",
-                                             "Defination"))
+                                             "Definition"))
 # Write it as a csv
-write.csv(definations_data,
+write.csv(definitions_data,
           "fig_output/month definitions table.csv",
           row.names = FALSE)
 ```

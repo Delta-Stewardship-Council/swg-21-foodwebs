@@ -77,7 +77,7 @@ cnames=rbind(cnames,data.frame(Longname = c("Total zooplankton biomass",
                                Datacolumn=NA,Log=c(rep("yes",6),"no"),
                                Color=c("black","black","#ED7D31","#ED7D31","#7030A0",
                                        "#7030A0","#4472C4"),
-                               Defination = c("summed zooplankton biomass",
+                               Definition = c("summed zooplankton biomass",
                                               "summed zooplankton energy",
                                               "summed herbivorous zooplankton biomass",
                                               "summed herbivorous zooplankton energy",
@@ -262,8 +262,8 @@ definitions_data = focaldata %>%
   pivot_longer(cols = -year, names_to = "Shortname", values_to = "value") %>% 
   na.omit() %>% 
   # Join so we can get the long names
-  left_join(select(cnames, Longname, Shortname, Defination), by = "Shortname") %>% 
-  group_by(Shortname, Longname, Defination) %>% 
+  left_join(select(cnames, Longname, Shortname, Definition), by = "Shortname") %>% 
+  group_by(Shortname, Longname, Definition) %>% 
   # some calculations to get range, years missing, ect.
   summarize(max = max(value, na.rm = TRUE),
          min = min(value, na.rm = TRUE),
@@ -278,12 +278,12 @@ definitions_data = focaldata %>%
          Years_missing = paste0(first_year, "\U2012", last_year, " (", missing, ")")) %>% 
   ungroup() %>% 
   rename(Variable = Longname) %>% 
-  select(Variable, Years_missing, Defination) 
+  select(Variable, Years_missing, Definition) 
 
 # Do a little formating of the table
 knitr::kable(definitions_data, col.names = c("Variable",
                                              "Years (missing)",
-                                             "Defination"))
+                                             "Definition"))
 # Write it as a csv
 write.csv(definitions_data,
           "fig_output/definitions table.csv",
@@ -341,7 +341,7 @@ cnames_with_latent <- rbind(cnames,
                             data.frame(Longname="fish", Shortname="fish",
                                        Diagramname="estuarine\nfishes", 
                                        Datacolumn=NA, Log=NA,
-                                       Color="#FF0000", Defination = NA))
+                                       Color="#FF0000", Definition = NA))
 
 plot_modfit1 <- createGraph(fit=modfit1, 
                             reference_df=cnames_with_latent, 

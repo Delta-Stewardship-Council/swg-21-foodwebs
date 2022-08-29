@@ -1,4 +1,4 @@
-Longname,Shortname,Diagramname,Datacolumn,Log,Color,Defination
+Longname,Shortname,Diagramname,Datacolumn,Log,Color,Definition
 Year,year,year,Year,no,,
 Flow,flow,flow,Mean_outflow_WY,yes,#4472C4,continuous - mean Delta outflow (water leaving the Delta to the Bay)
 Secchi,secchi,secchi,Secchi,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - continuous monthly
@@ -42,8 +42,8 @@ Delta smelt bay study otter trawl,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTra
 Striped bass bay study otter trawl,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,continuous - ottor trawl - biomass of age 0 individuals
 Longfin smelt bay study otter trawl,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,continuous - ottor trawl - biomass
 Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes,#333F50,from the Delta juvenile fish monitoring program - continuous - combination of surface trawls and beach seines - biomass
-Estuarine fishes summer townet,estfish_stn,STN\nestuarine fishes,STN_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,summer (June – August) - townet - biomass of estuarine pelagic forage fishes
-Marine fishes summer townet,marfish_stn,STN\nmarine fishes,STN_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,summer (June – August) - townet - biomass
-Delta smelt summer townet,smelt_stn,STN\ndelta smelt,STN_fish_biomass_DeltaSmelt,yes,#333F50,summer (June – August) - townet - biomass
-Striped bass summer townet,sbass_stn,STN\nstriped bass,STN_fish_biomass_StripedBass_age0,yes,#333F50,summer (June – August) - townet - biomass of age 0 individuals
-Longfin smelt summer townet,lfin_stn,STN\nlongfin smelt,STN_fish_biomass_LongfinSmelt,yes,#333F50,summer (June – August) - townet - biomass
+Estuarine fishes summer townet,estfish_stn,STN\nestuarine fishes,STN_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,summer (June ? August) - townet - biomass of estuarine pelagic forage fishes
+Marine fishes summer townet,marfish_stn,STN\nmarine fishes,STN_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,summer (June ? August) - townet - biomass
+Delta smelt summer townet,smelt_stn,STN\ndelta smelt,STN_fish_biomass_DeltaSmelt,yes,#333F50,summer (June ? August) - townet - biomass
+Striped bass summer townet,sbass_stn,STN\nstriped bass,STN_fish_biomass_StripedBass_age0,yes,#333F50,summer (June ? August) - townet - biomass of age 0 individuals
+Longfin smelt summer townet,lfin_stn,STN\nlongfin smelt,STN_fish_biomass_LongfinSmelt,yes,#333F50,summer (June ? August) - townet - biomass
