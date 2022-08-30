@@ -370,11 +370,15 @@ pre code {
 
 
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
-<pre><code>## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
-## ✔ tibble  3.1.7     ✔ dplyr   1.0.9
-## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
-## ✔ readr   2.1.2     ✔ forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+## ✔ tibble  3.1.8     ✔ dplyr   1.0.9
+## ✔ tidyr   1.2.0     ✔ stringr 1.4.1
+## ✔ readr   2.1.2     ✔ forcats 0.5.2</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.2.1</code></pre>
 <pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
@@ -397,10 +401,10 @@ knitr::kable(full_table_ordered, col.names = c(&quot;Variable&quot;,
                                              &quot;Definition&quot;))</code></pre>
 <table>
 <colgroup>
-<col width="20%" />
-<col width="11%" />
-<col width="10%" />
-<col width="57%" />
+<col width="23%" />
+<col width="12%" />
+<col width="12%" />
+<col width="50%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -416,20 +420,20 @@ knitr::kable(full_table_ordered, col.names = c(&quot;Variable&quot;,
 <td align="left">1995‒2020 (0)</td>
 <td align="left">1980‒2020 (0)</td>
 <td align="left">from the Discrete Environmental Monitoring Program
-(EMP) at DWR - continuous monthly</td>
+(EMP) at DWR - year-round</td>
 </tr>
 <tr class="even">
 <td align="left">Amphipods catch</td>
 <td align="left">1997‒2020 (18)</td>
 <td align="left">1975‒2020 (1)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
 <td align="left">Amphipods mass</td>
 <td align="left">1997‒2020 (18)</td>
 <td align="left">1975‒2020 (1)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="even">
@@ -437,35 +441,34 @@ et al. 2022</td>
 <td align="left">1995‒2020 (3)</td>
 <td align="left">NA</td>
 <td align="left">from the Delta juvenile fish monitoring program -
-continuous - combination of surface trawls and beach seines -
-biomass</td>
+year-round - beach seines - biomass</td>
 </tr>
 <tr class="odd">
 <td align="left">Phytoplankton</td>
 <td align="left">1995‒2020 (0)</td>
 <td align="left">1980‒2020 (0)</td>
 <td align="left">from the Discrete Environmental Monitoring Program
-(EMP) at DWR - continuous monthly</td>
+(EMP) at DWR - year-round</td>
 </tr>
 <tr class="even">
 <td align="left">Cladocera</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
 <td align="left">Cladocera catch</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="even">
 <td align="left">Cladocera energy</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
@@ -473,62 +476,62 @@ et al. 2022</td>
 <td align="left">1997‒2020 (18)</td>
 <td align="left">1975‒2020 (1)</td>
 <td align="left">from the Environmental Monitoring Program (EMP) Benthic
-Survey at DWR - continuous monthly</td>
+Survey at DWR - year-round</td>
 </tr>
 <tr class="even">
 <td align="left">Dissolved Inorganic Nitrogen</td>
 <td align="left">1995‒2020 (0)</td>
 <td align="left">NA</td>
 <td align="left">from the Discrete Environmental Monitoring Program
-(EMP) at DWR - continuous monthly</td>
+(EMP) at DWR - year-round</td>
 </tr>
 <tr class="odd">
 <td align="left">Dissolved Orthophos</td>
 <td align="left">1995‒2020 (0)</td>
 <td align="left">1980‒2020 (0)</td>
 <td align="left">from the Discrete Environmental Monitoring Program
-(EMP) at DWR - continuous monthly</td>
+(EMP) at DWR - year-round</td>
 </tr>
 <tr class="even">
 <td align="left">Estuarine fishes BSMT</td>
 <td align="left">1995‒2020 (38)</td>
 <td align="left">NA</td>
-<td align="left">continuous - midwater trawl - biomass of estuarine
+<td align="left">year-round - midwater trawl - biomass of estuarine
 pelagic forage fishes</td>
 </tr>
 <tr class="odd">
 <td align="left">Estuarine fishes BSOT</td>
 <td align="left">1995‒2020 (18)</td>
 <td align="left">NA</td>
-<td align="left">continuous - ottor trawl - biomass of estuarine pelagic
+<td align="left">year-round - ottor trawl - biomass of estuarine pelagic
 forage fishes</td>
 </tr>
 <tr class="even">
 <td align="left">Flow</td>
 <td align="left">1995‒2020 (0)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">continuous - mean Delta outflow (water leaving the
+<td align="left">year-round - mean Delta outflow (water leaving the
 Delta to the Bay)</td>
 </tr>
 <tr class="odd">
 <td align="left">Herbivorous copepods</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="even">
 <td align="left">Herbivorous copepods catch</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
 <td align="left">Herbivorous copepods energy</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="even">
@@ -547,45 +550,45 @@ et al. 2022</td>
 <td align="left">Longfin smelt BSMT</td>
 <td align="left">1995‒2020 (38)</td>
 <td align="left">NA</td>
-<td align="left">continuous - midwater trawl - biomass</td>
+<td align="left">year-round - midwater trawl - biomass</td>
 </tr>
 <tr class="odd">
 <td align="left">Longfin smelt BSOT</td>
 <td align="left">1995‒2020 (18)</td>
 <td align="left">NA</td>
-<td align="left">continuous - ottor trawl - biomass</td>
+<td align="left">year-round - ottor trawl - biomass</td>
 </tr>
 <tr class="even">
 <td align="left">Marine fishes BSMT</td>
 <td align="left">1995‒2020 (38)</td>
 <td align="left">NA</td>
-<td align="left">continuous - midwater trawl - biomass</td>
+<td align="left">year-round - midwater trawl - biomass</td>
 </tr>
 <tr class="odd">
 <td align="left">Marine fishes BSOT</td>
 <td align="left">1995‒2020 (18)</td>
 <td align="left">NA</td>
-<td align="left">continuous - ottor trawl - biomass</td>
+<td align="left">year-round - ottor trawl - biomass</td>
 </tr>
 <tr class="even">
 <td align="left">Mysids</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
 <td align="left">Mysids catch</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="even">
 <td align="left">Mysids energy</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
@@ -593,27 +596,27 @@ et al. 2022</td>
 <td align="left">1995‒2020 (0)</td>
 <td align="left">1980‒2020 (0)</td>
 <td align="left">from the Discrete Environmental Monitoring Program
-(EMP) at DWR - continuous monthly</td>
+(EMP) at DWR - year-round</td>
 </tr>
 <tr class="even">
 <td align="left">Predatory copepods</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
 <td align="left">Predatory copepods catch</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="even">
 <td align="left">Predatory copepods energy</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
@@ -621,7 +624,7 @@ et al. 2022</td>
 <td align="left">1997‒2020 (18)</td>
 <td align="left">1975‒2020 (1)</td>
 <td align="left">from the Environmental Monitoring Program (EMP) Benthic
-Survey at DWR - continuous monthly</td>
+Survey at DWR - year-round</td>
 </tr>
 <tr class="even">
 <td align="left">Predatory zooplankton biomass</td>
@@ -639,49 +642,49 @@ Survey at DWR - continuous monthly</td>
 <td align="left">Rotifers catch</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
 <td align="left">Rotifers energy</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="even">
 <td align="left">Rotifers mass</td>
 <td align="left">1995‒2020 (2)</td>
 <td align="left">1975‒2020 (0)</td>
-<td align="left">from 5 different sources - continuous - see Bashevkin
+<td align="left">from 5 different sources - year-round - see Bashevkin
 et al. 2022</td>
 </tr>
 <tr class="odd">
 <td align="left">Striped bass BSMT</td>
 <td align="left">1995‒2020 (38)</td>
 <td align="left">NA</td>
-<td align="left">continuous - midwater trawl - biomass of age 0
+<td align="left">year-round - midwater trawl - biomass of age 0
 individuals</td>
 </tr>
 <tr class="even">
 <td align="left">Striped bass BSOT</td>
 <td align="left">1995‒2020 (18)</td>
 <td align="left">NA</td>
-<td align="left">continuous - ottor trawl - biomass of age 0
+<td align="left">year-round - ottor trawl - biomass of age 0
 individuals</td>
 </tr>
 <tr class="odd">
 <td align="left">Striped bass age 1+ BSMT</td>
 <td align="left">1995‒2020 (38)</td>
 <td align="left">NA</td>
-<td align="left">continuous - midwater trawl - biomass of age 1+
+<td align="left">year-round - midwater trawl - biomass of age 1+
 individuals</td>
 </tr>
 <tr class="even">
 <td align="left">Striped bass age 1+ BSOT</td>
 <td align="left">1995‒2020 (18)</td>
 <td align="left">NA</td>
-<td align="left">continuous - ottor trawl - biomass of age 1+
+<td align="left">year-round - ottor trawl - biomass of age 1+
 individuals</td>
 </tr>
 <tr class="odd">
@@ -689,34 +692,33 @@ individuals</td>
 <td align="left">1995‒2020 (0)</td>
 <td align="left">1980‒2020 (0)</td>
 <td align="left">from the Discrete Environmental Monitoring Program
-(EMP) at DWR - continuous monthly</td>
+(EMP) at DWR - year-round</td>
 </tr>
 <tr class="even">
 <td align="left">Delta smelt BSMT</td>
 <td align="left">1995‒2020 (38)</td>
 <td align="left">NA</td>
-<td align="left">continuous - midwater trawl - biomass</td>
+<td align="left">year-round - midwater trawl - biomass</td>
 </tr>
 <tr class="odd">
 <td align="left">Delta smelt BSOT</td>
 <td align="left">1995‒2020 (18)</td>
 <td align="left">NA</td>
-<td align="left">continuous - ottor trawl - biomass</td>
+<td align="left">year-round - ottor trawl - biomass</td>
 </tr>
 <tr class="even">
 <td align="left">Mississippi silverside</td>
 <td align="left">1995‒2020 (3)</td>
 <td align="left">1976‒2020 (0)</td>
 <td align="left">from the Delta juvenile fish monitoring program -
-continuous - combination of surface trawls and beach seines -
-biomass</td>
+year-round - beach seines - biomass</td>
 </tr>
 <tr class="odd">
 <td align="left">Temperature</td>
 <td align="left">1995‒2020 (0)</td>
 <td align="left">1980‒2020 (0)</td>
 <td align="left">from the Discrete Environmental Monitoring Program
-(EMP) at DWR - continuous monthly</td>
+(EMP) at DWR - year-round</td>
 </tr>
 <tr class="even">
 <td align="left">Turbidity</td>
@@ -747,14 +749,14 @@ of estuarine pelagic forage fishes</td>
 <td align="left">Estuarine fishes bay study midwater trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (1)</td>
-<td align="left">continuous - midwater trawl - biomass of estuarine
+<td align="left">year-round - midwater trawl - biomass of estuarine
 pelagic forage fishes</td>
 </tr>
 <tr class="odd">
 <td align="left">Estuarine fishes bay study otter trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (0)</td>
-<td align="left">continuous - ottor trawl - biomass of estuarine pelagic
+<td align="left">year-round - ottor trawl - biomass of estuarine pelagic
 forage fishes</td>
 </tr>
 <tr class="even">
@@ -775,13 +777,13 @@ biomass</td>
 <td align="left">Longfin smelt bay study midwater trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (1)</td>
-<td align="left">continuous - midwater trawl - biomass</td>
+<td align="left">year-round - midwater trawl - biomass</td>
 </tr>
 <tr class="odd">
 <td align="left">Longfin smelt bay study otter trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (0)</td>
-<td align="left">continuous - ottor trawl - biomass</td>
+<td align="left">year-round - ottor trawl - biomass</td>
 </tr>
 <tr class="even">
 <td align="left">Longfin smelt summer townet</td>
@@ -800,13 +802,13 @@ biomass</td>
 <td align="left">Marine fishes bay study midwater trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (1)</td>
-<td align="left">continuous - midwater trawl - biomass</td>
+<td align="left">year-round - midwater trawl - biomass</td>
 </tr>
 <tr class="odd">
 <td align="left">Marine fishes bay study otter trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (0)</td>
-<td align="left">continuous - ottor trawl - biomass</td>
+<td align="left">year-round - ottor trawl - biomass</td>
 </tr>
 <tr class="even">
 <td align="left">Marine fishes summer townet</td>
@@ -825,14 +827,14 @@ of age 0 individuals</td>
 <td align="left">Striped bass bay study midwater trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (1)</td>
-<td align="left">continuous - midwater trawl - biomass of age 0
+<td align="left">year-round - midwater trawl - biomass of age 0
 individuals</td>
 </tr>
 <tr class="odd">
 <td align="left">Striped bass bay study otter trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (0)</td>
-<td align="left">continuous - ottor trawl - biomass of age 0
+<td align="left">year-round - ottor trawl - biomass of age 0
 individuals</td>
 </tr>
 <tr class="even">
@@ -853,13 +855,13 @@ biomass</td>
 <td align="left">Delta smelt bay study midwater trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (1)</td>
-<td align="left">continuous - midwater trawl - biomass</td>
+<td align="left">year-round - midwater trawl - biomass</td>
 </tr>
 <tr class="odd">
 <td align="left">Delta smelt bay study otter trawl</td>
 <td align="left">NA</td>
 <td align="left">1980‒2020 (0)</td>
-<td align="left">continuous - ottor trawl - biomass</td>
+<td align="left">year-round - ottor trawl - biomass</td>
 </tr>
 <tr class="even">
 <td align="left">Delta smelt summer townet</td>

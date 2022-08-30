@@ -68,6 +68,7 @@ monthly_coefficients_tbl <- flextable::flextable(monthly_coefficients) %>%
 supp_doc <- read_docx(path=file.path("fig_output","SI_template.docx"))%>%
   body_add_par(value = "Evaluating top-down, bottom-up, and environmental drivers of pelagic food web dynamics along an estuarine gradient", style = "heading 1") %>%
   body_add_par("Tanya L. Rogers, Samuel M. Bashevkin, Christina E. Burdi, Denise D. Colombano, Peter N. Dudley, Brian Mahardja, Lara Mitchell, Sarah Perry, Parsa Saffarinia") %>%
+  body_add_par(value = "Appendix S2: Supplemental data and model tables", style = "heading 2") %>%
   body_add_par("") %>%
   body_add_par("") %>%
   body_add_flextable(variable_tbl) %>%
