@@ -1016,7 +1016,8 @@ zoop_plot_far_west <- createGraph(fit=modfitFW,
                                   model_type="monthly_zoop",
                                   region="Far West",
                                   title="San Pablo",
-                                  manual_port_settings=TRUE)
+                                  manual_port_settings=TRUE,
+                    font_size=12)
 zoop_plot_far_west
 #WEST
 # myLavaanPlot(model=modfitW, labels=labelswest,
@@ -1029,7 +1030,8 @@ zoop_plot_west <- createGraph(fit=modfitW,
                               model_type="monthly_zoop",
                               region="West",
                               title="Suisun",
-                              manual_port_settings=TRUE)
+                              manual_port_settings=TRUE,
+                    font_size=12)
 zoop_plot_west
 #NORTH
 # myLavaanPlot(model=modfitN, labels=labelsnorth,
@@ -1042,7 +1044,8 @@ zoop_plot_north <- createGraph(fit=modfitN,
                                model_type="monthly_zoop",
                                region="North",
                                title="Sacramento",
-                               manual_port_settings=TRUE)
+                               manual_port_settings=TRUE,
+                    font_size=12)
 zoop_plot_north
 #SOUTH
 # myLavaanPlot(model=modfitS, labels=labelssouth,
@@ -1055,7 +1058,8 @@ zoop_plot_south <- createGraph(fit=modfitS,
                                model_type="monthly_zoop",
                                region="South",
                                title="San Joaquin",
-                               manual_port_settings=TRUE)
+                               manual_port_settings=TRUE,
+                    font_size=12)
 zoop_plot_south
 ```
 

@@ -283,7 +283,7 @@ ggsave(plot=plags0+theme(plot.title = element_blank()), filename="./fig_output/c
 
 #lag 0, detrended
 lags0dtr=expand.grid(region=regionorder_pub, V1=varnames_cc,V2=varnames_cc,Cor=NA,P=NA,
-                  stringsAsFactors = F)
+                     stringsAsFactors = F)
 for(i in 1:nrow(lags0dtr)) {
   v1=fd_dtr_cc[fd_dtr_cc$region==lags0dtr$region[i],lags0dtr$V1[i]]
   v2=fd_dtr_cc[fd_dtr_cc$region==lags0dtr$region[i],lags0dtr$V2[i]]
@@ -492,10 +492,10 @@ labelssouth <- createLabels(modfitsouth, cnames)
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfitwest, labels=labelswest,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+             width=c("regress","latent"),
+             color=c("regress","latent"))
 
 ## Updated SEM diagram:
 cnames_with_latent <- rbind(cnames,
@@ -506,7 +506,8 @@ figW <- createGraph(fit=modfitwest,
                     reference_df=cnames_with_latent, 
                     model_type="annual",
                     title="Suisun",
-                    manual_port_settings=TRUE)
+                    manual_port_settings=TRUE,
+                    font_size=12)
 figW
 ```
 
@@ -514,16 +515,17 @@ figW
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfitnorth, labels=labelsnorth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+             width=c("regress","latent"),
+             color=c("regress","latent"))
 
 figN <- createGraph(fit=modfitnorth, 
                     reference_df=cnames_with_latent, 
                     model_type="annual",
                     title="Sacramento",
-                    manual_port_settings=TRUE)
+                    manual_port_settings=TRUE,
+                    font_size=12)
 figN
 ```
 
@@ -531,16 +533,17 @@ figN
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfitsouth, labels=labelssouth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+             width=c("regress","latent"),
+             color=c("regress","latent"))
 
 figS <- createGraph(fit=modfitsouth, 
                     reference_df=cnames_with_latent, 
                     model_type="annual",
                     title="San Joaquin",
-                    manual_port_settings=TRUE)
+                    manual_port_settings=TRUE,
+                    font_size=12)
 figS
 ```
 
@@ -550,16 +553,17 @@ figS
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfitwest_dtr, labels=labelswest,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+             width=c("regress","latent"),
+             color=c("regress","latent"))
 
 figWdt <- createGraph(fit=modfitwest_dtr, 
                       reference_df=cnames_with_latent, 
                       model_type="annual",
                       title="Suisun",
-                      manual_port_settings=TRUE)
+                      manual_port_settings=TRUE,
+                      font_size=12)
 figWdt
 ```
 
@@ -567,16 +571,17 @@ figWdt
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfitnorth_dtr, labels=labelsnorth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+             width=c("regress","latent"),
+             color=c("regress","latent"))
 
 figNdt <- createGraph(fit=modfitnorth_dtr, 
                       reference_df=cnames_with_latent, 
                       model_type="annual",
                       title="Sacramento",
-                      manual_port_settings=TRUE)
+                      manual_port_settings=TRUE,
+                      font_size=12)
 figNdt
 ```
 
@@ -584,16 +589,17 @@ figNdt
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfitsouth_dtr, labels=labelssouth,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+             width=c("regress","latent"),
+             color=c("regress","latent"))
 
 figSdt <- createGraph(fit=modfitsouth_dtr, 
                       reference_df=cnames_with_latent, 
                       model_type="annual",
                       title="San Joaquin",
-                      manual_port_settings=TRUE)
+                      manual_port_settings=TRUE,
+                      font_size=12)
 figSdt
 ```
 
@@ -607,7 +613,7 @@ combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto",
                                   color = "black",
                                   face = "bold",
                                   size = 9))# + 
-  #theme(plot.margin = unit(c(1,0,0,0), "lines"))
+#theme(plot.margin = unit(c(1,0,0,0), "lines"))
 
 ggsave('./fig_output/sem_annual_regions.png', combined_figure, width=6, height=6,
        dpi=300, bg = "white")
@@ -634,7 +640,7 @@ ggsave('./fig_output/sem_annual.png', combined_figure, width=8, height=7, dpi=30
 plot_grobs <- map(list(sem_annual_noregions_dtr, figNdt, figWdt, figSdt),
                   ~convert_html_to_grob(.x, 2000))
 combined_figure_dtr <- ggarrange(plotlist=plot_grobs, labels=c("(a)", "(b)", "(c)", "(d)"), 
-                             font.label=list(size=9)) %>%
+                                 font.label=list(size=9)) %>%
   annotate_figure(top = text_grob("Annual SEMs, Detrended",
                                   color = "black",
                                   face = "bold",

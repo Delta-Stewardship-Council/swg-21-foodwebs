@@ -230,7 +230,7 @@ ggplot(filter(lags0,P<0.05,V1!=V2), aes(x=V2,y=V1,fill=Cor)) +
 
 #lag 0, detrended
 lags0dtr=expand.grid(V1=varnames,V2=varnames,Cor=NA,P=NA,
-                  stringsAsFactors = F)
+                     stringsAsFactors = F)
 for(i in 1:nrow(lags0dtr)) {
   v1=fd_dtr[,lags0dtr$V1[i]]
   v2=fd_dtr[,lags0dtr$V2[i]]
@@ -266,16 +266,16 @@ definitions_data = focaldata %>%
   group_by(Shortname, Longname, Definition) %>% 
   # some calculations to get range, years missing, ect.
   summarize(max = max(value, na.rm = TRUE),
-         min = min(value, na.rm = TRUE),
-         Range = paste0(format(round(min, 2), nsmall = 2),
-                        "\U2012",
-                        format(round(max, 2), nsmall = 2)),
-         first_year = min(year, na.rm = TRUE),
-         last_year = max(year, na.rm = TRUE),
-         time_span = last_year - first_year,
-         year_count = length(unique(year)),
-         missing = time_span - year_count + 1,
-         Years_missing = paste0(first_year, "\U2012", last_year, " (", missing, ")")) %>% 
+            min = min(value, na.rm = TRUE),
+            Range = paste0(format(round(min, 2), nsmall = 2),
+                           "\U2012",
+                           format(round(max, 2), nsmall = 2)),
+            first_year = min(year, na.rm = TRUE),
+            last_year = max(year, na.rm = TRUE),
+            time_span = last_year - first_year,
+            year_count = length(unique(year)),
+            missing = time_span - year_count + 1,
+            Years_missing = paste0(first_year, "\U2012", last_year, " (", missing, ")")) %>% 
   ungroup() %>% 
   rename(Variable = Longname) %>% 
   select(Variable, Years_missing, Definition) 
@@ -331,10 +331,10 @@ Original units
 labels1 <- createLabels(modfit1, cnames)
 
 myLavaanPlot(model=modfit1, labels=labels1,
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+             width=c("regress","latent"),
+             color=c("regress","latent"))
 
 ## Updated SEM diagram:
 cnames_with_latent <- rbind(cnames,
@@ -347,7 +347,8 @@ plot_modfit1 <- createGraph(fit=modfit1,
                             reference_df=cnames_with_latent, 
                             model_type="annual",
                             title="Whole Estuary",
-                            manual_port_settings=TRUE)
+                            manual_port_settings=TRUE,
+                            font_size=12)
 plot_modfit1
 ```
 
@@ -355,16 +356,17 @@ Detrended
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfit1_dtr, labels=labels1, 
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
-						 width=c("regress","latent"),
-						 color=c("regress","latent"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=FALSE, sig=0.05, 
+             width=c("regress","latent"),
+             color=c("regress","latent"))
 
 plot_modfit2 <- createGraph(fit=modfit1_dtr, 
                             reference_df=cnames_with_latent, 
                             model_type="annual",
                             title="Whole Estuary",
-                            manual_port_settings=TRUE)
+                            manual_port_settings=TRUE,
+                            font_size=12)
 plot_modfit2
 ```
 
@@ -374,34 +376,36 @@ Original units
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfit1, labels=labels1, 
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
-						 width=c("regress","latent","covs"),
-						 color=c("regress","latent","covs"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+             width=c("regress","latent","covs"),
+             color=c("regress","latent","covs"))
 
 createGraph(fit=modfit1, 
             reference_df=cnames_with_latent, 
             cov=TRUE,
             model_type="annual",
             title="Annual no region",
-            manual_port_settings=TRUE)
+            manual_port_settings=TRUE,
+            font_size=12)
 ```
 
 Detrended
 
 ```{r, echo=FALSE}
 myLavaanPlot(model=modfit1_dtr, labels=labels1, 
-						 node_options=list(shape="box", fontname="Helvetica"), 
-						 coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
-						 width=c("regress","latent","covs"),
-						 color=c("regress","latent","covs"))
+             node_options=list(shape="box", fontname="Helvetica"), 
+             coefs=TRUE, stand=TRUE, covs=TRUE, sig=0.05, 
+             width=c("regress","latent","covs"),
+             color=c("regress","latent","covs"))
 
 createGraph(fit=modfit1_dtr, 
             reference_df=cnames_with_latent, 
             cov=TRUE,
             model_type="annual",
             title="Annual no region, detrended",
-            manual_port_settings=TRUE)
+            manual_port_settings=TRUE,
+            font_size=12)
 ```
 
 *Save updated SEM diagrams*
