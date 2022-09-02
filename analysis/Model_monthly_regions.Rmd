@@ -861,6 +861,39 @@ lower_figure <- ggarrange(plotlist=lower_grobs, labels="auto",
 ggsave('./fig_output/sem_lower_trophic.png',lower_figure, width=8, height=7, dpi=300, bg = "white")
 ```
 
+Combine upper and lower SEM diagrams
+
+```{r, fig.width=10, fig.height=12, fig.fullwidth=TRUE}
+monthly_theme <- theme(plot.margin=unit(c(0,0.1,0.5,0), "lines"))
+
+## Convert the grobs to ggplots, then add extra spacing between the two rows:
+upper_ggplots <- lapply(upper_grobs, ggarrange)
+upper_ggplots[[1]] <- upper_ggplots[[1]] + monthly_theme
+upper_ggplots[[2]] <- upper_ggplots[[2]] + monthly_theme
+upper_figure_1 <- ggarrange(plotlist=upper_ggplots, labels=c("a","b","c","d"),
+                            font.label=list(size=11)) %>%
+  annotate_figure(top = text_grob("Monthly regional models: upper trophic level",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 11)) + 
+  theme(plot.margin=unit(c(0,0.1,1,0), "lines"))
+
+lower_ggplots <- lapply(lower_grobs, ggarrange)
+lower_ggplots[[1]] <- lower_ggplots[[1]] + monthly_theme
+lower_ggplots[[2]] <- lower_ggplots[[2]] + monthly_theme
+lower_figure_1 <- ggarrange(plotlist=lower_ggplots, labels=c("e","f","g","h"),
+                            font.label=list(size=11)) %>%
+  annotate_figure(top = text_grob("Monthly regional models: lower trophic level",
+                                  color = "black",
+                                  face = "bold",
+                                  size = 11))
+
+combined <- ggarrange(plotlist=list(upper_figure_1, lower_figure_1), ncol=1)
+combined
+ggsave('./fig_output/sem_upper_and_lower.png', combined, 
+       width=15, height=22, dpi=300, bg="white", units="cm")
+```
+
 Total effects
 
 ```{r}

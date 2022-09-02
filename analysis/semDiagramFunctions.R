@@ -75,8 +75,8 @@ getUpperTrophicCoordinates <- function(df) {
   df$y <- as.numeric(df$y)
 
   ## R2 coordinates outside of the node:
-  df$x_R2 <- df$x - 0.4
-  df$y_R2 <- df$y - 0.4
+  df$x_R2 <- df$x - 0.38
+  df$y_R2 <- df$y - 0.45
 
   return(df)
 }
@@ -115,8 +115,8 @@ getLowerTrophicCoordinates <- function(df) {
   df$y <- as.numeric(df$y)
 
   ## R2 coordinates outside of the node:
-  df$x_R2 <- df$x - 0.4
-  df$y_R2 <- df$y - 0.4
+  df$x_R2 <- df$x - 0.38
+  df$y_R2 <- df$y - 0.45
 
   return(df)
 }
@@ -302,13 +302,15 @@ getAnnualPortOptions <- function() {
 getUpperTrophicPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("estfish_bsmt_1","potam_1","pzoop_1","hzoop_1",
                                   "chla_1","corbic_1"),
-                      to_name=c("estfish_bsmt","pzoop","hzoop","estfish_bsmt_gr","pzoop_gr","hzoop_gr"),
+                      to_name=c("estfish_bsmt","pzoop","hzoop","estfish_bsmt_gr",
+                                "pzoop_gr","hzoop_gr"),
                       headport="w",
                       tailport="e")
 
   tmp2 <- expand.grid(from_name=c("marfish_bsmt_1","flow","temp","turbid",
                                   "sside_1","cent_1"),
-                      to_name=c("estfish_bsmt","pzoop","hzoop","estfish_bsmt_gr","pzoop_gr","hzoop_gr"),
+                      to_name=c("estfish_bsmt","pzoop","hzoop","estfish_bsmt_gr",
+                                "pzoop_gr","hzoop_gr"),
                       headport="e",
                       tailport="w")
 
@@ -326,12 +328,14 @@ getUpperTrophicPortOptions <- function() {
 getLowerTrophicPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("potam_1","pzoop_1","hzoop_1","chla_1","din_1",
                                   "corbic_1"),
-                      to_name=c("potam","chla","din","corbic","potam_gr","chla_gr","din_gr","corbic_gr"),
+                      to_name=c("potam","chla","din","corbic","potam_gr","chla_gr",
+                                "din_gr","corbic_gr"),
                       headport="w",
                       tailport="e")
 
   tmp2 <- expand.grid(from_name=c("flow","temp","turbid"),
-                      to_name=c("potam","chla","din","corbic","potam_gr","chla_gr","din_gr","corbic_gr"),
+                      to_name=c("potam","chla","din","corbic","potam_gr","chla_gr",
+                                "din_gr","corbic_gr"),
                       headport="e",
                       tailport="w")
 
@@ -349,14 +353,18 @@ getLowerTrophicPortOptions <- function() {
 getZoopPortOptions <- function() {
   tmp1 <- expand.grid(from_name=c("pcope_1","hcope_1","amphi_m_1","chla_1","rotif_m_1",
                                   "mysid_1","estfish_bsmt_1","clad_1"),
-                      to_name=c("pcope","hcope","amphi_m","chla","mysid","clad","rotif_m","estfish_bsmt",
-                                "pcope_gr","hcope_gr","amphi_m_gr","chla_gr","mysid_gr","clad_gr","rotif_m_gr","estfish_bsmt_gr"),
+                      to_name=c("pcope","hcope","amphi_m","chla","mysid","clad",
+                                "rotif_m","estfish_bsmt","pcope_gr","hcope_gr",
+                                "amphi_m_gr","chla_gr","mysid_gr","clad_gr",
+                                "rotif_m_gr","estfish_bsmt_gr"),
                       headport="w",
                       tailport="e")
 
   tmp2 <- expand.grid(from_name=c("flow","temp","turbid","corbic_1","potam_1"),
-                      to_name=c("pcope","hcope","amphi_m","chla","mysid","clad","rotif_m","estfish_bsmt",
-                                "pcope_gr","hcope_gr","amphi_m_gr","chla_gr","mysid_gr","clad_gr","rotif_m_gr","estfish_bsmt_gr"),
+                      to_name=c("pcope","hcope","amphi_m","chla","mysid","clad",
+                                "rotif_m","estfish_bsmt","pcope_gr","hcope_gr",
+                                "amphi_m_gr","chla_gr","mysid_gr","clad_gr",
+                                "rotif_m_gr","estfish_bsmt_gr"),
                       headport="e",
                       tailport="w")
 
@@ -478,7 +486,9 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
                         sig=0.05, digits=2,
                         line_col_positive="#00B0F0",
                         line_col_negative="red",
-                        line_col_notsig="gray60") {
+                        line_col_notsig="gray60",
+                        font_size=16,
+                        arrow_size=0.9) {
   ## model_type must be one of the following:
   ##  "annual","monthly_upper_trophic","monthly_lower_trophic","monthly_zoop"
 
@@ -550,7 +560,8 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
     shape=dplyr::case_when(node_input_df$var_type == "observed" ~ "polygon",
                            node_input_df$var_type == "latent" ~ "ellipse"),
     width=1,
-    fixedsize=FALSE)
+    fixedsize=FALSE,
+    fontsize=font_size)
 
   ## For R2 outside the nodes:
   R2_input_df <- node_input_df %>%
@@ -569,7 +580,8 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
     penwidth=0,
     width=0.4,
     height=0.2,
-    fixedsize=TRUE)
+    fixedsize=TRUE,
+    fontsize=font_size)
   R2_node_df$id <- R2_node_df$id + nrow(node_df)
 
   ## Create edges:
@@ -598,7 +610,8 @@ createGraph <- function(fit, reference_df, model_type, region=NULL,
     color=edge_input_df$color,
     dir=edge_input_df$dir,
     headport=edge_input_df$headport,
-    tailport=edge_input_df$tailport)
+    tailport=edge_input_df$tailport,
+    arrowsize=arrow_size)
 
   ## Create graph:
   graph <- DiagrammeR::create_graph() %>%
