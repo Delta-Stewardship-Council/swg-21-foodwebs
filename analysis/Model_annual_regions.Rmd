@@ -633,7 +633,7 @@ ggsave('./fig_output/sem_annual.png', combined_figure, width=8, height=7, dpi=30
 #detrended
 plot_grobs <- map(list(sem_annual_noregions_dtr, figNdt, figWdt, figSdt),
                   ~convert_html_to_grob(.x, 2000))
-combined_figure_dtr <- ggarrange(plotlist=plot_grobs, labels="auto", 
+combined_figure_dtr <- ggarrange(plotlist=plot_grobs, labels=c("(a)", "(b)", "(c)", "(d)"), 
                              font.label=list(size=9)) %>%
   annotate_figure(top = text_grob("Annual SEMs, Detrended",
                                   color = "black",
