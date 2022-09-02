@@ -36,6 +36,7 @@ library(rsvg)
 library(png)
 library(grid)
 library(ggpubr)
+library(patchwork)
 ```
 
 ### Import data
@@ -693,15 +694,16 @@ ssut=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:
          influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","environmental")),
          variable=factor(variable,levels=c("estuarine\nfishes","predatory\nzooplankton","herbivorous\nzooplankton")),
          sig=ifelse(pvalue<0.05,"*",""))
-ggplot(ssut,aes(x=influence,y=est.std)) +
+uteffects<-ggplot(ssut,aes(x=influence,y=est.std)) +
   facet_grid(variable~region) +
   geom_errorbar(aes(ymin=ci.lower, ymax=ci.upper),width=0.5) +
   geom_point() +
   geom_text(aes(y=ci.upper+0.05, label=sig)) +
   geom_hline(yintercept = 0) +
-  theme_bw() + theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1)) +
+  ggtitle("Monthly regional models: upper trophic level")+
+  theme_bw() + 
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1), plot.title = element_text(hjust = 0.5)) +
   labs(y="total effect (standardized)")
-ggsave("./fig_output/uteffects.png",width = 6,height=5)
 ```
 
 ### Phytoplankton-centered model (lower trophic level aggregates)
@@ -870,7 +872,7 @@ monthly_theme <- theme(plot.margin=unit(c(0,0.1,0.5,0), "lines"))
 upper_ggplots <- lapply(upper_grobs, ggarrange)
 upper_ggplots[[1]] <- upper_ggplots[[1]] + monthly_theme
 upper_ggplots[[2]] <- upper_ggplots[[2]] + monthly_theme
-upper_figure_1 <- ggarrange(plotlist=upper_ggplots, labels=c("a","b","c","d"),
+upper_figure_1 <- ggarrange(plotlist=upper_ggplots, labels=c("(a)","(b)","(c)","(d)"),
                             font.label=list(size=11)) %>%
   annotate_figure(top = text_grob("Monthly regional models: upper trophic level",
                                   color = "black",
@@ -881,7 +883,7 @@ upper_figure_1 <- ggarrange(plotlist=upper_ggplots, labels=c("a","b","c","d"),
 lower_ggplots <- lapply(lower_grobs, ggarrange)
 lower_ggplots[[1]] <- lower_ggplots[[1]] + monthly_theme
 lower_ggplots[[2]] <- lower_ggplots[[2]] + monthly_theme
-lower_figure_1 <- ggarrange(plotlist=lower_ggplots, labels=c("e","f","g","h"),
+lower_figure_1 <- ggarrange(plotlist=lower_ggplots, labels=c("(e)","(f)","(g)","(h)"),
                             font.label=list(size=11)) %>%
   annotate_figure(top = text_grob("Monthly regional models: lower trophic level",
                                   color = "black",
@@ -915,15 +917,19 @@ sslt=rbind(ssFW,ssW,ssN,ssS) %>% filter(op==":=") %>% select(region,lhs,est.std:
          influence=factor(influence, levels=c("self-regulation","bottom-up","top-down","environmental","nutrient cycling")),
          variable=factor(variable,levels=c("clams","phytoplankton","DIN")),
          sig=ifelse(pvalue<0.05,"*",""))
-ggplot(sslt,aes(x=influence,y=est.std)) +
+lteffects<-ggplot(sslt,aes(x=influence,y=est.std)) +
   facet_grid(variable~region) +
   geom_errorbar(aes(ymin=ci.lower, ymax=ci.upper),width=0.5) +
   geom_point() +
   geom_text(aes(y=ci.upper+0.05, label=sig)) +
   geom_hline(yintercept = 0) +
-  theme_bw() + theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1)) +
+  ggtitle("Monthly regional models: lower trophic level")+
+  theme_bw() + 
+  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1), plot.title = element_text(hjust = 0.5)) +
   labs(y="total effect (standardized)")
-ggsave("./fig_output/lteffects.png",width = 6,height=5)
+
+teffects<-uteffects/lteffects + plot_annotation(tag_levels="a", tag_prefix="(", tag_suffix=")")
+ggsave(plot=teffects, filename="./fig_output/teffects.png",width = 6,height=10)
 ```
 
 ### Zooplankton-centered model (individual groups)
@@ -1060,7 +1066,7 @@ zoop_grobs <-  map(list(zoop_plot_far_west,
                         zoop_plot_north,
                         zoop_plot_west,
                         zoop_plot_south), ~convert_html_to_grob(.x, 2000))
-zoop_figure <- ggarrange(plotlist=zoop_grobs, labels="auto",
+zoop_figure <- ggarrange(plotlist=zoop_grobs, labels=c("(a)", "(b)", "(c)", "(d)"),
                          font.label=list(size=11)) %>%
   annotate_figure(top = text_grob("Monthly Regional Models (zooplankton groups)",
                                   color = "black",

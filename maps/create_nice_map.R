@@ -236,7 +236,7 @@ monthly_map <- cowplot::ggdraw(monthlyRegionalMap)
   # cowplot::draw_plot(arrowPlot, x=0.08, y=0.67, width=0.25, height=0.25)
 
 
-both_maps <- cowplot::plot_grid(annual_map, monthly_map, nrow=2)
+both_maps <- cowplot::plot_grid(annual_map, monthly_map, nrow=2, labels=c("(a)", "(b)"))
 both_maps
 
 

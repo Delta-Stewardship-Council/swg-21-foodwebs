@@ -620,7 +620,7 @@ load('./fig_output/sem_annual_noregions.RData')
 
 plot_grobs <- map(list(sem_annual_noregions, figN, figW, figS),
                   ~convert_html_to_grob(.x, 2000))
-combined_figure <- ggarrange(plotlist=plot_grobs, labels="auto", 
+combined_figure <- ggarrange(plotlist=plot_grobs, labels=c("(a)", "(b)", "(c)", "(d)"), 
                              font.label=list(size=9)) %>%
   annotate_figure(top = text_grob("Annual SEMs",
                                   color = "black",
