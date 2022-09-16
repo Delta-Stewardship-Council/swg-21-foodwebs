@@ -4,11 +4,10 @@ author: "Peter Dudley"
 date: "4/29/2022"
 output: html_document
 editor_options: 
-  chunk_output_type: console
   
+  chunk_output_type: console
 knit: (function(input, ...) {
     
-   
     rmarkdown::render(
       input,
       output_dir = 'docs',
