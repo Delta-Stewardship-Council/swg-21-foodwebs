@@ -6,7 +6,7 @@ Flow,flow,flow,Flow,yes,#4472C4,year-round - mean Delta outflow (water leaving t
 Secchi,secchi,secchi,Secchi,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Ammonia,ammonia,ammonia,DissAmmonia,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Phytoplankton,chla,phytoplankton,Chlorophyll,yes,#70AD47,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
-Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
+Nitrate and Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Dissolved Inorganic Nitrogen,din,DIN,DIN,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Temperature,temp,temperature,Temperature,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
@@ -34,12 +34,12 @@ Marine fishes BSMT,marfish_bsmt,BSMT\nmarine fishes,BayStudy_MidwaterTrawl_fish_
 Delta smelt BSMT,smelt_bsmt,BSMT\ndelta smelt,BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,year-round - midwater trawl - biomass
 Striped bass BSMT,sbass_bsmt,BSMT\nstriped bass,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,year-round - midwater trawl - biomass of age 0 individuals
 Longfin smelt BSMT,lfin_bsmt,BSMT\nlongfin smelt,BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,year-round - midwater trawl - biomass
-Estuarine fishes BSOT,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,year-round - ottor trawl - biomass of estuarine pelagic forage fishes
-Marine fishes BSOT,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,year-round - ottor trawl - biomass
-Delta smelt BSOT,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,year-round - ottor trawl - biomass
-Striped bass BSOT,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,year-round - ottor trawl - biomass of age 0 individuals
-Longfin smelt BSOT,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,year-round - ottor trawl - biomass
-Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes,#333F50,from the Delta juvenile fish monitoring program - year-round - beach seines - biomass
-Centrarchids,cent,Centrarchids,DJFMP_fish_biomass_Centrarchids,yes,#333F50,from the Delta juvenile fish monitoring program - year-round - beach seines - biomass
+Estuarine fishes BSOT,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,year-round - otter trawl - biomass of estuarine pelagic forage fishes
+Marine fishes BSOT,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,year-round - otter trawl - biomass
+Delta smelt BSOT,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,year-round - otter trawl - biomass
+Striped bass BSOT,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,year-round - otter trawl - biomass of age 0 individuals
+Longfin smelt BSOT,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,year-round - otter trawl - biomass
+Mississippi silverside DJFMP,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes,#333F50,year-round - beach seines - biomass
+Centrarchids DJFMP,cent,Centrarchids,DJFMP_fish_biomass_Centrarchids,yes,#333F50,year-round - beach seines - biomass
 Striped bass age 1+ BSMT,sbass1_bsmt,striped bass\nage 1+,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age1above,yes,#333F50,year-round - midwater trawl - biomass of age 1+ individuals
-Striped bass age 1+ BSOT,sbass1_bsot,BSOT striped bass\nage 1+,BayStudy_OtterTrawl_fish_biomass_StripedBass_age1above,yes,#333F50,year-round - ottor trawl - biomass of age 1+ individuals
+Striped bass age 1+ BSOT,sbass1_bsot,BSOT striped bass\nage 1+,BayStudy_OtterTrawl_fish_biomass_StripedBass_age1above,yes,#333F50,year-round - otter trawl - biomass of age 1+ individuals

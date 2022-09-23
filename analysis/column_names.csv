@@ -4,7 +4,7 @@ Flow,flow,flow,Mean_outflow_WY,yes,#4472C4,year-round - mean Delta outflow (wate
 Secchi,secchi,secchi,Secchi,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Ammonia,ammonia,ammonia,DissAmmonia,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Phytoplankton,chla,phytoplankton,Chlorophyll,yes,#70AD47,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
-Nitrate Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
+Nitrate and Nitrite,nitrate,nitrate\nnitrite,DissNitrateNitrite,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Dissolved Orthophos,dophos,total\nphosphorous,DissOrthophos,yes,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Temperature,temp,temperature,Temperature,no,#4472C4,from the Discrete Environmental Monitoring Program (EMP) at DWR - year-round
 Potamocorbula,potam,Potamocorbula\nclams,Potamocorbula_cpue,no,#A5A5A5,from the Environmental Monitoring Program (EMP) Benthic Survey at DWR - year-round
@@ -26,24 +26,24 @@ Predatory copepods energy,pcope_e,predatory copepods energy,Predatory_Copepods_J
 Rotifers mass,rotif_m,rotifers mass,Rotifers_BPUE,yes,#F446A1,from 5 different sources - year-round - see Bashevkin et al. 2022
 Rotifers catch,rotif_c,rotifers catch,Rotifers_CPUE,yes,#F446A1,from 5 different sources - year-round - see Bashevkin et al. 2022
 Rotifers energy,rotif_e,rotifers energy,Rotifers_JPUE,yes,#F446A1,from 5 different sources - year-round - see Bashevkin et al. 2022
-Estuarine fishes,estfish,FMWT\nestuarine fishes,FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,fall (September - December) - midwater trawl - biomass of estuarine pelagic forage fishes
-Marine fishes,marfish,FMWT\nmarine fishes,FMWT_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,fall (September - December) - midwater trawl - biomass
-Delta smelt,smelt,delta\nsmelt,FMWT_fish_biomass_DeltaSmelt,yes,#333F50,fall (September - December) - midwater trawl - biomass
-Striped bass,sbass,striped\nbass,FMWT_fish_biomass_StripedBass_age0,yes,#333F50,fall (September - December) - midwater trawl - biomass of age 0 individuals
-Longfin smelt,lfin,longfin\nsmelt,FMWT_fish_biomass_LongfinSmelt,yes,#333F50,fall (September - December) - midwater trawl - biomass
-Estuarine fishes bay study midwater trawl,estfish_bsmt,BSMT\nestuarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,year-round - midwater trawl - biomass of estuarine pelagic forage fishes
-Marine fishes bay study midwater trawl,marfish_bsmt,BSMT\nmarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,year-round - midwater trawl - biomass
-Delta smelt bay study midwater trawl,smelt_bsmt,BSMT\ndelta smelt,BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,year-round - midwater trawl - biomass
-Striped bass bay study midwater trawl,sbass_bsmt,BSMT\nstriped bass,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,year-round - midwater trawl - biomass of age 0 individuals
-Longfin smelt bay study midwater trawl,lfin_bsmt,BSMT\nlongfin smelt,BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,year-round - midwater trawl - biomass
-Estuarine fishes bay study otter trawl,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,year-round - ottor trawl - biomass of estuarine pelagic forage fishes
-Marine fishes bay study otter trawl,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,year-round - ottor trawl - biomass
-Delta smelt bay study otter trawl,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,year-round - ottor trawl - biomass
-Striped bass bay study otter trawl,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,year-round - ottor trawl - biomass of age 0 individuals
-Longfin smelt bay study otter trawl,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,year-round - ottor trawl - biomass
-Mississippi silverside,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes,#333F50,from the Delta juvenile fish monitoring program - year-round - beach seines - biomass
-Estuarine fishes summer townet,estfish_stn,STN\nestuarine fishes,STN_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,summer (June ? August) - townet - biomass of estuarine pelagic forage fishes
-Marine fishes summer townet,marfish_stn,STN\nmarine fishes,STN_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,summer (June ? August) - townet - biomass
-Delta smelt summer townet,smelt_stn,STN\ndelta smelt,STN_fish_biomass_DeltaSmelt,yes,#333F50,summer (June ? August) - townet - biomass
-Striped bass summer townet,sbass_stn,STN\nstriped bass,STN_fish_biomass_StripedBass_age0,yes,#333F50,summer (June ? August) - townet - biomass of age 0 individuals
-Longfin smelt summer townet,lfin_stn,STN\nlongfin smelt,STN_fish_biomass_LongfinSmelt,yes,#333F50,summer (June ? August) - townet - biomass
+Estuarine fishes FMWT,estfish,FMWT\nestuarine fishes,FMWT_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,fall (September - December) - midwater trawl - biomass of estuarine pelagic forage fishes
+Marine fishes FMWT,marfish,FMWT\nmarine fishes,FMWT_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,fall (September - December) - midwater trawl - biomass
+Delta smelt FMWT,smelt,delta\nsmelt,FMWT_fish_biomass_DeltaSmelt,yes,#333F50,fall (September - December) - midwater trawl - biomass
+Striped bass FMWT,sbass,striped\nbass,FMWT_fish_biomass_StripedBass_age0,yes,#333F50,fall (September - December) - midwater trawl - biomass of age 0 individuals
+Longfin smelt FMWT,lfin,longfin\nsmelt,FMWT_fish_biomass_LongfinSmelt,yes,#333F50,fall (September - December) - midwater trawl - biomass
+Estuarine fishes BSMT,estfish_bsmt,BSMT\nestuarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,year-round - midwater trawl - biomass of estuarine pelagic forage fishes
+Marine fishes BSMT,marfish_bsmt,BSMT\nmarine fishes,BayStudy_MidwaterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,year-round - midwater trawl - biomass
+Delta smelt BSMT,smelt_bsmt,BSMT\ndelta smelt,BayStudy_MidwaterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,year-round - midwater trawl - biomass
+Striped bass BSMT,sbass_bsmt,BSMT\nstriped bass,BayStudy_MidwaterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,year-round - midwater trawl - biomass of age 0 individuals
+Longfin smelt BSMT,lfin_bsmt,BSMT\nlongfin smelt,BayStudy_MidwaterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,year-round - midwater trawl - biomass
+Estuarine fishes BSOT,estfish_bsot,BSOT\nestuarine fishes,BayStudy_OtterTrawl_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,year-round - otter trawl - biomass of estuarine pelagic forage fishes
+Marine fishes BSOT,marfish_bsot,BSOT\nmarine fishes,BayStudy_OtterTrawl_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,year-round - otter trawl - biomass
+Delta smelt BSOT,smelt_bsot,BSOT\ndelta smelt,BayStudy_OtterTrawl_fish_biomass_DeltaSmelt,yes,#333F50,year-round - otter trawl - biomass
+Striped bass BSOT,sbass_bsot,BSOT\nstriped bass,BayStudy_OtterTrawl_fish_biomass_StripedBass_age0,yes,#333F50,year-round - otter trawl - biomass of age 0 individuals
+Longfin smelt BSOT,lfin_bsot,BSOT\nlongfin smelt,BayStudy_OtterTrawl_fish_biomass_LongfinSmelt,yes,#333F50,year-round - otter trawl - biomass
+Mississippi silverside DJFMP,sside,Mississippi\nsilverside,DJFMP_fish_biomass_Silverside,yes,#333F50,year-round - beach seines - biomass
+Estuarine fishes STN,estfish_stn,STN\nestuarine fishes,STN_fish_biomass_Estuarine_pelagic_forage_fishes,yes,#FF0000,summer (June - August) - townet - biomass of estuarine pelagic forage fishes
+Marine fishes STN,marfish_stn,STN\nmarine fishes,STN_fish_biomass_Marine_pelagic_forage_fishes,yes,#333F50,summer (June - August) - townet - biomass
+Delta smelt STN,smelt_stn,STN\ndelta smelt,STN_fish_biomass_DeltaSmelt,yes,#333F50,summer (June - August) - townet - biomass
+Striped bass STN,sbass_stn,STN\nstriped bass,STN_fish_biomass_StripedBass_age0,yes,#333F50,summer (June - August) - townet - biomass of age 0 individuals
+Longfin smelt STN,lfin_stn,STN\nlongfin smelt,STN_fish_biomass_LongfinSmelt,yes,#333F50,summer (June - August) - townet - biomass

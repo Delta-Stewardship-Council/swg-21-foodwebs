@@ -35,7 +35,8 @@ full_table = month_defs %>%
   full_join(year_defs, by = c("Variable", "Definition"))
 
 col_order = c("Variable", "Months_missing", "Years_missing", "Definition")
-full_table_ordered = full_table[, col_order]
+full_table_ordered = full_table[, col_order]%>%
+  arrange(Variable)
 
 # Do a little formating of the table
 knitr::kable(full_table_ordered, col.names = c("Variable",
