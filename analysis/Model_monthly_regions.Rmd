@@ -103,7 +103,6 @@ cnamesgr=cnames
 cnamesgr$Shortname=paste0(cnamesgr$Shortname,"_gr")
 cnamesgr$Diagramname=paste(cnamesgr$Diagramname,"(gr)")
 cnameslag=rbind(cnameslag,cnamesgr)
-source("analysis/myLavaanPlot.r")
 source("analysis/semDiagramFunctions.r")
 ```
 

@@ -78,7 +78,6 @@ cnames=rbind(cnames,data.frame(Longname=NA,Shortname=c("tzoop","tzoop_e",
 #focal variables
 varnames=c("temp","flow","turbid","chla","hzoop","pzoop","potam","corbic","estfish","estfish_bsmt","estfish_stn")
 
-source("analysis/myLavaanPlot.r")
 source("analysis/semDiagramFunctions.r")
 ```
 
