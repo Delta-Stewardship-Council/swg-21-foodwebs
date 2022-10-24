@@ -12,6 +12,9 @@ The project uses structural equation modeling and four decades of integrated dat
 to investigate the relative effects of different drivers of the pelagic food web in the 
 San Francisco Estuary. 
 
+The following diagram outlines the general project workflow. 
+<img src="project_flowchart.png" />
+
 Project files are organized according to the following folder structure:
 * data: scripts for accessing, processing, and saving data prior to model fitting
 *	maps: script for creating a map of sampling stations in the San Francisco Estuary
@@ -21,6 +24,4 @@ Project files are organized according to the following folder structure:
 intermediate and final analysis results
 *	functions, lib: utility scripts and libraries
 
-The following diagram outlines the general project workflow. 
-<img src="project_flowchart.png" />
 
