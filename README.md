@@ -22,5 +22,5 @@ intermediate and final analysis results
 *	functions, lib: utility scripts and libraries
 
 The following diagram outlines the general project workflow. 
-<img src='project_flowchart.png" />
+<img src="project_flowchart.png" />
 
