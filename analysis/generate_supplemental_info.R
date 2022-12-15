@@ -52,7 +52,7 @@ annual_coefficients_tbl <- flextable::flextable(annual_coefficients) %>%
   width(j="op", width=0.43) %>%
   width(j="Predictor", width=0.9) %>%
   padding(padding=0, part="all") %>%
-  set_caption(caption="Table S3. Path coefficients for annual and annual-regional SEMS.")
+  set_caption(caption="Table S3. Path coefficients for annual and annual-regional SEMS. The 'op' column defines the operation between the predictor and response where ~ refers to regression, ~~ refers to covariances, and ~= refers to latent variable manifestations. Covariances between exogenous variables do not have standard errors or p-values.")
 
 monthly_coefficients_tbl <- flextable::flextable(monthly_coefficients) %>%
   font(fontname="Calibri", part="all") %>%
@@ -63,7 +63,7 @@ monthly_coefficients_tbl <- flextable::flextable(monthly_coefficients) %>%
   width(j="op", width=0.43) %>%
   width(j="Predictor", width=1.17) %>%
   padding(padding=0, part="all") %>%
-  set_caption(caption="Table S4. Path coefficients for monthly-regional SEMS.")
+  set_caption(caption="Table S4. Path coefficients for monthly-regional SEMS. The 'op' column defines the operation between the predictor and response where ~ refers to regression, ~~ refers to covariances, and ~= refers to latent variable manifestations. Covariances between exogenous variables do not have standard errors or p-values.")
 
 supp_doc <- read_docx(path=file.path("fig_output","SI_template.docx"))%>%
   body_add_par(value = "Evaluating top-down, bottom-up, and environmental drivers of pelagic food web dynamics along an estuarine gradient", style = "heading 1") %>%
