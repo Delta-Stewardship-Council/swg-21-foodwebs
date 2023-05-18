@@ -27,6 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## [STN Fish Sampling](fish_STN.html)
 ## [Spatial extent of surveys](Survey_extents.html)
 ## [Compiled annual data](annual_data_compiler.html)
+## [Salinity model exploration](Salinity_model_exploration.html)
 
 # Models
 

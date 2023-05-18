@@ -1,0 +1,113 @@
+---
+title: "Salinity model exploration"
+author: "Sam Bashevkin"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+editor_options: 
+  chunk_output_type: console
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = 'docs',
+      knit_root_dir = "../",
+      envir = globalenv()
+    )
+    })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE}
+library(dplyr)
+library(zooper)
+library(lubridate)
+library(ggplot2)
+source("functions/region_assigner.R") #loads function to analyze regional data
+```
+
+# Zooplankton
+
+## Data
+
+```{r}
+zoop_sal<-zooper::zoopEnvComb%>%
+  filter(!is.na(SalSurf) & Source=="EMP" & year(Date)>=1980)%>%
+  mutate(salbin=case_when(SalSurf<1 ~ "< 1 PPT",
+                          SalSurf>1 & SalSurf <6 ~ "1-6 PPT",
+                          SalSurf >6 ~ ">6 PPT"),
+         Month=month(Date),
+         Year=year(Date),
+         salbin=factor(salbin, levels=c("< 1 PPT", "1-6 PPT", ">6 PPT")))%>%
+  group_by(Month, Year, salbin)%>%
+  summarise(N_stations=n_distinct(Station), .groups="drop")
+
+zoop_geo<-zooper::zoopEnvComb%>%
+  filter(!is.na(Latitude) & Source=="EMP" & year(Date)>=1980)%>%
+  region_assigner(analysis = "annual", plot = FALSE)%>%
+  mutate(Month=month(Date),
+         Year=year(Date),
+         Region=case_match(Region, "West" ~ "Suisun", "North" ~ "Sacramento", "South" ~ "San Joaquin"),
+         Region=factor(Region, levels=c("Suisun", "Sacramento", "San Joaquin")))%>%
+  group_by(Month, Year, Region)%>%
+  summarise(N_stations=n_distinct(Station), .groups="drop")
+```
+
+## Sampling effort plots all dates {.tabset .tabset-pills}
+
+
+### Salinity {.tabset .tabset-pills}
+```{r, fig.width=10, fig.height=8}
+ggplot(zoop_sal, aes(y=Month, x=Year, fill=N_stations))+
+  geom_tile()+
+  scale_y_continuous(breaks=1:12)+
+  scale_fill_viridis_c()+
+  facet_wrap(~salbin)+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+### Geography {.tabset .tabset-pills}
+```{r, fig.width=10, fig.height=8}
+ggplot(zoop_geo, aes(y=Month, x=Year, fill=N_stations))+
+  geom_tile()+
+  scale_y_continuous(breaks=1:12)+
+  scale_fill_viridis_c()+
+  facet_wrap(~Region)+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+## Sampling effort plots 1995 - present {.tabset .tabset-pills}
+
+
+### Salinity {.tabset .tabset-pills}
+```{r, fig.width=10, fig.height=8}
+ggplot(filter(zoop_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
+  geom_tile()+
+  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
+  scale_color_manual(values=c("black", "white"))+
+  scale_y_continuous(breaks=1:12)+
+  scale_fill_viridis_c()+
+  facet_wrap(~salbin)+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+### Geography {.tabset .tabset-pills}
+```{r, fig.width=10, fig.height=8}
+ggplot(filter(zoop_geo, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
+  geom_tile()+
+  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
+  scale_color_manual(values=c("black", "white"))+
+  scale_y_continuous(breaks=1:12)+
+  scale_fill_viridis_c()+
+  facet_wrap(~Region)+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
