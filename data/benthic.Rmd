@@ -87,7 +87,46 @@ ben <- read.csv("data_raw/DWR Benthic raw count data 1975-2020.csv")  %>%
   group_by(across(-c(Count, Grab, CPUE, BPUE)))%>%
   summarise(across(c(CPUE, BPUE), mean), .groups="drop")%>%
   mutate(Latitude=if_else(StationCode=="D7-C", 38.1171292, Latitude),
-         Longitude=if_else(StationCode=="D7-C", -122.0395539, Longitude))
+         Longitude=if_else(StationCode=="D7-C", -122.0395539, Longitude)) %>%
+  separate(SampleDate,into = c('Date','Time'), sep = 'T', convert = TRUE, remove = FALSE) %>%
+  separate(StationCode, into = c('Station',NA), sep = '-', remove = FALSE)
+
+ben$Year <- as.character(ben$Year)
+ben$Month <- sprintf('%02d', ben$Month)
+ben$Month <- as.character(ben$Month)
+ben$Date <- ymd(ben$Date)
+```
+
+
+Add specific conductance (salinity) data
+
+Wasn't regularly collected over our timespan, so using closest EMP discrete water quality stations in date/station.
+
+
+```{r}
+# read in WQ data
+df_wq <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.9&entityid=cf231071093ac2861893793517db26f3') %>%
+  select(Date, Station, SpCndSurface) %>%
+  separate(Date, into = c('Year','Month',NA), sep = '-', remove = FALSE) %>%
+  drop_na() %>%
+  distinct()
+
+# join two dataframes; if multiple WQ entries for a month, choose closest one
+ben <- ben %>%
+  left_join(df_wq, by = c('Year', 'Month', 'Station')) %>%
+  mutate(date_diff = abs(Date.x - Date.y),
+         date_same_diff = (Date.x - Date.y)) %>%
+  group_by_at(vars(-date_diff,-date_same_diff,-SpCndSurface,-Date.y)) %>%
+  filter((date_diff == min(date_diff)) %>% replace_na(TRUE)) %>%
+  ungroup()
+
+# if multiple WQ entries are the same number of days apart, choose the one that is after the sampling event
+ben <- ben %>%
+  group_by_at(vars(-date_diff,-date_same_diff,-SpCndSurface,-Date.y)) %>%
+  filter((date_same_diff == min(date_same_diff)) %>% replace_na(TRUE)) %>%
+  ungroup() %>%
+  select(c(-date_diff,-date_same_diff,-Date.y)) %>%
+  rename(Date = Date.x)
 ```
 
 
@@ -315,6 +354,23 @@ write.csv(ST_clams_mon, "data/monthly_averages/clams_monthly_regions.csv",
           row.names=FALSE)
 ```
 
+```{r}
+# save w/ salinity and stations
+ST_clams_mon_sal <- ben_ST %>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
+  group_by(Region, Genus, Year, Month,StationCode, Latitude, Longitude) %>%
+  summarize(CPUE_Total = mean(CPUE), SpCndSurface_Avg = mean(SpCndSurface, na.rm = TRUE),.groups = "drop") %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+ST_clams_mon_sal <- ST_clams_mon_sal %>%
+  mutate(Salinity = wql::ec2pss(.data$SpCndSurface_Avg / 1000, t = 25)) # equation taken from discretewq package
+
+write.csv(ST_clams_mon_sal, "data/monthly_averages/clams_monthly_regions_salinity.csv",
+          row.names=FALSE)
+```
+
 
 ## Amphipod monthly CPUE
 
@@ -326,13 +382,31 @@ ST_amph_mon <- ben_ST%>%
   filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Crangonyx", "Gammarus",
                       "Hyalella"))%>%
   group_by(Region, Order_level, Year, Month)%>%
-  summarize(across(c(CPUE, BPUE),  mean), .groups = "drop") %>% 
+  summarize(CPUE = mean(CPUE), BPUE = mean(BPUE), .groups = "drop") %>% 
   pivot_wider(names_from = Order_level, values_from = c(CPUE, BPUE),
     names_glue = "{Order_level}_{.value}")
 
 write.csv(ST_amph_mon, "data/monthly_averages/amphipod_monthly_regions.csv",
           row.names=FALSE)
 ```
+
+```{r}
+# save w/ salinity and stations
+ST_amph_mon_sal <- ben_ST%>%
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Crangonyx", "Gammarus",
+                      "Hyalella"))%>%
+  group_by(Region, Order_level, Year, Month, StationCode, Latitude, Longitude)%>%
+  summarize(CPUE = mean(CPUE), BPUE = mean(BPUE), SpCndSurface_Avg = mean(SpCndSurface, na.rm = TRUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = c(CPUE, BPUE),
+    names_glue = "{Order_level}_{.value}")
+
+ST_amph_mon_sal <- ST_amph_mon_sal %>%
+  mutate(Salinity = wql::ec2pss(.data$SpCndSurface_Avg / 1000, t = 25)) # equation taken from discretewq package
+
+write.csv(ST_amph_mon_sal, "data/monthly_averages/amphipod_monthly_regions_salinity.csv",
+          row.names=FALSE)
+```
+
 
 Export monthly station list
 
