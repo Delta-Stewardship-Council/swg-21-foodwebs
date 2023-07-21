@@ -439,7 +439,7 @@ save(fd, fd_dtr, file = "./fig_output/data_annual_noregions.Rdata")
 
 *Save model coefficients for manuscript table*
 ```{r}
-coeftable_we<-coef_tabler(modfit1, modfit1_dtr, name="")
+coeftable_we<-coef_tabler(modfit1, name="")
 
 save(coeftable_we, file = "./fig_output/coeftable_we.Rdata")
 ```

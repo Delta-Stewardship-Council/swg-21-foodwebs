@@ -24,4 +24,10 @@ Project files are organized according to the following folder structure:
 intermediate and final analysis results
 *	functions, lib: utility scripts and libraries
 
+## Model coefficients
+
+Spreadsheets of model coefficients can be found in the following files:
+
+* [Annual model coefficients](fig_output/annual coefficients.csv)
+* [Monthly model coefficients](fig_output/monthly coefficients.csv)
 

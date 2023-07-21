@@ -654,8 +654,7 @@ ggsave('./fig_output/sem_annual_detrend.png', combined_figure_dtr, width=8, heig
 load("./fig_output/coeftable_we.Rdata")
 bind_rows(
   coeftable_we,
-  coef_tabler(modfitwest, modfitnorth, modfitsouth, name="Original"),
-  coef_tabler(modfitwest_dtr, modfitnorth_dtr, modfitsouth_dtr, name="Detrended"))%>%
+  coef_tabler(modfitwest, modfitnorth, modfitsouth, name="Original"))%>%
   arrange(Model, Region)%>%
   write.csv("fig_output/annual coefficients.csv", row.names = FALSE)
 ```
