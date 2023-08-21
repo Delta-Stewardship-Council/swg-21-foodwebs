@@ -1002,7 +1002,13 @@ labelswest=createLabels(modfitW, cnameslag)
 labelsnorth=createLabels(modfitN, cnameslag)
 labelssouth=createLabels(modfitS, cnameslag)
 #Extract model coefficients for table
-coef_table<-bind_rows(coef_table, coef_tabler(modfitFW, modfitW, modfitN, modfitS, name="Individual zooplankton groups"))
+coef_table<-bind_rows(coef_table, coef_tabler(modfitFW, modfitW, modfitN, modfitS, name="Individual zooplankton groups"))%>%
+  mutate(Model=case_when(
+    Model == "Individual zooplankton groups" ~ "Zooplankton",
+    Model == "Lower trophic level aggregates" ~ "Lower trophic",
+    Model == "Upper trophic level aggregates" ~ "Upper trophic"),
+    across(c(Response, Predictor),
+           ~recode(.x, amphi_m="amphi", amphi_m_1="amphi_1", rotif_m="rotif", rotif_m_1="rotif_1")))
 write.csv(coef_table, "fig_output/monthly coefficients.csv", row.names = FALSE)
 #FAR WEST
 # myLavaanPlot(model=modfitFW, labels=labelsfarwest,

@@ -10,13 +10,13 @@ output:
 editor_options: 
   chunk_output_type: console
 knit: (function(input, ...) {
-    )
-    })
     rmarkdown::render(
       input,
       output_dir = 'docs',
       knit_root_dir = "../",
       envir = globalenv()
+      )
+    })
 ---
 
 ```{r setup, include=FALSE}
@@ -28,6 +28,7 @@ library(dplyr)
 library(zooper)
 library(lubridate)
 library(ggplot2)
+library(readr)
 source("functions/region_assigner.R") #loads function to analyze regional data
 ```
 

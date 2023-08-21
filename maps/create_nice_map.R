@@ -83,41 +83,27 @@ baseMap <- ggplot() +
 
 
 ## Feature labels:
-cities_lab_df <- as.data.frame(do.call("rbind",
-	list(c(-122.448605, 37.775, "San\nFrancisco"),
-			 c(-121.75, 38.204, "Rio\nVista"),
-			 c(-121.735, 37.955, "Jersey\nPoint"),
-			 c(-121.911947, 37.955, "Chipps\nIsland")
+feature_lab_df <- as.data.frame(do.call("rbind",
+	list(c(-122.59, 37.812614, "Pacific\nOcean"),
+	     c(-122.448605, 37.775, "San\nFrancisco"),
+			 c(-122.381544, 37.869070, "San\nFrancisco\nBay"),
+			 c(-122.381544, 38.069, "San Pablo\nBay"),
+			 #c(-122.053572, 37.955, "Suisun\nBay"),
+			 c(-122.018701, 37.975, "Suisun\nBay"),
+			 c(-121.62, 37.80, "Pumping\nfacilities")
 			)))
-names(cities_lab_df) <- c("lon","lat","Name")
-cities_lab <- sf::st_as_sf(cities_lab_df, coords=c("lon","lat"), crs=sf::st_crs(4326)) %>%
+names(feature_lab_df) <- c("lon","lat","Name")
+feature_lab <- sf::st_as_sf(feature_lab_df, coords=c("lon","lat"), crs=sf::st_crs(4326)) %>%
 	sf::st_transform(crs=sf::st_crs(regions_NAD83))
 
-# cities_pts_df <- as.data.frame(do.call("rbind",
-# 	list(#c(-122.25610220918693, 38.103989737465874, "Vallejo"),
-# 			 #c(-121.80872930068863, 38.0051785736139, "Antioch"),
-# 			 #c(-121.29386818891265, 37.95627566997309, "Stockton"),
-# 			 # c(-121.49487475270506, 38.579735889891296, "Sacramento")
-# 	     #c(-122.435766, 37.791754, "San\nFrancisco")
-# 			 #c(-121.702656, 38.170723, "Rio Vista")
-# 			 #c(-121.688565, 38.051695, "Jersey\nPoint"),
-# 			 #c(-121.911947, 38.054960, "Chipps\nIsland")
-# 			)))
-# names(cities_pts_df) <- c("lon","lat","Name")
-# cities_pts <- sf::st_as_sf(cities_pts_df, coords=c("lon","lat"), crs=sf::st_crs(4326)) %>%
-# 	sf::st_transform(crs=sf::st_crs(regions_NAD83))
-
-
-loc_arrow_df <- as.data.frame(do.call("rbind",
-  list(c(-121.911947, 37.98, -121.911947, 38.035551, "Chipps\nIsland"),
-       c(-121.735, 37.98, -121.688565, 38.045, "Jersey\nPoint"),
-       c(-121.75, 38.170723, -121.69, 38.170723, "Rio\nVista")
+feature_arrow_df <- as.data.frame(do.call("rbind",
+  list(c(-122.018701, 38, -122.018701, 38.05, "Suisun Bay")
   )))
-names(loc_arrow_df) <- c("x1","y1","x2","y2","loc")
-loc_arrow_df$x1 <- as.numeric(loc_arrow_df$x1)
-loc_arrow_df$y1 <- as.numeric(loc_arrow_df$y1)
-loc_arrow_df$x2 <- as.numeric(loc_arrow_df$x2)
-loc_arrow_df$y2 <- as.numeric(loc_arrow_df$y2)
+names(feature_arrow_df) <- c("x1","y1","x2","y2","loc")
+feature_arrow_df$x1 <- as.numeric(feature_arrow_df$x1)
+feature_arrow_df$y1 <- as.numeric(feature_arrow_df$y1)
+feature_arrow_df$x2 <- as.numeric(feature_arrow_df$x2)
+feature_arrow_df$y2 <- as.numeric(feature_arrow_df$y2)
 
 
 region_lab_df <- as.data.frame(do.call("rbind",
@@ -158,13 +144,13 @@ arrowPlot <- ggplot() +
 annualRegionalMap <- baseMap +
 	minTheme() +
   geom_segment(aes(x=x1, y=y1, xend=x2, yend=y2),
-               data=loc_arrow_df, size=0.5,
+               data=feature_arrow_df, size=0.5,
                arrow=arrow(angle=30, length=unit(0.07,"inches"), type="closed"),
                arrow.fill="gray50", col="gray50") +
 	geom_sf(data=subset(regions_NAD83, Region == "West"), fill=NA, color="green4") +
 	geom_sf(data=subset(regions_NAD83, Region == "North"), fill=NA, color="violetred1") +
 	geom_sf(data=subset(regions_NAD83, Region == "South"), fill=NA, color="purple") +
-	geom_sf_text(data=cities_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
+	geom_sf_text(data=feature_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
 	geom_sf_text(data=subset(region_lab, Name == "Suisun"), aes(label=Name),
 								color="green4") +
 	geom_sf_text(data=subset(region_lab, Name == "Sacramento"), aes(label=Name),
@@ -202,15 +188,15 @@ annual_map <- cowplot::ggdraw(annualRegionalMap) +
 ## Monthly regional map:
 monthlyRegionalMap <- baseMap +
 	minTheme() +
-  geom_segment(aes(x=x1, y=y1, xend=x2, yend=y2),
-               data=loc_arrow_df, size=0.5,
-               arrow=arrow(angle=30, length=unit(0.07,"inches"), type="closed"),
-               arrow.fill="gray50", col="gray50") +
+  #geom_segment(aes(x=x1, y=y1, xend=x2, yend=y2),
+  #             data=feature_arrow_df, size=0.5,
+  #             arrow=arrow(angle=30, length=unit(0.07,"inches"), type="closed"),
+  #             arrow.fill="gray50", col="gray50") +
 	geom_sf(data=subset(regions_NAD83, Region == "Far West"), fill=NA, color="blue") +
 	geom_sf(data=subset(regions_NAD83, Region == "West"), fill=NA, color="green4") +
 	geom_sf(data=subset(regions_NAD83, Region == "North"), fill=NA, color="violetred1") +
 	geom_sf(data=subset(regions_NAD83, Region == "South"), fill=NA, color="purple") +
-	geom_sf_text(data=cities_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
+	#geom_sf_text(data=feature_lab, aes(label=Name), size=3, col="gray50", lineheight=0.9) +
 	geom_sf_text(data=subset(region_lab, Name == "San\nPablo"), aes(label=Name),
 								color="blue") +
 	geom_sf_text(data=subset(region_lab, Name == "Suisun"), aes(label=Name),
