@@ -83,12 +83,12 @@ ggplot(zoop_geo, aes(y=Month, x=Year, fill=N_stations))+
   theme(legend.position = "bottom")
 ```
 
-## Sampling effort plots 1995 - present {.tabset .tabset-pills}
+## Sampling effort plots 1980 - present {.tabset .tabset-pills}
 
 
 ### Salinity {.tabset .tabset-pills}
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(zoop_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
+ggplot(filter(zoop_sal, Year>=1980), aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
   geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
   scale_color_manual(values=c("black", "white"))+
@@ -101,7 +101,7 @@ ggplot(filter(zoop_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
 
 ### Geography {.tabset .tabset-pills}
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(zoop_geo, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
+ggplot(filter(zoop_geo, Year>=1980), aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
   geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
   scale_color_manual(values=c("black", "white"))+
@@ -163,12 +163,12 @@ ggplot(df_amph_geo, aes(y=Month, x=Year, fill=N_stations))+
   theme(legend.position = "bottom")
 ```
 
-## Sampling effort plots 1995 - present {.tabset .tabset-pills}
+## Sampling effort plots 1980 - present {.tabset .tabset-pills}
 
 
 ### Salinity {.tabset .tabset-pills}
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(df_amph_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
+ggplot(filter(df_amph_sal, Year>=1980), aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
   geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
   scale_color_manual(values=c("black", "white"))+
@@ -181,7 +181,7 @@ ggplot(filter(df_amph_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
 
 ### Geography {.tabset .tabset-pills}
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(df_amph_geo, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
+ggplot(filter(df_amph_geo, Year>=1980), aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
   geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
   scale_color_manual(values=c("black", "white"))+
@@ -244,12 +244,12 @@ ggplot(df_clams_geo, aes(y=Month, x=Year, fill=N_stations))+
   theme(legend.position = "bottom")
 ```
 
-## Sampling effort plots 1995 - present {.tabset .tabset-pills}
+## Sampling effort plots 1980 - present {.tabset .tabset-pills}
 
 
 ### Salinity {.tabset .tabset-pills}
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(df_clams_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
+ggplot(filter(df_clams_sal, Year>=1980), aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
   geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
   scale_color_manual(values=c("black", "white"))+
@@ -262,7 +262,7 @@ ggplot(filter(df_clams_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
 
 ### Geography {.tabset .tabset-pills}
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(df_clams_geo, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
+ggplot(filter(df_clams_geo, Year>=1980), aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
   geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
   scale_color_manual(values=c("black", "white"))+
