@@ -73,7 +73,7 @@ Benthic file does not exist locally so can get it from KMB: https://knb.ecoinfor
 * Take mean of lat/ long for each site since some sites moved slightly over the years based on the L, R, C
 
 ```{r}
-ben <- read.csv("data_raw/DWR Benthic raw count data 1975-2020.csv")  %>% 
+ben <- read.csv("data_raw/DWR Benthic raw count data 1975-2020.csv") %>% 
   filter(Genus %in% c("Potamocorbula", "Corbicula", "Ampelisca", 
                       "Monocorophium", "Sinocorophium", "Americorophium", 
                       "Crangonyx", "Gammarus", "Hyalella"))%>%
@@ -96,39 +96,6 @@ ben$Month <- sprintf('%02d', ben$Month)
 ben$Month <- as.character(ben$Month)
 ben$Date <- ymd(ben$Date)
 ```
-
-
-Add specific conductance (salinity) data
-
-Wasn't regularly collected over our timespan, so using closest EMP discrete water quality stations in date/station.
-
-
-```{r}
-# read in WQ data
-df_wq <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.9&entityid=cf231071093ac2861893793517db26f3') %>%
-  select(Date, Station, SpCndSurface) %>%
-  separate(Date, into = c('Year','Month',NA), sep = '-', remove = FALSE) %>%
-  drop_na() %>%
-  distinct()
-
-# join two dataframes; if multiple WQ entries for a month, choose closest one
-ben <- ben %>%
-  left_join(df_wq, by = c('Year', 'Month', 'Station')) %>%
-  mutate(date_diff = abs(Date.x - Date.y),
-         date_same_diff = (Date.x - Date.y)) %>%
-  group_by_at(vars(-date_diff,-date_same_diff,-SpCndSurface,-Date.y)) %>%
-  filter((date_diff == min(date_diff)) %>% replace_na(TRUE)) %>%
-  ungroup()
-
-# if multiple WQ entries are the same number of days apart, choose the one that is after the sampling event
-ben <- ben %>%
-  group_by_at(vars(-date_diff,-date_same_diff,-SpCndSurface,-Date.y)) %>%
-  filter((date_same_diff == min(date_same_diff)) %>% replace_na(TRUE)) %>%
-  ungroup() %>%
-  select(c(-date_diff,-date_same_diff,-Date.y)) %>%
-  rename(Date = Date.x)
-```
-
 
 # Graph which stations were sampled continuously over the time series
 
@@ -246,34 +213,6 @@ ben_LT <- ben %>%
 
 ## Calculate Annual CPUE for Clams
 
-* Uses only the 1980s stations, and both clam genera
-
-
-```{r}
-LT_clams_year_noregions <- ben_LT%>%
-  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>%
-  group_by(Genus, Year) %>%
-  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
-  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
-  rename(Corbicula_cpue = Corbicula,
-         Potamocorbula_cpue = Potamocorbula)
-
-write.csv(LT_clams_year_noregions, "data/annual_averages/clams_annual_noregions.csv",
-          row.names=FALSE)
-
-LT_clams_year_regions <- ben_LT%>%
-  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
-  group_by(Region, Genus, Year) %>%
-  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
-  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
-  rename(Corbicula_cpue = Corbicula,
-         Potamocorbula_cpue = Potamocorbula)
-
-write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv",
-          row.names=FALSE)
-
-```
-
 Export annual station list
 
 ```{r, echo = TRUE, message=FALSE, warning=FALSE}
@@ -288,6 +227,96 @@ ben_LT %>%
             row.names=FALSE)
 ```
 
+Uses only the 1980s stations, and both clam genera
+
+```{r}
+LT_clams_year_noregions <- ben_LT %>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>%
+  group_by(Genus, Year) %>%
+  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(LT_clams_year_noregions, "data/annual_averages/clams_annual_noregions.csv",
+          row.names=FALSE)
+
+LT_clams_year_regions <- ben_LT %>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
+  group_by(Region, Genus, Year) %>%
+  summarize(CPUE_Total = mean(CPUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions.csv",
+          row.names=FALSE)
+
+```
+
+Add specific conductance (salinity) data
+
+Wasn't regularly collected over our timespan, so using closest EMP discrete water quality stations in date/station.
+
+```{r}
+# read in WQ data
+df_wq <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.9&entityid=cf231071093ac2861893793517db26f3') %>%
+  select(Date, Station, SpCndSurface) %>%
+  separate(Date, into = c('Year','Month',NA), sep = '-', remove = FALSE) %>%
+  drop_na() %>%
+  distinct() %>%
+  # distinct(Year,Month,Station, .keep_all = TRUE) %>% # grab first sampling event of the month
+  filter(Year >= 1980)
+
+# join two dataframes; if multiple WQ entries for a month, choose closest one
+ben_LT <- ben_LT %>%
+  filter(Year >= 1980) %>%
+  left_join(df_wq, by = c('Year', 'Month', 'Station'), relationship = 'many-to-many') %>%
+  mutate(date_diff = abs(Date.x - Date.y),
+         date_same_diff = (Date.x - Date.y)) %>%
+  group_by_at(vars(-date_diff,-date_same_diff,-SpCndSurface,-Date.y)) %>%
+  filter((date_diff == min(date_diff)) %>% replace_na(TRUE)) %>%
+  ungroup()
+
+# if multiple WQ entries are the same number of days apart, choose the one that is after the sampling event
+ben_LT <- ben_LT %>%
+  group_by_at(vars(-date_diff,-date_same_diff,-SpCndSurface,-Date.y)) %>%
+  filter((date_same_diff == min(date_same_diff)) %>% replace_na(TRUE)) %>%
+  ungroup() %>%
+  select(c(-date_diff,-date_same_diff,-Date.y)) %>%
+  rename(Date = Date.x)
+
+# map Spc to salinity
+ben_LT <- ben_LT %>%
+  mutate(Salinity = wql::ec2pss(.data$SpCndSurface / 1000, t = 25)) # equation taken from discretewq package
+```
+
+* Uses only the 1980s stations, and both clam genera
+
+```{r}
+LT_clams_year_noregions <- ben_LT %>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>%
+  group_by(Genus, Year, Month, StationCode, Latitude, Longitude) %>%
+  summarize(CPUE_Total = mean(CPUE), Salinity = mean(Salinity, na.rm = TRUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(LT_clams_year_noregions, "data/annual_averages/clams_annual_noregions_salinity.csv",
+          row.names=FALSE)
+
+LT_clams_year_regions <- ben_LT%>%
+  filter(Genus %in% c("Potamocorbula", "Corbicula"))%>% 
+  group_by(Region, Genus, Year, Month, StationCode, Latitude, Longitude) %>%
+  summarize(CPUE_Total = mean(CPUE), Salinity = mean(Salinity, na.rm = TRUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Genus, values_from = CPUE_Total) %>% 
+  rename(Corbicula_cpue = Corbicula,
+         Potamocorbula_cpue = Potamocorbula)
+
+write.csv(LT_clams_year_regions, "data/annual_averages/clams_annual_regions_salinity.csv",
+          row.names=FALSE)
+```
+
 ## Calculate Annual CPUE for Amphipods
 
 * 1980s stations
@@ -298,7 +327,7 @@ ben_LT %>%
 
 
 ```{r}
-LT_amph_year_noregions <- ben_LT%>%
+LT_amph_year_noregions <- ben_LT %>%
   filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Crangonyx", "Gammarus",
                       "Hyalella"))%>%
   group_by(Order_level, Year) %>%
@@ -319,9 +348,33 @@ LT_amph_year_regions <- ben_LT%>%
 
 write.csv(LT_amph_year_regions, "data/annual_averages/amphipod_annual_regions.csv",
           row.names=FALSE)
-
 ```
 
+Save with Salinity and Stations
+```{r}
+# save w/ salinity and stations
+LT_amph_year_regions_sal <- ben_LT %>%
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Crangonyx", "Gammarus",
+                      "Hyalella"))%>%
+  group_by(Region, Order_level, Year, Month, StationCode, Latitude, Longitude)%>%
+  summarize(CPUE = mean(CPUE), BPUE = mean(BPUE), Salinity = mean(Salinity, na.rm = TRUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = c(CPUE, BPUE),
+    names_glue = "{Order_level}_{.value}")
+
+write.csv(LT_amph_year_regions_sal, "data/annual_averages/amphipod_annual_regions_salinity.csv",
+          row.names=FALSE)
+
+LT_amph_year_noregions_sal <- ben_LT %>%
+  filter(Genus %in% c("Ampelisca", "Monocorophium", "Sinocorophium", "Americorophium", "Crangonyx", "Gammarus",
+                      "Hyalella"))%>%
+  group_by(Order_level, Year, Month, StationCode, Latitude, Longitude)%>%
+  summarize(CPUE = mean(CPUE), BPUE = mean(BPUE), Salinity = mean(Salinity, na.rm = TRUE), .groups = "drop") %>% 
+  pivot_wider(names_from = Order_level, values_from = c(CPUE, BPUE),
+    names_glue = "{Order_level}_{.value}")
+
+write.csv(LT_amph_year_noregions_sal, "data/annual_averages/amphipod_annual_noregions_salinity.csv",
+          row.names=FALSE)
+```
 
 ## Monthly CPUE for monthly/ regional analysis
 
