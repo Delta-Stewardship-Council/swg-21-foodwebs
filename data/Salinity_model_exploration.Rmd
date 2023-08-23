@@ -29,6 +29,7 @@ library(zooper)
 library(lubridate)
 library(ggplot2)
 library(readr)
+library(tidyr)
 source("functions/region_assigner.R") #loads function to analyze regional data
 ```
 
@@ -37,7 +38,7 @@ source("functions/region_assigner.R") #loads function to analyze regional data
 ## Data
 
 ```{r}
-zoop_sal<-zooper::zoopEnvComb%>%
+zoop_sal<-zooper::zoopEnvComb %>%
   filter(!is.na(SalSurf) & Source=="EMP" & year(Date)>=1980)%>%
   mutate(salbin=case_when(SalSurf<1 ~ "< 1 PPT",
                           SalSurf>1 & SalSurf <6 ~ "1-6 PPT",
@@ -61,8 +62,8 @@ zoop_geo<-zooper::zoopEnvComb%>%
 
 ## Sampling effort plots all dates {.tabset .tabset-pills}
 
-
 ### Salinity {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
 ggplot(zoop_sal, aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
@@ -74,6 +75,7 @@ ggplot(zoop_sal, aes(y=Month, x=Year, fill=N_stations))+
 ```
 
 ### Geography {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
 ggplot(zoop_geo, aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
@@ -86,8 +88,8 @@ ggplot(zoop_geo, aes(y=Month, x=Year, fill=N_stations))+
 
 ## Sampling effort plots 1995 - present {.tabset .tabset-pills}
 
-
 ### Salinity {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
 ggplot(filter(zoop_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
@@ -101,6 +103,7 @@ ggplot(filter(zoop_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
 ```
 
 ### Geography {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
 ggplot(filter(zoop_geo, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
   geom_tile()+
@@ -113,164 +116,313 @@ ggplot(filter(zoop_geo, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
   theme(legend.position = "bottom")
 ```
 
+# Clean Benthic Data
+
+## Pre-process
+
+```{r}
+# read in amphipod biomass conversion data
+df_amphi_biomass <- read_csv('data/data_in/amphipod_biomass_conversions.csv') %>%
+  select(SpeciesName, Month, Biomass_mean)
+
+# vectors for amphipod and clam genus
+vec_amph <- c('Ampelisca', 'Monocorophium', 'Sinocorophium', 'Americorophium', 'Crangonyx', 'Gammarus', 'Hyalella')
+vec_clam <- c('Potamocorbula', 'Corbicula')
+
+# format raw benthic data
+df_ben_raw <-
+  data.table::fread(
+    'data_raw/DWR Benthic raw count data 1975-2020.csv',
+    colClasses = c('Year' = 'character')
+    ) %>% 
+  filter(Genus %in% c(vec_clam, vec_amph)) %>%
+  select(SampleDate, Year, Month, StationCode, Grab, OrganismCode, Count, Order_level, Genus, Latitude, Longitude) %>%
+  mutate(
+    Month = match(Month, month.name),
+    CPUE = Count/0.052,
+    Year = as.numeric(Year)
+  ) %>%
+
+  # join amphipod biomass and benthic data
+  left_join(df_amphi_biomass, by=c('Genus'= 'SpeciesName', 'Month')) %>%
+  mutate(BPUE = CPUE*Biomass_mean) %>%
+  select(-Biomass_mean) %>%
+
+  # finish cleaning benthic data  
+  mutate(Month = as.character(sprintf('%02d', Month))) %>%
+  group_by(across(-c(Count, Grab, CPUE, BPUE))) %>%
+  summarise(across(c(CPUE, BPUE), mean), .groups='drop') %>%
+  mutate(Latitude = if_else(StationCode == 'D7-C', 38.1171292, Latitude),
+         Longitude = if_else(StationCode == 'D7-C', -122.0395539, Longitude)) %>%
+  separate(SampleDate,into = c('Date','Time'), sep = 'T', convert = TRUE, remove = FALSE) %>%
+  separate(StationCode, into = c('Station', NA), sep = '-', remove = FALSE)
+
+df_ben_raw$Date <- ymd(df_ben_raw$Date)
+
+# assign annual regions
+df_ben_lt <- df_ben_raw %>%
+  region_assigner(analysis = 'annual')
+```
+
+## Add Salinity
+
+```{r}
+# read in WQ data (for SpC data)
+df_wq <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=edi.458.9&entityid=cf231071093ac2861893793517db26f3') %>%
+  select(Date, Station, SpCndSurface) %>%
+  separate(Date, into = c('Year','Month',NA), sep = '-', remove = FALSE) %>%
+  drop_na() %>%
+  distinct() %>%
+  mutate(Year = as.numeric(Year)) %>%
+  filter(Year >= 1980)
+
+# join two data frames; if multiple WQ entries for a month, choose closest one
+df_ben_lt <- df_ben_lt %>%
+  filter(Year >= 1980) %>%
+  left_join(df_wq, by = c('Year', 'Month', 'Station'), relationship = 'many-to-many') %>%
+  mutate(date_diff = abs(Date.x - Date.y),
+         date_same_diff = (Date.x - Date.y)) %>%
+  group_by_at(vars(-date_diff,-date_same_diff,-SpCndSurface,-Date.y)) %>%
+  filter((date_diff == min(date_diff)) %>% replace_na(TRUE)) %>%
+  ungroup()
+
+# if multiple WQ entries are the same number of days apart, choose the one that is after the sampling event
+df_ben_lt <- df_ben_lt %>%
+  group_by_at(vars(-date_diff,-date_same_diff,-SpCndSurface,-Date.y)) %>%
+  filter((date_same_diff == min(date_same_diff)) %>% replace_na(TRUE)) %>%
+  ungroup() %>%
+  select(c(-date_diff,-date_same_diff,-Date.y)) %>%
+  rename(Date = Date.x)
+
+# map Spc to salinity
+df_ben_lt <- df_ben_lt %>%
+  mutate(Salinity = wql::ec2pss(.data$SpCndSurface / 1000, t = 25)) # equation taken from discretewq package
+
+# average by StationCode, Month/Year, and Genus (Region/Lat/Lon/Order_level added so they're included in the df)
+df_ben_lt <- df_ben_lt %>%
+  group_by(StationCode, Region, Order_level, Genus, Month, Year, Latitude, Longitude) %>%
+  summarize(across(c(CPUE, BPUE, Salinity), ~mean(., na.rm = TRUE)), .groups = 'drop') %>% 
+  pivot_wider(names_from = Order_level, values_from = c(CPUE, BPUE),
+    names_glue = '{Order_level}_{.value}')
+```
+
+
 # Benthic Amphipods
 
 ## Data
 
 ```{r}
-df_amph <- read_csv('data/annual_averages/amphipod_annual_regions_salinity.csv', col_types = c(Month = 'd')) %>%
-  rename(Orig_Region = Region)
+# filter data by relevant genus
+df_amph <- df_ben_lt %>% filter(Genus %in% vec_amph)
 
+# add salinity bins
 df_amph_sal <- df_amph %>%
-  filter(!is.na(Salinity) & Year >= 1980)%>%
-  mutate(salbin=case_when(Salinity<1 ~ "< 1 PPT",
-                          Salinity>1 & Salinity <6 ~ "1-6 PPT",
-                          Salinity >6 ~ ">6 PPT"),
-         salbin=factor(salbin, levels=c("< 1 PPT", "1-6 PPT", ">6 PPT")))%>%
-  group_by(Month, Year, salbin)%>%
-  summarise(N_stations=n_distinct(StationCode), .groups="drop")
+  filter(!is.na(Salinity)) %>%
+  mutate(
+    salbin = case_when(Salinity < 1 ~ '< 1 PPT',
+                       Salinity >= 1 & Salinity <= 6 ~ '1-6 PPT',
+                       Salinity > 6 ~ '> 6 PPT'),
+         salbin=factor(
+           salbin, levels=c('< 1 PPT', '1-6 PPT', '> 6 PPT'))
+    ) %>%
+  group_by(Month, Year, salbin) %>%
+  summarise(N_stations = n_distinct(StationCode), .groups='drop') %>%
+  mutate(N_stations = factor(N_stations, levels = sort(unique(N_stations))))
 
+# add regions
 df_amph_geo <- df_amph %>%
-  filter(Year >= 1980)%>%
-  region_assigner(analysis = "annual", plot = FALSE)%>%
-  mutate(Region=case_when(Orig_Region == "West" ~ "Suisun", Orig_Region == "North" ~ "Sacramento", Orig_Region == "South" ~ "San Joaquin"),
-         Region=factor(Region, levels=c("Suisun", "Sacramento", "San Joaquin"))) %>%
-  group_by(Month, Year, Region)%>%
-  summarise(N_stations=n_distinct(StationCode), .groups="drop")
+  filter(Year >= 1980) %>%
+  rename(Orig_Region = Region) %>%
+  region_assigner(analysis = 'annual', plot = FALSE) %>%
+  mutate(
+    Region = case_when(Orig_Region == 'West' ~ 'Suisun',
+                       Orig_Region == 'North' ~ 'Sacramento',
+                       Orig_Region == 'South' ~ 'San Joaquin'),
+    Region = factor(Region, levels = c('Suisun', 'Sacramento', 'San Joaquin'))
+    ) %>%
+  group_by(Month, Year, Region) %>%
+  summarise(N_stations = n_distinct(StationCode), .groups='drop') %>%
+  mutate(N_stations = factor(N_stations, levels = sort(unique(N_stations))))
 ```
 
 ## Sampling effort plots all dates {.tabset .tabset-pills}
 
-
 ### Salinity {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
-ggplot(df_amph_sal, aes(y=Month, x=Year, fill=N_stations))+
-  geom_tile()+
-  scale_y_continuous(breaks=1:12)+
-  scale_fill_viridis_c()+
-  facet_wrap(~salbin)+
-  theme_bw()+
-  theme(legend.position = "bottom")
+ggplot(df_amph_sal, aes(y = Month, x = Year, fill = N_stations)) +
+  geom_tile() +
+  scale_fill_viridis_d() +
+  facet_wrap(~salbin) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.spacing.x = unit(0, 'cm')) +
+  guides(
+    fill = guide_legend(nrow = 1,
+                        label.position = 'bottom')
+    )
 ```
 
 ### Geography {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
-ggplot(df_amph_geo, aes(y=Month, x=Year, fill=N_stations))+
-  geom_tile()+
-  scale_y_continuous(breaks=1:12)+
-  scale_fill_viridis_c()+
-  facet_wrap(~Region)+
-  theme_bw()+
-  theme(legend.position = "bottom")
+ggplot(df_amph_geo, aes(y = Month, x = Year, fill = N_stations)) +
+  geom_tile() +
+  scale_fill_viridis_d() +
+  facet_wrap(~Region) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.spacing.x = unit(0, 'cm')) +
+  guides(
+    fill = guide_legend(nrow = 1,
+                        label.position = 'bottom')
+    )
 ```
 
 ## Sampling effort plots 1995 - present {.tabset .tabset-pills}
 
-
 ### Salinity {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(df_amph_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
-  geom_tile()+
-  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
-  scale_color_manual(values=c("black", "white"))+
-  scale_y_continuous(breaks=1:12)+
-  scale_fill_viridis_c()+
-  facet_wrap(~salbin)+
-  theme_bw()+
-  theme(legend.position = "bottom")
+ggplot(filter(df_amph_sal, Year >= 1995), aes(y = Month, x = Year, fill = N_stations)) +
+  geom_tile() +
+  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F) +
+  scale_color_manual(values=c("black", "white")) +
+  scale_fill_viridis_d() +
+  facet_wrap(~salbin) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.spacing.x = unit(0, 'cm')) +
+  guides(
+    fill = guide_legend(nrow = 1,
+                        label.position = 'bottom')
+    )
 ```
 
 ### Geography {.tabset .tabset-pills}
-```{r, fig.width=10, fig.height=8}
-ggplot(filter(df_amph_geo, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
-  geom_tile()+
-  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
-  scale_color_manual(values=c("black", "white"))+
-  scale_y_continuous(breaks=1:12)+
-  scale_fill_viridis_c()+
-  facet_wrap(~Region)+
-  theme_bw()+
-  theme(legend.position = "bottom")
-```
 
+```{r, fig.width=10, fig.height=8}
+ggplot(filter(df_amph_geo, Year >= 1995), aes(y = Month, x = Year, fill = N_stations)) +
+  geom_tile() +
+  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F) +
+  scale_color_manual(values=c("black", "white")) +
+  scale_fill_viridis_d()+
+  facet_wrap(~Region) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.spacing.x = unit(0, 'cm')) +
+  guides(
+    fill = guide_legend(nrow = 1,
+                        label.position = 'bottom')
+    )
+```
 
 # Benthic Clams
 
 ## Data
 
 ```{r}
-df_clams <- read_csv('data/annual_averages/clams_annual_regions_salinity.csv', col_types = cols(Month = 'd')) %>%
-  rename(Orig_Region = Region)
+# filter data by relevant genus
+df_clam <- df_ben_lt %>% filter(Genus %in% vec_clam)
 
-df_clams_sal <- df_clams %>%
-  filter(!is.na(Salinity) & Year >= 1980)%>%
-  mutate(salbin=case_when(Salinity<1 ~ "< 1 PPT",
-                          Salinity>1 & Salinity <6 ~ "1-6 PPT",
-                          Salinity >6 ~ ">6 PPT"),
-         salbin=factor(salbin, levels=c("< 1 PPT", "1-6 PPT", ">6 PPT")))%>%
-  group_by(Month, Year, salbin)%>%
-  summarise(N_stations=n_distinct(StationCode), .groups="drop")
+# add salinity bins
+df_clam_sal <- df_clam %>%
+  filter(!is.na(Salinity)) %>%
+  mutate(
+    salbin = case_when(Salinity < 1 ~ '< 1 PPT',
+                       Salinity >= 1 & Salinity <= 6 ~ '1-6 PPT',
+                       Salinity > 6 ~ '> 6 PPT'),
+         salbin=factor(
+           salbin, levels=c('< 1 PPT', '1-6 PPT', '> 6 PPT'))
+    ) %>%
+  group_by(Month, Year, salbin) %>%
+  summarise(N_stations = n_distinct(StationCode), .groups='drop') %>%
+  mutate(N_stations = factor(N_stations, levels = sort(unique(N_stations))))
 
-df_clams_geo <- df_clams %>%
-  filter(Year >= 1980)%>%
-  region_assigner(analysis = "annual", plot = FALSE)%>%
-  mutate(Region=case_when(Orig_Region == "West" ~ "Suisun", Orig_Region == "North" ~ "Sacramento", Orig_Region == "South" ~ "San Joaquin"),
-         Region=factor(Region, levels=c("Suisun", "Sacramento", "San Joaquin"))) %>%
-  group_by(Month, Year, Region)%>%
-  summarise(N_stations=n_distinct(StationCode), .groups="drop")
+# add regions
+df_clam_geo <- df_clam %>%
+  filter(Year >= 1980) %>%
+  rename(Orig_Region = Region) %>%
+  region_assigner(analysis = 'annual', plot = FALSE) %>%
+  mutate(
+    Region = case_when(Orig_Region == 'West' ~ 'Suisun',
+                       Orig_Region == 'North' ~ 'Sacramento',
+                       Orig_Region == 'South' ~ 'San Joaquin'),
+    Region = factor(Region, levels = c('Suisun', 'Sacramento', 'San Joaquin'))
+    ) %>%
+  group_by(Month, Year, Region) %>%
+  summarise(N_stations = n_distinct(StationCode), .groups='drop') %>%
+  mutate(N_stations = factor(N_stations, levels = sort(unique(N_stations))))
 ```
 
 ## Sampling effort plots all dates {.tabset .tabset-pills}
 
-
 ### Salinity {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
-ggplot(df_clams_sal, aes(y=Month, x=Year, fill=N_stations))+
-  geom_tile()+
-  scale_y_continuous(breaks=1:12)+
-  scale_fill_viridis_c()+
-  facet_wrap(~salbin)+
-  theme_bw()+
-  theme(legend.position = "bottom")
+ggplot(df_clam_sal, aes(y = Month, x = Year, fill = N_stations)) +
+  geom_tile() +
+  scale_fill_viridis_d() +
+  facet_wrap(~salbin) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.spacing.x = unit(0, 'cm')) +
+  guides(
+    fill = guide_legend(nrow = 1,
+                        label.position = 'bottom')
+    )
 ```
 
 ### Geography {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
-ggplot(df_clams_geo, aes(y=Month, x=Year, fill=N_stations))+
-  geom_tile()+
-  scale_y_continuous(breaks=1:12)+
-  scale_x_continuous(breaks=1:2)+
-  scale_fill_viridis_c()+
-  facet_wrap(~Region)+
-  theme_bw()+
-  theme(legend.position = "bottom")
+ggplot(df_clam_geo, aes(y = Month, x = Year, fill = N_stations)) +
+  geom_tile() +
+  scale_fill_viridis_d() +
+  facet_wrap(~Region) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.spacing.x = unit(0, 'cm')) +
+  guides(
+    fill = guide_legend(nrow = 1,
+                        label.position = 'bottom')
+    )
 ```
 
 ## Sampling effort plots 1995 - present {.tabset .tabset-pills}
 
-
 ### Salinity {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(df_clams_sal, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
-  geom_tile()+
-  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
-  scale_color_manual(values=c("black", "white"))+
-  scale_y_continuous(breaks=1:12)+
-  scale_fill_viridis_c()+
-  facet_wrap(~salbin)+
-  theme_bw()+
-  theme(legend.position = "bottom")
+ggplot(filter(df_clam_sal, Year >= 1995), aes(y = Month, x = Year, fill = N_stations)) +
+  geom_tile() +
+  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F) +
+  scale_color_manual(values=c("black", "white")) +
+  scale_fill_viridis_d() +
+  facet_wrap(~salbin) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.spacing.x = unit(0, 'cm')) +
+  guides(
+    fill = guide_legend(nrow = 1,
+                        label.position = 'bottom')
+    )
 ```
 
 ### Geography {.tabset .tabset-pills}
+
 ```{r, fig.width=10, fig.height=8}
-ggplot(filter(df_clams_geo, Year>=1995), aes(y=Month, x=Year, fill=N_stations))+
-  geom_tile()+
-  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F)+
-  scale_color_manual(values=c("black", "white"))+
-  scale_y_continuous(breaks=1:12)+
-  scale_fill_viridis_c()+
-  facet_wrap(~Region)+
-  theme_bw()+
-  theme(legend.position = "bottom")
+ggplot(filter(df_clam_geo, Year >= 1995), aes(y = Month, x = Year, fill = N_stations)) +
+  geom_tile() +
+  geom_text(aes(label=N_stations, color=N_stations<5), size=2, show.legend = F) +
+  scale_color_manual(values=c("black", "white")) +
+  scale_fill_viridis_d()+
+  facet_wrap(~Region) +
+  theme_bw() +
+  theme(legend.position = 'bottom',
+        legend.spacing.x = unit(0, 'cm')) +
+  guides(
+    fill = guide_legend(nrow = 1,
+                        label.position = 'bottom')
+    )
 ```
