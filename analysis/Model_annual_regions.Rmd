@@ -626,13 +626,13 @@ load('./fig_output/sem_annual_noregions.RData')
 plot_grobs <- map(list(sem_annual_noregions, figN, figW, figS),
                   ~convert_html_to_grob(.x, 2000))
 combined_figure <- ggarrange(plotlist=plot_grobs, labels=c("(a)", "(b)", "(c)", "(d)"), 
-                             font.label=list(size=9)) %>%
+                             font.label=list(size=12)) %>%
   annotate_figure(top = text_grob("Annual SEMs",
                                   color = "black",
                                   face = "bold",
-                                  size = 11))
+                                  size = 14))
 
-ggsave('./fig_output/sem_annual.png', combined_figure, width=8, height=7, dpi=300, 
+ggsave('./fig_output/sem_annual.tiff', combined_figure, width=7, height=7, dpi=600, 
        bg = "white")
 
 #detrended

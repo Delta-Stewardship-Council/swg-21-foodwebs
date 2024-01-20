@@ -42,3 +42,9 @@ vignettes/*.pdf
 data_raw
 
 .DS_Store
+
+# Final figure files too large to commit
+fig_output/sem_annual.tiff
+fig_output/annual_and_monthly_maps.tiff
+fig_output/sem_lower_trophic.tiff
+fig_output/sem_upper_trophic.tiff

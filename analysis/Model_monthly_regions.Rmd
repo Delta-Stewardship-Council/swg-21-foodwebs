@@ -664,12 +664,12 @@ upper_grobs <-  map(list(upper_plot_far_west,
                          upper_plot_west,
                          upper_plot_south), ~convert_html_to_grob(.x, 2000))
 upper_figure <- ggarrange(plotlist=upper_grobs, labels="auto",
-                          font.label=list(size=11)) %>%
+                          font.label=list(size=14)) %>%
   annotate_figure(top = text_grob("Monthly Regional Models (upper trophic level)",
                                   color = "black",
                                   face = "bold",
-                                  size = 11))
-ggsave('./fig_output/sem_upper_trophic.png',upper_figure, width=8, height=7, dpi=300, bg = "white")
+                                  size = 14))
+ggsave('./fig_output/sem_upper_trophic.tiff',upper_figure, width=7, height=7, dpi=600, bg = "white")
 ```
 
 
@@ -854,12 +854,12 @@ lower_grobs <-  map(list(lower_plot_far_west,
                          lower_plot_west,
                          lower_plot_south), ~convert_html_to_grob(.x, 2000))
 lower_figure <- ggarrange(plotlist=lower_grobs, labels="auto",
-                          font.label=list(size=11)) %>%
+                          font.label=list(size=14)) %>%
   annotate_figure(top = text_grob("Monthly Regional Models (lower trophic level)",
                                   color = "black",
                                   face = "bold",
-                                  size = 11))
-ggsave('./fig_output/sem_lower_trophic.png',lower_figure, width=8, height=7, dpi=300, bg = "white")
+                                  size = 14))
+ggsave('./fig_output/sem_lower_trophic.tiff',lower_figure, width=7, height=7, dpi=600, bg = "white")
 ```
 
 Combine upper and lower SEM diagrams

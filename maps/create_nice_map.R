@@ -227,13 +227,12 @@ both_maps
 
 
 ggsave(
-  filename=file.path("fig_output","annual_and_monthly_maps.png"),
+  filename=file.path("fig_output","annual_and_monthly_maps.tiff"),
   plot=both_maps,
-	device="png",
   width=7,
   height=7.5,
   units=c("in"),
-  dpi = 300,
+  dpi = 600,
   bg = "white"
 )
 
