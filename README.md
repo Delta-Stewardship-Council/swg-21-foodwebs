@@ -1,5 +1,7 @@
 # Food web drivers in the San Francisco Estuary
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10552629.svg)](https://doi.org/10.5281/zenodo.10552629)
+
 This repository contains R code, data, and results supporting the project "Evaluating 
 top-down, bottom-up, and environmental drivers of pelagic food web dynamics along an 
 estuarine gradient" by Tanya L. Rogers, Samuel M. Bashevkin, Christina E. Burdi, 
