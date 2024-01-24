@@ -168,12 +168,11 @@ annualRegionalMap <- baseMap +
           size=2) +
   # geom_sf(data=regions_NAD83, aes(fill=Region), alpha=0.25) +
   scale_color_manual(name="Survey",
-                     values=c("Bay Study"="darkorange","EMP Zoop"="#6A00A8FF",
-                              "EMP Benthic"="#B12A90FF","EMP Nutrients"="#0D0887FF",
-                              "DJFMP"="green3","FMWT"="red","STN"="black")) +
+                     values=c("EMP Benthic"="#B12A90FF","EMP Zoop"="#6A00A8FF","EMP Nutrients"="#0D0887FF",
+                              "DJFMP"="green3","STN"="black","Bay Study"="darkorange","FMWT"="red")) +
   scale_shape_manual(name="Survey",
-                     values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
-                              "EMP Nutrients"=7,"DJFMP"=8,"FMWT"=3,"STN"=5)) +
+                     values=c("EMP Benthic"=15,"EMP Zoop"=17,"EMP Nutrients"=7,
+                              "DJFMP"=8,"STN"=5,"Bay Study"=20,"FMWT"=3)) +
 	annotate(geom="text", x=-122.6, y=ymin + 0.01, label="a)")
 
 annual_map <- cowplot::ggdraw(annualRegionalMap) +
@@ -209,12 +208,11 @@ monthlyRegionalMap <- baseMap +
           aes(color=Survey_f, shape=Survey_f),
           size=2) +
   scale_color_manual(name="Survey",
-                     values=c("Bay Study"="darkorange","EMP Zoop"="#6A00A8FF",
-                              "EMP Benthic"="#B12A90FF",
-                              "EMP Nutrients"="#0D0887FF","DJFMP"="green3")) +
+                     values=c("EMP Benthic"="#B12A90FF","EMP Zoop"="#6A00A8FF",
+                              "EMP Nutrients"="#0D0887FF","DJFMP"="green3","Bay Study"="darkorange")) +
   scale_shape_manual(name="Survey",
-                     values=c("Bay Study"=20,"EMP Zoop"=17,"EMP Benthic"=15,
-                              "EMP Nutrients"=7,"DJFMP"=8)) +
+                     values=c("EMP Benthic"=15,"EMP Zoop"=17,
+                              "EMP Nutrients"=7,"DJFMP"=8,"Bay Study"=20)) +
 	annotate(geom="text", x=-122.6, y=ymin + 0.01, label="b)")
 
 monthly_map <- cowplot::ggdraw(monthlyRegionalMap)
@@ -227,12 +225,12 @@ both_maps
 
 
 ggsave(
-  filename=file.path("fig_output","annual_and_monthly_maps.tiff"),
+  filename=file.path("fig_output","annual_and_monthly_maps.pdf"),
   plot=both_maps,
   width=7,
   height=7.5,
   units=c("in"),
-  dpi = 600,
+  #dpi = 600,
   bg = "white"
 )
 

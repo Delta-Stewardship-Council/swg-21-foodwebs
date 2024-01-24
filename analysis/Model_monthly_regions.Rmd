@@ -669,7 +669,7 @@ upper_figure <- ggarrange(plotlist=upper_grobs, labels="auto",
                                   color = "black",
                                   face = "bold",
                                   size = 14))
-ggsave('./fig_output/sem_upper_trophic.tiff',upper_figure, width=7, height=7, dpi=600, bg = "white")
+ggsave('./fig_output/sem_upper_trophic.pdf',upper_figure, width=7, height=7, bg = "white")
 ```
 
 
@@ -859,7 +859,7 @@ lower_figure <- ggarrange(plotlist=lower_grobs, labels="auto",
                                   color = "black",
                                   face = "bold",
                                   size = 14))
-ggsave('./fig_output/sem_lower_trophic.tiff',lower_figure, width=7, height=7, dpi=600, bg = "white")
+ggsave('./fig_output/sem_lower_trophic.pdf',lower_figure, width=7, height=7, bg = "white")
 ```
 
 Combine upper and lower SEM diagrams

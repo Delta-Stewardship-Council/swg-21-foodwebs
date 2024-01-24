@@ -632,7 +632,7 @@ combined_figure <- ggarrange(plotlist=plot_grobs, labels=c("(a)", "(b)", "(c)", 
                                   face = "bold",
                                   size = 14))
 
-ggsave('./fig_output/sem_annual.tiff', combined_figure, width=7, height=7, dpi=600, 
+ggsave('./fig_output/sem_annual.pdf', combined_figure, width=7, height=7, #dpi=600, 
        bg = "white")
 
 #detrended
